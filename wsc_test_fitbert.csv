@@ -1,0 +1,288 @@
+masked_sentences,OptionA,OptionB,answer
+ The city councilmen refused the demonstrators a permit because ***mask*** feared violence. ,The city councilmen ,The demonstrators , A  
+ The city councilmen refused the demonstrators a permit because ***mask*** advocated violence. ,The city councilmen ,The demonstrators , B  
+ The trophy doesn't fit into the brown suitcase because ***mask*** is too large. ,the trophy ,the suitcase ,A.  
+ The trophy doesn't fit into the brown suitcase because ***mask*** is too small. ,the trophy ,the suitcase ,B.  
+ Joan made sure to thank Susan for all the help ***mask*** had recieved. , Joan , Susan  , A.  
+ Joan made sure to thank Susan for all the help ***mask*** had given. , Joan , Susan  , B.  
+" Paul tried to call George on the phone, but ***mask*** wasn't successful. ", Paul , George , A. 
+" Paul tried to call George on the phone, but ***mask*** wasn't available. ", Paul , George , B. 
+" The lawyer asked the witness a question, but ***mask*** was reluctant to repeat it. ", the lawyer , the witness , A.  
+" The lawyer asked the witness a question, but ***mask*** was reluctant to answer it. ", the lawyer , the witness , B.  
+ The delivery truck zoomed by the school bus because ***mask*** was going so fast. , the delivery truck , the school bus , A.  
+ The delivery truck zoomed by the school bus because ***mask*** was going so slow. , the delivery truck , the school bus , B.  
+ Frank felt vindicated when his longtime rival Bill revealed that ***mask*** was the winner of the competition., Frank , Bill , A.  
+ Frank felt crushed when his longtime rival Bill revealed that ***mask*** was the winner of the competition., Frank , Bill , B.  
+ The man couldn't lift his son because ***mask*** was so weak. , The man , The son , A. 
+ The man couldn't lift his son because ***mask*** was so heavy. , The man , The son , B. 
+ The large ball crashed right through the table because ***mask*** was made of steel. ,The large ball ,The table , A. 
+ The large ball crashed right through the table because ***mask*** was made of styrofoam. ,The large ball ,The table , B. 
+ John couldn't see the stage with Billy in front of him because ***mask*** is so short. ,John ,Billy , A. 
+ John couldn't see the stage with Billy in front of him because ***mask*** is so tall. ,John ,Billy , B. 
+ Tom threw his schoolbag down to Ray after ***mask*** reached the top of the stairs. ,Tom ,Ray , A 
+ Tom threw his schoolbag down to Ray after ***mask*** reached the bottom of the stairs. ,Tom ,Ray , B 
+" Although they ran at about the same speed, Sue beat Sally because ***mask*** had such a good start. ", Sue , Sally , A 
+" Although they ran at about the same speed, Sue beat Sally because ***mask*** had such a bad start. ", Sue , Sally , B 
+ The sculpture rolled off the shelf because ***mask*** wasn't anchored. , The sculpture , The shelf , A  
+ The sculpture rolled off the shelf because ***mask*** wasn't level. , The sculpture , The shelf , B  
+ Sam's drawing was hung just above Tina's and ***mask*** did look much better with another one below it. , Sam's drawing , Tina's drawing , A  
+ Sam's drawing was hung just above Tina's and ***mask*** did look much better with another one above it. , Sam's drawing , Tina's drawing , B  
+ Anna did a lot better than her good friend Lucy on the test because ***mask*** had studied so hard. ,Anna ,Lucy , A 
+ Anna did a lot worse than her good friend Lucy on the test because ***mask*** had studied so hard. ,Anna ,Lucy , B 
+ The firemen arrived after the police because ***mask*** were coming from so far away. ,The firemen ,The police , A  
+ The firemen arrived before the police because ***mask*** were coming from so far away. ,The firemen ,The police , B  
+ Frank was upset with Tom because the toaster ***mask*** had bought from him didn't work. , Frank , Tom , A  
+ Frank was upset with Tom because the toaster ***mask*** had sold him didn't work. , Frank , Tom , B  
+ Jim yelled at Kevin because ***mask*** was so upset. ,Jim  ,Kevin  , A  
+ Jim comforted Kevin because ***mask*** was so upset. ,Jim  ,Kevin  , B  
+" The sack of potatoes had been placed above the bag of flour, so ***mask*** had to be moved first. ", The sack of potatoes , The bag of flour , A 
+" The sack of potatoes had been placed below the bag of flour, so ***mask*** had to be moved first. ", The sack of potatoes , The bag of flour , B 
+ Pete envies Martin although ***mask*** is very successful. , Pete , Martin , A  
+ Pete envies Martin because ***mask*** is very successful. , Pete , Martin , B  
+" The older students were bullying the younger ones, so we punished ***mask***.",The older students ,The younger students , A 
+" The older students were bullying the younger ones, so we rescued ***mask***.",The older students ,The younger students , B 
+ I poured water from the bottle into the cup until ***mask*** was empty. , the bottle , the cup , A  
+ I poured water from the bottle into the cup until ***mask*** was full. , the bottle , the cup , B  
+ Susan knows all about Ann's personal problems because ***mask*** is nosy. , Susan , Ann , A  
+ Susan knows all about Ann's personal problems because ***mask*** is indiscreet. , Susan , Ann , B  
+ Sid explained his theory to Mark but ***mask*** couldn't convince him. ,Sid  ,Mark , A  
+ Sid explained his theory to Mark but ***mask*** couldn't understand him. ,Sid  ,Mark , B  
+" Susan knew that Ann's son had been in a car accident, so ***mask*** told her about it. ", Susan , Ann , A  
+" Susan knew that Ann's son had been in a car accident, because ***mask*** told her about it. ", Susan , Ann , B  
+" Joe's uncle can still beat him at tennis, even though ***mask*** is 30 years younger. ", Joe , Joe's uncle , A  
+" Joe's uncle can still beat him at tennis, even though ***mask*** is 30 years older. ", Joe , Joe's uncle ,  B 
+ The painting in Mark's living room shows an oak tree. ***mask*** is to the right of the bookcase. , The painting , The oak tree , A  
+ The painting in Mark's living room shows an oak tree. ***mask*** is to the right of a house. , The painting , The oak tree , B  
+ There is a gap in the wall. You can see the garden through ***mask***., The gap , The wall , A  
+ There is a gap in the wall. You can see the garden behind ***mask***., The gap , The wall , B  
+ The drain is clogged with hair. ***mask*** has to be cleaned. , The drain , The hair , A  
+ The drain is clogged with hair. ***mask*** has to be removed. , The drain , The hair , B  
+" My meeting started at 4:00 and I needed to catch the train at 4:30, so there wasn't much time. Luckily, ***mask*** was short, so it worked out. ", The meeting , The train , A  
+" My meeting started at 4:00 and I needed to catch the train at 4:30, so there wasn't much time. Luckily, ***mask*** was delayed, so it worked out. ", The meeting , The train , B  
+" There is a pillar between me and the stage, and I can't see around ***mask***.", The pillar , The stage ,  A 
+" There is a pillar between me and the stage, and I can't see ***mask***.", The pillar , The stage ,  B 
+" They broadcast an announcement, but a subway came into the station and I couldn't hear ***mask***.",The announcement ,The subway , A  
+" They broadcast an announcement, but a subway came into the station and I couldn't hear over ***mask***.",The announcement ,The subway , B  
+" In the middle of the outdoor concert, the rain started falling, but ***mask*** continued until 10. ", The concert , The rain , A  
+" In the middle of the outdoor concert, the rain started falling, and ***mask*** continued until 10. ", The concert , The rain , B  
+" I used an old rag to clean the knife, and then I put ***mask*** in the trash. ",The rag ,The knife , A  
+" I used an old rag to clean the knife, and then I put ***mask*** in the drawer. ",The rag ,The knife , B  
+" Ann asked Mary what time the library closes, because ***mask*** had forgotten. ", Ann , Mary , A 
+" Ann asked Mary what time the library closes, but ***mask*** had forgotten. ", Ann , Mary , B 
+ I took the water bottle out of the backpack so that ***mask*** would be handy. , The water bottle , The backpack , A  
+ I took the water bottle out of the backpack so that ***mask*** would be lighter. , The water bottle , The backpack , B  
+ I couldn't put the pot on the shelf because ***mask*** was too tall. ,The pot ,The shelf , A 
+ I couldn't put the pot on the shelf because ***mask*** was too high. ,The pot ,The shelf , B 
+ I'm sure that my map will show this building; ***mask*** is very good. , The map , The building , A 
+ I'm sure that my map will show this building; ***mask*** is very famous. , The map , The building , B 
+ Bob paid for Charlie's college education. ***mask*** is very generous. , Bob , Charlie , A.  
+ Bob paid for Charlie's college education. ***mask*** is very grateful. , Bob , Charlie , B.  
+" Bob paid for Charlie's college education, but now Charlie acts as though it never happened. ***mask*** is very hurt. ", Bob , Charlie , A.  
+" Bob paid for Charlie's college education, but now Charlie acts as though it never happened. ***mask*** is very ungrateful. ", Bob , Charlie , B.  
+" Bob was playing cards with Adam and was way ahead. If Adam hadn't had a sudden run of good luck, ***mask*** would have won. ", Bob , Adam , A 
+" Bob was playing cards with Adam and was way ahead. If Adam hadn't had a sudden run of good luck, ***mask*** would have lost. ", Bob , Adam , B 
+" Adam can't leave work here until Bob arrives to replace him. If Bob had left home for work on time, ***mask*** would be gone by this time. ", Adam , Bob , A  
+" Adam can't leave work here until Bob arrives to replace him. If Bob had left home for work on time, ***mask*** would be here by this time. ", Adam , Bob , B  
+" If the con artist has succeeded in fooling Sam, ***mask*** would have gotten a lot of money. ",The con artist ,Sam , A  
+" If the con artist has succeeded in fooling Sam, ***mask*** would have lost a lot of money. ",The con artist ,Sam , B  
+" It was a summer afternoon, and the dog was sitting in the middle of the lawn. After a while, it got up and moved to a spot under the tree, because ***mask*** was hot. ",The dog ,The spot under the tree , A  
+" It was a summer afternoon, and the dog was sitting in the middle of the lawn. After a while, it got up and moved to a spot under the tree, because ***mask*** was cooler. ",The dog ,The spot under the tree , B  
+" The cat was lying by the mouse hole waiting for the mouse, but ***mask*** was too impatient. ",The cat ,The mouse , A  
+" The cat was lying by the mouse hole waiting for the mouse, but ***mask*** was too cautious. ",The cat ,The mouse , B  
+ Anne gave birth to a daughter last month. ***mask*** is a very charming woman. , Anne , Anne's daughter , A  
+ Anne gave birth to a daughter last month. ***mask*** is a very charming baby. , Anne , Anne's daughter , B  
+" Alice tried frantically to stop her daughter from chatting at the party, leaving us to wonder why ***mask*** was behaving so strangely. ", Alice, Alice's daughter ,  A 
+" Alice tried frantically to stop her daughter from barking at the party, leaving us to wonder why ***mask*** was behaving so strangely. ", Alice , Alice's daughter , B  
+" I saw Jim yelling at some guy in a military uniform with a huge red beard. I don't know why ***mask*** was, but he looked very unhappy. ", Jim , the guy in uniform , A  
+" I saw Jim yelling at some guy in a military uniform with a huge red beard. I don't know who ***mask*** was, but he looked very unhappy. ", Jim , the guy in uniform , B  
+ The fish ate the worm. ***mask*** was hungry. ,The fish ,The worm , A  
+ The fish ate the worm. ***mask*** was tasty. ,The fish ,The worm , B  
+" I was trying to open the lock with the key, but someone had filled the keyhole with chewing gum, and I couldn't get ***mask*** in. ", The key , The chewing gum , A 
+" I was trying to open the lock with the key, but someone had filled the keyhole with chewing gum, and I couldn't get ***mask*** out. ", The key , The chewing gum , B 
+" The dog chased the cat, which ran up a tree. ***mask*** waited at the bottom. ", The dog , The cat , A  
+" The dog chased the cat, which ran up a tree. ***mask*** waited at the top. ", The dog , The cat , B  
+" In the storm, the tree fell down and crashed through the roof of my house. Now, I have to get ***mask*** removed. ", The tree , The roof , A  
+" In the storm, the tree fell down and crashed through the roof of my house. Now, I have to get ***mask*** repaired. ", The tree , The roof , B  
+ The customer walked into the bank and stabbed one of the tellers. ***mask*** was immediately taken to the police station. , The customer , The teller , A. 
+ The customer walked into the bank and stabbed one of the tellers. ***mask*** was immediately taken to the hospital. , The customer , The teller , B. 
+ John was doing research in the library when he heard a man humming and whistling. ***mask*** was very annoyed. , John , The man , A  
+ John was doing research in the library when he heard a man humming and whistling. ***mask*** was very annoying. , John , The man , B  
+ John was jogging through the park when he saw a man juggling watermelons. ***mask*** was very impressed. , John , The juggler , A  
+ John was jogging through the park when he saw a man juggling watermelons. ***mask*** was very impressive. , John , The juggler , B  
+ Bob collapsed on the sidewalk. Soon he saw Carl coming to help. ***mask*** was very ill. , Bob , Carl , A  
+ Bob collapsed on the sidewalk. Soon he saw Carl coming to help. ***mask*** was very concerned. , Bob , Carl , B  
+" Sam and Amy are passionately in love, but Amy's parents are unhappy about it, because ***mask*** are fifteen. ", Sam and Amy , Amy's parents , A  
+" Sam and Amy are passionately in love, but Amy's parents are unhappy about it, because ***mask*** are snobs. ", Sam and Amy , Amy's parents , B  
+" Mark told Pete many lies about himself, which Pete included in his book. ***mask*** should have been more truthful. ", Mark , Pete , A 
+" Mark told Pete many lies about himself, which Pete included in his book. ***mask*** should have been more skeptical. ", Mark , Pete , B 
+ Joe has sold his house and bought a new one a few miles away. He will be moving out of ***mask*** on Thursday. , The old house , The new house , A 
+ Joe has sold his house and bought a new one a few miles away. He will be moving into ***mask*** on Thursday. , The old house , The new house , B 
+ Many people start to read Paul's books and can't put them down. ***mask*** are gripped because Paul writes so well. , People , Paul's books , A  
+ Many people start to read Paul's books and can't put them down. ***mask*** are popular because Paul writes so well. , People , Paul's books , B  
+ Mary took out her flute and played one of her favorite pieces. She has had ***mask*** since she was a child. , The flute , The piece , A  
+ Mary took out her flute and played one of her favorite pieces. She has loved ***mask*** since she was a child. , The flute , The piece , B  
+" Sam pulled up a chair to the piano, but ***mask*** was broken, so he had to stand instead. ",The chair ,The piano , A  
+" Sam pulled up a chair to the piano, but ***mask*** was broken, so he had to sing instead. ",The chair ,The piano , B  
+" Since it was raining, I carried the newspaper in my backpack to keep ***mask*** dry. ", The newspaper , The backpack , A  
+" Since it was raining, I carried the newspaper over my backpack to keep ***mask*** dry. ", The newspaper , The backpack , B  
+ Sara borrowed the book from the library because she needs it for an article she is working on. She reads ***mask*** when she gets home from work. , The book , The article ,  A 
+ Sara borrowed the book from the library because she needs it for an article she is working on. She writes ***mask*** when she gets home from work. , The book , The article ,  B 
+" This morning, Joey built a sand castle on the beach, and put a toy flag in the highest tower, but this afternoon the tide knocked ***mask*** down. ", The sand castle , The flag , A  
+" This morning, Joey built a sand castle on the beach, and put a toy flag in the highest tower, but this afternoon the wind knocked ***mask*** down. ", The sand castle , The flag , B 
+" Jane knocked on Susan's door, but there was no answer. ***mask*** was disappointed. ", Jane , Susan , A 
+" Jane knocked on Susan's door, but there was no answer. ***mask*** was out. ", Jane , Susan , B 
+" Jane knocked on the door, and Susan answered it. ***mask*** invited her to come out. ", Jane , Susan , A 
+" Jane knocked on the door, and Susan answered it. ***mask*** invited her to come in. ", Jane , Susan , B 
+" Sam took French classes from Adam, because ***mask*** was eager to speak it fluently. ", Sam , Adam , A  
+" Sam took French classes from Adam, because ***mask*** was known to speak it fluently. ", Sam , Adam , B  
+" The path to the lake was blocked, so we couldn't use ***mask***.", The path , The lake , A  
+" The path to the lake was blocked, so we couldn't reach ***mask***.", The path , The lake , B 
+" The sun was covered by a thick cloud all morning, but luckily, by the time the picnic started, ***mask*** was out. ", The sun , The cloud , A  
+" The sun was covered by a thick cloud all morning, but luckily, by the time the picnic started, ***mask*** was gone. ", The sun , The cloud , B  
+" We went to the lake, because a shark had been seen at the ocean beach, so ***mask*** was a safer place to swim. ", The lake , The ocean beach , A  
+" We went to the lake, because a shark had been seen at the ocean beach, so ***mask*** was a dangerous place to swim. ", The lake , The ocean beach , B  
+" Sam tried to paint a picture of shepherds with sheep, but ***mask*** ended up looking more like golfers. ", The shepherds , The sheep , A  
+" Sam tried to paint a picture of shepherds with sheep, but ***mask*** ended up looking more like dogs. ", The shepherds , The sheep , B  
+" Mary tucked her daughter Anne into bed, so that ***mask*** could work. ", Mary , Mary's daughter , A  
+" Mary tucked her daughter Anne into bed, so that ***mask*** could sleep. ", Mary , Mary's daughter , B  
+" Fred and Alice had very warm down coats, but ***mask*** were not prepared for the cold in Alaska. ",Fred and Alice , coats , A 
+" Fred and Alice had very warm down coats, but ***mask*** were not enough for the cold in Alaska. ",Fred and Alice , coats , B 
+ Thomson visited Cooper's grave in 1765. At that date ***mask*** had been travelling for five years. , Thomson , Cooper , A  
+ Thomson visited Cooper's grave in 1765. At that date ***mask*** had been dead for five years. , Thomson , Cooper , B 
+" Jackson was greatly influenced by Arnold, though ***mask*** lived two centuries later. ", Jackson , Arnold , A  
+" Jackson was greatly influenced by Arnold, though ***mask*** lived two centuries earlier. ", Jackson , Arnold , B  
+ I can't cut that tree down with that axe; ***mask*** is too thick. , The tree , The axe , A  
+ I can't cut that tree down with that axe; ***mask*** is too small. , The tree , The axe , B  
+ The foxes are getting in at night and attacking the chickens. I shall have to kill ***mask***., The foxes , The chickens , A  
+ The foxes are getting in at night and attacking the chickens. I shall have to guard ***mask***., The foxes , The chickens , B  
+ The foxes are getting in at night and attacking the chickens. ***mask*** have gotten very bold. , The foxes , The chickens , A  
+ The foxes are getting in at night and attacking the chickens. ***mask*** have gotten very nervous. , The foxes , The chickens , B  
+" Fred covered his eyes with his hands, because the wind was blowing sand around. He opened ***mask*** when the wind stopped. ", His eyes , His hands , A  
+" Fred covered his eyes with his hands, because the wind was blowing sand around. He lowered ***mask*** when the wind stopped. ", His eyes , His hands , B  
+" The actress used to be named Terpsichore, but she changed it to Tina a few years ago, because she figured ***mask*** was too hard to pronounce. ", Terpsichore , Tina , A  
+" The actress used to be named Terpsichore, but she changed it to Tina a few years ago, because she figured ***mask*** was easier to pronounce. ", Terpsichore , Tina , B  
+ Fred watched TV while George went out to buy groceries. After an hour ***mask*** got up. , Fred , George , A  
+ Fred watched TV while George went out to buy groceries. After an hour ***mask*** got back. , Fred , George , B  
+" Fred was supposed to run the dishwasher, but he put it off, because he wanted to watch TV. But the show turned out to be boring, so he changed his mind and turned ***mask*** on. ", The dishwasher , The TV , A  
+" Fred was supposed to run the dishwasher, but he put it off, because he wanted to watch TV. But the show turned out to be boring, so he changed his mind and turned ***mask*** off. ", The dishwasher , The TV , B  
+ Fred is the only man still alive who remembers my great-grandfather. ***mask*** is a remarkable man. , Fred , My great-grandfather , A  
+ Fred is the only man still alive who remembers my great-grandfather. ***mask*** was a remarkable man. , Fred , My great-grandfather , B  
+" Fred is the only man alive who still remembers my father as an infant. When Fred first saw my father, ***mask*** was twelve years old. ",Fred ,My father , A  
+" Fred is the only man alive who still remembers my father as an infant. When Fred first saw my father, ***mask*** was twelve months old. ",Fred ,My father , B  
+" In July, Kamtchatka declared war on Yakutsk. Since Yakutsk's army was much better equipped and ten times larger, ***mask*** were defeated within weeks. ", Kamchatka , Yakutsk , A  
+" In July, Kamtchatka declared war on Yakutsk. Since Yakutsk's army was much better equipped and ten times larger, ***mask*** were victorious within weeks. ", Kamchatka , Yakutsk , B  
+ Look! There is a minnow swimming right below that duck! ***mask*** had better get away to safety fast! , The minnow , The duck , A  
+ Look! There is a shark swimming right below that duck! ***mask*** had better get away to safety fast! , The shark  , The duck , B  
+" Archaeologists have concluded that humans lived in Laputa 20,000 years ago. ***mask*** hunted for evidence on the river banks. ", Archaeologists  , Prehistoric humans  , A  
+" Archaeologists have concluded that humans lived in Laputa 20,000 years ago. ***mask*** hunted for deer on the river banks. ", Archaeologists  , Prehistoric humans  , B  
+ The scientists are studying three species of fish that have recently been found living in the Indian Ocean. ***mask*** began two years ago. , The scientists , The fish , A  
+ The scientists are studying three species of fish that have recently been found living in the Indian Ocean. ***mask*** appeared two years ago. , The scientists , The fish , B  
+" The journalists interviewed the stars of the new movie. ***mask*** were very persistent, so the interview lasted for a long time. ", The journalists , The stars , A  
+" The journalists interviewed the stars of the new movie. ***mask*** were very cooperative, so the interview lasted for a long time. ", The journalists , The stars , B  
+ The police arrested all of the gang members. ***mask*** were trying to stop the drug trade in the neighborhood. , The police , The gang members , A  
+ The police arrested all of the gang members. ***mask*** were trying to run the drug trade in the neighborhood. , The police , The gang members , B  
+ I put the cake away in the refrigerator. ***mask*** has a lot of butter in it. , The cake , The refrigerator , A  
+ I put the cake away in the refrigerator. ***mask*** has a lot of leftovers in it. , The cake , The refrigerator , B  
+ Sam broke both his ankles and he's walking with crutches. But a month or so from now ***mask*** should be better. , The ankles , The crutches , A  
+ Sam broke both his ankles and he's walking with crutches. But a month or so from now ***mask*** should be unnecessary. , The ankles , The crutches , B  
+" When the sponsors of the bill got to the town hall, they were surprised to find that the room was full of opponents. ***mask*** were very much in the minority. ", The sponsors , The opponents , A  
+" When the sponsors of the bill got to the town hall, they were surprised to find that the room was full of opponents. ***mask*** were very much in the majority. ", The sponsors , The opponents , B  
+" Everyone really loved the oatmeal cookies; only a few people liked the chocolate chip cookies. Next time, we should make more of ***mask***.", The oatmeal cookies , The chocolate chip cookies , A  
+" Everyone really loved the oatmeal cookies; only a few people liked the chocolate chip cookies. Next time, we should make fewer of ***mask***.", The oatmeal cookies , The chocolate chip cookies , B  
+" We had hoped to place copies of our newsletter on all the chairs in the auditorium, but there were simply not enough of ***mask***.",copies of the newsletter ,chairs  , A  
+" We had hoped to place copies of our newsletter on all the chairs in the auditorium, but there were simply too many of ***mask***.",copies of the newsletter ,chairs  , B  
+" I stuck a pin through a carrot. When I pulled the pin out, ***mask*** left a hole. ", The pin , The carrot , A  
+" I stuck a pin through a carrot. When I pulled the pin out, ***mask*** had a hole. ", The pin , The carrot , B  
+" I couldn't find a spoon, so I tried using a pen to stir my coffee. But that turned out to be a bad idea, because ***mask*** got full of coffee. ", The pen , The coffee , A  
+" I couldn't find a spoon, so I tried using a pen to stir my coffee. But that turned out to be a bad idea, because ***mask*** got full of ink. ", The pen , The coffee , B  
+ Steve follows Fred's example in everything. ***mask*** admires him hugely. ,Steve  ,Fred  , A  
+ Steve follows Fred's example in everything. ***mask*** influences him hugely. ,Steve  ,Fred  , B  
+ The table won't fit through the doorway because ***mask*** is too wide. , The table , The doorway , A  
+ The table won't fit through the doorway because ***mask*** is too narrow. , The table , The doorway , B  
+ Grace was happy to trade me her sweater for my jacket. She thinks ***mask*** looks dowdy on her. , The sweater , The jacket , A  
+ Grace was happy to trade me her sweater for my jacket. She thinks ***mask*** looks great on her. , The sweater , The jacket , B  
+ John hired Bill to take care of ***mask***., John , Bill , A  
+ John hired himself out to Bill to take care of ***mask***., John , Bill , B  
+" John promised Bill to leave, so an hour later ***mask*** left. ",John ,Bill , A  
+" John ordered Bill to leave, so an hour later ***mask*** left. ",John ,Bill , B  
+ Sam Goodman's biography of the Spartan general Xenophanes conveys a vivid sense of the difficulties ***mask*** faced in his research. , Goodman , Xenophanes , A  
+ Sam Goodman's biography of the Spartan general Xenophanes conveys a vivid sense of the difficulties ***mask*** faced in his childhood. , Goodman , Xenophanes , B  
+" Emma's mother had died long ago, and ***mask*** education had been managed by an excellent woman as governess. ", Emma , Emma's mother , A  
+" Emma's mother had died long ago, and ***mask*** place had been taken by an excellent woman as governess. ", Emma , Emma's mother , B  
+ Jane knocked on Susan's door but ***mask*** did not get an answer. , Jane , Susan , A  
+ Jane knocked on Susan's door but ***mask*** did not answer. , Jane , Susan , B  
+ Joe paid the detective after ***mask*** received the final report on the case. , Joe , the detective , A  
+ Joe paid the detective after ***mask*** delivered the final report on the case. , Joe , the detective , B  
+" Beth didn't get angry with Sally, who had cut her off, because ***mask*** stopped and counted to ten. ", Beth , Sally , A  
+" Beth didn't get angry with Sally, who had cut her off, because ***mask*** stopped and apologized. ", Beth , Sally , B  
+ Jim signaled the barman and gestured toward ***mask*** empty glass , Jim , The barman , A  
+ Jim signaled the barman and gestured toward ***mask*** bathroom key. , Jim , The barman , B  
+" Dan took the rear seat while Bill claimed the front because ***mask*** ""Dibs!"" was slow. ", Dan , Bill , A  
+" Dan took the rear seat while Bill claimed the front because ***mask*** ""Dibs!"" was quicker. ", Dan , Bill , B  
+" Tom said ""Check"" to Ralph as he moved ***mask*** bishop. ", Tom , Ralph , A  
+" Tom said ""Check"" to Ralph as he took ***mask*** bishop. ", Tom , Ralph , B  
+" As Andrea in the crop duster passed over Susan, ***mask*** could see the landing strip. ", Andrea , Susan , A  
+" As Andrea in the crop duster passed over Susan, ***mask*** could see the landing gear. ", Andrea , Susan , B  
+ Tom gave Ralph a lift to school so ***mask*** wouldn't have to drive alone. , Tom , Ralph , A  
+ Tom gave Ralph a lift to school so ***mask*** wouldn't have to walk. , Tom , Ralph , B  
+ Bill passed the half-empty plate to John because ***mask*** was full. ,Bill ,John , A  
+ Bill passed the half-empty plate to John because ***mask*** was hungry. ,Bill ,John , B  
+ Bill passed the gameboy to John because ***mask*** turn was over. ,Bill ,John , A  
+ Bill passed the gameboy to John because ***mask*** turn was next. ,Bill ,John , B  
+ The man lifted the boy onto ***mask*** shoulders. , The man , The boy , A  
+ The man lifted the boy onto ***mask*** bunk bed. , The man , The boy , B  
+" Stretching ***mask*** back, the woman smiled at the girl. ", The woman , The girl , A  
+" Patting ***mask*** back, the woman smiled at the girl. ", The woman , The girl , B  
+ Billy cried because Toby wouldn't accept ***mask*** toy. , Billy , Toby , A  
+ Billy cried because Toby wouldn't share ***mask*** toy. , Billy , Toby , B  
+" Lily spoke to Donna, breaking ***mask*** silence. ",Lily  ,Donna , A  
+" Lily spoke to Donna, breaking ***mask*** concentration. ",Lily  ,Donna , B  
+" When Tommy dropped his ice cream, Timmy giggled, so father gave ***mask*** a sympathetic look. ", Tommy , Timmy , A  
+" When Tommy dropped his ice cream, Timmy giggled, so father gave ***mask*** a stern look. ", Tommy , Timmy , B  
+" As Ollie carried Tommy up the long winding steps, ***mask*** legs ached. ", Ollie , Tommy , A  
+" As Ollie carried Tommy up the long winding steps, ***mask*** legs dangled. ", Ollie , Tommy , B  
+ The father carried the sleeping boy in ***mask*** arms , The father , The boy , A  
+ The father carried the sleeping boy in ***mask*** bassinet. , The father , The boy , B  
+ The woman held the girl against ***mask***chest ,The woman ,The girl , A  
+ The woman held the girl against ***mask*** will. ,The woman ,The girl , B  
+" Pam's parents came home and found her having sex with her boyfriend, Paul. ***mask*** were furious about it. ",Pam's parents ,Pam and Paul , A  
+" Pam's parents came home and found her having sex with her boyfriend, Paul. ***mask*** were embarrassed about it. ",Pam's parents ,Pam and Paul , B  
+ Dr. Adams informed Kate that ***mask*** had retired and presented several options for future treatment. , Dr. Adams , Kate  , A  
+ Dr. Adams informed Kate that ***mask*** had cancer and presented several options for future treatment. , Dr. Adams , Kate  , B  
+ Dan had to stop Bill from toying with the injured bird. ***mask*** is very compassionate. ,Dan ,Bill , A  
+ Dan had to stop Bill from toying with the injured bird. ***mask*** is very cruel. ,Dan ,Bill , B  
+" George got free tickets to the play, but he gave them to Eric, even though ***mask*** was particularly eager to see it. ", George , Eric , A  
+" George got free tickets to the play, but he gave them to Eric, because ***mask*** was particularly eager to see it. ", George , Eric , B  
+" George got free tickets to the play, but he gave them to Eric, because ***mask*** was not particularly eager to see it. ", George , Eric , A  
+ Jane gave Joan candy because ***mask*** wasn't hungry. , Jane , Joan , A  
+ Jane gave Joan candy because ***mask*** was hungry. , Jane , Joan , B  
+" I tried to paint a picture of an orchard, with lemons in the lemon trees, but ***mask*** came out looking more like light bulbs. ", lemons , lemon trees , A  
+" I tried to paint a picture of an orchard, with lemons in the lemon trees, but ***mask*** came out looking more like telephone poles. ", lemons , lemon trees , B  
+ James asked Robert for a favor but ***mask*** was refused. , James , Robert , A  
+ James asked Robert for a favor but ***mask*** refused. , James , Robert , B  
+ Kirilov ceded the presidency to Shatov because ***mask*** was less popular. , Kirilov , Shatov , A  
+ Kirilov ceded the presidency to Shatov because ***mask*** was more popular. , Kirilov , Shatov , B  
+ Emma did not pass the ball to Janie although ***mask*** saw that she was open. , Emma , Janie , A  
+ Emma did not pass the ball to Janie although ***mask*** was open. , Emma , Janie , B  
+ I put the butterfly wing on the table and ***mask*** broke. ,The butterfly wing , The table , A  
+ I put the heavy book on the table and ***mask*** broke. ,The heavy book , The table , B  
+ Madonna fired her trainer because ***mask*** couldn't stand her boyfriend. , Madonna , The trainer , A  
+ Madonna fired her trainer because ***mask*** slept with her boyfriend. , Madonna , The trainer , B  
+ Madonna fired her trainer because she slept with ***mask*** boyfriend. , Madonna , The trainer , A  
+ Madonna fired her trainer because she couldn't stand ***mask*** boyfriend. , Madonna , The trainer , B  
+ Carol believed that Rebecca suspected that ***mask*** had stolen the watch. , Carol , Rebecca , A  
+ Carol believed that Rebecca regretted that ***mask*** had stolen the watch. , Carol , Rebecca , B  
+ This book introduced Shakespeare to Ovid; it was a major influence on ***mask*** writing. , Shakespeare , Ovid , A.  
+ This book introduced Shakespeare to Goethe; it was a major influence on ***mask*** writing. , Shakespeare , Goethe , B.  
+ This book introduced Shakespeare to Ovid; it was a fine selection of ***mask*** writing. , Shakespeare , Ovid , B.  
+ This book introduced Shakespeare to Goethe; it was a fine selection of ***mask*** writing. , Shakespeare , Goethe , A.  
+" Alice looked for her friend Jade in the crowd. Since ***mask*** always has good luck, Alice spotted her quickly. ", Alice , Jade , A.  
+" Alice looked for her friend Jade in the crowd. Since ***mask*** always wears a red turban, Alice spotted her quickly. ", Alice , Jade , B.  
+" During a game of tag, Ethan chased Luke because ***mask*** was ""it"". ", Ethan , Luke , A.  
+" During a game of tag, Ethan ran from Luke because ***mask*** was ""it"". ", Ethan , Luke , B.  
+ At the Loebner competition the judges couldn't figure out which respondents were the chatbots because ***mask*** were so stupid. , the judges , the chatbots , A.  
+ At the Loebner competition the judges couldn't figure out which respondents were the chatbots because ***mask*** were so advanced. , the judges , the chatbots , B.  
+" The user changed his password from ""GrWQWu8JyC"" toÂ ""willow-towered Canopy Huntertropic wrestles"" as ***mask*** was easy to forget. ", GrWQWu8JyC ,"willow-towered Canopy
+Huntertropic wrestles ", A.  
+" The user changed his password from ""GrWQWu8JyC"" toÂ ""willow-towered Canopy Huntertropic wrestles"" as ***mask*** was easy to remember. ", GrWQWu8JyC ,"willow-towered Canopy
+Huntertropic wrestles ", B.  
