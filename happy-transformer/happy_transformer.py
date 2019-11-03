@@ -12,7 +12,7 @@ import re
 import torch
 from pytorch_transformers import BertForMaskedLM, BertTokenizer
 
-
+#Tesing github
 # TODO create a test framework
 # TODO: easy: find other challenges we can test the masked word prediction on
 
