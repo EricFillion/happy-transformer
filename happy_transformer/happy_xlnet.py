@@ -1,12 +1,14 @@
-
+# pylint: disable=W0511
 import torch
-from transformers import XLNetLMHeadModel,XLNetTokenizer
+import numpy as np
+from transformers import XLNetLMHeadModel, XLNetTokenizer
 
 from happy_transformer import HappyTransformer
 
+
 class HappyXLNET(HappyTransformer):
     """
-
+    Implementation of XLNET for masked word prediction
     """
 
     def __init__(self, model='xlnet-large-cased'):
@@ -28,8 +30,8 @@ class HappyXLNET(HappyTransformer):
         :return: predicts the most likely word to fill the mask and its probability
         """
 
-        # formatted_text = self._HappyTransformer__get_formatted_text(text) cant get it to word
-        tokenized_text = self.tokenizer.tokenize(text)
+        formatted_text = self._HappyTransformer__get_formatted_text(text)
+        tokenized_text = self.tokenizer.tokenize(formatted_text)
 
         masked_index = self.__get_prediction_index(tokenized_text)
         segments_ids = self.__get_segment_ids(tokenized_text)
@@ -41,7 +43,6 @@ class HappyXLNET(HappyTransformer):
 
         tokens_tensor = tokens_tensor.to(self.gpu_support)
         segments_tensors = segments_tensors.to(self.gpu_support)
-
 
         with torch.no_grad():
             outputs = self.transformer(tokens_tensor, token_type_ids=segments_tensors)
@@ -56,7 +57,7 @@ class HappyXLNET(HappyTransformer):
             prediction_token = self.tokenizer.convert_ids_to_tokens(prediction_index)
 
             # TODO: easy: del various variables
-            del outputs, softmax,predictions, top_prediction, prediction_index
+            del outputs, softmax, predictions, top_prediction, prediction_index
 
             if self.gpu_support == "cuda":
                 torch.cuda.empty_cache()
@@ -68,14 +69,15 @@ class HappyXLNET(HappyTransformer):
 
         :param text: a string with a masked token within it
         :param options: a list of strings as options for masked word
-        :return: predicts the most likely word from list of options to fill the mask and its probability
+        :return: predicts the most likely word from list of options
+        to fill the mask and its probability
         """
 
-        # formatted_text = self._HappyTransformer__get_formatted_text(text) Not sure if needed
-        tokenized_text = self.tokenizer.tokenize(text)
+        formatted_text = self._HappyTransformer__get_formatted_text(text)
+        tokenized_text = self.tokenizer.tokenize(formatted_text)
 
         masked_index = self.__get_prediction_index(tokenized_text)
-        segments_ids = self.__get_segment_ids(tokenized_text)
+        segments_ids = self._HappyTransformer__get_segment_ids(tokenized_text)
         indexed_tokens = self.tokenizer.convert_tokens_to_ids(tokenized_text)
 
         # Convert inputs to PyTorch tensors
@@ -85,16 +87,13 @@ class HappyXLNET(HappyTransformer):
         tokens_tensor = tokens_tensor.to(self.gpu_support)
         segments_tensors = segments_tensors.to(self.gpu_support)
 
-
         with torch.no_grad():
             outputs = self.transformer(tokens_tensor, token_type_ids=segments_tensors)
             predictions = outputs[0]
 
             softmax = self._HappyTransformer__softmax(predictions)[0]
 
-            option_ids = list()
-            for option in options:
-                option_ids.append(self.tokenizer.encode(option))
+            option_ids = [self.tokenizer.encode(option) for option in options]
 
             option_probs = list(map(lambda x: self.soft_sum(x, softmax, masked_index), option_ids))
             tupled_option = tuple(zip(options, option_probs))
@@ -105,15 +104,11 @@ class HappyXLNET(HappyTransformer):
 
             return prediction_token
 
-    def __get_segment_ids(self, tokenized_text: list): # Temp fix
-        return [0] * len(tokenized_text)
-
-
     def __get_prediction_index(self, tokenized_text):
         """
         Gets the location of the first occurrence of the [MASK] index
         :param tokenized_text: a list of word tokens where one of the tokens is the string "[MASK]"
-        :return:
+        :return: index of masked token
         """
         # TODO: put in HappyBERT. Overwrite HappyTransformer.
         #  Maybe only the masked token needs to be changed per HappyClass
@@ -122,28 +117,32 @@ class HappyXLNET(HappyTransformer):
 
         return tokenized_text.index('<mask>')
 
-
-
-    def soft_sum(self, option, softed, mask):
+    def soft_sum(self, option: list, softed, mask_id: int):
         # TODO: Better logic.
         """
+        Adds the softmax of a single option
+        XLNET tokenizer sometimes splits words in to pieces.
+        Ex: The councilmen -> ['the', 'council', 'men']
+        Pretty sure that this is mathematically wrong
 
-        Pretty sure that this is mathematically wrong(Can't add dependent probabilities)
 
-        :param option:
-        :param softed:
-        :param mask:
+        :param option: Id of tokens in one option
+        :param softed: softmax of the output
+        :param mask: Index of masked word
         :return: float Tensor
         """
-        options = []
-        for op in option:
-            options.append(softed[mask][op])
-        return sum(options)
+        # Collects the softmax of all tokens in list
+        options = [softed[mask_id][op] for op in option]
+        return np.sum(options)
 
 
 def main():
     happy = HappyXLNET()
-    print(happy.predict_mask_with_options("My dog is very <mask>",['cute','friendly','cat','crazy']))
+    print(happy.predict_mask_with_options("My dog is very good with people. He is very <mask>",
+                                          ['cute', 'friendly', 'cat', 'crazy', 'energetic']))
+    print(happy.predict_mask_with_options("Who was Jim Henson? Jim <mask> was a puppeteer.",
+                                          ['Henson', 'he', 'that']))
+
 
 if __name__ == '__main__':
     main()
