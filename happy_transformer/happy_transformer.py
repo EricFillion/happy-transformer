@@ -25,14 +25,6 @@ class HappyTransformer:
                 to utilize their capabilities.
     """
 
-    # TODO: complex: Turn this class into a parent class and then create child classes for it.
-    #       Some child classes would include  HappyBERT, HappyXLNet e
-
-    # TODO: complex: think of a unique public method for HappyBERT and implement it
-    #                eg, sentence perplexity and rank words
-
-    # TODO: 10/10 hard: fine tuning module
-
     def __init__(self):
         # Transformer and tokenizer set in child class
         self.transformer = None
@@ -72,7 +64,6 @@ class HappyTransformer:
         return None # TODO: medium: find a proper way to deal with errors
 
     def __get_formatted_text(self, text):
-        # TODO: put in HappyBERT. Overwrite HappyTransformer
         """
         Formats a sentence so that BERT it can be tokenized by BERT.
 
@@ -110,7 +101,6 @@ class HappyTransformer:
         return text
 
     def __get_segment_ids(self, tokenized_text: list):
-        # TODO: put in HappyBERT
         """
         Converts a list of tokens into segment_ids. The segment id is a array
         representation of the location for each character in the
