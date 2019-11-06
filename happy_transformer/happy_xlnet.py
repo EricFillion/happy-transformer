@@ -33,7 +33,7 @@ class HappyXLNET(HappyTransformer):
         formatted_text = self._HappyTransformer__get_formatted_text(text)
         tokenized_text = self.tokenizer.tokenize(formatted_text)
 
-        masked_index = self.__get_prediction_index(tokenized_text)
+        masked_index = self._HappyTransformer__get_prediction_index(tokenized_text)
         segments_ids = self.__get_segment_ids(tokenized_text)
         indexed_tokens = self.tokenizer.convert_tokens_to_ids(tokenized_text)
 
@@ -76,7 +76,7 @@ class HappyXLNET(HappyTransformer):
         formatted_text = self._HappyTransformer__get_formatted_text(text)
         tokenized_text = self.tokenizer.tokenize(formatted_text)
 
-        masked_index = self.__get_prediction_index(tokenized_text)
+        masked_index = self._HappyTransformer__get_prediction_index(tokenized_text)
         segments_ids = self._HappyTransformer__get_segment_ids(tokenized_text)
         indexed_tokens = self.tokenizer.convert_tokens_to_ids(tokenized_text)
 
@@ -104,19 +104,6 @@ class HappyXLNET(HappyTransformer):
 
             return prediction_token
 
-    def __get_prediction_index(self, tokenized_text):
-        """
-        Gets the location of the first occurrence of the [MASK] index
-        :param tokenized_text: a list of word tokens where one of the tokens is the string "[MASK]"
-        :return: index of masked token
-        """
-        # TODO: put in HappyBERT. Overwrite HappyTransformer.
-        #  Maybe only the masked token needs to be changed per HappyClass
-
-        # TODO: easy: there might be a cleaner way to do this
-
-        return tokenized_text.index('<mask>')
-
     def soft_sum(self, option: list, softed, mask_id: int):
         # TODO: Better logic.
         """
@@ -128,21 +115,10 @@ class HappyXLNET(HappyTransformer):
 
         :param option: Id of tokens in one option
         :param softed: softmax of the output
-        :param mask: Index of masked word
+        :param mask_id: Index of masked word
         :return: float Tensor
         """
         # Collects the softmax of all tokens in list
         options = [softed[mask_id][op] for op in option]
         return np.sum(options)
 
-
-def main():
-    happy = HappyXLNET()
-    print(happy.predict_mask_with_options("My dog is very good with people. He is very <mask>",
-                                          ['cute', 'friendly', 'cat', 'crazy', 'energetic']))
-    print(happy.predict_mask_with_options("Who was Jim Henson? Jim <mask> was a puppeteer.",
-                                          ['Henson', 'he', 'that']))
-
-
-if __name__ == '__main__':
-    main()
