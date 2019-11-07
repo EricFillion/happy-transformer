@@ -121,3 +121,19 @@ class HappyTransformer:
                 segment_ids.append(1)
             # add exception case for XLNet
         return segment_ids
+
+    def text_verification(self, text:str):
+        if '[MASK]' not in text:
+            return -1, 0
+        elif '[CLS]' in text:
+            index = s2.find('[CLS]')
+            return -2, index
+        elif '[SEP]' in text:
+            index = s2.find('[SEP]')
+            return -3, index
+        elif '##eer' in text:
+            index = s2.find('[##eer]')
+            return -4, index
+        
+
+

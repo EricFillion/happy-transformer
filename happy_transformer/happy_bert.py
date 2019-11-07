@@ -35,6 +35,20 @@ class HappyBERT(HappyTransformer):
         # TODO: medium: make it more modular
 
         # Generated formatted text so that it can be tokenized. Mainly, add the required tags
+        validation_check, indexes = self._HappyTransformer__text_verification(text)
+        if validation_check == -1:
+            print('[MASK] was not found in your string, change the word you want to predict with [MASK] to use bert]')
+            return 'error', 0
+        elif validation_check == -2:
+            print('[SEP] was found in your string between indexes %d and %d. Remove this as the text formatter will add this in later. Input a string with the word you would like predicted as "[MASK]"', index, index + 5)
+            return 'error', 0
+        elif validation_check == -3:
+            print('[CLS] was found in your string between indexes %d and %d. Remove this as the text formatter will add this in later. Input a string with the word you would like predicted as "[MASK]"', index, index + 5)
+            return 'error', 0
+        elif validation_check == -4:
+            print('[##eer] was found in your string between indexes %d and %d. Remove this as the text formatter will add this in later. Input a string with the word you would like predicted as "[MASK]"', index, index + 5)
+            return 'error', 0
+        
         formatted_text = self._HappyTransformer__get_formatted_text(text)
         tokenized_text = self.tokenizer.tokenize(formatted_text)
 

@@ -26,3 +26,4 @@ class TestBERT:
         token, score = self.model.predict_mask(test_string)
         assert token == ["henson"]
         print("Success: \"" + token[0] + "\" was predicted for the input "+"\"" + test_string + "\"")
+
