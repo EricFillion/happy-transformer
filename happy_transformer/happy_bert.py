@@ -1,5 +1,8 @@
+# disable pylint TODO warning
+# pylint: disable=W0511
+
 import torch
-from pytorch_transformers import BertForMaskedLM, BertTokenizer
+from transformers import BertForMaskedLM, BertTokenizer
 
 from happy_transformer.happy_transformer import HappyTransformer
 
@@ -21,7 +24,7 @@ class HappyBERT(HappyTransformer):
     def predict_mask(self, text: str):
         """
         :param text: a string with a masked token within it
-        :return: predicts the most likely word to fill the mask and its probability
+        :return: predicts the most likely word to fill the mask and its score
         """
 
         # TODO: put in HappyBERT. Overwrite HappyTransformer.
