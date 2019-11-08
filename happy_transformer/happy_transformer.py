@@ -130,7 +130,7 @@ class HappyTransformer:
         # TODO: As said in happy_bert, put the print statements within here
         # TODO: Add text_verification to happy_xlnet  and happy_roberta. Be sure to pull the master branch
         #       Before making any changes to them.
-        # TODO, add  cases for the other masked tokens used in common transformer models
+        # TODO,  Add cases for the other masked tokens used in common transformer models
 
 
 
