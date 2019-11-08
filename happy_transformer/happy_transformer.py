@@ -123,6 +123,17 @@ class HappyTransformer:
         return segment_ids
 
     def text_verification(self, text:str):
+
+        # TODO return True if the text is okay, else return False
+        # TODO: create a happy_transformer test class and create a test_verification method
+        #       Include at least 3 test cases.
+        # TODO: As said in happy_bert, put the print statements within here
+        # TODO: Add text_verification to happy_xlnet  and happy_roberta. Be sure to pull the master branch
+        #       Before making any changes to them.
+        # TODO, add  cases for the other masked tokens used in common transformer models
+
+
+
         if '[MASK]' not in text:
             return -1, 0
         elif '[CLS]' in text:
@@ -131,9 +142,8 @@ class HappyTransformer:
         elif '[SEP]' in text:
             index = s2.find('[SEP]')
             return -3, index
-        elif '##eer' in text:
+        elif '##eer' in text: # TODO, dont need this check
             index = s2.find('[##eer]')
             return -4, index
-        
 
 

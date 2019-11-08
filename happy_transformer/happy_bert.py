@@ -35,6 +35,8 @@ class HappyBERT(HappyTransformer):
         # TODO: medium: make it more modular
 
         # Generated formatted text so that it can be tokenized. Mainly, add the required tags
+        # TODO: put the print statements in the parent class. Use the boolean return value and an if statement to determine
+        # TODO: if the return value was False. If False, return None
         validation_check, indexes = self._HappyTransformer__text_verification(text)
         if validation_check == -1:
             print('[MASK] was not found in your string, change the word you want to predict with [MASK] to use bert]')
