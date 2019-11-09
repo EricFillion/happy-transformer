@@ -118,3 +118,27 @@ class HappyTransformer:
                 segment_ids.append(1)
             # add exception case for XLNet
         return segment_ids
+
+    def finish_sentence(self, text: str, maxPredictionLength = 100):
+        """
+
+        :param text: a string that is the start of a sentence to be finished
+        :param maxPredictionLength: an int with the maximum number of words to be predicted
+        :return: the completed sentence
+        """
+        father_predict = ""
+        grand_father_predict = ""
+
+        for i in range(0, maxPredictionLength):
+            predict_text = text + self.masked_token
+            predict_word = self.predict_mask(predict_text)[0]
+
+            if predict_word == father_predict and predict_word == grand_father_predict:
+                # if the same token was predicted three times in a row
+                return text
+
+            grand_father_predict = father_predict
+            father_predict = predict_word
+
+            text = text + predict_word
+        return text

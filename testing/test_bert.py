@@ -24,5 +24,5 @@ class TestBERT:
         # TODO create a test for probs
         test_string = "Who was Jim Henson? Jim [MASK] was a puppeteer."
         token, score = self.model.predict_mask(test_string)
-        assert token == ["henson"]
-        print("Success: \"" + token[0] + "\" was predicted for the input "+"\"" + test_string + "\"")
+        assert token == "henson"
+        print("Success: \"" + token + "\" was predicted for the input "+"\"" + test_string + "\"")

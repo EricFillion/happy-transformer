@@ -42,13 +42,14 @@ class HappyRoBERTa(HappyTransformer):
 
         score = target_prediction[1]
         filled_in_sentence = target_prediction[0]
-
         start_prediction = filled_in_sentence[mask_index:]
+
         prediction = start_prediction.partition(' ')[0]
 
         results = [prediction, score]
 
         return results
+
 
     def wsc(self, text):
         # todo load in pretrained wsc model so this can be used
