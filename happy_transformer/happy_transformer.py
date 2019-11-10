@@ -10,6 +10,7 @@ easier to use.
 import string
 import re
 import torch
+import numpy as np
 
 
 class HappyTransformer:
@@ -57,7 +58,7 @@ class HappyTransformer:
             if token == self.masked_token:
                 return location
             location += 1
-        print("Error, {} not found in the input".format(self.mask_token))
+        print("Error, {} not found in the input".format(self.masked_token))
         return None # TODO: medium: find a proper way to deal with errors
 
     def __get_formatted_text(self, text):
@@ -142,3 +143,44 @@ class HappyTransformer:
 
             text = text + predict_word
         return text
+
+    def __get_tensors_and_mask_idx(self, text):
+        formatted_text = self.__get_formatted_text(text)
+        tokenized_text = self.tokenizer.tokenize(formatted_text)
+
+        masked_index = self.__get_prediction_index(tokenized_text)
+        segments_ids = self.__get_segment_ids(tokenized_text)
+        indexed_tokens = self.tokenizer.convert_tokens_to_ids(tokenized_text)
+
+        # Convert inputs to PyTorch tensors
+        tokens_tensor = torch.tensor([indexed_tokens]).to(self.gpu_support)
+        segments_tensors = torch.tensor([segments_ids]).to(self.gpu_support)
+        return tokens_tensor, segments_tensors, masked_index
+
+    def __format_option_scores(self, ranked_scores: list):
+        """
+        :param: ranked_scores: list of tuples to be converted into user friendly dicitonary
+        :return: formatted_ranked_scores: list of dictionaries of the ranked scores
+        """
+        # TODO: Shouldn't depend on ranked_scores to already be in order
+        formatted_ranked_scores = list()
+        for word, score in ranked_scores:
+            formatted_ranked_scores.append({'word': word, 'score': score})
+        return formatted_ranked_scores
+
+    @staticmethod
+    def soft_sum(option: list, softed, mask_id: int):
+        # TODO: Better logic.
+        """
+        Adds the softmax of a single option
+        XLNET tokenizer sometimes splits words in to pieces.
+        Ex: The councilmen -> ['the', 'council', 'men']
+        Pretty sure that this is mathematically wrong
+        :param option: Id of tokens in one option
+        :param softed: softmax of the output
+        :param mask: Index of masked word
+        :return: float Tensor
+        """
+        # Collects the softmax of all tokens in list
+        options = [softed[mask_id][op] for op in option]
+        return np.sum(options)
