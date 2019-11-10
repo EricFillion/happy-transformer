@@ -14,9 +14,9 @@ class HappyBERT(HappyTransformer):
         super().__init__()
         self.transformer = BertForMaskedLM.from_pretrained(model)
         self.tokenizer = BertTokenizer.from_pretrained(model)
-        self.masked_token = self.tokenizer._mask_token
-        self.sep_token = self.tokenizer._sep_token
-        self.cls_token = self.tokenizer._cls_token
+        self.masked_token = self.tokenizer.mask_token
+        self.sep_token = self.tokenizer.sep_token
+        self.cls_token = self.tokenizer.cls_token
 
         self.model = 'BERT'
 
@@ -78,19 +78,3 @@ class HappyBERT(HappyTransformer):
                 torch.cuda.empty_cache()
             ranked_scores = self._HappyTransformer__format_option_scores(ranked_scores)
             return ranked_scores
-
-    def soft_sum(self, option: list, softed, mask_id: int):
-        # TODO: Better logic.
-        """
-        Adds the softmax of a single option
-        XLNET tokenizer sometimes splits words in to pieces.
-        Ex: The councilmen -> ['the', 'council', 'men']
-        Pretty sure that this is mathematically wrong
-        :param option: Id of tokens in one option
-        :param softed: softmax of the output
-        :param mask: Index of masked word
-        :return: float Tensor
-        """
-        # Collects the softmax of all tokens in list
-        options = [softed[mask_id][op] for op in option]
-        return np.sum(options)
