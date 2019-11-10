@@ -66,5 +66,5 @@ class HappyBERT(HappyTransformer):
             if self.gpu_support == "cuda":
                 torch.cuda.empty_cache()
 
-            return prediction_token[0], prediction_softmax
+            return prediction_token[0], prediction_softmax[0]
 
