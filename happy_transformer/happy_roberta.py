@@ -54,4 +54,4 @@ class HappyRoBERTa(HappyTransformer):
     def wsc(self, text):
         # todo load in pretrained wsc model so this can be used
         # print(self.transformer_wsc.disambiguate_pronoun(text))
-        pass
+        return ''
