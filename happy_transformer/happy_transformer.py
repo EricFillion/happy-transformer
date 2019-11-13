@@ -35,38 +35,57 @@ class HappyTransformer:
                                         else "cpu")
         print("Using model:", self.gpu_support)
 
-    def predict_mask(self, text: str):
-        # child classes must implement
-        pass
-
-    def __softmax(self, value):
-        # TODO: make it an external function
-        return value.exp() / (value.exp().sum(-1)).unsqueeze(-1)
-
-    def __get_prediction_index(self, tokenized_text):
+    def predict_mask(self, text: str, options=None):
         """
-        Gets the location of the first occurrence of the [MASK] index
-        :param tokenized_text: a list of word tokens where one of the tokens is the string "[MASK]"
-        :return:
-        """
-        # TODO: put in HappyBERT. Overwrite HappyTransformer.
-        #  Maybe only the masked token needs to be changed per HappyClass
+        Method to predict what the masked token in the given text string is.
 
-        # TODO: easy: there might be a cleaner way to do this
-        location = 0
-        for token in tokenized_text:
-            if token == self.masked_token:
-                return location
-            location += 1
-        print("Error, {} not found in the input".format(self.masked_token))
-        return None # TODO: medium: find a proper way to deal with errors
+        NOTE: This is the generic version of this predict_mask method. If a
+        child class needs a different implementation they should overload this
+        method, not create a new method.
 
-    def __get_formatted_text(self, text):
+        :param text: a string with a masked token within it
+        :param options: list of options that the mask token may be [optional]
+        :return: list of dictionaries containing the predicted token(s) and
+                 their corresponding score(s).
+
+        NOTE: If no options are given, the returned list will be length 1
         """
-        Formats a sentence so that BERT it can be tokenized by BERT.
+
+        # TODO: easy: create a method to check if the sentence is valid.
+        # TODO: easy: if the sentence is not valid, provide the user with
+        #             input requirements.
+        # TODO: easy: if sentence is not valid, indicate where the user messed
+        #             up.
+
+        tokenized_text = self.__get_tokenized_text(text)
+        masked_index = tokenized_text.index(self.masked_token)
+        softmax = self.__get_prediction_softmax(tokenized_text)
+        if options is not None:
+            option_ids = [self.tokenizer.encode(option) for option in options]
+
+            scores = list(map(lambda x: self.soft_sum(x, softmax[0],
+                                                      masked_index),
+                              option_ids))
+        else:
+            top_predictions = torch.topk(softmax[0, masked_index], 1)
+            scores = top_predictions[0].tolist()
+            prediction_index = top_predictions[1].tolist()
+            options = self.tokenizer.convert_ids_to_tokens(prediction_index)
+
+        tupled_predictions = tuple(zip(options, scores))
+
+        if self.gpu_support == "cuda":
+            torch.cuda.empty_cache()
+
+        return self.__format_option_scores(tupled_predictions)
+
+    def __get_tokenized_text(self, text):
+        """
+        Formats a sentence so that it can be tokenized by a transformer.
 
         :param text: a 1-2 sentence text that contains [MASK]
-        :return: A string with the same sentence that contains the required tokens for BERT
+        :return: A string with the same sentence that contains the required
+                 tokens for the transformer
         """
 
         # Create a spacing around each punctuation character. eg "!" -> " ! "
@@ -94,9 +113,59 @@ class HappyTransformer:
                 # must be a middle punctuation
 
         new_text.append(self.sep_token)
-        text = " ".join(new_text)
-
+        text = " ".join(new_text).replace('[MASK]', self.masked_token)
+        text = self.tokenizer.tokenize(text)
         return text
+
+    def __get_prediction_softmax(self, text: str):
+        """
+        Gets the softmaxes of the predictions for each index in the the given
+        input string.
+        Returned tensor will be in shape:
+            [1, <tokens in string>, <possible options for token>]
+
+        :param text: a tokenized string to be used by the transformer.
+        :return: a tensor of the softmaxes of the predictions of the
+                 transformer
+        """
+        segments_ids = self.__get_segment_ids(text)
+        indexed_tokens = self.tokenizer.convert_tokens_to_ids(text)
+
+        # Convert inputs to PyTorch tensors
+        tokens_tensor = torch.tensor([indexed_tokens]).to(self.gpu_support)
+        segments_tensors = torch.tensor([segments_ids]).to(self.gpu_support)
+
+        with torch.no_grad():
+            outputs = self.transformer(tokens_tensor,
+                                       token_type_ids=segments_tensors)
+            predictions = outputs[0]
+
+            softmax = self.__softmax(predictions)
+            return softmax
+
+    def __format_option_scores(self, tupled_predicitons: list):
+        """
+        Formats the given list of tuples containing the option and its
+        corresponding score into a user friendly list of dictionaries where
+        the first element in the list is the option with the highest score.
+        Dictionary will be in the form:
+             {'word': <the option>, 'score': <score for the option>}
+
+        :param: ranked_scores: list of tuples to be converted into user
+                friendly dicitonary
+        :return: formatted_ranked_scores: list of dictionaries of the ranked
+                 scores
+        """
+        ranked_scores = sorted(tupled_predicitons, key=lambda x: x[1],
+                               reverse=True)
+        formatted_ranked_scores = list()
+        for word, score in ranked_scores:
+            formatted_ranked_scores.append({'word': word, 'score': score})
+        return formatted_ranked_scores
+
+    def __softmax(self, value):
+        # TODO: make it an external function
+        return value.exp() / (value.exp().sum(-1)).unsqueeze(-1)
 
     def __get_segment_ids(self, tokenized_text: list):
         """
@@ -144,30 +213,6 @@ class HappyTransformer:
             text = text + predict_word
         return text
 
-    def __get_tensors_and_mask_idx(self, text):
-        formatted_text = self.__get_formatted_text(text)
-        tokenized_text = self.tokenizer.tokenize(formatted_text)
-
-        masked_index = self.__get_prediction_index(tokenized_text)
-        segments_ids = self.__get_segment_ids(tokenized_text)
-        indexed_tokens = self.tokenizer.convert_tokens_to_ids(tokenized_text)
-
-        # Convert inputs to PyTorch tensors
-        tokens_tensor = torch.tensor([indexed_tokens]).to(self.gpu_support)
-        segments_tensors = torch.tensor([segments_ids]).to(self.gpu_support)
-        return tokens_tensor, segments_tensors, masked_index
-
-    def __format_option_scores(self, ranked_scores: list):
-        """
-        :param: ranked_scores: list of tuples to be converted into user friendly dicitonary
-        :return: formatted_ranked_scores: list of dictionaries of the ranked scores
-        """
-        # TODO: Shouldn't depend on ranked_scores to already be in order
-        formatted_ranked_scores = list()
-        for word, score in ranked_scores:
-            formatted_ranked_scores.append({'word': word, 'score': score})
-        return formatted_ranked_scores
-
     @staticmethod
     def soft_sum(option: list, softed, mask_id: int):
         # TODO: Better logic.
@@ -182,5 +227,4 @@ class HappyTransformer:
         :return: float Tensor
         """
         # Collects the softmax of all tokens in list
-        options = [softed[mask_id][op] for op in option]
-        return np.sum(options)
+        return np.sum([softed[mask_id][op] for op in option])
