@@ -3,6 +3,7 @@
 
 import torch
 from transformers import BertForMaskedLM, BertTokenizer
+import numpy as np
 
 from happy_transformer.happy_transformer import HappyTransformer
 
@@ -13,9 +14,9 @@ class HappyBERT(HappyTransformer):
         super().__init__()
         self.transformer = BertForMaskedLM.from_pretrained(model)
         self.tokenizer = BertTokenizer.from_pretrained(model)
-        self.masked_token = self.tokenizer._mask_token
-        self.sep_token = self.tokenizer._sep_token
-        self.cls_token = self.tokenizer._cls_token
+        self.masked_token = self.tokenizer.mask_token
+        self.sep_token = self.tokenizer.sep_token
+        self.cls_token = self.tokenizer.cls_token
 
         self.model = 'BERT'
 
@@ -34,6 +35,7 @@ class HappyBERT(HappyTransformer):
 
         # TODO: medium: make it more modular
 
+<<<<<<< HEAD
         # Generated formatted text so that it can be tokenized. Mainly, add the required tags
         # TODO: put the print statements in the parent class. Use the boolean return value and an if statement to determine
         # TODO: if the return value was False. If False, return None
@@ -64,6 +66,10 @@ class HappyBERT(HappyTransformer):
 
         tokens_tensor = tokens_tensor.to(self.gpu_support)
         segments_tensors = segments_tensors.to(self.gpu_support)
+=======
+        tokens_tensor, segments_tensors, masked_index =\
+            self._HappyTransformer__get_tensors_and_mask_idx(text)
+>>>>>>> master
 
         with torch.no_grad():
             outputs = self.transformer(tokens_tensor, token_type_ids=segments_tensors)
@@ -82,4 +88,26 @@ class HappyBERT(HappyTransformer):
             if self.gpu_support == "cuda":
                 torch.cuda.empty_cache()
 
-            return prediction_token, prediction_softmax
+            return prediction_token[0], prediction_softmax[0]
+
+    def predict_mask_with_options(self, text: str, options: list):
+
+        tokens_tensor, segments_tensors, masked_index =\
+            self._HappyTransformer__get_tensors_and_mask_idx(text)
+
+        with torch.no_grad():
+            outputs = self.transformer(tokens_tensor, token_type_ids=segments_tensors)
+            predictions = outputs[0]
+
+            softmax = self._HappyTransformer__softmax(predictions)[0]
+
+            option_ids = [self.tokenizer.encode(option) for option in options]
+
+            option_probs = list(map(lambda x: self.soft_sum(x, softmax, masked_index), option_ids))
+            tupled_option = tuple(zip(options, option_probs))
+            ranked_scores = sorted(tupled_option, key=lambda x: x[1], reverse=True)
+
+            if self.gpu_support == "cuda":
+                torch.cuda.empty_cache()
+            ranked_scores = self._HappyTransformer__format_option_scores(ranked_scores)
+            return ranked_scores

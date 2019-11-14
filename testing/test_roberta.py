@@ -2,35 +2,32 @@
 # pylint: disable=W0511
 
 """ Testing module for HappyBERT"""
+import pytest
+
 from happy_transformer.happy_roberta import HappyRoBERTa
 
 
-class TestRoBERTa:
+def test_predict_mask():
     """
-    A class that contains test methods for HappyBERT
+    Tests the method predict_mask in HappyRoBERTa()
+
     """
+    model = HappyRoBERTa()
+    test_string = "The first Star wars movie came out in <mask>"
+    token, score = model.predict_mask(test_string)
+    assert token == "1977"
+    assert score > 0.8
 
-    def __init__(self):
 
-        self.model = HappyRoBERTa()
+@pytest.mark.xfail
+def test_wsc():
+    """
+    Tests the method wsc in HappyRoBERTa()
 
-    def test_predict_mask(self):
+    """
+    model = HappyRoBERTa()
+    text = 'The city councilmen refused the demonstrators a permit because '\
+           '[they] feared violence.'
+    output = model.wsc(text)
 
-        """
-        Tests the method predict_mask in HappyRoBERTa()
-
-        """
-
-        test_string = "The first Star wars movie came out in <mask>"
-        token, score = self.model.predict_mask(test_string)
-        assert token == "1977"
-        print("\ntest_predict_mask")
-        print("Success: \"" + token + "\" was predicted for the input "+"\"" + test_string + "\"")
-
-    def test_wsc(self):
-        text = 'The city councilmen refused the demonstrators a permit because [they] feared violence.'
-        output = self.model.wsc(text)
-
-        assert output == "The city councilmen"
-        print("\ntest_wsc")
-        print("Success: \"" + output + "\" was predicted for the input "+"\"" + text + "\"")
+    assert output == "The city councilmen"

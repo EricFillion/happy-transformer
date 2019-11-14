@@ -6,16 +6,11 @@
 from happy_transformer.happy_bert import HappyBERT
 
 
-class TestBERT:
+def test_predict_mask():
     """
-    A class that contains test methods for HappyBERT
-    """
+    Tests the method predict_mask in HappyBERT()
 
-    def __init__(self):
-        self.model = HappyBERT()
-
-    def test_predict_mask(self):
-
+<<<<<<< HEAD
         """
         Tests the method predict_mask in HappyBERT()
 
@@ -27,3 +22,13 @@ class TestBERT:
         assert token == ["henson"]
         print("Success: \"" + token[0] + "\" was predicted for the input "+"\"" + test_string + "\"")
 
+=======
+    """
+    # TODO make the return token from test_predict_mask a string
+    # TODO create a test for probs
+    model = HappyBERT()
+    test_string = "Who was Jim Henson? Jim [MASK] was a puppeteer."
+    token, score = model.predict_mask(test_string)
+    assert token == "henson"
+    assert score > 0.8
+>>>>>>> master
