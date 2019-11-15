@@ -5,7 +5,7 @@ import pandas as pd
 
 def get_data_wsc():
     " Organizes the data_wsc into a panda dataframe"
-    tree = et.parse('data_wsc/WSCollection.xml')
+    tree = et.parse('WSCollection.xml')
 
     root = tree.getroot()
 
@@ -48,3 +48,4 @@ def get_data_wsc():
         problem['answer'] = schema.find("correctAnswer").text
         dataframe = dataframe.append(problem, ignore_index=True)
     return dataframe
+
