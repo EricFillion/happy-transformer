@@ -10,5 +10,6 @@ def get_data_bwic():
         starting_index = row.find("\"") + 1 # find the location of the start of the sentence4
         row = row[starting_index:-2] # Each sentence ends with a quotation mark which must be removed
         result_list.append(row)
-    print(len(result_list))
+    print("Number of Billion Word Challenge test cases:", len(result_list) - 1)
+    result_list.pop(0) # Removes the header
     return result_list
