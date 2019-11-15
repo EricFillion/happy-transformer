@@ -18,9 +18,9 @@ class HappyTransformer:
     Initializes pytroch's transformer models and provided methods for
     their basic functionality.
 
-    Philosophy: Automatically make decisions for the user so that they don't have to
-                have any understanding of PyTorch or transformer models to be able
-                to utilize their capabilities.
+    Philosophy: Automatically make decisions for the user so that they don't
+                have to have any understanding of PyTorch or transformer
+                models to be able to utilize their capabilities.
     """
 
     def __init__(self):
@@ -111,7 +111,6 @@ class HappyTransformer:
                 else:
                     new_text.append(self.sep_token)
                 # must be a middle punctuation
-
         new_text.append(self.sep_token)
         text = " ".join(new_text).replace('[MASK]', self.masked_token)
         text = self.tokenizer.tokenize(text)
@@ -128,7 +127,7 @@ class HappyTransformer:
         :return: a tensor of the softmaxes of the predictions of the
                  transformer
         """
-        segments_ids = self.__get_segment_ids(text)
+        segments_ids = self._get_segment_ids(text)
         indexed_tokens = self.tokenizer.convert_tokens_to_ids(text)
 
         # Convert inputs to PyTorch tensors
@@ -167,7 +166,7 @@ class HappyTransformer:
         # TODO: make it an external function
         return value.exp() / (value.exp().sum(-1)).unsqueeze(-1)
 
-    def __get_segment_ids(self, tokenized_text: list):
+    def _get_segment_ids(self, tokenized_text: list):
         """
         Converts a list of tokens into segment_ids. The segment id is a array
         representation of the location for each character in the
@@ -175,7 +174,8 @@ class HappyTransformer:
 
         Example:
         tokenized_text = ['[CLS]', 'who', 'was', 'jim', 'henson', '?', '[SEP]',
-                         'jim', '[MASK]', 'was', 'a', 'puppet', '##eer', '[SEP]']
+                          'jim', '[MASK]', 'was', 'a', 'puppet', '##eer',
+                          '[SEP]']
         segments_ids = [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1]
         returns segments_ids
         """
@@ -189,11 +189,12 @@ class HappyTransformer:
             # add exception case for XLNet
         return segment_ids
 
-    def finish_sentence(self, text: str, maxPredictionLength = 100):
+    def finish_sentence(self, text: str, maxPredictionLength=100):
         """
 
         :param text: a string that is the start of a sentence to be finished
-        :param maxPredictionLength: an int with the maximum number of words to be predicted
+        :param maxPredictionLength: an int with the maximum number of words to
+                                    be predicted
         :return: the completed sentence
         """
         father_predict = ""
@@ -203,7 +204,8 @@ class HappyTransformer:
             predict_text = text + self.masked_token
             predict_word = self.predict_mask(predict_text)[0]
 
-            if predict_word == father_predict and predict_word == grand_father_predict:
+            if predict_word == father_predict\
+                    and predict_word == grand_father_predict:
                 # if the same token was predicted three times in a row
                 return text
 
