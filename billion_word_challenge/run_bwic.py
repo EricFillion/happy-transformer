@@ -1,16 +1,15 @@
-from bwic import data_collection_bwic
+from billion_word_challenge import data_collection_bwic
 from happy_transformer.happy_roberta import HappyRoBERTa
 
 def bwic_roberta():
     """
-    Using HappyRoBERTa to solve the Billion Word Imputation Challenge
+    Uses HappyRoBERTa to solve the Billion Word Imputation Challenge
     Writes the result to bwic_output.txt
-    The run time is too long for a standard laptop to complete.
-    prints the result to a file called bwic_output.txt
+
+    The run time is too long for a standard computer to complete.
     """
     happy_roberta = HappyRoBERTa()
     data = data_collection_bwic.get_data_bwic()
-    data.pop(0) # remove the header line
     output = open("bwic_output.txt", 'w')
     output.write("id,\"sentence\"\n")
 
