@@ -2,6 +2,12 @@ from bwic import data_collection_bwic
 from happy_transformer.happy_roberta import HappyRoBERTa
 
 def bwic_roberta():
+    """
+    Using HappyRoBERTa to solve the Billion Word Imputation Challenge
+    Writes the result to bwic_output.txt
+    The run time is too long for a standard laptop to complete.
+    prints the result to a file called bwic_output.txt
+    """
     happy_roberta = HappyRoBERTa()
     data = data_collection_bwic.get_data_bwic()
     data.pop(0) # remove the header line
@@ -23,7 +29,7 @@ def bwic_roberta():
             predictions = happy_roberta.predict_k_masks(mask_sentence, 20)
             j = 0
 
-            while(j < len(predictions)):
+            while j < len(predictions):
                 temp_word = predictions[j][0]
                 temp_softmax = predictions[j][1]
                 if temp_word.isalpha():
