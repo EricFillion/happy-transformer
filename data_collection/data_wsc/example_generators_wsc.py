@@ -5,7 +5,7 @@ Contains modules to generate examples for both testing and training
 """
 
 import re
-from data_collection.data import data_collection
+from data_collection.data_wsc import data_collection_wsc
 
 
 def fit_bert_test_generator():
@@ -15,7 +15,7 @@ def fit_bert_test_generator():
     The output is saved to a csv file called "fit_bert_test_generator"
     """
 
-    df = data_collection.get_data()
+    df = data_collection_wsc.get_data()
 
     masked_sentences = list()
     for index, row in df.iterrows():

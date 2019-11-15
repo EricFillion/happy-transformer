@@ -3,9 +3,9 @@ import xml.etree.ElementTree as et
 import pandas as pd
 
 
-def get_data():
-    " Organizes the data into a panda dataframe"
-    tree = et.parse('data/WSCollection.xml')
+def get_data_wsc():
+    " Organizes the data_wsc into a panda dataframe"
+    tree = et.parse('data_wsc/WSCollection.xml')
 
     root = tree.getroot()
 
