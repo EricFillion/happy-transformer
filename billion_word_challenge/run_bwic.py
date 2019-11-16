@@ -21,7 +21,7 @@ def bwic_roberta():
         top_word = ""
         top_index = 0
 
-        for i in range(0, len(case_array)):
+        for i in range(1, len(case_array)-1):
             mask_list = case_array.copy()
             mask_list.insert(i, "<mask>")
             mask_sentence = " ".join(mask_list)
