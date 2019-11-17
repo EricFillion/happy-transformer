@@ -35,7 +35,7 @@ class HappyTransformer:
                                         else "cpu")
         print("Using model:", self.gpu_support)
 
-    def predict_mask(self, text: str, options=None):
+    def predict_mask(self, text: str, options=None, k=1):
         """
         Method to predict what the masked token in the given text string is.
 
@@ -45,6 +45,8 @@ class HappyTransformer:
 
         :param text: a string with a masked token within it
         :param options: list of options that the mask token may be [optional]
+        :param k: the number of options to output if no output list is given
+                  [optional]
         :return: list of dictionaries containing the predicted token(s) and
                  their corresponding score(s).
 
@@ -67,7 +69,7 @@ class HappyTransformer:
                                                       masked_index),
                               option_ids))
         else:
-            top_predictions = torch.topk(softmax[0, masked_index], 1)
+            top_predictions = torch.topk(softmax[0, masked_index], k)
             scores = top_predictions[0].tolist()
             prediction_index = top_predictions[1].tolist()
             options = self.tokenizer.convert_ids_to_tokens(prediction_index)
