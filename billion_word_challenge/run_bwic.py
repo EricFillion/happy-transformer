@@ -46,4 +46,3 @@ def bwic_roberta():
         print(final_answer)
 
 
-bwic_roberta()
