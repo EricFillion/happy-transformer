@@ -29,28 +29,11 @@ class HappyBERT(HappyTransformer):
         """
 
         # TODO: put in HappyBERT. Overwrite HappyTransformer.
-        # TODO: easy: create a method to check if the sentence is valid
-        # TODO: easy: if the sentence is not valid, provide the user with input requirements
-        # TODO: easy: if sentence is not valid, indicate where the user messed up
 
         # TODO: medium: make it more modular
-
-        # Generated formatted text so that it can be tokenized. Mainly, add the required tags
-        # TODO: put the print statements in the parent class. Use the boolean return value and an if statement to determine
-        # TODO: if the return value was False. If False, return None
-        validation_check, indexes = self._HappyTransformer__text_verification(text)
-        if validation_check == -1:
-            print('[MASK] was not found in your string, change the word you want to predict with [MASK] to use bert]')
-            return 'error', 0
-        elif validation_check == -2:
-            print('[SEP] was found in your string between indexes %d and %d. Remove this as the text formatter will add this in later. Input a string with the word you would like predicted as "[MASK]"', index, index + 5)
-            return 'error', 0
-        elif validation_check == -3:
-            print('[CLS] was found in your string between indexes %d and %d. Remove this as the text formatter will add this in later. Input a string with the word you would like predicted as "[MASK]"', index, index + 5)
-            return 'error', 0
-        elif validation_check == -4:
-            print('[##eer] was found in your string between indexes %d and %d. Remove this as the text formatter will add this in later. Input a string with the word you would like predicted as "[MASK]"', index, index + 5)
-            return 'error', 0
+        validation_check = self._HappyTransformer__text_verification(text)
+        if validation_check == False:
+            return None, None
         
         formatted_text = self._HappyTransformer__get_formatted_text(text)
         tokenized_text = self.tokenizer.tokenize(formatted_text)
@@ -89,6 +72,10 @@ class HappyBERT(HappyTransformer):
 
     def predict_mask_with_options(self, text: str, options: list):
 
+        validation_check = self._HappyTransformer__text_verification(text)
+        if validation_check == False:
+            return None
+        
         tokens_tensor, segments_tensors, masked_index =\
             self._HappyTransformer__get_tensors_and_mask_idx(text)
 

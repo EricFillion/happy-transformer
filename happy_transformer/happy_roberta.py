@@ -34,6 +34,9 @@ class HappyRoBERTa(HappyTransformer):
         :param text: a string that contains "<mask>"
         :return: the most likely word for the token and its score
         """
+        validation_check = self._HappyTransformer__text_verification(text)
+        if validation_check == False:
+            return None
 
         mask_index = text.find(self.masked_token)
 

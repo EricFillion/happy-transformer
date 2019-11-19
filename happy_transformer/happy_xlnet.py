@@ -29,6 +29,9 @@ class HappyXLNET(HappyTransformer):
         :param text: a string with a masked token within it
         :return: predicts the most likely word to fill the mask and its probability
         """
+        validation_check = self._HappyTransformer__text_verification(text)
+        if validation_check == False:
+            return None
 
         formatted_text = self._HappyTransformer__get_formatted_text(text)
         tokenized_text = self.tokenizer.tokenize(formatted_text)
@@ -72,6 +75,9 @@ class HappyXLNET(HappyTransformer):
         :return: predicts the most likely word from list of options
         to fill the mask and its probability
         """
+        validation_check = self._HappyTransformer__text_verification(text)
+        if validation_check == False:
+            return None
 
         formatted_text = self._HappyTransformer__get_formatted_text(text)
         tokenized_text = self.tokenizer.tokenize(formatted_text)

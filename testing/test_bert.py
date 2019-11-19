@@ -10,7 +10,6 @@ def test_predict_mask():
     """
     Tests the method predict_mask in HappyBERT()
 
-<<<<<<< HEAD
         """
         Tests the method predict_mask in HappyBERT()
 
@@ -22,7 +21,6 @@ def test_predict_mask():
         assert token == ["henson"]
         print("Success: \"" + token[0] + "\" was predicted for the input "+"\"" + test_string + "\"")
 
-=======
     """
     # TODO make the return token from test_predict_mask a string
     # TODO create a test for probs
@@ -31,4 +29,3 @@ def test_predict_mask():
     token, score = model.predict_mask(test_string)
     assert token == "henson"
     assert score > 0.8
->>>>>>> master

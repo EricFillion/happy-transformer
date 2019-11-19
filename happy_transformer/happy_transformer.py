@@ -125,27 +125,25 @@ class HappyTransformer:
 
     def text_verification(self, text:str):
 
-        # TODO return True if the text is okay, else return False
         # TODO: create a happy_transformer test class and create a test_verification method
         #       Include at least 3 test cases.
-        # TODO: As said in happy_bert, put the print statements within here
-        # TODO: Add text_verification to happy_xlnet  and happy_roberta. Be sure to pull the master branch
-        #       Before making any changes to them.
         # TODO,  Add cases for the other masked tokens used in common transformer models
 
-
-
         if '[MASK]' not in text:
-            return -1, 0
+            print('[MASK] was not found in your string, change the word you want to predict with [MASK] to use bert]')
+            return False
         elif '[CLS]' in text:
-            index = s2.find('[CLS]')
-            return -2, index
+            print('[CLS] was found in your string between indexes %d and %d. Remove this as the text formatter will add this in later. Input a string with the word you would like predicted as "[MASK]"', index, index + 5)
+            return False
         elif '[SEP]' in text:
-            index = s2.find('[SEP]')
-            return -3, index
+            print('[SEP] was found in your string between indexes %d and %d. Remove this as the text formatter will add this in later. Input a string with the word you would like predicted as "[MASK]"', index, index + 5)
+            return False
         elif '##eer' in text: # TODO, dont need this check
-            index = s2.find('[##eer]')
-            return -4, index
+            print('[##eer] was found in your string between indexes %d and %d. Remove this as the text formatter will add this in later. Input a string with the word you would like predicted as "[MASK]"', index, index + 5)
+            return False
+        else:
+            return True
+            
 
 
     def finish_sentence(self, text: str, maxPredictionLength = 100):
