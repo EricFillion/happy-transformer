@@ -123,7 +123,6 @@ class HappyTransformer:
             # add exception case for XLNet
         return segment_ids
 
-<<<<<<< HEAD
     def text_verification(self, text:str):
 
         # TODO return True if the text is okay, else return False
@@ -149,7 +148,6 @@ class HappyTransformer:
             return -4, index
 
 
-=======
     def finish_sentence(self, text: str, maxPredictionLength = 100):
         """
 
@@ -214,4 +212,3 @@ class HappyTransformer:
         # Collects the softmax of all tokens in list
         options = [softed[mask_id][op] for op in option]
         return np.sum(options)
->>>>>>> master

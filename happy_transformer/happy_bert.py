@@ -35,7 +35,6 @@ class HappyBERT(HappyTransformer):
 
         # TODO: medium: make it more modular
 
-<<<<<<< HEAD
         # Generated formatted text so that it can be tokenized. Mainly, add the required tags
         # TODO: put the print statements in the parent class. Use the boolean return value and an if statement to determine
         # TODO: if the return value was False. If False, return None
@@ -66,10 +65,8 @@ class HappyBERT(HappyTransformer):
 
         tokens_tensor = tokens_tensor.to(self.gpu_support)
         segments_tensors = segments_tensors.to(self.gpu_support)
-=======
         tokens_tensor, segments_tensors, masked_index =\
             self._HappyTransformer__get_tensors_and_mask_idx(text)
->>>>>>> master
 
         with torch.no_grad():
             outputs = self.transformer(tokens_tensor, token_type_ids=segments_tensors)
