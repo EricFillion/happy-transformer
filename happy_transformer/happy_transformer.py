@@ -76,10 +76,32 @@ class HappyTransformer:
 
         tupled_predictions = tuple(zip(options, scores))
 
+        if self.model == "XLNET": # TODO find other models that also require this
+            tupled_predictions = self.__remove_one_eighth_block(tupled_predictions)
+
         if self.gpu_support == "cuda":
             torch.cuda.empty_cache()
 
         return self.__format_option_scores(tupled_predictions)
+
+    def __remove_one_eighth_block(self, tupled_predictions):
+        """
+        Some cased models like XLNet place a "▁" character in front of lower cased predictions.
+        For most applications this extra bit of information is irrelevant.
+
+        :param tupled_predictions: A list that contains tuples where the first index is the name of the prediction
+               and the second index is the prediction's softmax
+        :return: a new list of tuples where the prediction's name does not contains a "▁" character
+        """
+        new_predictions = list()
+        for prediction in tupled_predictions:
+            word_prediction = prediction[0]
+            if word_prediction[0] == "▁":
+                new_prediction = (word_prediction[1:], prediction[1])
+                new_predictions.append(new_prediction)
+            else:
+                new_predictions.append(prediction)
+        return new_predictions
 
     def __get_tokenized_text(self, text):
         """
