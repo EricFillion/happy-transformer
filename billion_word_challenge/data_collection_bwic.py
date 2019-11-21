@@ -1,8 +1,12 @@
+import os
 def get_data_bwic():
     """
     :return: a list where each index is a line without "test_bwic.txt" without junk characters
+
     """
+    os.chdir("billion_word_challenge")
     test_file = open("test_bwic.txt", "r")
+    os.chdir("..")
     test_file_rows = test_file.readlines()
     result_list = list()
 
