@@ -122,7 +122,7 @@ class HappyTransformer:
         new_text.append(self.cls_token)
 
         for i, char in enumerate(split_text):
-            new_text.append(char)
+            new_text.append(char.lower())
             if char not in string.punctuation:
                 pass
             # must be a punctuation symbol
@@ -136,7 +136,7 @@ class HappyTransformer:
                     new_text.append(self.sep_token)
                 # must be a middle punctuation
         new_text.append(self.sep_token)
-        text = " ".join(new_text).replace('[MASK]', self.masked_token)
+        text = " ".join(new_text).replace('[mask]', self.masked_token)
         text = self.tokenizer.tokenize(text)
         return text
 
