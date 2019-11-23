@@ -239,6 +239,27 @@ class HappyTransformer:
             text = text + predict_word
         return text
 
+        def text_verification(self, text:str):
+
+        # TODO: create a happy_transformer test class and create a test_verification method
+        #       Include at least 3 test cases.
+        # TODO,  Add cases for the other masked tokens used in common transformer models
+
+        if '[MASK]' not in text:
+            print('[MASK] was not found in your string, change the word you want to predict with [MASK] to use bert]')
+            return False
+        elif '[CLS]' in text:
+            print('[CLS] was found in your string between indexes %d and %d. Remove this as the text formatter will add this in later. Input a string with the word you would like predicted as "[MASK]"', index, index + 5)
+            return False
+        elif '[SEP]' in text:
+            print('[SEP] was found in your string between indexes %d and %d. Remove this as the text formatter will add this in later. Input a string with the word you would like predicted as "[MASK]"', index, index + 5)
+            return False
+        elif '##eer' in text: # TODO, dont need this check
+            print('[##eer] was found in your string between indexes %d and %d. Remove this as the text formatter will add this in later. Input a string with the word you would like predicted as "[MASK]"', index, index + 5)
+            return False
+        else:
+            return True
+
     @staticmethod
     def soft_sum(option: list, softed, mask_id: int):
         # TODO: Better logic.
