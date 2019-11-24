@@ -53,12 +53,6 @@ class HappyTransformer:
         NOTE: If no options are given, the returned list will be length 1
         """
 
-        # TODO: easy: create a method to check if the sentence is valid.
-        # TODO: easy: if the sentence is not valid, provide the user with
-        #             input requirements.
-        # TODO: easy: if sentence is not valid, indicate where the user messed
-        #             up.
-
         if not self._text_verification(text):
             return
 
@@ -245,13 +239,14 @@ class HappyTransformer:
 
     def _text_verification(self, text: str):
 
-        # TODO: create a happy_transformer test class and create a test_verification method
-        #       Include at least 3 test cases.
         # TODO,  Add cases for the other masked tokens used in common transformer models
         valid = True
         if '[MASK]' not in text:
             print("[MASK] was not found in your string. Change the word you want to predict to [MASK]")
             valid = False
+        if '<mask>' in text or '<MASK>' in text:
+            print('Instead of using <mask> or <MASK>, use [MASK] please as it is the convention')
+            valid = True 
         if '[CLS]' in text:
             print("[CLS] was found in your string.  Remove it as it will be automatically added later")
             valid = False
