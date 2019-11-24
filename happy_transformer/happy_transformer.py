@@ -161,8 +161,8 @@ class HappyTransformer:
         indexed_tokens = self.tokenizer.convert_tokens_to_ids(text)
 
         # Convert inputs to PyTorch tensors
-        tokens_tensor = torch.tensor([indexed_tokens]).to(self.gpu_support)
-        segments_tensors = torch.tensor([segments_ids]).to(self.gpu_support)
+        tokens_tensor = torch.tensor([indexed_tokens])
+        segments_tensors = torch.tensor([segments_ids])
 
         with torch.no_grad():
             outputs = self.transformer(tokens_tensor,
