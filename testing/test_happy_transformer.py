@@ -1,7 +1,7 @@
 # disable pylint TODO warning
 # pylint: disable=W0511, W0212
-# todo import pytest
 
+import pytest
 """ Testing module for HappyBERT"""
 from happy_transformer.happy_transformer import HappyTransformer
 
@@ -26,3 +26,8 @@ def test_text_verification():
     assert valid_cls is False
     assert valid_sep is False
     assert valid_correct is True
+
+def main():
+    test_text_verification()
+
+main()
