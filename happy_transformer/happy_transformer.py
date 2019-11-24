@@ -29,10 +29,12 @@ class HappyTransformer:
         self.tokenizer = None
         # Child class sets to indicate which model is being used
         self.model = ''
+        self.tag_one_transformers = ['BERT', 'GPT2', 'XLM', 'XLNET']
 
         # GPU support
         self.gpu_support = torch.device("cuda" if torch.cuda.is_available()
                                         else "cpu")
+        self.gpu_support = "cpu"                             
         print("Using model:", self.gpu_support)
 
     def predict_mask(self, text: str, options=None, k=1):
@@ -52,12 +54,15 @@ class HappyTransformer:
 
         NOTE: If no options are given, the returned list will be length 1
         """
+        
+        if self.model in self.tag_one_transformers:
+            text = text.replace("<mask>", "[MASK]")
+            text = text.replace("<MASK>", "[MASK]")
+        else:
+            text = text.replace("[MASK]", "<mask>")
 
-        # TODO: easy: create a method to check if the sentence is valid.
-        # TODO: easy: if the sentence is not valid, provide the user with
-        #             input requirements.
-        # TODO: easy: if sentence is not valid, indicate where the user messed
-        #             up.
+        if not self._text_verification(text):
+            return
 
         tokenized_text = self.__get_tokenized_text(text)
         masked_index = tokenized_text.index(self.masked_token)
@@ -89,8 +94,9 @@ class HappyTransformer:
         Some cased models like XLNet place a "▁" character in front of lower cased predictions.
         For most applications this extra bit of information is irrelevant.
 
-        :param tupled_predictions: A list that contains tuples where the first index is the name of the prediction
-               and the second index is the prediction's softmax
+        :param tupled_predictions: A list that contains tuples where the first index is
+                                the name of the prediction and the second index is the
+                                prediction's softmax
         :return: a new list of tuples where the prediction's name does not contains a "▁" character
         """
         new_predictions = list()
@@ -238,6 +244,25 @@ class HappyTransformer:
 
             text = text + predict_word
         return text
+
+    def _text_verification(self, text: str):
+
+        # TODO,  Add cases for the other masked tokens used in common transformer models
+        valid = True
+        if '[MASK]' not in text:
+            print("[MASK] was not found in your string. Change the word you want to predict to [MASK]")
+            valid = False
+        if '<mask>' in text or '<MASK>' in text:
+            print('Instead of using <mask> or <MASK>, use [MASK] please as it is the convention')
+            valid = True 
+        if '[CLS]' in text:
+            print("[CLS] was found in your string.  Remove it as it will be automatically added later")
+            valid = False
+        if '[SEP]' in text:
+            print("[SEP] was found in your string.  Remove it as it will be automatically added later")
+            valid = False
+
+        return valid
 
     @staticmethod
     def soft_sum(option: list, softed, mask_id: int):
