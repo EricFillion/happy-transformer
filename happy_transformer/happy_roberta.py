@@ -35,6 +35,8 @@ class HappyRoBERTa(HappyTransformer):
         :return: the most likely word for the token and its score
         """
 
+        if not self._text_verification(text):
+            return
         mask_index = text.find(self.masked_token)
 
         predictions = self.transformer.fill_mask(text, topk=1)
