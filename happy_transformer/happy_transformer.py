@@ -140,7 +140,7 @@ class HappyTransformer:
         text = self.tokenizer.tokenize(text)
         return text
 
-    def __get_prediction_softmax(self, text: str):
+    def _get_prediction_softmax(self, text: str):
         """
         Gets the softmaxes of the predictions for each index in the the given
         input string.
