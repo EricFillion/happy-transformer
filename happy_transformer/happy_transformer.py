@@ -59,6 +59,9 @@ class HappyTransformer:
         # TODO: easy: if sentence is not valid, indicate where the user messed
         #             up.
 
+        if not self._text_verification(text):
+            return
+
         tokenized_text = self.__get_tokenized_text(text)
         masked_index = tokenized_text.index(self.masked_token)
         softmax = self.__get_prediction_softmax(tokenized_text)
@@ -89,8 +92,9 @@ class HappyTransformer:
         Some cased models like XLNet place a "▁" character in front of lower cased predictions.
         For most applications this extra bit of information is irrelevant.
 
-        :param tupled_predictions: A list that contains tuples where the first index is the name of the prediction
-               and the second index is the prediction's softmax
+        :param tupled_predictions: A list that contains tuples where the first index is
+                                the name of the prediction and the second index is the
+                                prediction's softmax
         :return: a new list of tuples where the prediction's name does not contains a "▁" character
         """
         new_predictions = list()
@@ -239,26 +243,23 @@ class HappyTransformer:
             text = text + predict_word
         return text
 
-        def text_verification(self, text:str):
+    def _text_verification(self, text: str):
 
         # TODO: create a happy_transformer test class and create a test_verification method
         #       Include at least 3 test cases.
         # TODO,  Add cases for the other masked tokens used in common transformer models
-
+        valid = True
         if '[MASK]' not in text:
-            print('[MASK] was not found in your string, change the word you want to predict with [MASK] to use bert]')
-            return False
-        elif '[CLS]' in text:
-            print('[CLS] was found in your string between indexes %d and %d. Remove this as the text formatter will add this in later. Input a string with the word you would like predicted as "[MASK]"', index, index + 5)
-            return False
-        elif '[SEP]' in text:
-            print('[SEP] was found in your string between indexes %d and %d. Remove this as the text formatter will add this in later. Input a string with the word you would like predicted as "[MASK]"', index, index + 5)
-            return False
-        elif '##eer' in text: # TODO, dont need this check
-            print('[##eer] was found in your string between indexes %d and %d. Remove this as the text formatter will add this in later. Input a string with the word you would like predicted as "[MASK]"', index, index + 5)
-            return False
-        else:
-            return True
+            print("[MASK] was not found in your string. Change the word you want to predict to [MASK]")
+            valid = False
+        if '[CLS]' in text:
+            print("[CLS] was found in your string.  Remove it as it will be automatically added later")
+            valid = False
+        if '[SEP]' in text:
+            print("[SEP] was found in your string.  Remove it as it will be automatically added later")
+            valid = False
+
+        return valid
 
     @staticmethod
     def soft_sum(option: list, softed, mask_id: int):
