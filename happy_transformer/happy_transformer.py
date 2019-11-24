@@ -29,10 +29,12 @@ class HappyTransformer:
         self.tokenizer = None
         # Child class sets to indicate which model is being used
         self.model = ''
+        self.tag_one_transformers = ['BERT', 'GPT2', 'XLM', 'XLNET']
 
         # GPU support
         self.gpu_support = torch.device("cuda" if torch.cuda.is_available()
                                         else "cpu")
+        self.gpu_support = "cpu"                             
         print("Using model:", self.gpu_support)
 
     def predict_mask(self, text: str, options=None, k=1):
@@ -52,6 +54,12 @@ class HappyTransformer:
 
         NOTE: If no options are given, the returned list will be length 1
         """
+        
+        if self.model in self.tag_one_transformers:
+            text = text.replace("<mask>", "[MASK]")
+            text = text.replace("<MASK>", "[MASK]")
+        else:
+            text = text.replace("[MASK]", "<mask>")
 
         if not self._text_verification(text):
             return

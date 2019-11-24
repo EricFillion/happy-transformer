@@ -32,3 +32,24 @@ def test_text_verification():
     assert valid_cls is False
     assert valid_sep is False
     assert valid_correct is True
+
+'''
+def main():
+    """testing"""
+    hb = Happy...()
+    a = hb.predict_mask("Hello <mask>")
+    print(a)
+    b = hb.predict_mask("Hello [SEP]")
+    print(b)
+    c = hb.predict_mask("Hello [CLS]")
+    print(c)
+    d = hb.predict_mask("Hello")
+    print(d)
+    e = hb.predict_mask("Hello <MASK>")
+    print(e)
+    f = hb.predict_mask("Hello [MASK]")
+    print(f)
+
+main()
+text_verification testing code
+'''
