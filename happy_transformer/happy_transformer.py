@@ -34,6 +34,7 @@ class HappyTransformer:
         # GPU support
         self.gpu_support = torch.device("cuda" if torch.cuda.is_available()
                                         else "cpu")
+        self.gpu_support = "cpu"         	        
         print("Using model:", self.gpu_support)
 
     def predict_mask(self, text: str, options=None, k=1):
