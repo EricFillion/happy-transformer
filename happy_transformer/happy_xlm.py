@@ -12,15 +12,18 @@ class HappyXLM(HappyTransformer):
     cls_token =  '</s>'
     """
 
-    def __init__(self, model='xlm-mlm-en-2048'):
-        super().__init__()
-
-        self.transformer = XLMWithLMHeadModel.from_pretrained(model)
+    def __init__(self, model='xlm-mlm-en-2048', initial_transformers=[]):
+        super().__init__(model, initial_transformers)
+        self.mlm = XLMWithLMHeadModel.from_pretrained(model)
         self.tokenizer = XLMTokenizer.from_pretrained(model)
         self.masked_token = self.tokenizer.mask_token
         self.sep_token = self.tokenizer.sep_token
         self.cls_token = self.tokenizer.cls_token
-
         self.model = 'XLM'
 
-        self.transformer.eval()
+    def _get_masked_language_model(self):
+        """
+        Initializes the XLMWithLMHeadModel transformer
+        """
+        self.mlm = XLMWithLMHeadModel.from_pretrained(self.model_to_use)
+        self.mlm.eval()

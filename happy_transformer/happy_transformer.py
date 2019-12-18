@@ -23,9 +23,11 @@ class HappyTransformer:
                 models to be able to utilize their capabilities.
     """
 
-    def __init__(self):
+    def __init__(self, model, initial_transformers=[]):
         # Transformer and tokenizer set in child class
-        self.transformer = None
+        self.mlm = None  # Masked Language Model
+        self.nsp = None  # Next Sentence Prediction
+        self.model_to_use = model
         self.tokenizer = None
         # Child class sets to indicate which model is being used
         self.model = ''
@@ -35,6 +37,24 @@ class HappyTransformer:
         self.gpu_support = torch.device("cuda" if torch.cuda.is_available()
                                         else "cpu")
         print("Using model:", self.gpu_support)
+        self.__get_initial_transformers(initial_transformers)
+
+    def __get_initial_transformers(self, initial_transformers):
+        for transformer in initial_transformers:
+            if transformer == 'mlm':
+                self._get_masked_language_model()
+            if transformer == 'nsp':
+                self._get_next_sentence_prediction()
+
+    def _get_masked_language_model(self):
+        # Must be overloaded
+        # TODO make an exception to be thrown if not overloaded
+        pass
+
+    def _get_next_sentence_prediction(self):
+        # Must be overloaded
+        # TODO make an exception to be thrown if not overloaded
+        pass
 
     def predict_mask(self, text: str, options=None, k=1):
         """
@@ -53,7 +73,9 @@ class HappyTransformer:
 
         NOTE: If no options are given, the returned list will be length 1
         """
-        
+        if self.mlm is None:
+            self._get_masked_language_model()
+
         if self.model in self.tag_one_transformers:
             text = text.replace("<mask>", "[MASK]")
             text = text.replace("<MASK>", "[MASK]")
@@ -164,11 +186,11 @@ class HappyTransformer:
         segments_tensors = torch.tensor([segments_ids])
 
         with torch.no_grad():
-            outputs = self.transformer(tokens_tensor,
+            outputs = self.mlm(tokens_tensor,
                                        token_type_ids=segments_tensors)
             predictions = outputs[0]
 
-            softmax = self.__softmax(predictions)
+            softmax = self._softmax(predictions)
             return softmax
 
     def __format_option_scores(self, tupled_predicitons: list):
@@ -226,6 +248,9 @@ class HappyTransformer:
                                     be predicted
         :return: the completed sentence
         """
+        if self.mlm is None:
+            self._get_masked_language_model()
+
         father_predict = ""
         grand_father_predict = ""
 
