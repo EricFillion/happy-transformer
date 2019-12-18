@@ -288,6 +288,34 @@ class HappyTransformer:
 
         return valid
 
+    def is_next_sentence(self, a, b):
+        """
+        Determines if sentence B is likely to be a continuation after sentence
+        A.
+
+        :param a: First sentence
+        :param b: Second sentence to test if it comes after the first
+        :return tuple: True if b is likely to follow a, False if b is unlikely
+                       to follow a, with the probabilities as the second item
+                       of the tuple
+        """
+        if self.nsp is None:
+            self._get_next_sentence_prediction()
+        connected = a + ' ' + b
+        tokenized_text = self.__get_tokenized_text(connected)
+        indexed_tokens = self.tokenizer.convert_tokens_to_ids(tokenized_text)
+        segments_ids = self._get_segment_ids(tokenized_text)
+        # Convert inputs to PyTorch tensors
+        tokens_tensor = torch.tensor([indexed_tokens])
+        segments_tensors = torch.tensor([segments_ids])
+        with torch.no_grad():
+            predictions = self.nsp(tokens_tensor, token_type_ids=segments_tensors)[0]
+        softmax = self._softmax(predictions)
+        if torch.argmax(softmax) == 0:
+            return (True, softmax)
+        else:
+            return (False, softmax)
+
     @staticmethod
     def soft_sum(option: list, softed, mask_id: int):
         # TODO: Better logic.
