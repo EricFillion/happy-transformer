@@ -38,3 +38,9 @@ class HappyBERT(HappyTransformer):
         """
         self.nsp = BertForNextSentencePrediction.from_pretrained(self.model_to_use)
         self.nsp.eval()
+
+    def _get_prediction_softmax(self, text: str):
+        """
+        BERT's "_get_prediction_softmax" is the default in HappyTransformer
+        """
+        return super()._get_prediction_softmax(text)

@@ -190,7 +190,7 @@ class HappyTransformer:
                                        token_type_ids=segments_tensors)
             predictions = outputs[0]
 
-            softmax = self._softmax(predictions)
+            softmax = self.__softmax(predictions)
             return softmax
 
     def __format_option_scores(self, tupled_predicitons: list):
@@ -213,7 +213,7 @@ class HappyTransformer:
             formatted_ranked_scores.append({'word': word, 'score': score})
         return formatted_ranked_scores
 
-    def _softmax(self, value):
+    def __softmax(self, value):
         # TODO: make it an external function
         return value.exp() / (value.exp().sum(-1)).unsqueeze(-1)
 
