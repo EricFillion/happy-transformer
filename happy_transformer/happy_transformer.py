@@ -191,7 +191,7 @@ class HappyTransformer:
             formatted_ranked_scores.append({'word': word, 'score': score})
         return formatted_ranked_scores
 
-    def _softmax(self, value):
+    def __softmax(self, value):
         # TODO: make it an external function
         return value.exp() / (value.exp().sum(-1)).unsqueeze(-1)
 

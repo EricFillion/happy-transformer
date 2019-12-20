@@ -29,4 +29,4 @@ class HappyBERT(HappyTransformer):
         """
         BERT's "_get_prediction_softmax" is the default in HappyTransformer
         """
-        super()._get_prediction_softmax(text)
+        return super()._get_prediction_softmax(text)
