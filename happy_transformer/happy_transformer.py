@@ -103,14 +103,18 @@ class HappyTransformer:
         tupled_predictions = tuple(zip(options, scores))
 
         if self.model == "XLNET": # TODO find other models that also require this
-            tupled_predictions = self.__remove_one_eighth_block(tupled_predictions)
+            tupled_predictions = self.__remove_staring_character(tupled_predictions, "▁")
+        if self.model == "RoBERTa":
+            tupled_predictions = self.__remove_staring_character(tupled_predictions, "Ġ")
+
 
         if self.gpu_support == "cuda":
             torch.cuda.empty_cache()
 
         return self.__format_option_scores(tupled_predictions)
 
-    def __remove_one_eighth_block(self, tupled_predictions):
+
+    def __remove_staring_character(self, tupled_predictions, starting_char):
         """
         Some cased models like XLNet place a "▁" character in front of lower cased predictions.
         For most applications this extra bit of information is irrelevant.
@@ -118,12 +122,13 @@ class HappyTransformer:
         :param tupled_predictions: A list that contains tuples where the first index is
                                 the name of the prediction and the second index is the
                                 prediction's softmax
-        :return: a new list of tuples where the prediction's name does not contains a "▁" character
+        ;param staring_char: The special character that is placed at the start of the predicted word
+        :return: a new list of tuples where the prediction's name does not contains a special starting character
         """
         new_predictions = list()
         for prediction in tupled_predictions:
             word_prediction = prediction[0]
-            if word_prediction[0] == "▁":
+            if word_prediction[0] == starting_char:
                 new_prediction = (word_prediction[1:], prediction[1])
                 new_predictions.append(new_prediction)
             else:
