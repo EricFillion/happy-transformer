@@ -27,28 +27,6 @@ class HappyBERT(HappyTransformer):
 
     def _get_prediction_softmax(self, text: str):
         """
-        Gets the softmaxes of the predictions for each index in the the given
-        input string.
-        Returned tensor will be in shape:
-            [1, <tokens in string>, <possible options for token>]
-
-        :param text: a tokenized string to be used by the transformer.
-        :return: a tensor of the softmaxes of the predictions of the
-                 transformer
+        BERT's "_get_prediction_softmax" is the default in HappyTransformer
         """
-        segments_ids = self._get_segment_ids(text)
-        indexed_tokens = self.tokenizer.convert_tokens_to_ids(text)
-
-
-        # Convert inputs to PyTorch tensors
-        tokens_tensor = torch.tensor([indexed_tokens])
-        segments_tensors = torch.tensor([segments_ids])
-
-
-        with torch.no_grad():
-            outputs = self.transformer(tokens_tensor,
-                                       token_type_ids=segments_tensors)
-            predictions = outputs[0]
-            softmax = self._softmax(predictions)
-
-            return softmax
+        return super()._get_prediction_softmax(text)
