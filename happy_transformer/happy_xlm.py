@@ -1,3 +1,5 @@
+"""
+We will finish HappyXLM in January 2020
 # pylint: disable=W0511
 from transformers import XLMWithLMHeadModel, XLMTokenizer
 
@@ -5,12 +7,12 @@ from happy_transformer.happy_transformer import HappyTransformer
 
 
 class HappyXLM(HappyTransformer):
-    """
+    \"""
     Implementation of XLM for masked word prediction
     masked_token = '<special1>'
     sep_token =  '</s>'
     cls_token =  '</s>'
-    """
+    \"""
 
     def __init__(self, model='xlm-mlm-en-2048', initial_transformers=[]):
         super().__init__(model, initial_transformers)
@@ -22,8 +24,9 @@ class HappyXLM(HappyTransformer):
         self.model = 'XLM'
 
     def _get_masked_language_model(self):
-        """
+        \"""
         Initializes the XLMWithLMHeadModel transformer
-        """
+        \"""
         self.mlm = XLMWithLMHeadModel.from_pretrained(self.model_to_use)
         self.mlm.eval()
+"""
