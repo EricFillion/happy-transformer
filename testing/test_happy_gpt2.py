@@ -1,6 +1,9 @@
+"""
+We will finish HappyGPT2 in January 2020
+
 # disable pylint TODO warning
 # pylint: disable=W0511
-""" Testing module for HappyGPT2"""
+\""" Testing module for HappyGPT2\"""
 import pytest
 
 from happy_transformer.happy_gpt2 import HappyGPT2
@@ -12,10 +15,10 @@ from testing.standard_test_data import test_data
                          [test_data[0]['data'], test_data[1]['data']],
                          ids=[test_data[0]['id'], test_data[1]['id']])
 def test_predict_mask(tests):
-    """
+    \"""
     Tests the method predict_mask in HappyGPT2()
     :param tests: A set of 10 tests to run
-    """
+    \"""
     # TODO make the return token from test_predict_mask a string
     # TODO create a test for probs
     model = HappyGPT2()
@@ -39,3 +42,4 @@ def test_predict_mask(tests):
         print('Incorrect sentences:')
         for sentence in incorrect_sentences:
             print(sentence)
+"""

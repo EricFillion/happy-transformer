@@ -1,3 +1,5 @@
+"""
+We will finish HappyGPT2 in January 2020
 # pylint: disable=W0511
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
 
@@ -17,11 +19,12 @@ class HappyGPT2(HappyTransformer):
         self.model = 'GPT2'
 
     def _get_masked_language_model(self):
-        """
+        \"""
         Initializes the GPT2LMHeadModel transformer
-        """
+        \"""
         self.mlm = GPT2LMHeadModel.from_pretrained(self.model_to_use)
         self.mlm.eval()
 
     def _get_segment_ids(self, tokenized_text):
         return [0] * len(tokenized_text)
+"""
