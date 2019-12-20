@@ -23,9 +23,11 @@ class HappyTransformer:
                 models to be able to utilize their capabilities.
     """
 
-    def __init__(self):
+    def __init__(self, model, initial_transformers=[]):
         # Transformer and tokenizer set in child class
-        self.transformer = None
+        self.mlm = None  # Masked Language Model
+        self.nsp = None  # Next Sentence Prediction
+        self.model_to_use = model
         self.tokenizer = None
         # Child class sets to indicate which model is being used
         self.model = ''
@@ -35,6 +37,24 @@ class HappyTransformer:
         self.gpu_support = torch.device("cuda" if torch.cuda.is_available()
                                         else "cpu")
         print("Using model:", self.gpu_support)
+        self.__get_initial_transformers(initial_transformers)
+
+    def __get_initial_transformers(self, initial_transformers):
+        for transformer in initial_transformers:
+            if transformer == 'mlm':
+                self._get_masked_language_model()
+            if transformer == 'nsp':
+                self._get_next_sentence_prediction()
+
+    def _get_masked_language_model(self):
+        # Must be overloaded
+        # TODO make an exception to be thrown if not overloaded
+        pass
+
+    def _get_next_sentence_prediction(self):
+        # Must be overloaded
+        # TODO make an exception to be thrown if not overloaded
+        pass
 
     def predict_mask(self, text: str, options=None, k=1):
         """
@@ -53,7 +73,9 @@ class HappyTransformer:
 
         NOTE: If no options are given, the returned list will be length 1
         """
-        
+        if self.mlm is None:
+            self._get_masked_language_model()
+
         if self.model in self.tag_one_transformers:
             text = text.replace("<mask>", "[MASK]")
             text = text.replace("<MASK>", "[MASK]")
@@ -164,7 +186,7 @@ class HappyTransformer:
         segments_tensors = torch.tensor([segments_ids])
 
         with torch.no_grad():
-            outputs = self.transformer(tokens_tensor,
+            outputs = self.mlm(tokens_tensor,
                                        token_type_ids=segments_tensors)
             predictions = outputs[0]
 
@@ -226,6 +248,9 @@ class HappyTransformer:
                                     be predicted
         :return: the completed sentence
         """
+        if self.mlm is None:
+            self._get_masked_language_model()
+
         father_predict = ""
         grand_father_predict = ""
 
@@ -262,6 +287,34 @@ class HappyTransformer:
             valid = False
 
         return valid
+
+    def is_next_sentence(self, a, b):
+        """
+        Determines if sentence B is likely to be a continuation after sentence
+        A.
+
+        :param a: First sentence
+        :param b: Second sentence to test if it comes after the first
+        :return tuple: True if b is likely to follow a, False if b is unlikely
+                       to follow a, with the probabilities as the second item
+                       of the tuple
+        """
+        if self.nsp is None:
+            self._get_next_sentence_prediction()
+        connected = a + ' ' + b
+        tokenized_text = self.__get_tokenized_text(connected)
+        indexed_tokens = self.tokenizer.convert_tokens_to_ids(tokenized_text)
+        segments_ids = self._get_segment_ids(tokenized_text)
+        # Convert inputs to PyTorch tensors
+        tokens_tensor = torch.tensor([indexed_tokens])
+        segments_tensors = torch.tensor([segments_ids])
+        with torch.no_grad():
+            predictions = self.nsp(tokens_tensor, token_type_ids=segments_tensors)[0]
+        softmax = self._softmax(predictions)
+        if torch.argmax(softmax) == 0:
+            return (True, softmax)
+        else:
+            return (False, softmax)
 
     @staticmethod
     def soft_sum(option: list, softed, mask_id: int):
