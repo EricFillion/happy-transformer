@@ -9,8 +9,8 @@ easier to use.
 """
 import string
 import re
-import torch
 import numpy as np
+import torch
 
 
 class HappyTransformer:
@@ -315,7 +315,7 @@ class HappyTransformer:
         segments_tensors = torch.tensor([segments_ids])
         with torch.no_grad():
             predictions = self.nsp(tokens_tensor, token_type_ids=segments_tensors)[0]
-        softmax = self._softmax(predictions)
+        softmax = self.__softmax(predictions)
         if torch.argmax(softmax) == 0:
             return (True, softmax)
         else:
