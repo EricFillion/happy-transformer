@@ -1,5 +1,4 @@
 from __future__ import absolute_import, division, print_function
-
 import glob
 import logging
 import os
@@ -41,24 +40,22 @@ logger = logging.getLogger(__name__)
 
 class SequenceClassifier():
 
-
-
     def __init__(self, args):
         self.args = args
         self.processor = None
         self.device = None
-        self.run_sequence_classifier()
 
-
-    def run_sequence_classifier(self):
-
-        MODEL_CLASSES = {
+        self.model_classes = {
             'bert': (BertConfig, BertForSequenceClassification, BertTokenizer),
             'xlnet': (XLNetConfig, XLNetForSequenceClassification, XLNetTokenizer),
             'xlm': (XLMConfig, XLMForSequenceClassification, XLMTokenizer),
             'roberta': (RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer)
         }
 
+        self.run_sequence_classifier()
+
+
+    def run_sequence_classifier(self):
 
         with open('args.json', 'w') as f:
             json.dump(self.args, f)
@@ -70,7 +67,7 @@ class SequenceClassifier():
                     self.args['output_dir']))
 
 
-        config_class, model_class, tokenizer_class = MODEL_CLASSES[self.args['model_type']]
+        config_class, model_class, tokenizer_class = self.model_classes[self.args['model_type']]
 
         config = config_class.from_pretrained(self.args['model_name'], num_labels=2, finetuning_task=self.args['task_name'])
         tokenizer = tokenizer_class.from_pretrained(self.args['model_name'])
@@ -78,7 +75,7 @@ class SequenceClassifier():
         model = model_class.from_pretrained(self.args['model_name'])
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        model.to(device);
+        model.to(device)
 
         task = self.args['task_name']
 
@@ -130,7 +127,7 @@ class SequenceClassifier():
         output_mode = self.args['output_mode']
 
         mode = 'dev' if evaluate else 'train'
-        cached_features_file = os.path.join(self.args['data_dir'],
+        cached_features_file = os.path.join(self.args['cache_dir'],
                                             f"cached_{mode}_{self.args['model_name']}_{self.args['max_seq_length']}_{task}")
 
         if os.path.exists(cached_features_file) and not self.args['reprocess_input_data']:
@@ -138,7 +135,7 @@ class SequenceClassifier():
             features = torch.load(cached_features_file)
 
         else:
-            logger.info("Creating features from dataset file at %s", self.args['data_dir'])
+            logger.info("Creating features from dataset file at %s", self.args['cache_dir'])
             label_list = processor.get_labels()
             examples = processor.get_dev_examples(self.args['data_dir']) if evaluate else processor.get_train_examples(
                 self.args['data_dir'])
@@ -280,6 +277,8 @@ class SequenceClassifier():
 
 
     def get_eval_report(self, labels, preds):
+        print("labels: ", labels)
+        print("preds", preds)
         mcc = matthews_corrcoef(labels, preds)
         tn, fp, fn, tp = confusion_matrix(labels, preds).ravel()
         return {

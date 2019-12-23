@@ -261,14 +261,15 @@ output_modes = {
 
 
 classifier_args = {
+    'classifier_name': 'HappyTransformer',
     'data_dir': 'data/',
     'model_type':  'xlnet',
     'model_name': 'xlnet-base-cased',
     'task_name': 'binary',
     'output_dir': 'outputs/',
     'cache_dir': 'cache/',
-    'do_train': True, # was true
-    'do_eval': True,
+    'do_train': False, # was true
+    'do_eval': False, # was true
     'fp16': False,
     'fp16_opt_level': 'O1',
     'max_seq_length': 128,
