@@ -94,15 +94,24 @@ class DataProcessor(object):
 class BinaryProcessor(DataProcessor):
     """Processor for the binary data sets"""
 
-    def get_train_examples(self, data_dir):
+    def get_train_examples(self, data):
         """See base class."""
-        return self._create_examples(
-            self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
 
-    def get_dev_examples(self, data_dir):
-        """See base class."""
-        return self._create_examples(
-            self._read_tsv(os.path.join(data_dir, "dev.tsv")), "dev")
+
+        return self._create_examples(data , "train")
+
+
+        # print(self._read_tsv(os.path.join(data_dir, "train.tsv")))
+        # print(type(self._read_tsv(os.path.join(data_dir, "train.tsv"))))
+        #
+        # return self._create_examples(
+        #     self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
+
+    def get_dev_examples(self, data):
+            """See base class."""
+            return self._create_examples(data, "dev")
+
+
 
     def get_labels(self):
         """See base class."""
@@ -270,6 +279,7 @@ classifier_args = {
     'cache_dir': 'cache/',
     'do_train': False, # was true
     'do_eval': False, # was true
+    'do_test': False,
     'fp16': False,
     'fp16_opt_level': 'O1',
     'max_seq_length': 128,
@@ -293,4 +303,5 @@ classifier_args = {
     'overwrite_output_dir': True,
     'reprocess_input_data': True,
     'notes': 'HappyTransformer'
+
 }
