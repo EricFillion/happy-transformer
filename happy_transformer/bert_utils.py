@@ -1,3 +1,4 @@
+import logging
 import os
 import random
 
@@ -8,6 +9,12 @@ from tqdm import trange
 from tqdm.notebook import tqdm_notebook
 from transformers import AdamW, BertForMaskedLM, BertTokenizer
 from transformers import WarmupLinearSchedule as get_linear_schedule_with_warmup
+
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
+                    datefmt='%m/%d/%Y %H:%M:%S',
+                    level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 
 class TextDataset(Dataset):
@@ -92,6 +99,8 @@ def train(train_dataset, model, tokenizer, batch_size=1, lr=5e-5, adam_epsilon=1
     # ToDo Case for fp16
 
     # Start of training loop
+    logger.info("***** Running training *****")
+
     model.train()
     global_step = 0
     tr_loss, logging_loss = 0.0, 0.0
@@ -118,6 +127,7 @@ def train(train_dataset, model, tokenizer, batch_size=1, lr=5e-5, adam_epsilon=1
             model.zero_grad()
             global_step += 1
 
+    logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
     model_directory = save_model(model, tokenizer, 'model')
     logger.info("Model saved at %s", model_directory)
 
@@ -212,3 +222,4 @@ def evaluate(model, tokenizer, eval_dataset, batch_size=1):
         logger.info("  %s = %s", key, str(result[key]))
 
     return result
+
