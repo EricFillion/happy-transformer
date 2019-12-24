@@ -50,7 +50,7 @@ class HappyBERT(HappyTransformer):
         return super()._get_prediction_softmax(text)
 
     @staticmethod
-    def fine_tune(self):
+    def fine_tune(self, train_path, test_path):
         logger = logging.getLogger(__name__)
         self._get_masked_language_model()
         logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
@@ -60,7 +60,7 @@ class HappyBERT(HappyTransformer):
                               else "cpu")
         self.mlm.resize_token_embeddings(len(self.tokenizer))
         self.mlm.cuda()
-        train_dataset = load_and_cache_examples(self.tokenizer, file_path='train/wiki.train2.raw')
+        train_dataset = load_and_cache_examples(self.tokenizer, file_path=train_path)
         logger.info("Training Started")
         global_step, tr_loss = train(train_dataset, self.mlm, self.tokenizer)
         logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
@@ -68,5 +68,5 @@ class HappyBERT(HappyTransformer):
         logger.info("Eval Started")
         model, tokenizer = switch_to_new('model')
         model.cuda()
-        test_dataset = load_and_cache_examples(tokenizer, file_path='test/wiki.test.raw')
+        test_dataset = load_and_cache_examples(tokenizer, file_path=test_path)
         return evaluate(model, tokenizer, test_dataset)
