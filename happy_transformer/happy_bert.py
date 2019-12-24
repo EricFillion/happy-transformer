@@ -2,12 +2,10 @@
 HappyBERT
 """
 
-import logging
 
 # disable pylint TODO warning
 # pylint: disable=W0511
 # FineTuning Parts
-from happy_transformer.bert_utils import train, switch_to_new, load_and_cache_examples, evaluate
 from happy_transformer.happy_transformer import HappyTransformer
 from transformers import BertForMaskedLM, BertForNextSentencePrediction, BertTokenizer
 
@@ -49,21 +47,15 @@ class HappyBERT(HappyTransformer):
 
     @staticmethod
     def fine_tune(train_path, test_path):
-        logger = logging.getLogger(__name__)
+        from happy_transformer.bert_utils import train, switch_to_new, load_and_cache_examples, evaluate
         model = BertForMaskedLM.from_pretrained('bert-base-uncased')
         tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-        logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
-                            datefmt='%m/%d/%Y %H:%M:%S',
-                            level=logging.INFO)
-
         model.resize_token_embeddings(len(tokenizer))
+        # Start Train
         model.cuda()
         train_dataset = load_and_cache_examples(tokenizer, file_path=train_path)
-        logger.info("Training Started")
-        global_step, tr_loss = train(train_dataset, model, tokenizer)
-        logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
+        train(train_dataset, model, tokenizer)
         # Start Eval
-        logger.info("Eval Started")
         model, tokenizer = switch_to_new('model')
         model.cuda()
         test_dataset = load_and_cache_examples(tokenizer, file_path=test_path)
