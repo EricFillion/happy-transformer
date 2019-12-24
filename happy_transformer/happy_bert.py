@@ -6,7 +6,6 @@ import logging
 
 # disable pylint TODO warning
 # pylint: disable=W0511
-import torch
 # FineTuning Parts
 from happy_transformer.bert_utils import train, switch_to_new, load_and_cache_examples, evaluate
 from happy_transformer.happy_transformer import HappyTransformer
@@ -56,8 +55,7 @@ class HappyBERT(HappyTransformer):
         logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                             datefmt='%m/%d/%Y %H:%M:%S',
                             level=logging.INFO)
-        device = torch.device("cuda" if torch.cuda.is_available()
-                              else "cpu")
+
         model.resize_token_embeddings(len(tokenizer))
         model.cuda()
         train_dataset = load_and_cache_examples(tokenizer, file_path=train_path)

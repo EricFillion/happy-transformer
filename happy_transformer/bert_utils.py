@@ -101,8 +101,8 @@ def train(train_dataset, model, tokenizer, batch_size=1, lr=5e-5, adam_epsilon=1
         epoch_iterator = tqdm(train_dataloader, desc="Iteration")
         for batch in epoch_iterator:
             inputs, labels = mask_tokens(batch, tokenizer)
-            inputs = inputs.to(device)  # Don't bother if you don't have a gpu
-            labels = labels.to(device)
+            inputs = inputs.to('cuda')  # Don't bother if you don't have a gpu
+            labels = labels.to('cuda')
 
             outputs = model(inputs, masked_lm_labels=labels)
             loss = outputs[0]  # model outputs are always tuple in transformers (see doc)
@@ -189,8 +189,8 @@ def evaluate(model, tokenizer, eval_dataset, batch_size=1):
 
     for batch in tqdm(eval_dataloader, desc='Evaluating'):
         inputs, labels = mask_tokens(batch, tokenizer)
-        inputs = inputs.to(device)
-        labels = labels.to(device)
+        inputs = inputs.to('cuda')
+        labels = labels.to('cuda')
         model.eval()
 
         with torch.no_grad():
