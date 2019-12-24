@@ -44,16 +44,19 @@ class SequenceClassifier():
         self.args = args
         self.processor = None
         self.device = None
-
+        self.train_dataset = None
+        self.eval_dataset = None
         self.model_classes = {
             'bert': (BertConfig, BertForSequenceClassification, BertTokenizer),
             'xlnet': (XLNetConfig, XLNetForSequenceClassification, XLNetTokenizer),
             'xlm': (XLMConfig, XLMForSequenceClassification, XLMTokenizer),
             'roberta': (RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer)
         }
-
         self.run_sequence_classifier()
-
+        self.train_list_data = None
+        self.eval_list_data = None
+        self.features = False
+        self.features_exists = False
 
     def run_sequence_classifier(self):
 
@@ -87,7 +90,10 @@ class SequenceClassifier():
             raise KeyError(f'{task} not found in processors or in output_modes. Please check utils.py.')
 
         if self.args['do_train']:
-            train_dataset = self.load_and_cache_examples(task, tokenizer)
+            train_dataset = self.train_dataset
+
+            print("train dataset: ", train_dataset)
+            print(type(train_dataset))
             global_step, tr_loss = self.train(train_dataset, model, tokenizer)
             logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
 
@@ -120,52 +126,6 @@ class SequenceClassifier():
 
         print(results)
 
-
-    def load_and_cache_examples(self, task, tokenizer, evaluate=False):
-        global processor
-        processor = processors[task]()
-        output_mode = self.args['output_mode']
-
-        mode = 'dev' if evaluate else 'train'
-        cached_features_file = os.path.join(self.args['cache_dir'],
-                                            f"cached_{mode}_{self.args['model_name']}_{self.args['max_seq_length']}_{task}")
-
-        if os.path.exists(cached_features_file) and not self.args['reprocess_input_data']:
-            logger.info("Loading features from cached file %s", cached_features_file)
-            features = torch.load(cached_features_file)
-
-        else:
-            logger.info("Creating features from dataset file at %s", self.args['cache_dir'])
-            label_list = processor.get_labels()
-            examples = processor.get_dev_examples(self.args['data_dir']) if evaluate else processor.get_train_examples(
-                self.args['data_dir'])
-
-            #if __name__ == "__main__":
-            features = convert_examples_to_features(examples, label_list, self.args['max_seq_length'], tokenizer, output_mode,
-                                                    cls_token_at_end=bool(self.args['model_type'] in ['xlnet']),
-                                                    # xlnet has a cls token at the end
-                                                    cls_token=tokenizer.cls_token,
-                                                    cls_token_segment_id=2 if self.args['model_type'] in ['xlnet'] else 0,
-                                                    sep_token=tokenizer.sep_token,
-                                                    sep_token_extra=bool(self.args['model_type'] in ['roberta']),
-                                                    # roberta uses an extra separator b/w pairs of sentences, cf. github.com/pytorch/fairseq/commit/1684e166e3da03f5b600dbb7855cb98ddfcd0805
-                                                    pad_on_left=bool(self.args['model_type'] in ['xlnet']),
-                                                    # pad on the left for xlnet
-                                                    pad_token=tokenizer.convert_tokens_to_ids([tokenizer.pad_token])[0],
-                                                    pad_token_segment_id=4 if self.args['model_type'] in ['xlnet'] else 0)
-            logger.info("Saving features into cached file %s", cached_features_file)
-            torch.save(features, cached_features_file)
-
-        all_input_ids = torch.tensor([f.input_ids for f in features], dtype=torch.long)
-        all_input_mask = torch.tensor([f.input_mask for f in features], dtype=torch.long)
-        all_segment_ids = torch.tensor([f.segment_ids for f in features], dtype=torch.long)
-        if output_mode == "classification":
-            all_label_ids = torch.tensor([f.label_id for f in features], dtype=torch.long)
-        elif output_mode == "regression":
-            all_label_ids = torch.tensor([f.label_id for f in features], dtype=torch.float)
-
-        dataset = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_label_ids)
-        return dataset
 
 
     def train(self, train_dataset, model, tokenizer):
@@ -270,7 +230,8 @@ class SequenceClassifier():
     def get_mismatched(self, labels, preds):
         global processor
         mismatched = labels != preds
-        examples = processor.get_dev_examples(self.args['data_dir'])
+        #examples = self.processor.get_dev_examples(self.args['data_dir'])
+        examples = self.processor.get_dev_examples(self.eval_list_data)
         wrong = [i for (i, v) in zip(examples, mismatched) if v]
 
         return wrong
@@ -302,7 +263,7 @@ class SequenceClassifier():
         results = {}
         EVAL_TASK = self.args['task_name']
 
-        eval_dataset = self.load_and_cache_examples(EVAL_TASK, tokenizer, evaluate=True)
+        eval_dataset = self.eval_dataset
         if not os.path.exists(eval_output_dir):
             os.makedirs(eval_output_dir)
 
