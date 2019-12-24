@@ -2,12 +2,16 @@
 HappyBERT
 """
 
+import logging
+
 # disable pylint TODO warning
 # pylint: disable=W0511
 import torch
+from happy_transformer.happy_transformer import HappyTransformer
 from transformers import BertForMaskedLM, BertForNextSentencePrediction, BertTokenizer
 
-from happy_transformer.happy_transformer import HappyTransformer
+# FineTuning Parts
+from bert_utils import train, switch_to_new, load_and_cache_examples, evaluate
 
 
 class HappyBERT(HappyTransformer):
@@ -44,3 +48,25 @@ class HappyBERT(HappyTransformer):
         BERT's "_get_prediction_softmax" is the default in HappyTransformer
         """
         return super()._get_prediction_softmax(text)
+
+    @staticmethod
+    def fine_tune(self):
+        logger = logging.getLogger(__name__)
+        self._get_masked_language_model()
+        logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
+                            datefmt='%m/%d/%Y %H:%M:%S',
+                            level=logging.INFO)
+        device = torch.device("cuda" if torch.cuda.is_available()
+                              else "cpu")
+        self.mlm.resize_token_embeddings(len(self.tokenizer))
+        self.mlm.cuda()
+        train_dataset = load_and_cache_examples(self.tokenizer, file_path='train/wiki.train2.raw')
+        logger.info("Training Started")
+        global_step, tr_loss = train(train_dataset, self.mlm, self.tokenizer)
+        logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
+        # Start Eval
+        logger.info("Eval Started")
+        model, tokenizer = switch_to_new('model')
+        model.cuda()
+        test_dataset = load_and_cache_examples(tokenizer, file_path='test/wiki.test.raw')
+        return evaluate(model, tokenizer, test_dataset)
