@@ -48,7 +48,6 @@ class HappyBERT(HappyTransformer):
         """
         return super()._get_prediction_softmax(text)
 
-    @staticmethod
     def fine_tune(self, train_path, test_path):
         logger = logging.getLogger(__name__)
         self._get_masked_language_model()
