@@ -7,11 +7,10 @@ import logging
 # disable pylint TODO warning
 # pylint: disable=W0511
 import torch
+# FineTuning Parts
+from happy_transformer.bert_utils import train, switch_to_new, load_and_cache_examples, evaluate
 from happy_transformer.happy_transformer import HappyTransformer
 from transformers import BertForMaskedLM, BertForNextSentencePrediction, BertTokenizer
-
-# FineTuning Parts
-from bert_utils import train, switch_to_new, load_and_cache_examples, evaluate
 
 
 class HappyBERT(HappyTransformer):
