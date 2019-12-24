@@ -4,7 +4,8 @@ import random
 import numpy as np
 import torch
 from torch.utils.data import DataLoader, Dataset, SequentialSampler, RandomSampler
-from tqdm import tqdm, trange
+from tqdm import trange
+from tqdm.notebook import tqdm_notebook
 from transformers import AdamW, BertForMaskedLM, BertTokenizer
 from transformers import WarmupLinearSchedule as get_linear_schedule_with_warmup
 
@@ -98,7 +99,7 @@ def train(train_dataset, model, tokenizer, batch_size=1, lr=5e-5, adam_epsilon=1
     model.zero_grad()
     train_iterator = trange(int(epochs), desc="Epoch")
     for _ in train_iterator:
-        epoch_iterator = tqdm(train_dataloader, desc="Iteration")
+        epoch_iterator = tqdm_notebook(train_dataloader, desc="Iteration")
         for batch in epoch_iterator:
             inputs, labels = mask_tokens(batch, tokenizer)
             inputs = inputs.to('cuda')  # Don't bother if you don't have a gpu
@@ -187,7 +188,7 @@ def evaluate(model, tokenizer, eval_dataset, batch_size=1):
 
     # Evaluation loop
 
-    for batch in tqdm(eval_dataloader, desc='Evaluating'):
+    for batch in tqdm_notebook(eval_dataloader, desc='Evaluating'):
         inputs, labels = mask_tokens(batch, tokenizer)
         inputs = inputs.to('cuda')
         labels = labels.to('cuda')
