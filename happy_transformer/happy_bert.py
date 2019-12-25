@@ -2,7 +2,6 @@
 HappyBERT
 """
 
-
 # disable pylint TODO warning
 # pylint: disable=W0511
 # FineTuning Parts
@@ -46,17 +45,19 @@ class HappyBERT(HappyTransformer):
         return super()._get_prediction_softmax(text)
 
     @staticmethod
-    def fine_tune(train_path, test_path):
-        from happy_transformer.bert_utils import train, switch_to_new, load_and_cache_examples, evaluate
+    def fine_tune(train_path, test_path, batch_size=1, epochs=1, lr=5e-5, adam_epsilon=1e-8):
+        from happy_transformer.bert_utils import (train, switch_to_new, create_dataset, evaluate)
         model = BertForMaskedLM.from_pretrained('bert-base-uncased')
         tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-        model.resize_token_embeddings(len(tokenizer))
+        model.resize_token_embeddings(len(tokenizer))  # To make sure embedding size agrees with the tokenizer
+
         # Start Train
         model.cuda()
-        train_dataset = load_and_cache_examples(tokenizer, file_path=train_path)
-        train(train_dataset, model, tokenizer)
+        train_dataset = create_dataset(tokenizer, file_path=train_path)
+        train(train_dataset, model, tokenizer, batch_size=batch_size, epochs=epochs, lr=lr, adam_epsilon=adam_epsilon)
+
         # Start Eval
         model, tokenizer = switch_to_new('model')
         model.cuda()
-        test_dataset = load_and_cache_examples(tokenizer, file_path=test_path)
+        test_dataset = create_dataset(tokenizer, file_path=test_path, batch_size=2)
         return evaluate(model, tokenizer, test_dataset)
