@@ -16,7 +16,6 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message
 logger = logging.getLogger(__name__)
 
 
-
 class TextDataset(Dataset):
     """
     Used to turn .txt file into a suitable dataset object
@@ -42,8 +41,6 @@ class TextDataset(Dataset):
 def set_seed(seed=42):
     """
     Sets seed for all random number generators available.
-    :param seed:
-    :return:
     """
     random.seed(seed)
     np.random.seed(seed)
@@ -80,7 +77,19 @@ def mask_tokens(inputs, tokenizer):
     return inputs, labels
 
 
-def train(train_dataset, model, tokenizer, batch_size=1, lr=5e-5, adam_epsilon=1e-8, epochs=1):
+def train(model, tokenizer, train_dataset, batch_size, lr, adam_epsilon, epochs):
+    """
+
+    :param model: Bert Model to train
+    :param tokenizer: Bert Tokenizer to train
+    :param train_dataset:
+    :param batch_size: Stick to 1 if not using using a high end GPU
+    :param lr: Suggested learning rate from paper is 5e-5
+    :param adam_epsilon: Used for weight decay fixed suggested parameter is 1e-8
+    :param epochs: Usually a single pass through the entire dataset is satisfactory
+    :return: Loss
+    """
+
     train_sampler = RandomSampler(train_dataset)
     train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=batch_size)
 
@@ -90,7 +99,7 @@ def train(train_dataset, model, tokenizer, batch_size=1, lr=5e-5, adam_epsilon=1
     no_decay = ['bias', 'LayerNorm.weight']
     optimizer_grouped_parameters = [
         {'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
-         'weight_decay': 0.0},
+         'weight_decay': 0.01},
         {'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
     ]
     optimizer = AdamW(optimizer_grouped_parameters, lr=lr, eps=adam_epsilon)
@@ -100,6 +109,8 @@ def train(train_dataset, model, tokenizer, batch_size=1, lr=5e-5, adam_epsilon=1
 
     # Start of training loop
     logger.info("***** Running training *****")
+    logger.info("  Num examples = %d", len(train_dataset))
+    logger.info("  Batch size = %d", batch_size)
 
     model.train()
     global_step = 0
@@ -139,15 +150,15 @@ def save_model(model: object, tokenizer: object, output_dir: str):
     Saves the model and the tokenizer to the specified output
     directory.
 
-    :param model:
-    :param tokenizer:
-    :param output_dir:
-    :return:
+    :param model: Newly trained bert model
+    :param tokenizer: Newly trained bert tokenizer
+    :param output_dir: Location of model and tokenizer
+    :return: Location of model and tokenizer
     """
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-    saved_model = model.save_pretrained(output_dir)
-    saved_tokenizer = tokenizer.save_pretrained(output_dir)
+    model.save_pretrained(output_dir)
+    tokenizer.save_pretrained(output_dir)
     return output_dir
 
 
@@ -157,35 +168,35 @@ def switch_to_new(output_dir):
     directory.
 
     :param output_dir:
-    :return:
+    :return: New model and tokenizer
     """
     model = BertForMaskedLM.from_pretrained(output_dir)
     tokenizer = BertTokenizer.from_pretrained(output_dir)
     return model, tokenizer
 
 
-def load_and_cache_examples(tokenizer, file_path, block_size=512):
+def create_dataset(tokenizer, file_path, block_size=512):
     """
     Creates a dataset object from file path.
-    :param tokenizer:
-    :param file_path:
-    :param block_size:
-    :return:
+    :param tokenizer: Bert tokenizer to create dataset
+    :param file_path: Path where data is stored
+    :param block_size: Should be in range of [0,512], viable choices are 64, 128, 256, 512
+    :return: The dataset
     """
     dataset = TextDataset(tokenizer, file_path=file_path, block_size=block_size)
     return dataset
 
 
-def evaluate(model, tokenizer, eval_dataset, batch_size=1):
+def evaluate(model, tokenizer, eval_dataset, batch_size):
     """
 
-    :param model:
-    :param tokenizer:
+    :param model: Newly trained Bert model
+    :param tokenizer:Newly trained Bert tokenizer
     :param eval_dataset:
-    :param batch_size:
-    :return:
+    :param batch_size: More flexible than training, the user can get away with picking a higher batch_size
+    :return: The perplexity of the dataset
     """
-    eval_sampler = SequentialSampler(eval_dataset)
+    eval_sampler = SequentialSampler(eval_dataset)  # Same order samplinng
     eval_dataloader = DataLoader(eval_dataset, sampler=eval_sampler, batch_size=batch_size)
 
     # Eval!
@@ -202,7 +213,6 @@ def evaluate(model, tokenizer, eval_dataset, batch_size=1):
         inputs, labels = mask_tokens(batch, tokenizer)
         inputs = inputs.to('cuda')
         labels = labels.to('cuda')
-        model.eval()
 
         with torch.no_grad():
             outputs = model(inputs, masked_lm_labels=labels)
@@ -222,4 +232,3 @@ def evaluate(model, tokenizer, eval_dataset, batch_size=1):
         logger.info("  %s = %s", key, str(result[key]))
 
     return result
-
