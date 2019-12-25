@@ -23,7 +23,7 @@ class HappyTransformer:
                 models to be able to utilize their capabilities.
     """
 
-    def __init__(self, model, initial_transformers=[]):
+    def __init__(self, model):
         # Transformer and tokenizer set in child class
         self.mlm = None  # Masked Language Model
         self.nsp = None  # Next Sentence Prediction
@@ -321,6 +321,7 @@ class HappyTransformer:
         segments_tensors = torch.tensor([segments_ids])
         with torch.no_grad():
             predictions = self.nsp(tokens_tensor, token_type_ids=segments_tensors)[0]
+        print(type(predictions))
         softmax = self.__softmax(predictions)
         if torch.argmax(softmax) == 0:
             return (True, softmax)
