@@ -59,5 +59,5 @@ class HappyBERT(HappyTransformer):
         # Start Eval
         model, tokenizer = switch_to_new('model')
         model.cuda()
-        test_dataset = create_dataset(tokenizer, file_path=test_path, batch_size=2)
+        test_dataset = create_dataset(tokenizer, file_path=test_path)
         return evaluate(model, tokenizer, test_dataset, batch_size=2)
