@@ -40,7 +40,7 @@ logger = logging.getLogger(__name__)
 
 class SequenceClassifier():
 
-    def __init__(self, args):
+    def __init__(self, args, tokenizer):
         self.args = args
         self.processor = None
         self.device = None
@@ -52,13 +52,19 @@ class SequenceClassifier():
             'xlm': (XLMConfig, XLMForSequenceClassification, XLMTokenizer),
             'roberta': (RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer)
         }
-        self.run_sequence_classifier()
         self.train_list_data = None
         self.eval_list_data = None
         self.features = False
         self.features_exists = False
+        self.tokenizer = tokenizer
 
     def run_sequence_classifier(self):
+
+        if self.args["do_train"]:
+
+            self.train_dataset = self.load_and_cache_examples(task="binary", tokenizer=self.tokenizer, evaluate=False)
+        else:
+            self.eval_dataset = self.load_and_cache_examples(task="binary", tokenizer=self.tokenizer, evaluate=True)
 
         with open('args.json', 'w') as f:
             json.dump(self.args, f)
@@ -126,10 +132,7 @@ class SequenceClassifier():
 
         print(results)
 
-
-
     def train(self, train_dataset, model, tokenizer):
-        global processor
 
         tb_writer = SummaryWriter()
 
@@ -316,3 +319,61 @@ class SequenceClassifier():
                 writer.write("%s = %s\n" % (key, str(result[key])))
 
         return results, wrong
+
+
+
+    def load_and_cache_examples(self, task, tokenizer, evaluate):
+
+        logging.basicConfig(level=logging.INFO)
+        logger = logging.getLogger(__name__)
+
+        self.processor = processors[task]()
+        output_mode = self.args['output_mode']
+
+        if not self.features_exists and not self.args['reprocess_input_data']:
+            logger.info("Loading features from cached file %s")
+
+
+        else:
+            self.features_exists = True
+            logger.info("Creating features from dataset file at %s", self.args['cache_dir'])
+            label_list = self.processor.get_labels()
+
+            if evaluate:
+                examples = self.processor.get_dev_examples(self.eval_list_data)
+            else:
+
+                examples = self.processor.get_train_examples(self.train_list_data)
+
+
+            print("examples: ", examples)
+            print(type(examples))
+
+            # if __name__ == "__main__":
+            self.features = convert_examples_to_features(examples, label_list, self.args['max_seq_length'], tokenizer,
+                                                    output_mode,
+                                                    cls_token_at_end=bool(self.args['model_type'] in ['xlnet']),
+                                                    # xlnet has a cls token at the end
+                                                    cls_token=tokenizer.cls_token,
+                                                    cls_token_segment_id=2 if self.args['model_type'] in [
+                                                        'xlnet'] else 0,
+                                                    sep_token=tokenizer.sep_token,
+                                                    sep_token_extra=bool(self.args['model_type'] in ['roberta']),
+                                                    # roberta uses an extra separator b/w pairs of sentences, cf. github.com/pytorch/fairseq/commit/1684e166e3da03f5b600dbb7855cb98ddfcd0805
+                                                    pad_on_left=bool(self.args['model_type'] in ['xlnet']),
+                                                    # pad on the left for xlnet
+                                                    pad_token=tokenizer.convert_tokens_to_ids([tokenizer.pad_token])[0],
+                                                    pad_token_segment_id=4 if self.args['model_type'] in [
+                                                        'xlnet'] else 0)
+
+        all_input_ids = torch.tensor([f.input_ids for f in self.features], dtype=torch.long)
+        all_input_mask = torch.tensor([f.input_mask for f in self.features], dtype=torch.long)
+        all_segment_ids = torch.tensor([f.segment_ids for f in self.features], dtype=torch.long)
+        all_label_ids = None
+        if output_mode == "classification":
+            all_label_ids = torch.tensor([f.label_id for f in self.features], dtype=torch.long)
+        elif output_mode == "regression":
+            all_label_ids = torch.tensor([f.label_id for f in self.features], dtype=torch.float)
+
+        dataset = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_label_ids)
+        return dataset

@@ -27,6 +27,7 @@ class HappyTransformer:
         # Transformer and tokenizer set in child class
         self.mlm = None  # Masked Language Model
         self.nsp = None  # Next Sentence Prediction
+        self.sc = None   # Sequence Classification
         self.model_to_use = model
         self.tokenizer = None
         # Child class sets to indicate which model is being used
@@ -45,6 +46,8 @@ class HappyTransformer:
                 self._get_masked_language_model()
             if transformer == 'nsp':
                 self._get_next_sentence_prediction()
+            if transformer == "sc":
+                self._get_sequence_classification_model()
 
     def _get_masked_language_model(self):
         # Must be overloaded
@@ -320,6 +323,7 @@ class HappyTransformer:
             return (True, softmax)
         else:
             return (False, softmax)
+
 
     @staticmethod
     def soft_sum(option: list, softed, mask_id: int):
