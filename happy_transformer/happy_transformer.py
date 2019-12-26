@@ -5,19 +5,20 @@
 """
 HappyTransformer is a wrapper over pytorch_transformers to make it
 easier to use.
-
 """
 import string
 import re
 import numpy as np
 import torch
 
+from happy_transformer.classifier_utils import classifier_args
+from happy_transformer.sequence_classification import SequenceClassifier
+
 
 class HappyTransformer:
     """
     Initializes pytroch's transformer models and provided methods for
     their basic functionality.
-
     Philosophy: Automatically make decisions for the user so that they don't
                 have to have any understanding of PyTorch or transformer
                 models to be able to utilize their capabilities.
@@ -27,6 +28,7 @@ class HappyTransformer:
         # Transformer and tokenizer set in child class
         self.mlm = None  # Masked Language Model
         self.nsp = None  # Next Sentence Prediction
+        self.seq = None
         self.sc = None   # Sequence Classification
         self.model_to_use = model
         self.tokenizer = None
@@ -39,6 +41,12 @@ class HappyTransformer:
                                         else "cpu")
         print("Using model:", self.gpu_support)
         self.__get_initial_transformers(initial_transformers)
+
+        self.model_version = model
+        self.seq_trained = False
+        self.seq_args = None
+
+
 
     def __get_initial_transformers(self, initial_transformers):
         for transformer in initial_transformers:
@@ -62,18 +70,15 @@ class HappyTransformer:
     def predict_mask(self, text: str, options=None, k=1):
         """
         Method to predict what the masked token in the given text string is.
-
         NOTE: This is the generic version of this predict_mask method. If a
         child class needs a different implementation they should overload this
         method, not create a new method.
-
         :param text: a string with a masked token within it
         :param options: list of options that the mask token may be [optional]
         :param k: the number of options to output if no output list is given
                   [optional]
         :return: list of dictionaries containing the predicted token(s) and
                  their corresponding score(s).
-
         NOTE: If no options are given, the returned list will be length 1
         """
         if self.mlm is None:
@@ -121,7 +126,6 @@ class HappyTransformer:
         """
         Some cased models like XLNet place a "▁" character in front of lower cased predictions.
         For most applications this extra bit of information is irrelevant.
-
         :param tupled_predictions: A list that contains tuples where the first index is
                                 the name of the prediction and the second index is the
                                 prediction's softmax
@@ -141,7 +145,6 @@ class HappyTransformer:
     def __get_tokenized_text(self, text):
         """
         Formats a sentence so that it can be tokenized by a transformer.
-
         :param text: a 1-2 sentence text that contains [MASK]
         :return: A string with the same sentence that contains the required
                  tokens for the transformer
@@ -181,7 +184,6 @@ class HappyTransformer:
         input string.
         Returned tensor will be in shape:
             [1, <tokens in string>, <possible options for token>]
-
         :param text: a tokenized string to be used by the transformer.
         :return: a tensor of the softmaxes of the predictions of the
                  transformer
@@ -208,7 +210,6 @@ class HappyTransformer:
         the first element in the list is the option with the highest score.
         Dictionary will be in the form:
              {'word': <the option>, 'score': <score for the option>}
-
         :param: ranked_scores: list of tuples to be converted into user
                 friendly dicitonary
         :return: formatted_ranked_scores: list of dictionaries of the ranked
@@ -230,7 +231,6 @@ class HappyTransformer:
         Converts a list of tokens into segment_ids. The segment id is a array
         representation of the location for each character in the
         first and second sentence. This method only words with 1-2 sentences.
-
         Example:
         tokenized_text = ['[CLS]', 'who', 'was', 'jim', 'henson', '?', '[SEP]',
                           'jim', '[MASK]', 'was', 'a', 'puppet', '##eer',
@@ -250,7 +250,6 @@ class HappyTransformer:
 
     def finish_sentence(self, text: str, maxPredictionLength=100):
         """
-
         :param text: a string that is the start of a sentence to be finished
         :param maxPredictionLength: an int with the maximum number of words to
                                     be predicted
@@ -286,7 +285,7 @@ class HappyTransformer:
             valid = False
         if '<mask>' in text or '<MASK>' in text:
             print('Instead of using <mask> or <MASK>, use [MASK] please as it is the convention')
-            valid = True 
+            valid = True
         if '[CLS]' in text:
             print("[CLS] was found in your string.  Remove it as it will be automatically added later")
             valid = False
@@ -300,7 +299,6 @@ class HappyTransformer:
         """
         Determines if sentence B is likely to be a continuation after sentence
         A.
-
         :param a: First sentence
         :param b: Second sentence to test if it comes after the first
         :return tuple: True if b is likely to follow a, False if b is unlikely
@@ -340,3 +338,54 @@ class HappyTransformer:
         """
         # Collects the softmax of all tokens in list
         return np.sum([softed[mask_id][op] for op in option])
+
+
+
+
+    def _init_sequence_classifier(self, classifier_name: str):
+
+        #TODO Test the sequence classifier with other models
+        if self.model == "XLNET":
+            self.seq_args = classifier_args.copy()
+            self.classifier_name = classifier_name
+            self.seq_args['classifier_name'] = classifier_name
+            self.seq_args['model_name'] = classifier_name
+            self.seq_args['model_name'] = self.model_version
+            self.seq_args['output_dir'] = "outputs/" + classifier_name
+            self.seq_args['cache_dir'] = "cache/" + classifier_name
+            self.seq_args['data_dir'] = "data/" + classifier_name
+            self.seq = SequenceClassifier(self.seq_args, self.tokenizer)
+            self.seq.tokenizer = self.tokenizer
+            print(self.classifier_name, "has been initialized")
+        else:
+            print("Sequence classifier is not available for", self.model)
+
+    def _train_sequence_classifier(self, train_df):
+        if self.seq == None:
+            print("First initialize the sequence classifier")
+            return
+        #  self.seq.train_tsv = train_df.to_csv(sep='\t', index=True, header=False, columns=train_df.columns)
+        train_df = train_df.astype("str")
+        self.seq.train_list_data = train_df.values.tolist()
+
+        self.seq_args["do_train"] = True
+        self.seq.run_sequence_classifier()
+        self.seq_args["do_train"] = False
+        self.seq_trained = True
+
+        print("Training for ", self.classifier_name, "has been completed")
+
+
+    def _eval_sequence_classifier(self, eval_df):
+        if self.seq_trained == False:
+            print("First train the sequence classifier")
+            return
+        eval_df = eval_df.astype("str")
+
+
+        self.seq.eval_list_data = eval_df.values.tolist()
+
+        self.seq_args["do_eval"] = True
+        self.seq.run_sequence_classifier()
+        self.seq_args["do_eval"] = False
+        print("Evaluation for ", self.classifier_name, "has been completed")
