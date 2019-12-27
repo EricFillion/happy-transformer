@@ -2,15 +2,12 @@ from __future__ import absolute_import, division, print_function
 import glob
 import logging
 import os
-import random
-import json
 import math
 import numpy as np
 import torch
 from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
                               TensorDataset)
-import random
-from torch.utils.data.distributed import DistributedSampler
+
 from tqdm import tqdm_notebook, trange
 
 from tensorboardX import SummaryWriter
@@ -23,14 +20,11 @@ from pytorch_transformers import (WEIGHTS_NAME, BertConfig, BertForSequenceClass
 
 from pytorch_transformers import AdamW, WarmupLinearSchedule
 
-from sklearn.metrics import mean_squared_error, matthews_corrcoef, confusion_matrix
-from scipy.stats import pearsonr
+
 
 from sklearn.metrics import mean_squared_error, matthews_corrcoef, confusion_matrix
-from scipy.stats import pearsonr
 
 from happy_transformer.classifier_utils import convert_examples_to_features, output_modes, processors
-import ipywidgets
 
 
 
@@ -61,47 +55,37 @@ class SequenceClassifier():
     def run_sequence_classifier(self):
 
         if self.args["do_train"]:
-
             self.train_dataset = self.load_and_cache_examples(task="binary", tokenizer=self.tokenizer, evaluate=False)
         else:
             self.eval_dataset = self.load_and_cache_examples(task="binary", tokenizer=self.tokenizer, evaluate=True)
 
-        with open('args.json', 'w') as f:
-            json.dump(self.args, f)
-
         if os.path.exists(self.args['output_dir']) and os.listdir(self.args['output_dir']) and self.args['do_train'] and not self.args[
             'overwrite_output_dir']:
             raise ValueError(
-                "Output directory ({}) already exists and is not empty. Use --overwrite_output_dir to overcome.".format(
+                "Output directory ({}) already exists and is not empty. Use set \"overwrite_output_dir\" to true to overcome.".format(
                     self.args['output_dir']))
 
 
         config_class, model_class, tokenizer_class = self.model_classes[self.args['model_type']]
 
-        config = config_class.from_pretrained(self.args['model_name'], num_labels=2, finetuning_task=self.args['task_name'])
         tokenizer = tokenizer_class.from_pretrained(self.args['model_name'])
 
         model = model_class.from_pretrained(self.args['model_name'])
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        model.to(device)
+        model.to(self.args['device'])
 
         task = self.args['task_name']
 
         if task in processors.keys() and task in output_modes.keys():
-            processor = processors[task]()
-            label_list = processor.get_labels()
-            num_labels = len(label_list)
+            self.processor = processors[task]()
         else:
             raise KeyError(f'{task} not found in processors or in output_modes. Please check utils.py.')
 
         if self.args['do_train']:
             train_dataset = self.train_dataset
 
-            print("train dataset: ", train_dataset)
-            print(type(train_dataset))
-            global_step, tr_loss = self.train(train_dataset, model, tokenizer)
-            logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
+
+            self.train(train_dataset, model, tokenizer)
 
         if self.args['do_train']:
             if not os.path.exists(self.args['output_dir']):
@@ -121,16 +105,15 @@ class SequenceClassifier():
                 checkpoints = list(os.path.dirname(c) for c in
                                    sorted(glob.glob(self.args['output_dir'] + '/**/' + WEIGHTS_NAME, recursive=True)))
                 logging.getLogger("pytorch_transformers.modeling_utils").setLevel(logging.WARN)  # Reduce logging
-            logger.info("Evaluate the following checkpoints: %s", checkpoints)
             for checkpoint in checkpoints:
                 global_step = checkpoint.split('-')[-1] if len(checkpoints) > 1 else ""
                 model = model_class.from_pretrained(checkpoint)
-                model.to(device)
+                model.to(self.args['device'])
                 result, wrong_preds = self.evaluate(model, tokenizer, prefix=global_step)
                 result = dict((k + '_{}'.format(global_step), v) for k, v in result.items())
                 results.update(result)
 
-        print(results)
+        return results
 
     def train(self, train_dataset, model, tokenizer):
 
@@ -162,11 +145,6 @@ class SequenceClassifier():
             model, optimizer = amp.initialize(model, optimizer, opt_level=self.args['fp16_opt_level'])
 
         logger.info("***** Running training *****")
-        logger.info("  Num examples = %d", len(train_dataset))
-        logger.info("  Num Epochs = %d", self.args['num_train_epochs'])
-        logger.info("  Total train batch size  = %d", self.args['train_batch_size'])
-        logger.info("  Gradient Accumulation steps = %d", self.args['gradient_accumulation_steps'])
-        logger.info("  Total optimization steps = %d", t_total)
 
         global_step = 0
         tr_loss, logging_loss = 0.0, 0.0
@@ -227,13 +205,11 @@ class SequenceClassifier():
                         model_to_save.save_pretrained(output_dir)
                         logger.info("Saving model checkpoint to %s", output_dir)
 
-        return global_step, tr_loss / global_step
 
 
     def get_mismatched(self, labels, preds):
         global processor
         mismatched = labels != preds
-        #examples = self.processor.get_dev_examples(self.args['data_dir'])
         examples = self.processor.get_dev_examples(self.eval_list_data)
         wrong = [i for (i, v) in zip(examples, mismatched) if v]
 
@@ -241,12 +217,9 @@ class SequenceClassifier():
 
 
     def get_eval_report(self, labels, preds):
-        print("labels: ", labels)
-        print("preds", preds)
-        mcc = matthews_corrcoef(labels, preds)
+
         tn, fp, fn, tp = confusion_matrix(labels, preds).ravel()
         return {
-                   "mcc": mcc,
                    "tp": tp,
                    "tn": tn,
                    "fp": fp,
@@ -275,8 +248,6 @@ class SequenceClassifier():
 
         # Eval!
         logger.info("***** Running evaluation {} *****".format(prefix))
-        logger.info("  Num examples = %d", len(eval_dataset))
-        logger.info("  Batch size = %d", self.args['eval_batch_size'])
         eval_loss = 0.0
         nb_eval_steps = 0
         preds = None
@@ -336,7 +307,6 @@ class SequenceClassifier():
 
         else:
             self.features_exists = True
-            logger.info("Creating features from dataset file at %s", self.args['cache_dir'])
             label_list = self.processor.get_labels()
 
             if evaluate:
@@ -345,11 +315,6 @@ class SequenceClassifier():
 
                 examples = self.processor.get_train_examples(self.train_list_data)
 
-
-            print("examples: ", examples)
-            print(type(examples))
-
-            # if __name__ == "__main__":
             self.features = convert_examples_to_features(examples, label_list, self.args['max_seq_length'], tokenizer,
                                                     output_mode,
                                                     cls_token_at_end=bool(self.args['model_type'] in ['xlnet']),
@@ -377,3 +342,7 @@ class SequenceClassifier():
 
         dataset = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_label_ids)
         return dataset
+
+
+
+

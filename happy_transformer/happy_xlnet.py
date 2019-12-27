@@ -39,5 +39,3 @@ class HappyXLNET(HappyTransformer):
         """
         self.mlm = XLNetLMHeadModel.from_pretrained(self.model_to_use)
         self.mlm.eval()
-
-
