@@ -88,11 +88,11 @@ class SequenceClassifier():
         self.logger.info("Saving model checkpoint to %s", self.args['output_dir'])
 
         model_to_save = self.model.module if hasattr(self.model,'module') else self.model  # Take care of distributed/parallel training
+        # self.model = self.model.module if hasattr(self.model,'module') else self.model  # Take care of distributed/parallel training
 
         model_to_save.save_pretrained(self.args['output_dir'])
-        # self.model = model_to_save
-        self.tokenizer.save_pretrained(self.args['output_dir'])
-        torch.save(self.args, os.path.join(self.args['output_dir'], 'training_self.args.bin'))
+
+
 
     def eval_model(self):
         self.eval_dataset = self.load_and_cache_examples(task="binary", tokenizer=self.tokenizer, evaluate=True)
@@ -104,8 +104,8 @@ class SequenceClassifier():
             logging.getLogger("pytorch_transformers.modeling_utils").setLevel(logging.WARN)  # Reduce logging
         for checkpoint in checkpoints:
             global_step = checkpoint.split('-')[-1] if len(checkpoints) > 1 else ""
-            model = self.model_class.from_pretrained(checkpoint)
-            # model = self.model
+            # model = self.model_class.from_pretrained(checkpoint)
+            model = self.model
             self.model.to(self.args['device'])
             result, wrong_preds = self.evaluate(model, self.tokenizer, prefix=global_step)
             result = dict((k + '_{}'.format(global_step), v) for k, v in result.items())
