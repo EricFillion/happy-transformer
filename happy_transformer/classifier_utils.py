@@ -101,12 +101,6 @@ class BinaryProcessor(DataProcessor):
         return self._create_examples(data , "train")
 
 
-        # print(self._read_tsv(os.path.join(data_dir, "train.tsv")))
-        # print(type(self._read_tsv(os.path.join(data_dir, "train.tsv"))))
-        #
-        # return self._create_examples(
-        #     self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
-
     def get_dev_examples(self, data):
             """See base class."""
             return self._create_examples(data, "dev")
@@ -271,12 +265,9 @@ output_modes = {
 
 classifier_args = {
     'classifier_name': 'HappyTransformer',
-    'data_dir': 'data/',
     'model_type':  'xlnet',
     'model_name': 'xlnet-base-cased',
     'task_name': 'binary',
-    'output_dir': 'outputs/',
-    'cache_dir': 'cache/',
     'do_train': False, # was true
     'do_eval': False, # was true
     'do_test': False,
@@ -300,8 +291,9 @@ classifier_args = {
     'save_steps': 2000,
     'eval_all_checkpoints': True,
 
-    'overwrite_output_dir': True,
+    'overwrite_output_dir': False,
     'reprocess_input_data': True,
-    'notes': 'HappyTransformer'
+    'notes': 'HappyTransformer',
+    'device': 'cpu',
 
 }

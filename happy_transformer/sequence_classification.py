@@ -51,18 +51,10 @@ class SequenceClassifier():
         self.logger = logging.getLogger(__name__)
         self.model_class = self.model_classes[self.args['model_type']]
         self.model = self.model_class.from_pretrained(self.args['model_name'])
-
         self.model.to(self.args['device'])
 
 
     def run_sequence_classifier(self):
-
-        if os.path.exists(self.args['output_dir']) and os.listdir(self.args['output_dir']) and self.args['do_train'] and not self.args[
-            'overwrite_output_dir']:
-            raise ValueError(
-                "Output directory ({}) already exists and is not empty. Use set \"overwrite_output_dir\" to true to overcome.".format(
-                    self.args['output_dir']))
-
 
         task = self.args['task_name']
 
@@ -71,64 +63,34 @@ class SequenceClassifier():
         else:
             raise KeyError(f'{task} not found in processors or in output_modes. Please check utils.py.')
 
-
         if self.args['do_train']:
             self.train_model()
 
         if self.args['do_eval']:
-            return self.eval_model()
+            self.eval_dataset = self.load_and_cache_examples(task="binary", evaluate=True, tokenizer=self.tokenizer)
+
+            result, wrong_preds = self.evaluate()
+            result = dict((k + '_{}'.format(""), v) for k, v in result.items())
+
+            return result
 
 
     def train_model(self):
         self.train_dataset = self.load_and_cache_examples(task="binary", tokenizer=self.tokenizer, evaluate=False)
-        self.train(self.train_dataset)
-        if not os.path.exists(self.args['output_dir']):
-            os.makedirs(self.args['output_dir'])
-        self.logger.info("Saving model checkpoint to %s", self.args['output_dir'])
+        self.train()
 
         model_to_save = self.model.module if hasattr(self.model,'module') else self.model  # Take care of distributed/parallel training
 
-        # self.model = self.model.module if hasattr(self.model,'module') else self.model  # Take care of distributed/parallel training
 
-        model_to_save.save_pretrained(self.args['output_dir'])
         self.model = model_to_save # new
 
 
-    def eval_model(self):
-        self.eval_dataset = self.load_and_cache_examples(task="binary", evaluate=True, tokenizer= self.tokenizer)
-        checkpoints = [self.args['output_dir']]
-        results = {}
-        print("checkpints: ", checkpoints)
-        print(type(checkpoints))
-        print(len(checkpoints))
-        print("[0]")
-
-        print(checkpoints[0])
-        print(type(checkpoints[0]))
-
-
-
-        if self.args['eval_all_checkpoints']:
-            checkpoints = list(os.path.dirname(c) for c in
-                               sorted(glob.glob(self.args['output_dir'] + '/**/' + WEIGHTS_NAME, recursive=True)))
-
-            logging.getLogger("pytorch_transformers.modeling_utils").setLevel(logging.WARN)  # Reduce logging
-        for checkpoint in checkpoints:
-            print("here")
-            global_step = checkpoint.split('-')[-1] if len(checkpoints) > 1 else ""
-            self.model.to(self.args['device'])
-
-            result, wrong_preds = self.evaluate()
-            result = dict((k + '_{}'.format(global_step), v) for k, v in result.items())
-            results.update(result)
-            return results
-
-    def train(self, train_dataset):
+    def train(self):
 
         tb_writer = SummaryWriter()
 
-        train_sampler = RandomSampler(train_dataset)
-        train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=self.args['train_batch_size'])
+        train_sampler = RandomSampler(self.train_dataset)
+        train_dataloader = DataLoader(self.train_dataset, sampler=train_sampler, batch_size=self.args['train_batch_size'])
 
         t_total = len(train_dataloader) // self.args['gradient_accumulation_steps'] * self.args['num_train_epochs']
 
@@ -203,16 +165,6 @@ class SequenceClassifier():
                         tb_writer.add_scalar('loss', (tr_loss - logging_loss) / self.args['logging_steps'], global_step)
                         logging_loss = tr_loss
 
-                    if self.args['save_steps'] > 0 and global_step % self.args['save_steps'] == 0:
-                        # Save model checkpoint
-                        output_dir = os.path.join(self.args['output_dir'], 'checkpoint-{}'.format(global_step))
-                        if not os.path.exists(output_dir):
-                            os.makedirs(output_dir)
-                        model_to_save = self.model.module if hasattr(self.model,
-                                                                'module') else self.model  # Take care of distributed/parallel training
-                        model_to_save.save_pretrained(output_dir)
-                        self.logger.info("Saving model checkpoint to %s", output_dir)
-
 
 
     def get_mismatched(self, labels, preds):
@@ -242,13 +194,11 @@ class SequenceClassifier():
 
     def evaluate(self):
         # Loop to handle MNLI double evaluation (matched, mis-matched)
-        # eval_output_dir = self.args['output_dir']
 
         results = {}
         EVAL_TASK = self.args['task_name']
 
-        #if not os.path.exists(eval_output_dir):
-        #    os.makedirs(eval_output_dir)
+
 
         eval_sampler = SequentialSampler(self.eval_dataset)
         eval_dataloader = DataLoader(self.eval_dataset, sampler=eval_sampler, batch_size=self.args['eval_batch_size'])

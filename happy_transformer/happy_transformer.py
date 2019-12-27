@@ -342,7 +342,7 @@ class HappyTransformer:
 
 
 
-    def init_sequence_classifier(self, classifier_name: str, output_dir):
+    def init_sequence_classifier(self, classifier_name: str):
 
         #TODO Test the sequence classifier with other models
         if self.model == "XLNET":
@@ -350,7 +350,6 @@ class HappyTransformer:
             self.classifier_name = classifier_name
             self.seq_args['classifier_name'] = classifier_name
             self.seq_args['model_name'] = self.model_version
-            self.seq_args['output_dir'] = output_dir
             self.seq_args['device'] = self.gpu_support
             self.seq = SequenceClassifier(self.seq_args, self.tokenizer)
             print(self.classifier_name, "has been initialized")
