@@ -13,23 +13,18 @@ from tqdm import tqdm_notebook, trange
 from tensorboardX import SummaryWriter
 
 
-from pytorch_transformers import (WEIGHTS_NAME, BertConfig, BertForSequenceClassification, BertTokenizer,
-                                  XLMConfig, XLMForSequenceClassification, XLMTokenizer,
-                                  XLNetConfig, XLNetForSequenceClassification, XLNetTokenizer,
-                                  RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer)
+from pytorch_transformers import (WEIGHTS_NAME, BertForSequenceClassification,
+                                XLMForSequenceClassification,
+                                XLNetForSequenceClassification,
+                                RobertaForSequenceClassification)
 
 from pytorch_transformers import AdamW, WarmupLinearSchedule
 
 
 
-from sklearn.metrics import mean_squared_error, matthews_corrcoef, confusion_matrix
+from sklearn.metrics import confusion_matrix
 
 from happy_transformer.classifier_utils import convert_examples_to_features, output_modes, processors
-
-
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 
 class SequenceClassifier():
@@ -41,10 +36,10 @@ class SequenceClassifier():
         self.train_dataset = None
         self.eval_dataset = None
         self.model_classes = {
-            'bert': (BertConfig, BertForSequenceClassification, BertTokenizer),
-            'xlnet': (XLNetConfig, XLNetForSequenceClassification, XLNetTokenizer),
-            'xlm': (XLMConfig, XLMForSequenceClassification, XLMTokenizer),
-            'roberta': (RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer)
+            'bert': (BertForSequenceClassification),
+            'xlnet': (XLNetForSequenceClassification),
+            'xlm': (XLMForSequenceClassification),
+            'roberta': (RobertaForSequenceClassification)
         }
         self.train_list_data = None
         self.eval_list_data = None
@@ -52,12 +47,16 @@ class SequenceClassifier():
         self.features_exists = False
         self.tokenizer = tokenizer
 
+        logging.basicConfig(level=logging.INFO)
+        self.logger = logging.getLogger(__name__)
+        self.model_class = self.model_classes[self.args['model_type']]
+        self.model = self.model_class.from_pretrained(self.args['model_name'])
+
+        self.model.to(self.args['device'])
+
+
     def run_sequence_classifier(self):
 
-        if self.args["do_train"]:
-            self.train_dataset = self.load_and_cache_examples(task="binary", tokenizer=self.tokenizer, evaluate=False)
-        else:
-            self.eval_dataset = self.load_and_cache_examples(task="binary", tokenizer=self.tokenizer, evaluate=True)
 
         if os.path.exists(self.args['output_dir']) and os.listdir(self.args['output_dir']) and self.args['do_train'] and not self.args[
             'overwrite_output_dir']:
@@ -66,14 +65,6 @@ class SequenceClassifier():
                     self.args['output_dir']))
 
 
-        config_class, model_class, tokenizer_class = self.model_classes[self.args['model_type']]
-
-        tokenizer = tokenizer_class.from_pretrained(self.args['model_name'])
-
-        model = model_class.from_pretrained(self.args['model_name'])
-
-        model.to(self.args['device'])
-
         task = self.args['task_name']
 
         if task in processors.keys() and task in output_modes.keys():
@@ -81,39 +72,45 @@ class SequenceClassifier():
         else:
             raise KeyError(f'{task} not found in processors or in output_modes. Please check utils.py.')
 
-        if self.args['do_train']:
-            train_dataset = self.train_dataset
-
-
-            self.train(train_dataset, model, tokenizer)
 
         if self.args['do_train']:
-            if not os.path.exists(self.args['output_dir']):
-                os.makedirs(self.args['output_dir'])
-            logger.info("Saving model checkpoint to %s", self.args['output_dir'])
+            self.train_model()
 
-            model_to_save = model.module if hasattr(model,
-                                                    'module') else model  # Take care of distributed/parallel training
-            model_to_save.save_pretrained(self.args['output_dir'])
-            tokenizer.save_pretrained(self.args['output_dir'])
-            torch.save(self.args, os.path.join(self.args['output_dir'], 'training_self.args.bin'))
-
-        results = {}
         if self.args['do_eval']:
-            checkpoints = [self.args['output_dir']]
-            if self.args['eval_all_checkpoints']:
-                checkpoints = list(os.path.dirname(c) for c in
-                                   sorted(glob.glob(self.args['output_dir'] + '/**/' + WEIGHTS_NAME, recursive=True)))
-                logging.getLogger("pytorch_transformers.modeling_utils").setLevel(logging.WARN)  # Reduce logging
-            for checkpoint in checkpoints:
-                global_step = checkpoint.split('-')[-1] if len(checkpoints) > 1 else ""
-                model = model_class.from_pretrained(checkpoint)
-                model.to(self.args['device'])
-                result, wrong_preds = self.evaluate(model, tokenizer, prefix=global_step)
-                result = dict((k + '_{}'.format(global_step), v) for k, v in result.items())
-                results.update(result)
+            return self.eval_model()
 
-        return results
+
+    def train_model(self):
+        self.train_dataset = self.load_and_cache_examples(task="binary", tokenizer=self.tokenizer, evaluate=False)
+        self.train(self.train_dataset, self.model, self.tokenizer)
+        if not os.path.exists(self.args['output_dir']):
+            os.makedirs(self.args['output_dir'])
+        self.logger.info("Saving model checkpoint to %s", self.args['output_dir'])
+
+        model_to_save = self.model.module if hasattr(self.model,'module') else self.model  # Take care of distributed/parallel training
+
+        model_to_save.save_pretrained(self.args['output_dir'])
+        # self.model = model_to_save
+        self.tokenizer.save_pretrained(self.args['output_dir'])
+        torch.save(self.args, os.path.join(self.args['output_dir'], 'training_self.args.bin'))
+
+    def eval_model(self):
+        self.eval_dataset = self.load_and_cache_examples(task="binary", tokenizer=self.tokenizer, evaluate=True)
+        checkpoints = [self.args['output_dir']]
+        results = {}
+        if self.args['eval_all_checkpoints']:
+            checkpoints = list(os.path.dirname(c) for c in
+                               sorted(glob.glob(self.args['output_dir'] + '/**/' + WEIGHTS_NAME, recursive=True)))
+            logging.getLogger("pytorch_transformers.modeling_utils").setLevel(logging.WARN)  # Reduce logging
+        for checkpoint in checkpoints:
+            global_step = checkpoint.split('-')[-1] if len(checkpoints) > 1 else ""
+            model = self.model_class.from_pretrained(checkpoint)
+            # model = self.model
+            model.to(self.args['device'])
+            result, wrong_preds = self.evaluate(model, self.tokenizer, prefix=global_step)
+            result = dict((k + '_{}'.format(global_step), v) for k, v in result.items())
+            results.update(result)
+            return results
 
     def train(self, train_dataset, model, tokenizer):
 
@@ -144,7 +141,7 @@ class SequenceClassifier():
                 raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use fp16 training.")
             model, optimizer = amp.initialize(model, optimizer, opt_level=self.args['fp16_opt_level'])
 
-        logger.info("***** Running training *****")
+        self.logger.info("***** Running training *****")
 
         global_step = 0
         tr_loss, logging_loss = 0.0, 0.0
@@ -203,7 +200,7 @@ class SequenceClassifier():
                         model_to_save = model.module if hasattr(model,
                                                                 'module') else model  # Take care of distributed/parallel training
                         model_to_save.save_pretrained(output_dir)
-                        logger.info("Saving model checkpoint to %s", output_dir)
+                        self.logger.info("Saving model checkpoint to %s", output_dir)
 
 
 
@@ -247,7 +244,7 @@ class SequenceClassifier():
         eval_dataloader = DataLoader(eval_dataset, sampler=eval_sampler, batch_size=self.args['eval_batch_size'])
 
         # Eval!
-        logger.info("***** Running evaluation {} *****".format(prefix))
+        self.logger.info("***** Running evaluation {} *****".format(prefix))
         eval_loss = 0.0
         nb_eval_steps = 0
         preds = None
@@ -274,7 +271,6 @@ class SequenceClassifier():
                 preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
                 out_label_ids = np.append(out_label_ids, inputs['labels'].detach().cpu().numpy(), axis=0)
 
-        eval_loss = eval_loss / nb_eval_steps
         if self.args['output_mode'] == "classification":
             preds = np.argmax(preds, axis=1)
         elif self.args['output_mode'] == "regression":
@@ -282,12 +278,7 @@ class SequenceClassifier():
         result, wrong = self.compute_metrics(EVAL_TASK, preds, out_label_ids)
         results.update(result)
 
-        output_eval_file = os.path.join(eval_output_dir, "eval_results.txt")
-        with open(output_eval_file, "w") as writer:
-            logger.info("***** Eval results {} *****".format(prefix))
-            for key in sorted(result.keys()):
-                logger.info("  %s = %s", key, str(result[key]))
-                writer.write("%s = %s\n" % (key, str(result[key])))
+
 
         return results, wrong
 
@@ -295,14 +286,12 @@ class SequenceClassifier():
 
     def load_and_cache_examples(self, task, tokenizer, evaluate):
 
-        logging.basicConfig(level=logging.INFO)
-        logger = logging.getLogger(__name__)
 
         self.processor = processors[task]()
         output_mode = self.args['output_mode']
 
         if not self.features_exists and not self.args['reprocess_input_data']:
-            logger.info("Loading features from cached file %s")
+            self.logger.info("Loading features from cached file %s")
 
 
         else:

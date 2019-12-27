@@ -342,41 +342,43 @@ class HappyTransformer:
 
 
 
-    def _init_sequence_classifier(self, classifier_name: str):
+    def init_sequence_classifier(self, classifier_name: str, output_dir):
 
         #TODO Test the sequence classifier with other models
         if self.model == "XLNET":
             self.seq_args = classifier_args.copy()
             self.classifier_name = classifier_name
             self.seq_args['classifier_name'] = classifier_name
-            self.seq_args['model_name'] = classifier_name
             self.seq_args['model_name'] = self.model_version
-            self.seq_args['output_dir'] = "outputs/" + classifier_name
-            self.seq_args['cache_dir'] = "cache/" + classifier_name
-            self.seq_args['data_dir'] = "data/" + classifier_name
+            self.seq_args['output_dir'] = output_dir
+            self.seq_args['device'] = self.gpu_support
             self.seq = SequenceClassifier(self.seq_args, self.tokenizer)
-            self.seq.tokenizer = self.tokenizer
+            print(self.classifier_name, "has been initialized")
+        else:
+            print("Sequence classifier is not available for", self.model)
+    def advanced_init_sequence_classifier(self, args):
+        if self.model == "XLNET":
+            self.seq = SequenceClassifier(args, self.tokenizer)
             print(self.classifier_name, "has been initialized")
         else:
             print("Sequence classifier is not available for", self.model)
 
-    def _train_sequence_classifier(self, train_df):
+    def train_sequence_classifier(self, train_df, overwrite_output_dir=False):
         if self.seq == None:
             print("First initialize the sequence classifier")
             return
         #  self.seq.train_tsv = train_df.to_csv(sep='\t', index=True, header=False, columns=train_df.columns)
         train_df = train_df.astype("str")
         self.seq.train_list_data = train_df.values.tolist()
-
+        self.seq_args["overwrite_output_dir"] = overwrite_output_dir
         self.seq_args["do_train"] = True
         self.seq.run_sequence_classifier()
         self.seq_args["do_train"] = False
         self.seq_trained = True
-
         print("Training for ", self.classifier_name, "has been completed")
 
 
-    def _eval_sequence_classifier(self, eval_df):
+    def eval_sequence_classifier(self, eval_df):
         if self.seq_trained == False:
             print("First train the sequence classifier")
             return
@@ -386,6 +388,7 @@ class HappyTransformer:
         self.seq.eval_list_data = eval_df.values.tolist()
 
         self.seq_args["do_eval"] = True
-        self.seq.run_sequence_classifier()
+        results = self.seq.run_sequence_classifier()
         self.seq_args["do_eval"] = False
         print("Evaluation for ", self.classifier_name, "has been completed")
+        return results
