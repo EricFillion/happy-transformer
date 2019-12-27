@@ -57,7 +57,6 @@ class SequenceClassifier():
 
     def run_sequence_classifier(self):
 
-
         if os.path.exists(self.args['output_dir']) and os.listdir(self.args['output_dir']) and self.args['do_train'] and not self.args[
             'overwrite_output_dir']:
             raise ValueError(
@@ -82,37 +81,49 @@ class SequenceClassifier():
 
     def train_model(self):
         self.train_dataset = self.load_and_cache_examples(task="binary", tokenizer=self.tokenizer, evaluate=False)
-        self.train(self.train_dataset, self.model, self.tokenizer)
+        self.train(self.train_dataset)
         if not os.path.exists(self.args['output_dir']):
             os.makedirs(self.args['output_dir'])
         self.logger.info("Saving model checkpoint to %s", self.args['output_dir'])
 
         model_to_save = self.model.module if hasattr(self.model,'module') else self.model  # Take care of distributed/parallel training
+
         # self.model = self.model.module if hasattr(self.model,'module') else self.model  # Take care of distributed/parallel training
 
         model_to_save.save_pretrained(self.args['output_dir'])
-
+        self.model = model_to_save # new
 
 
     def eval_model(self):
-        self.eval_dataset = self.load_and_cache_examples(task="binary", tokenizer=self.tokenizer, evaluate=True)
+        self.eval_dataset = self.load_and_cache_examples(task="binary", evaluate=True, tokenizer= self.tokenizer)
         checkpoints = [self.args['output_dir']]
         results = {}
+        print("checkpints: ", checkpoints)
+        print(type(checkpoints))
+        print(len(checkpoints))
+        print("[0]")
+
+        print(checkpoints[0])
+        print(type(checkpoints[0]))
+
+
+
         if self.args['eval_all_checkpoints']:
             checkpoints = list(os.path.dirname(c) for c in
                                sorted(glob.glob(self.args['output_dir'] + '/**/' + WEIGHTS_NAME, recursive=True)))
+
             logging.getLogger("pytorch_transformers.modeling_utils").setLevel(logging.WARN)  # Reduce logging
         for checkpoint in checkpoints:
+            print("here")
             global_step = checkpoint.split('-')[-1] if len(checkpoints) > 1 else ""
-            # model = self.model_class.from_pretrained(checkpoint)
-            model = self.model
             self.model.to(self.args['device'])
-            result, wrong_preds = self.evaluate(model, self.tokenizer, prefix=global_step)
+
+            result, wrong_preds = self.evaluate()
             result = dict((k + '_{}'.format(global_step), v) for k, v in result.items())
             results.update(result)
             return results
 
-    def train(self, train_dataset, model, tokenizer):
+    def train(self, train_dataset):
 
         tb_writer = SummaryWriter()
 
@@ -123,9 +134,9 @@ class SequenceClassifier():
 
         no_decay = ['bias', 'LayerNorm.weight']
         optimizer_grouped_parameters = [
-            {'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
+            {'params': [p for n, p in self.model.named_parameters() if not any(nd in n for nd in no_decay)],
              'weight_decay': self.args['weight_decay']},
-            {'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
+            {'params': [p for n, p in self.model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
         ]
 
         warmup_steps = math.ceil(t_total * self.args['warmup_ratio'])
@@ -139,26 +150,26 @@ class SequenceClassifier():
                 from apex import amp
             except ImportError:
                 raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use fp16 training.")
-            model, optimizer = amp.initialize(model, optimizer, opt_level=self.args['fp16_opt_level'])
+            self.model, optimizer = amp.initialize(self.model, optimizer, opt_level=self.args['fp16_opt_level'])
 
         self.logger.info("***** Running training *****")
 
         global_step = 0
         tr_loss, logging_loss = 0.0, 0.0
-        model.zero_grad()
+        self.model.zero_grad()
         train_iterator = trange(int(self.args['num_train_epochs']), desc="Epoch")
 
         for _ in train_iterator:
             epoch_iterator = tqdm_notebook(train_dataloader, desc="Iteration")
             for step, batch in enumerate(epoch_iterator):
-                model.train()
+                self.model.train()
                 batch = tuple(t.to(self.device) for t in batch)
                 inputs = {'input_ids': batch[0],
                           'attention_mask': batch[1],
                           'token_type_ids': batch[2] if self.args['model_type'] in ['bert', 'xlnet'] else None,
                           # XLM don't use segment_ids
                           'labels': batch[3]}
-                outputs = model(**inputs)
+                outputs = self.model(**inputs)
                 loss = outputs[0]  # model outputs are always tuple in pytorch-transformers (see doc)
                 print("\r%f" % loss, end='')
 
@@ -172,20 +183,20 @@ class SequenceClassifier():
 
                 else:
                     loss.backward()
-                    torch.nn.utils.clip_grad_norm_(model.parameters(), self.args['max_grad_norm'])
+                    torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.args['max_grad_norm'])
 
                 tr_loss += loss.item()
                 if (step + 1) % self.args['gradient_accumulation_steps'] == 0:
                     optimizer.step()
                     scheduler.step()  # Update learning rate schedule
-                    model.zero_grad()
+                    self.model.zero_grad()
                     global_step += 1
 
                     if self.args['logging_steps'] > 0 and global_step % self.args['logging_steps'] == 0:
                         # Log metrics
                         if self.args[
                             'evaluate_during_training']:  # Only evaluate when single GPU otherwise metrics may not average well
-                            results, _ = self.evaluate(model, tokenizer)
+                            results, _ = self.evaluate()
                             for key, value in results.items():
                                 tb_writer.add_scalar('eval_{}'.format(key), value, global_step)
                         tb_writer.add_scalar('lr', scheduler.get_lr()[0], global_step)
@@ -197,8 +208,8 @@ class SequenceClassifier():
                         output_dir = os.path.join(self.args['output_dir'], 'checkpoint-{}'.format(global_step))
                         if not os.path.exists(output_dir):
                             os.makedirs(output_dir)
-                        model_to_save = model.module if hasattr(model,
-                                                                'module') else model  # Take care of distributed/parallel training
+                        model_to_save = self.model.module if hasattr(self.model,
+                                                                'module') else self.model  # Take care of distributed/parallel training
                         model_to_save.save_pretrained(output_dir)
                         self.logger.info("Saving model checkpoint to %s", output_dir)
 
@@ -229,28 +240,27 @@ class SequenceClassifier():
         return self.get_eval_report(labels, preds)
 
 
-    def evaluate(self, model, tokenizer, prefix=""):
+    def evaluate(self):
         # Loop to handle MNLI double evaluation (matched, mis-matched)
-        eval_output_dir = self.args['output_dir']
+        # eval_output_dir = self.args['output_dir']
 
         results = {}
         EVAL_TASK = self.args['task_name']
 
-        eval_dataset = self.eval_dataset
-        if not os.path.exists(eval_output_dir):
-            os.makedirs(eval_output_dir)
+        #if not os.path.exists(eval_output_dir):
+        #    os.makedirs(eval_output_dir)
 
-        eval_sampler = SequentialSampler(eval_dataset)
-        eval_dataloader = DataLoader(eval_dataset, sampler=eval_sampler, batch_size=self.args['eval_batch_size'])
+        eval_sampler = SequentialSampler(self.eval_dataset)
+        eval_dataloader = DataLoader(self.eval_dataset, sampler=eval_sampler, batch_size=self.args['eval_batch_size'])
 
         # Eval!
-        self.logger.info("***** Running evaluation {} *****".format(prefix))
+        self.logger.info("***** Running evaluation *****")
         eval_loss = 0.0
         nb_eval_steps = 0
         preds = None
         out_label_ids = None
         for batch in tqdm_notebook(eval_dataloader, desc="Evaluating"):
-            model.eval()
+            self.model.eval()
             batch = tuple(t.to(self. device) for t in batch)
 
             with torch.no_grad():
@@ -259,7 +269,7 @@ class SequenceClassifier():
                           'token_type_ids': batch[2] if self.args['model_type'] in ['bert', 'xlnet'] else None,
                           # XLM don't use segment_ids
                           'labels': batch[3]}
-                outputs = model(**inputs)
+                outputs = self.model(**inputs)
                 tmp_eval_loss, logits = outputs[:2]
 
                 eval_loss += tmp_eval_loss.mean().item()
@@ -283,9 +293,7 @@ class SequenceClassifier():
         return results, wrong
 
 
-
     def load_and_cache_examples(self, task, tokenizer, evaluate):
-
 
         self.processor = processors[task]()
         output_mode = self.args['output_mode']
@@ -331,7 +339,3 @@ class SequenceClassifier():
 
         dataset = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_label_ids)
         return dataset
-
-
-
-
