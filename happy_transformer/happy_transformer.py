@@ -348,6 +348,7 @@ class HappyTransformer:
         if self.model == "XLNET":
             self.seq_args = classifier_args.copy()
             self.classifier_name = classifier_name
+            self.seq_args["model_type"] = self.model
             self.seq_args['classifier_name'] = classifier_name
             self.seq_args['model_name'] = self.model_version
             self.seq_args['gpu_support'] = self.gpu_support
@@ -403,7 +404,10 @@ class HappyTransformer:
         self.seq_args["task"] = "eval"
         results = self.seq.evaluate()
         self.seq_args["task"] = "idle"
-        print("Evaluation for ", self.classifier_name, "has been completed")
+        message = "Evaluation for "+ self.classifier_name+" has been completed"
+        self.seq.logger.info("%s", message)
+
+
         return results
 
 
@@ -421,5 +425,6 @@ class HappyTransformer:
         self.seq_args["task"] = "test"
         results = self.seq.test()
         self.seq_args["task"] = "idle"
-        print("Testing for ", self.classifier_name, "has been completed")
+        message = "Testing for "+ self.classifier_name+ " has been completed"
+        self.seq.logger.info("%s", message)
         return results

@@ -45,10 +45,10 @@ class SequenceClassifier():
         self.train_dataset = None
         self.eval_dataset = None
         self.model_classes = {
-            'bert': (BertForSequenceClassification),
-            'xlnet': (XLNetForSequenceClassification),
+            'BERT': (BertForSequenceClassification),
+            'XLNET': (XLNetForSequenceClassification),
             'xlm': (XLMForSequenceClassification),
-            'roberta': (RobertaForSequenceClassification)
+            'RoBERTa': (RobertaForSequenceClassification)
         }
         self.train_list_data = None
         self.eval_list_data = None
@@ -139,6 +139,7 @@ class SequenceClassifier():
             for step, batch in enumerate(epoch_iterator):
                 self.model.train()
                 batch = tuple(t.to(self.args['gpu_support']) for t in batch)
+
                 inputs = {'input_ids': batch[0],
                           'attention_mask': batch[1],
                           'token_type_ids': batch[2] if self.args['model_type'] in ['bert', 'xlnet'] else None,
@@ -237,10 +238,9 @@ class SequenceClassifier():
                 preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
                 out_label_ids = np.append(out_label_ids, inputs['labels'].detach().cpu().numpy(), axis=0)
 
-        if self.args['output_mode'] == "classification":
-            preds = np.argmax(preds, axis=1)
-        elif self.args['output_mode'] == "regression":
-            preds = np.squeeze(preds)
+
+        preds = np.argmax(preds, axis=1)
+
 
         result = self.__get_eval_report(out_label_ids, preds)
         results.update(result)
@@ -287,10 +287,8 @@ class SequenceClassifier():
             else:
                 preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
 
-        if self.args['output_mode'] == "classification":
-            preds = np.argmax(preds, axis=1)
-        elif self.args['output_mode'] == "regression":
-            preds = np.squeeze(preds)
+        preds = np.argmax(preds, axis=1)
+
 
         return preds.tolist()
 
@@ -300,7 +298,7 @@ class SequenceClassifier():
         :return: a TensorDataset for the requested task
         """
         self.processor = processors[self.args["task_mode"]]()
-        output_mode = self.args['output_mode']
+        output_mode = "classification"
 
         if not self.features_exists and not self.args['reprocess_input_data']:
             self.logger.info("Loading features from cached file %s")
@@ -335,11 +333,8 @@ class SequenceClassifier():
         all_input_ids = torch.tensor([f.input_ids for f in self.features], dtype=torch.long)
         all_input_mask = torch.tensor([f.input_mask for f in self.features], dtype=torch.long)
         all_segment_ids = torch.tensor([f.segment_ids for f in self.features], dtype=torch.long)
-        all_label_ids = None
-        if output_mode == "classification":
-            all_label_ids = torch.tensor([f.label_id for f in self.features], dtype=torch.long)
-        elif output_mode == "regression":
-            all_label_ids = torch.tensor([f.label_id for f in self.features], dtype=torch.float)
+        all_label_ids = torch.tensor([f.label_id for f in self.features], dtype=torch.long)
+
 
         dataset = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_label_ids)
         return dataset
