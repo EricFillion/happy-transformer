@@ -1,5 +1,7 @@
 # disable pylint TODO warning
 # pylint: disable=W0511
+# pylint: disable=C0301
+
 
 
 """
@@ -355,7 +357,7 @@ class HappyTransformer:
             print("Sequence classifier is not available for", self.model)
 
 
-    def process_classifier_data(self, csv_path):
+    def __process_classifier_data(self, csv_path):
         df = pd.read_csv(csv_path, header=None)
         df[0] = (df[0] == 2).astype(int)
         df = pd.DataFrame({
@@ -366,6 +368,7 @@ class HappyTransformer:
         })
 
         return df
+
     def advanced_init_sequence_classifier(self, args):
         if self.model == "XLNET":
             self.seq = SequenceClassifier(args, self.tokenizer)
@@ -373,28 +376,24 @@ class HappyTransformer:
         else:
             print("Sequence classifier is not available for", self.model)
 
+    def train_sequence_classifier(self, csv_path):
 
-    def train_sequence_classifier(self, train_df, overwrite_output_dir=False):
+        train_df = self.__process_classifier_data(csv_path)
+
         if self.seq == None:
             print("First initialize the sequence classifier")
             return
         #  self.seq.train_tsv = train_df.to_csv(sep='\t', index=True, header=False, columns=train_df.columns)
         train_df = train_df.astype("str")
         self.seq.train_list_data = train_df.values.tolist()
-        self.seq_args["overwrite_output_dir"] = overwrite_output_dir
         self.seq_args["task"] = "train"
-        result = self.seq.run_sequence_classifier()
+        self.seq.train_model()
         self.seq_args["task"] = "idle"
         self.seq_trained = True
 
-        if result == 1:
-            print("Training for ", self.classifier_name, "has been completed")
-        else:
-            print("Training for ", self.classifier_name, "has failed")
+    def eval_sequence_classifier(self, csv_path):
+        eval_df = self.__process_classifier_data(csv_path)
 
-
-
-    def eval_sequence_classifier(self, eval_df):
         if self.seq_trained == False:
             print("First train the sequence classifier")
             return
@@ -402,13 +401,15 @@ class HappyTransformer:
         self.seq.eval_list_data = eval_df.values.tolist()
 
         self.seq_args["task"] = "eval"
-        results = self.seq.run_sequence_classifier()
+        results = self.seq.evaluate()
         self.seq_args["task"] = "idle"
         print("Evaluation for ", self.classifier_name, "has been completed")
         return results
 
 
-    def test(self, test_df):
+    def test(self, csv_path):
+        test_df = self.__process_classifier_data(csv_path)
+
         # todo finish
         if self.seq_trained == False:
             print("First train the sequence classifier")
@@ -418,7 +419,7 @@ class HappyTransformer:
         self.seq.test_list_data = test_df.values.tolist()
 
         self.seq_args["task"] = "test"
-        results = self.seq.run_sequence_classifier()
+        results = self.seq.test()
         self.seq_args["task"] = "idle"
         print("Testing for ", self.classifier_name, "has been completed")
         return results

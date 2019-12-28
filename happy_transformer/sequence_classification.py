@@ -10,11 +10,13 @@ from __future__ import absolute_import, division, print_function
 import logging
 import math
 import numpy as np
+from tqdm import tqdm_notebook, trange
+from sklearn.metrics import confusion_matrix
+
 import torch
 from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
                               TensorDataset)
 
-from tqdm import tqdm_notebook, trange
 
 from tensorboardX import SummaryWriter
 
@@ -26,7 +28,6 @@ from pytorch_transformers import (BertForSequenceClassification,
 
 from pytorch_transformers import AdamW, WarmupLinearSchedule
 
-from sklearn.metrics import confusion_matrix
 
 from happy_transformer.classifier_utils import convert_examples_to_features, \
                                                output_modes, \
@@ -63,12 +64,10 @@ class SequenceClassifier():
         self.model = self.model_class.from_pretrained(self.args['model_name'])
         self.model.to(self.args['gpu_support'])
 
-    def run_sequence_classifier(self):
-        """
 
-        :return:
-        """
 
+    def check_task(self):
+        "Checks to make sure the task is valid. Currently only \"Binary\" is accepted"
         task = self.args['task_mode']
 
         if task in processors.keys() and task in output_modes.keys():
@@ -76,22 +75,16 @@ class SequenceClassifier():
         else:
             raise KeyError(f'{task} is not available')
 
-        if self.args['task'] == "train":
-            self.train_model()
-
-        elif self.args['task'] == "eval":
-            self.eval_dataset = self.load_and_cache_examples()
-
-            return self.evaluate()
-
-        elif self.args['task'] == 'test':
-            self.eval_dataset = self.load_and_cache_examples()
-            return self.test()
-
 
     def train_model(self):
-        self.train_dataset = self.load_and_cache_examples()
-        self.train()
+        """
+        Does the proper checks and initializations before training self.model. Then, saves the model
+        :return:
+        """
+        self.check_task()
+
+        self.train_dataset = self.__load_and_cache_examples()
+        self.__train()
 
         # Takes care of distributed/parallel training
         model_to_save = self.model.module if hasattr(self.model, 'module') else self.model
@@ -99,8 +92,10 @@ class SequenceClassifier():
         self.model = model_to_save # new
 
 
-    def train(self):
-
+    def __train(self):
+        """
+        Trains the binary sequence classifier
+        """
         tb_writer = SummaryWriter()
 
         sampler = RandomSampler(self.train_dataset)
@@ -151,7 +146,7 @@ class SequenceClassifier():
                           'labels': batch[3]}
                 outputs = self.model(**inputs)
                 loss = outputs[0]  # model outputs are always tuple in pytorch-transformers (see doc)
-                print("\r%f" % loss, end='')
+                # print("\r%f" % loss, end='')
 
                 if self.args['gradient_accumulation_steps'] > 1:
                     loss = loss / self.args['gradient_accumulation_steps']
@@ -183,16 +178,31 @@ class SequenceClassifier():
                         tb_writer.add_scalar('loss', (tr_loss - logging_loss) / self.args['logging_steps'], global_step)
                         logging_loss = tr_loss
 
-    def get_eval_report(self, labels, preds):
+    def __get_eval_report(self, labels, preds):
+        """
+        :param labels: Correct answers
+        :param preds: predictions
+        :return: a confusion matrix
+        """
         assert len(preds) == len(labels)
 
-        tn, fp, fn, tp = confusion_matrix(labels, preds).ravel()
+        true_negative, false_positive, false_negative, true_positive = confusion_matrix(labels, preds).ravel()
         return {
-            "tp": tp, "tn": tn, "fp": fp, "fn": fn
+            "true_positive": true_positive,
+            "true_negative": true_negative,
+            "false_positive": false_positive,
+            "false_negative": false_negative
             }
 
     def evaluate(self):
+        """
+        Evaluates the model against a set of questions to determine accuracy
+        :return: a dictionary confusion martrix
+        """
         # Loop to handle MNLI double evaluation (matched, mis-matched)
+        self.check_task()
+
+        self.eval_dataset = self.__load_and_cache_examples()
 
         results = {}
 
@@ -232,14 +242,22 @@ class SequenceClassifier():
         elif self.args['output_mode'] == "regression":
             preds = np.squeeze(preds)
 
-        print("out_label_ids", out_label_ids)
-        result = self.get_eval_report(out_label_ids, preds)
+        result = self.__get_eval_report(out_label_ids, preds)
         results.update(result)
 
         return results
 
     def test(self):
+        """
+        Generates answers for an input
+
+        :return: a list of answers where each index contains the answer 1 or 0
+                for the corresponding test question with the same index
+        """
         # Loop to handle MNLI double evaluation (matched, mis-matched)
+        self.check_task()
+
+        self.eval_dataset = self.__load_and_cache_examples()
 
         eval_sampler = SequentialSampler(self.eval_dataset)
         eval_dataloader = DataLoader(self.eval_dataset, sampler=eval_sampler, batch_size=self.args['eval_batch_size'])
@@ -276,7 +294,11 @@ class SequenceClassifier():
 
         return preds.tolist()
 
-    def load_and_cache_examples(self):
+    def __load_and_cache_examples(self):
+        """
+        Converts the proper list_data variable to a TensorDataset for the current task
+        :return: a TensorDataset for the requested task
+        """
         self.processor = processors[self.args["task_mode"]]()
         output_mode = self.args['output_mode']
 

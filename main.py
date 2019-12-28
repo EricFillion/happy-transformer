@@ -7,30 +7,15 @@ def main():
 
     xl = HappyXLNET(model="xlnet-base-cased")
 
-
-    train_df = pd.read_csv("data/train.csv", header=None)
-    train_df[0] = (train_df[0] == 2).astype(int)
-    train_df = pd.DataFrame({
-        'id': range(len(train_df)),
-        'label': train_df[0],
-        'alpha': ['a'] * train_df.shape[0],
-        'text': train_df[1].replace(r'\n', ' ', regex=True)
-    })
-
     xl.init_sequence_classifier(classifier_name="xlnet-seq-class")
-    xl.train_sequence_classifier(train_df=train_df, overwrite_output_dir=True)
+    xl.train_sequence_classifier(csv_path="data/train.csv")
 
-    test_df = pd.read_csv("data/test.csv", header=None)
-    test_df[0] = (test_df[0] == 2).astype(int)
-    test_df = pd.DataFrame({
-        'id': range(len(test_df)),
-        'label': test_df[0],
-        'alpha': ['a'] * test_df.shape[0],
-        'text': test_df[1].replace(r'\n', ' ', regex=True)
-    })
-    results = xl.eval_sequence_classifier(test_df)
+    results = xl.eval_sequence_classifier(csv_path="data/test.csv")
 
-    print(results)
+    print("Eval results", results)
+    results = xl.test(csv_path="data/run.csv")
+    print("Test results", results)
+
 
 
 if __name__ == "__main__":
