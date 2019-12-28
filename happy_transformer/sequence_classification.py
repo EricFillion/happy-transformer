@@ -1,7 +1,13 @@
+"""
+Binary Sequence Classifier for BERT, XLNET and RoBERTa that has fine tuning capabilities.
+
+XLM is in pre alpha
+"""
+
+# pylint: disable=C0301
+
 from __future__ import absolute_import, division, print_function
-import glob
 import logging
-import os
 import math
 import numpy as np
 import torch
@@ -14,18 +20,23 @@ from tensorboardX import SummaryWriter
 
 
 from pytorch_transformers import (BertForSequenceClassification,
-                                XLMForSequenceClassification,
-                                XLNetForSequenceClassification,
-                                RobertaForSequenceClassification)
+                                  XLMForSequenceClassification,
+                                  XLNetForSequenceClassification,
+                                  RobertaForSequenceClassification)
 
 from pytorch_transformers import AdamW, WarmupLinearSchedule
 
 from sklearn.metrics import confusion_matrix
 
-from happy_transformer.classifier_utils import convert_examples_to_features, output_modes, processors
+from happy_transformer.classifier_utils import convert_examples_to_features, \
+                                               output_modes, \
+                                               processors
 
 
 class SequenceClassifier():
+    """
+    Sequence Classifier with fine tuning capabilities
+    """
 
     def __init__(self, args, tokenizer):
         self.args = args
@@ -48,18 +59,22 @@ class SequenceClassifier():
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger(__name__)
         self.model_class = self.model_classes[self.args['model_type']]
+
         self.model = self.model_class.from_pretrained(self.args['model_name'])
         self.model.to(self.args['gpu_support'])
 
-
     def run_sequence_classifier(self):
+        """
+
+        :return:
+        """
 
         task = self.args['task_mode']
 
         if task in processors.keys() and task in output_modes.keys():
             self.processor = processors[task]()
         else:
-            raise KeyError(f'{task} not found in processors or in output_modes. Please check utils.py.')
+            raise KeyError(f'{task} is not available')
 
         if self.args['task'] == "train":
             self.train_model()
@@ -78,7 +93,8 @@ class SequenceClassifier():
         self.train_dataset = self.load_and_cache_examples()
         self.train()
 
-        model_to_save = self.model.module if hasattr(self.model,'module') else self.model  # Takes care of distributed/parallel training
+        # Takes care of distributed/parallel training
+        model_to_save = self.model.module if hasattr(self.model, 'module') else self.model
 
         self.model = model_to_save # new
 
@@ -87,10 +103,14 @@ class SequenceClassifier():
 
         tb_writer = SummaryWriter()
 
-        train_sampler = RandomSampler(self.train_dataset)
-        train_dataloader = DataLoader(self.train_dataset, sampler=train_sampler, batch_size=self.args['train_batch_size'])
+        sampler = RandomSampler(self.train_dataset)
+        train_dataloader = DataLoader(self.train_dataset,
+                                      sampler=sampler,
+                                      batch_size=self.args['train_batch_size'])
 
-        t_total = len(train_dataloader) // self.args['gradient_accumulation_steps'] * self.args['num_train_epochs']
+        t_total = len(train_dataloader) \
+            // self.args['gradient_accumulation_steps'] * \
+            self.args['num_train_epochs']
 
         no_decay = ['bias', 'LayerNorm.weight']
         optimizer_grouped_parameters = [
@@ -154,8 +174,8 @@ class SequenceClassifier():
 
                     if self.args['logging_steps'] > 0 and global_step % self.args['logging_steps'] == 0:
                         # Log metrics
-                        if self.args[
-                            'evaluate_during_training']:  # Only evaluate when single GPU otherwise metrics may not average well
+                        # Only evaluate when single GPU otherwise metrics may not average well
+                        if self.args['evaluate_during_training']:
                             results = self.evaluate()
                             for key, value in results.items():
                                 tb_writer.add_scalar('eval_{}'.format(key), value, global_step)
@@ -163,18 +183,13 @@ class SequenceClassifier():
                         tb_writer.add_scalar('loss', (tr_loss - logging_loss) / self.args['logging_steps'], global_step)
                         logging_loss = tr_loss
 
-
-
     def get_eval_report(self, labels, preds):
         assert len(preds) == len(labels)
 
         tn, fp, fn, tp = confusion_matrix(labels, preds).ravel()
         return {
-                   "tp": tp,
-                   "tn": tn,
-                   "fp": fp,
-                   "fn": fn
-               }
+            "tp": tp, "tn": tn, "fp": fp, "fn": fn
+            }
 
     def evaluate(self):
         # Loop to handle MNLI double evaluation (matched, mis-matched)
@@ -259,7 +274,7 @@ class SequenceClassifier():
         elif self.args['output_mode'] == "regression":
             preds = np.squeeze(preds)
 
-        return preds
+        return preds.tolist()
 
     def load_and_cache_examples(self):
         self.processor = processors[self.args["task_mode"]]()
@@ -279,22 +294,21 @@ class SequenceClassifier():
             else:
                 examples = self.processor.get_dev_examples(self.test_list_data)
 
-
             self.features = convert_examples_to_features(examples, label_list, self.args['max_seq_length'], self.tokenizer,
-                                                    output_mode,
-                                                    cls_token_at_end=bool(self.args['model_type'] in ['xlnet']),
-                                                    # xlnet has a cls token at the end
-                                                    cls_token=self.tokenizer.cls_token,
-                                                    cls_token_segment_id=2 if self.args['model_type'] in [
-                                                        'xlnet'] else 0,
-                                                    sep_token=self.tokenizer.sep_token,
-                                                    sep_token_extra=bool(self.args['model_type'] in ['roberta']),
-                                                    # roberta uses an extra separator b/w pairs of sentences, cf. github.com/pytorch/fairseq/commit/1684e166e3da03f5b600dbb7855cb98ddfcd0805
-                                                    pad_on_left=bool(self.args['model_type'] in ['xlnet']),
-                                                    # pad on the left for xlnet
-                                                    pad_token=self.tokenizer.convert_tokens_to_ids([self.tokenizer.pad_token])[0],
-                                                    pad_token_segment_id=4 if self.args['model_type'] in [
-                                                        'xlnet'] else 0)
+                                                         output_mode,
+                                                         cls_token_at_end=bool(self.args['model_type'] in ['xlnet']),
+                                                         # xlnet has a cls token at the end
+                                                         cls_token=self.tokenizer.cls_token,
+                                                         cls_token_segment_id=2 if self.args['model_type'] in [
+                                                             'xlnet'] else 0,
+                                                         sep_token=self.tokenizer.sep_token,
+                                                         sep_token_extra=bool(self.args['model_type'] in ['roberta']),
+                                                         # roberta uses an extra separator b/w pairs of sentences, cf. github.com/pytorch/fairseq/commit/1684e166e3da03f5b600dbb7855cb98ddfcd0805
+                                                         pad_on_left=bool(self.args['model_type'] in ['xlnet']),
+                                                         # pad on the left for xlnet
+                                                         pad_token=self.tokenizer.convert_tokens_to_ids([self.tokenizer.pad_token])[0],
+                                                         pad_token_segment_id=4 if self.args['model_type'] in [
+                                                             'xlnet'] else 0)
 
         all_input_ids = torch.tensor([f.input_ids for f in self.features], dtype=torch.long)
         all_input_mask = torch.tensor([f.input_mask for f in self.features], dtype=torch.long)

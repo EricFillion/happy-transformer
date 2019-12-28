@@ -10,6 +10,7 @@ import string
 import re
 import numpy as np
 import torch
+import pandas as pd
 
 from happy_transformer.classifier_utils import classifier_args
 from happy_transformer.sequence_classification import SequenceClassifier
@@ -54,8 +55,7 @@ class HappyTransformer:
                 self._get_masked_language_model()
             if transformer == 'nsp':
                 self._get_next_sentence_prediction()
-            if transformer == "sc":
-                self._get_sequence_classification_model()
+
 
     def _get_masked_language_model(self):
         # Must be overloaded
@@ -353,6 +353,19 @@ class HappyTransformer:
             print(self.classifier_name, "has been initialized")
         else:
             print("Sequence classifier is not available for", self.model)
+
+
+    def process_classifier_data(self, csv_path):
+        df = pd.read_csv(csv_path, header=None)
+        df[0] = (df[0] == 2).astype(int)
+        df = pd.DataFrame({
+            'id': range(len(df)),
+            'label': df[0],
+            'alpha': ['a'] * df.shape[0],
+            'text': df[1].replace(r'\n', ' ', regex=True)
+        })
+
+        return df
     def advanced_init_sequence_classifier(self, args):
         if self.model == "XLNET":
             self.seq = SequenceClassifier(args, self.tokenizer)
@@ -370,10 +383,15 @@ class HappyTransformer:
         self.seq.train_list_data = train_df.values.tolist()
         self.seq_args["overwrite_output_dir"] = overwrite_output_dir
         self.seq_args["task"] = "train"
-        self.seq.run_sequence_classifier()
+        result = self.seq.run_sequence_classifier()
         self.seq_args["task"] = "idle"
         self.seq_trained = True
-        print("Training for ", self.classifier_name, "has been completed")
+
+        if result == 1:
+            print("Training for ", self.classifier_name, "has been completed")
+        else:
+            print("Training for ", self.classifier_name, "has failed")
+
 
 
     def eval_sequence_classifier(self, eval_df):
