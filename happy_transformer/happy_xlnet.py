@@ -1,21 +1,6 @@
 from transformers import XLNetLMHeadModel, XLNetTokenizer
 
 from happy_transformer.happy_transformer import HappyTransformer
-from happy_transformer.sequence_classification import SequenceClassifier
-from happy_transformer.classifier_utils import classifier_args
-import logging
-
-
-import os
-
-import torch
-from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
-                              TensorDataset)
-
-
-
-
-from happy_transformer.classifier_utils import convert_examples_to_features, processors
 
 
 class HappyXLNET(HappyTransformer):

@@ -19,12 +19,10 @@ from __future__ import absolute_import, division, print_function
 
 import csv
 import logging
-import os
 import sys
 from io import open
 
-from scipy.stats import pearsonr, spearmanr
-from sklearn.metrics import matthews_corrcoef, f1_score
+
 
 from multiprocessing import Pool, cpu_count
 from tqdm import tqdm
@@ -263,29 +261,3 @@ output_modes = {
 }
 
 
-classifier_args = {
-    'classifier_name': 'HappyTransformer',
-    'model_type':  '',
-    'model_name': '',
-    'task_mode': 'binary',
-    'task': "idle",
-    'fp16': False,
-    'fp16_opt_level': 'O1',
-    'max_seq_length': 128,
-    'train_batch_size': 1, # was 8
-    'eval_batch_size': 1, # was 8
-
-    'gradient_accumulation_steps': 1,
-    'num_train_epochs': 1,
-    'weight_decay': 0,
-    'learning_rate': 4e-5,
-    'adam_epsilon': 1e-8,
-    'warmup_ratio': 0.06,
-    'warmup_steps': 0,
-    'max_grad_norm': 1.0,
-
-    'logging_steps': 50,
-    'evaluate_during_training': False,
-    'reprocess_input_data': True,
-    'gpu_support': 'cpu',
-}

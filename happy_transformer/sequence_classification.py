@@ -7,7 +7,6 @@ XLM is in pre alpha
 # pylint: disable=C0301
 
 from __future__ import absolute_import, division, print_function
-import logging
 import math
 import numpy as np
 from tqdm import tqdm_notebook, trange
@@ -39,7 +38,7 @@ class SequenceClassifier():
     Sequence Classifier with fine tuning capabilities
     """
 
-    def __init__(self, args, tokenizer):
+    def __init__(self, args, tokenizer, logger):
         self.args = args
         self.processor = None
         self.train_dataset = None
@@ -56,9 +55,9 @@ class SequenceClassifier():
         self.features = False
         self.features_exists = False
         self.tokenizer = tokenizer
+        self.logger = logger
 
-        logging.basicConfig(level=logging.INFO)
-        self.logger = logging.getLogger(__name__)
+
         self.model_class = self.model_classes[self.args['model_type']]
 
         self.model = self.model_class.from_pretrained(self.args['model_name'])
@@ -96,7 +95,7 @@ class SequenceClassifier():
         """
         Trains the binary sequence classifier
         """
-        tb_writer = SummaryWriter()
+        # tb_writer = SummaryWriter()
 
         sampler = RandomSampler(self.train_dataset)
         train_dataloader = DataLoader(self.train_dataset,
@@ -127,7 +126,6 @@ class SequenceClassifier():
                 raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use fp16 training.")
             self.model, optimizer = amp.initialize(self.model, optimizer, opt_level=self.args['fp16_opt_level'])
 
-        self.logger.info("***** Running training *****")
 
         global_step = 0
         tr_loss, logging_loss = 0.0, 0.0
@@ -168,16 +166,16 @@ class SequenceClassifier():
                     self.model.zero_grad()
                     global_step += 1
 
-                    if self.args['logging_steps'] > 0 and global_step % self.args['logging_steps'] == 0:
-                        # Log metrics
-                        # Only evaluate when single GPU otherwise metrics may not average well
-                        if self.args['evaluate_during_training']:
-                            results = self.evaluate()
-                            for key, value in results.items():
-                                tb_writer.add_scalar('eval_{}'.format(key), value, global_step)
-                        tb_writer.add_scalar('lr', scheduler.get_lr()[0], global_step)
-                        tb_writer.add_scalar('loss', (tr_loss - logging_loss) / self.args['logging_steps'], global_step)
-                        logging_loss = tr_loss
+                    # if self.args['logging_steps'] > 0 and global_step % self.args['logging_steps'] == 0:
+                    #     # Log metrics
+                    #     # Only evaluate when single GPU otherwise metrics may not average well
+                    #     if self.args['evaluate_during_training']:
+                    #         results = self.evaluate()
+                    #     #     for key, value in results.items():
+                    #     #         tb_writer.add_scalar('eval_{}'.format(key), value, global_step)
+                    #     # tb_writer.add_scalar('lr', scheduler.get_lr()[0], global_step)
+                    #     # tb_writer.add_scalar('loss', (tr_loss - logging_loss) / self.args['logging_steps'], global_step)
+                    #     # logging_loss = tr_loss
 
     def __get_eval_report(self, labels, preds):
         """
@@ -211,7 +209,6 @@ class SequenceClassifier():
         eval_dataloader = DataLoader(self.eval_dataset, sampler=eval_sampler, batch_size=self.args['eval_batch_size'])
 
         # Eval!
-        self.logger.info("***** Running evaluation *****")
         eval_loss = 0.0
         nb_eval_steps = 0
         preds = None
@@ -263,7 +260,6 @@ class SequenceClassifier():
         eval_dataloader = DataLoader(self.eval_dataset, sampler=eval_sampler, batch_size=self.args['eval_batch_size'])
 
         # Eval!
-        self.logger.info("***** Running evaluation *****")
         eval_loss = 0.0
         nb_eval_steps = 0
         preds = None
