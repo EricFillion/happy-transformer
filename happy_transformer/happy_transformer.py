@@ -389,3 +389,20 @@ class HappyTransformer:
         self.seq_args["do_eval"] = False
         print("Evaluation for ", self.classifier_name, "has been completed")
         return results
+
+
+    def test(self, test_df):
+        # todo finish
+        if self.seq_trained == False:
+            print("First train the sequence classifier")
+            return
+
+        test_df = test_df.astype("str")
+        self.seq.test_list_data = test_df.values.tolist()
+
+        self.seq_args["do_test"] = True
+        results = self.seq.run_sequence_classifier()
+        self.seq_args["do_test"] = False
+        print("Evaluation for ", self.classifier_name, "has been completed")
+        return results
+

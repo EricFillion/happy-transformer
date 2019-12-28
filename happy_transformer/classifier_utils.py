@@ -277,6 +277,7 @@ classifier_args = {
     'output_mode': 'classification',
     'train_batch_size': 1, # was 8
     'eval_batch_size': 1, # was 8
+
     'gradient_accumulation_steps': 1,
     'num_train_epochs': 1,
     'weight_decay': 0,
@@ -289,6 +290,5 @@ classifier_args = {
     'logging_steps': 50,
     'evaluate_during_training': False,
     'reprocess_input_data': True,
-    'notes': 'HappyTransformer',
     'gpu_support': 'cpu',
 }

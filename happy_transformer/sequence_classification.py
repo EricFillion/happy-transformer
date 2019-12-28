@@ -67,7 +67,6 @@ class SequenceClassifier():
             self.eval_dataset = self.load_and_cache_examples(task="binary", evaluate=True, tokenizer=self.tokenizer)
 
             result = self.evaluate()
-            result = dict((k + '_{}'.format(""), v) for k, v in result.items())
 
             return result
 
@@ -163,14 +162,6 @@ class SequenceClassifier():
 
 
 
-    def get_mismatched(self, labels, preds):
-        mismatched = labels != preds
-        examples = self.processor.get_dev_examples(self.eval_list_data)
-        wrong = [i for (i, v) in zip(examples, mismatched) if v]
-
-        return wrong
-
-
     def get_eval_report(self, labels, preds):
         assert len(preds) == len(labels)
 
@@ -204,7 +195,7 @@ class SequenceClassifier():
                 inputs = {'input_ids': batch[0],
                           'attention_mask': batch[1],
                           'token_type_ids': batch[2] if self.args['model_type'] in ['bert', 'xlnet'] else None,
-                          # XLM don't use segment_ids
+                          # XLM does not  use segment_ids
                           'labels': batch[3]}
                 outputs = self.model(**inputs)
                 tmp_eval_loss, logits = outputs[:2]
@@ -222,13 +213,59 @@ class SequenceClassifier():
             preds = np.argmax(preds, axis=1)
         elif self.args['output_mode'] == "regression":
             preds = np.squeeze(preds)
+
+        print("out_label_ids", out_label_ids)
         result = self.get_eval_report(out_label_ids, preds)
         results.update(result)
 
-
-
         return results
 
+    def test(self):
+        # Loop to handle MNLI double evaluation (matched, mis-matched)
+
+        results = {}
+
+        eval_sampler = SequentialSampler(self.eval_dataset)
+        eval_dataloader = DataLoader(self.eval_dataset, sampler=eval_sampler, batch_size=self.args['eval_batch_size'])
+
+        # Eval!
+        self.logger.info("***** Running evaluation *****")
+        eval_loss = 0.0
+        nb_eval_steps = 0
+        preds = None
+        out_label_ids = None
+        for batch in tqdm_notebook(eval_dataloader, desc="Evaluating"):
+            self.model.eval()
+            batch = tuple(t.to(self.args['gpu_support']) for t in batch)
+
+            with torch.no_grad():
+                inputs = {'input_ids': batch[0],
+                          'attention_mask': batch[1],
+                          'token_type_ids': batch[2] if self.args['model_type'] in ['bert', 'xlnet'] else None,
+                          # XLM does not  use segment_ids
+                          'labels': batch[3]}
+                outputs = self.model(**inputs)
+                tmp_eval_loss, logits = outputs[:2]
+
+                eval_loss += tmp_eval_loss.mean().item()
+            nb_eval_steps += 1
+            if preds is None:
+                preds = logits.detach().cpu().numpy()
+                out_label_ids = inputs['labels'].detach().cpu().numpy()
+            else:
+                preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
+                out_label_ids = np.append(out_label_ids, inputs['labels'].detach().cpu().numpy(), axis=0)
+
+        if self.args['output_mode'] == "classification":
+            preds = np.argmax(preds, axis=1)
+        elif self.args['output_mode'] == "regression":
+            preds = np.squeeze(preds)
+
+        print("out_label_ids", out_label_ids)
+        result = self.get_eval_report(out_label_ids, preds)
+        results.update(result)
+
+        return results
 
     def load_and_cache_examples(self, task, tokenizer, evaluate):
 
@@ -246,7 +283,6 @@ class SequenceClassifier():
             if evaluate:
                 examples = self.processor.get_dev_examples(self.eval_list_data)
             else:
-
                 examples = self.processor.get_train_examples(self.train_list_data)
 
             self.features = convert_examples_to_features(examples, label_list, self.args['max_seq_length'], tokenizer,
