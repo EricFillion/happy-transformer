@@ -340,8 +340,6 @@ class HappyTransformer:
         return np.sum([softed[mask_id][op] for op in option])
 
 
-
-
     def init_sequence_classifier(self, classifier_name: str):
 
         #TODO Test the sequence classifier with other models
@@ -362,6 +360,7 @@ class HappyTransformer:
         else:
             print("Sequence classifier is not available for", self.model)
 
+
     def train_sequence_classifier(self, train_df, overwrite_output_dir=False):
         if self.seq == None:
             print("First initialize the sequence classifier")
@@ -370,9 +369,9 @@ class HappyTransformer:
         train_df = train_df.astype("str")
         self.seq.train_list_data = train_df.values.tolist()
         self.seq_args["overwrite_output_dir"] = overwrite_output_dir
-        self.seq_args["do_train"] = True
+        self.seq_args["task"] = "train"
         self.seq.run_sequence_classifier()
-        self.seq_args["do_train"] = False
+        self.seq_args["task"] = "idle"
         self.seq_trained = True
         print("Training for ", self.classifier_name, "has been completed")
 
@@ -384,9 +383,9 @@ class HappyTransformer:
         eval_df = eval_df.astype("str")
         self.seq.eval_list_data = eval_df.values.tolist()
 
-        self.seq_args["do_eval"] = True
+        self.seq_args["task"] = "eval"
         results = self.seq.run_sequence_classifier()
-        self.seq_args["do_eval"] = False
+        self.seq_args["task"] = "idle"
         print("Evaluation for ", self.classifier_name, "has been completed")
         return results
 
@@ -400,9 +399,8 @@ class HappyTransformer:
         test_df = test_df.astype("str")
         self.seq.test_list_data = test_df.values.tolist()
 
-        self.seq_args["do_test"] = True
+        self.seq_args["task"] = "test"
         results = self.seq.run_sequence_classifier()
-        self.seq_args["do_test"] = False
-        print("Evaluation for ", self.classifier_name, "has been completed")
+        self.seq_args["task"] = "idle"
+        print("Testing for ", self.classifier_name, "has been completed")
         return results
-

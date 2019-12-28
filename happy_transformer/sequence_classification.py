@@ -40,6 +40,7 @@ class SequenceClassifier():
         }
         self.train_list_data = None
         self.eval_list_data = None
+        self.test_list_data = None
         self.features = False
         self.features_exists = False
         self.tokenizer = tokenizer
@@ -53,26 +54,28 @@ class SequenceClassifier():
 
     def run_sequence_classifier(self):
 
-        task = self.args['task_name']
+        task = self.args['task_mode']
 
         if task in processors.keys() and task in output_modes.keys():
             self.processor = processors[task]()
         else:
             raise KeyError(f'{task} not found in processors or in output_modes. Please check utils.py.')
 
-        if self.args['do_train']:
+        if self.args['task'] == "train":
             self.train_model()
 
-        if self.args['do_eval']:
-            self.eval_dataset = self.load_and_cache_examples(task="binary", evaluate=True, tokenizer=self.tokenizer)
+        elif self.args['task'] == "eval":
+            self.eval_dataset = self.load_and_cache_examples()
 
-            result = self.evaluate()
+            return self.evaluate()
 
-            return result
+        elif self.args['task'] == 'test':
+            self.eval_dataset = self.load_and_cache_examples()
+            return self.test()
 
 
     def train_model(self):
-        self.train_dataset = self.load_and_cache_examples(task="binary", tokenizer=self.tokenizer, evaluate=False)
+        self.train_dataset = self.load_and_cache_examples()
         self.train()
 
         model_to_save = self.model.module if hasattr(self.model,'module') else self.model  # Takes care of distributed/parallel training
@@ -223,8 +226,6 @@ class SequenceClassifier():
     def test(self):
         # Loop to handle MNLI double evaluation (matched, mis-matched)
 
-        results = {}
-
         eval_sampler = SequentialSampler(self.eval_dataset)
         eval_dataloader = DataLoader(self.eval_dataset, sampler=eval_sampler, batch_size=self.args['eval_batch_size'])
 
@@ -233,7 +234,6 @@ class SequenceClassifier():
         eval_loss = 0.0
         nb_eval_steps = 0
         preds = None
-        out_label_ids = None
         for batch in tqdm_notebook(eval_dataloader, desc="Evaluating"):
             self.model.eval()
             batch = tuple(t.to(self.args['gpu_support']) for t in batch)
@@ -251,53 +251,48 @@ class SequenceClassifier():
             nb_eval_steps += 1
             if preds is None:
                 preds = logits.detach().cpu().numpy()
-                out_label_ids = inputs['labels'].detach().cpu().numpy()
             else:
                 preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
-                out_label_ids = np.append(out_label_ids, inputs['labels'].detach().cpu().numpy(), axis=0)
 
         if self.args['output_mode'] == "classification":
             preds = np.argmax(preds, axis=1)
         elif self.args['output_mode'] == "regression":
             preds = np.squeeze(preds)
 
-        print("out_label_ids", out_label_ids)
-        result = self.get_eval_report(out_label_ids, preds)
-        results.update(result)
+        return preds
 
-        return results
-
-    def load_and_cache_examples(self, task, tokenizer, evaluate):
-
-        self.processor = processors[task]()
+    def load_and_cache_examples(self):
+        self.processor = processors[self.args["task_mode"]]()
         output_mode = self.args['output_mode']
 
         if not self.features_exists and not self.args['reprocess_input_data']:
             self.logger.info("Loading features from cached file %s")
 
-
         else:
             self.features_exists = True
             label_list = self.processor.get_labels()
 
-            if evaluate:
+            if self.args['task'] == 'eval':
                 examples = self.processor.get_dev_examples(self.eval_list_data)
-            else:
+            elif self.args['task'] == 'train':
                 examples = self.processor.get_train_examples(self.train_list_data)
+            else:
+                examples = self.processor.get_dev_examples(self.test_list_data)
 
-            self.features = convert_examples_to_features(examples, label_list, self.args['max_seq_length'], tokenizer,
+
+            self.features = convert_examples_to_features(examples, label_list, self.args['max_seq_length'], self.tokenizer,
                                                     output_mode,
                                                     cls_token_at_end=bool(self.args['model_type'] in ['xlnet']),
                                                     # xlnet has a cls token at the end
-                                                    cls_token=tokenizer.cls_token,
+                                                    cls_token=self.tokenizer.cls_token,
                                                     cls_token_segment_id=2 if self.args['model_type'] in [
                                                         'xlnet'] else 0,
-                                                    sep_token=tokenizer.sep_token,
+                                                    sep_token=self.tokenizer.sep_token,
                                                     sep_token_extra=bool(self.args['model_type'] in ['roberta']),
                                                     # roberta uses an extra separator b/w pairs of sentences, cf. github.com/pytorch/fairseq/commit/1684e166e3da03f5b600dbb7855cb98ddfcd0805
                                                     pad_on_left=bool(self.args['model_type'] in ['xlnet']),
                                                     # pad on the left for xlnet
-                                                    pad_token=tokenizer.convert_tokens_to_ids([tokenizer.pad_token])[0],
+                                                    pad_token=self.tokenizer.convert_tokens_to_ids([self.tokenizer.pad_token])[0],
                                                     pad_token_segment_id=4 if self.args['model_type'] in [
                                                         'xlnet'] else 0)
 
