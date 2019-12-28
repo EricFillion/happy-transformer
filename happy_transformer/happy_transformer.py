@@ -350,7 +350,7 @@ class HappyTransformer:
             self.classifier_name = classifier_name
             self.seq_args['classifier_name'] = classifier_name
             self.seq_args['model_name'] = self.model_version
-            self.seq_args['device'] = self.gpu_support
+            self.seq_args['gpu_support'] = self.gpu_support
             self.seq = SequenceClassifier(self.seq_args, self.tokenizer)
             print(self.classifier_name, "has been initialized")
         else:
@@ -382,8 +382,6 @@ class HappyTransformer:
             print("First train the sequence classifier")
             return
         eval_df = eval_df.astype("str")
-
-
         self.seq.eval_list_data = eval_df.values.tolist()
 
         self.seq_args["do_eval"] = True

@@ -30,7 +30,6 @@ class SequenceClassifier():
     def __init__(self, args, tokenizer):
         self.args = args
         self.processor = None
-        self.device = None
         self.train_dataset = None
         self.eval_dataset = None
         self.model_classes = {
@@ -49,7 +48,7 @@ class SequenceClassifier():
         self.logger = logging.getLogger(__name__)
         self.model_class = self.model_classes[self.args['model_type']]
         self.model = self.model_class.from_pretrained(self.args['model_name'])
-        self.model.to(self.args['device'])
+        self.model.to(self.args['gpu_support'])
 
 
     def run_sequence_classifier(self):
@@ -122,7 +121,7 @@ class SequenceClassifier():
             epoch_iterator = tqdm_notebook(train_dataloader, desc="Iteration")
             for step, batch in enumerate(epoch_iterator):
                 self.model.train()
-                batch = tuple(t.to(self.device) for t in batch)
+                batch = tuple(t.to(self.args['gpu_support']) for t in batch)
                 inputs = {'input_ids': batch[0],
                           'attention_mask': batch[1],
                           'token_type_ids': batch[2] if self.args['model_type'] in ['bert', 'xlnet'] else None,
@@ -199,7 +198,7 @@ class SequenceClassifier():
         out_label_ids = None
         for batch in tqdm_notebook(eval_dataloader, desc="Evaluating"):
             self.model.eval()
-            batch = tuple(t.to(self. device) for t in batch)
+            batch = tuple(t.to(self.args['gpu_support']) for t in batch)
 
             with torch.no_grad():
                 inputs = {'input_ids': batch[0],

@@ -290,6 +290,5 @@ classifier_args = {
     'evaluate_during_training': False,
     'reprocess_input_data': True,
     'notes': 'HappyTransformer',
-    'device': 'cpu',
-
+    'gpu_support': 'cpu',
 }
