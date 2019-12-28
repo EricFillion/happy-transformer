@@ -268,8 +268,8 @@ classifier_args = {
     'model_type':  'xlnet',
     'model_name': 'xlnet-base-cased',
     'task_name': 'binary',
-    'do_train': False, # was true
-    'do_eval': False, # was true
+    'do_train': False,
+    'do_eval': False,
     'do_test': False,
     'fp16': False,
     'fp16_opt_level': 'O1',
@@ -288,10 +288,6 @@ classifier_args = {
 
     'logging_steps': 50,
     'evaluate_during_training': False,
-    'save_steps': 2000,
-    'eval_all_checkpoints': True,
-
-    'overwrite_output_dir': False,
     'reprocess_input_data': True,
     'notes': 'HappyTransformer',
     'device': 'cpu',

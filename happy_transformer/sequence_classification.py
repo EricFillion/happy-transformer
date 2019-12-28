@@ -13,14 +13,12 @@ from tqdm import tqdm_notebook, trange
 from tensorboardX import SummaryWriter
 
 
-from pytorch_transformers import (WEIGHTS_NAME, BertForSequenceClassification,
+from pytorch_transformers import (BertForSequenceClassification,
                                 XLMForSequenceClassification,
                                 XLNetForSequenceClassification,
                                 RobertaForSequenceClassification)
 
 from pytorch_transformers import AdamW, WarmupLinearSchedule
-
-
 
 from sklearn.metrics import confusion_matrix
 
@@ -69,7 +67,7 @@ class SequenceClassifier():
         if self.args['do_eval']:
             self.eval_dataset = self.load_and_cache_examples(task="binary", evaluate=True, tokenizer=self.tokenizer)
 
-            result, wrong_preds = self.evaluate()
+            result = self.evaluate()
             result = dict((k + '_{}'.format(""), v) for k, v in result.items())
 
             return result
@@ -79,8 +77,7 @@ class SequenceClassifier():
         self.train_dataset = self.load_and_cache_examples(task="binary", tokenizer=self.tokenizer, evaluate=False)
         self.train()
 
-        model_to_save = self.model.module if hasattr(self.model,'module') else self.model  # Take care of distributed/parallel training
-
+        model_to_save = self.model.module if hasattr(self.model,'module') else self.model  # Takes care of distributed/parallel training
 
         self.model = model_to_save # new
 
@@ -158,7 +155,7 @@ class SequenceClassifier():
                         # Log metrics
                         if self.args[
                             'evaluate_during_training']:  # Only evaluate when single GPU otherwise metrics may not average well
-                            results, _ = self.evaluate()
+                            results = self.evaluate()
                             for key, value in results.items():
                                 tb_writer.add_scalar('eval_{}'.format(key), value, global_step)
                         tb_writer.add_scalar('lr', scheduler.get_lr()[0], global_step)
@@ -168,7 +165,6 @@ class SequenceClassifier():
 
 
     def get_mismatched(self, labels, preds):
-        global processor
         mismatched = labels != preds
         examples = self.processor.get_dev_examples(self.eval_list_data)
         wrong = [i for (i, v) in zip(examples, mismatched) if v]
@@ -177,6 +173,7 @@ class SequenceClassifier():
 
 
     def get_eval_report(self, labels, preds):
+        assert len(preds) == len(labels)
 
         tn, fp, fn, tp = confusion_matrix(labels, preds).ravel()
         return {
@@ -184,21 +181,12 @@ class SequenceClassifier():
                    "tn": tn,
                    "fp": fp,
                    "fn": fn
-               }, self.get_mismatched(labels, preds)
-
-
-    def compute_metrics(self, task_name, preds, labels):
-        assert len(preds) == len(labels)
-        return self.get_eval_report(labels, preds)
-
+               }
 
     def evaluate(self):
         # Loop to handle MNLI double evaluation (matched, mis-matched)
 
         results = {}
-        EVAL_TASK = self.args['task_name']
-
-
 
         eval_sampler = SequentialSampler(self.eval_dataset)
         eval_dataloader = DataLoader(self.eval_dataset, sampler=eval_sampler, batch_size=self.args['eval_batch_size'])
@@ -235,12 +223,12 @@ class SequenceClassifier():
             preds = np.argmax(preds, axis=1)
         elif self.args['output_mode'] == "regression":
             preds = np.squeeze(preds)
-        result, wrong = self.compute_metrics(EVAL_TASK, preds, out_label_ids)
+        result = self.get_eval_report(out_label_ids, preds)
         results.update(result)
 
 
 
-        return results, wrong
+        return results
 
 
     def load_and_cache_examples(self, task, tokenizer, evaluate):

@@ -18,7 +18,7 @@ def main():
         'text': train_df[1].replace(r'\n', ' ', regex=True)
     })
 
-    xl.init_sequence_classifier(classifier_name="xlnet-seq-class", output_dir="outputs/xlnet-test")
+    xl.init_sequence_classifier(classifier_name="xlnet-seq-class")
     xl.train_sequence_classifier(train_df=train_df, overwrite_output_dir=True)
 
     test_df = pd.read_csv("data/test.csv", header=None)
