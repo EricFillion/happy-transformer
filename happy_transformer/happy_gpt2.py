@@ -9,7 +9,7 @@ from happy_transformer.happy_transformer import HappyTransformer
 class HappyGPT2(HappyTransformer):
 
     def __init__(self, model='gpt2', initial_transformers=[]):
-        super().__init__(model, initial_transformers)
+        super().__init__(model)
         self.transformer = GPT2LMHeadModel.from_pretrained(model)
         self.tokenizer = GPT2Tokenizer.from_pretrained(model)
         self.tokenizer.mask_token = '<mask>'
@@ -17,6 +17,7 @@ class HappyGPT2(HappyTransformer):
         self.sep_token = ''
         self.cls_token = ''
         self.model = 'GPT2'
+        self._get_initial_transformers(initial_transformers)
 
     def _get_masked_language_model(self):
         \"""

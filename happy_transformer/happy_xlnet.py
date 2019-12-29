@@ -9,14 +9,14 @@ class HappyXLNET(HappyTransformer):
     """
 
     def __init__(self, model='xlnet-large-cased', initial_transformers=[]):
-        super().__init__(model, initial_transformers)
+        super().__init__(model)
         self.mlm = None
         self.tokenizer = XLNetTokenizer.from_pretrained(model)
         self.masked_token = self.tokenizer.mask_token
         self.sep_token = self.tokenizer.sep_token
         self.cls_token = self.tokenizer.cls_token
         self.model = 'XLNET'
-        self.classifier_name = ""
+        self._get_initial_transformers(initial_transformers)
 
     def _get_masked_language_model(self):
         """

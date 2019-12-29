@@ -35,13 +35,13 @@ class HappyTransformer:
     """
 
     def __init__(self, model, initial_transformers=[]):
-
-
         # Transformer and tokenizer set in child class
         self.mlm = None  # Masked Language Model
         self.nsp = None  # Next Sentence Prediction
-        self.seq = None
-        self.sc = None   # Sequence Classification
+        self.seq = None # Sequence Classification
+        self.qa = None   # Question Answering
+
+
         self.model_to_use = model
         self.tokenizer = None
         # Child class sets to indicate which model is being used
@@ -52,8 +52,6 @@ class HappyTransformer:
         self.gpu_support = torch.device("cuda" if torch.cuda.is_available()
                                         else "cpu")
         print("Using model:", self.gpu_support)
-        self.__get_initial_transformers(initial_transformers)
-
         self.model_version = model
         self.seq_trained = False
         self.seq_args = None
@@ -68,6 +66,8 @@ class HappyTransformer:
                 self._get_masked_language_model()
             if transformer == 'nsp':
                 self._get_next_sentence_prediction()
+            if transformer == 'qa':
+                self._get_question_answering()
 
 
     def _get_masked_language_model(self):
@@ -76,6 +76,11 @@ class HappyTransformer:
         pass
 
     def _get_next_sentence_prediction(self):
+        # Must be overloaded
+        # TODO make an exception to be thrown if not overloaded
+        pass
+
+    def _get_question_answering(self):
         # Must be overloaded
         # TODO make an exception to be thrown if not overloaded
         pass
@@ -133,7 +138,6 @@ class HappyTransformer:
             torch.cuda.empty_cache()
 
         return self.__format_option_scores(tupled_predictions)
-
 
     def __remove_staring_character(self, tupled_predictions, starting_char):
         """
@@ -329,12 +333,38 @@ class HappyTransformer:
         segments_tensors = torch.tensor([segments_ids])
         with torch.no_grad():
             predictions = self.nsp(tokens_tensor, token_type_ids=segments_tensors)[0]
+        print(type(predictions))
         softmax = self.__softmax(predictions)
         if torch.argmax(softmax) == 0:
             return (True, softmax)
         else:
             return (False, softmax)
 
+
+    def answer_question(self, question, context):
+        """
+        Using the given context returns the answer to the given question.
+
+        :param question: 
+        :param context:
+        """
+        if self.qa is None:
+            self._get_question_answering()
+        input_text = "[CLS] " + question + " [SEP] " + context + " [SEP]"
+        input_ids = self.tokenizer.encode(input_text)
+        token_type_ids = [0 if i <= input_ids.index(102) else 1
+                          for i in range(len(input_ids))]
+        token_tensor = torch.tensor([input_ids])
+        segment_tensor = torch.tensor([token_type_ids])
+        with torch.no_grad():
+            start_scores, end_scores = self.qa(token_tensor,
+                                               token_type_ids=segment_tensor)
+        all_tokens = self.tokenizer.convert_ids_to_tokens(input_ids)
+        answer_list = all_tokens[torch.argmax(start_scores):
+                                 torch.argmax(end_scores)+1]
+        answer = self.tokenizer.convert_tokens_to_string(answer_list)
+        answer = answer.replace(' \' ', '\' ').replace('\' s ', '\'s ')
+        return answer
 
     @staticmethod
     def soft_sum(option: list, softed, mask_id: int):
