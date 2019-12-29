@@ -8,13 +8,20 @@
 HappyTransformer is a wrapper over pytorch_transformers to make it
 easier to use.
 """
+
 import string
 import re
 import numpy as np
 import torch
 import pandas as pd
+import logging
+import csv
 
-from happy_transformer.classifier_utils import classifier_args
+import sys
+import os
+
+
+from happy_transformer.classifier_args import classifier_args
 from happy_transformer.sequence_classification import SequenceClassifier
 
 
@@ -28,6 +35,8 @@ class HappyTransformer:
     """
 
     def __init__(self, model, initial_transformers=[]):
+
+
         # Transformer and tokenizer set in child class
         self.mlm = None  # Masked Language Model
         self.nsp = None  # Next Sentence Prediction
@@ -49,7 +58,9 @@ class HappyTransformer:
         self.seq_trained = False
         self.seq_args = None
 
-
+        #logging
+        logging.basicConfig(level=logging.INFO)
+        self.logger = logging.getLogger(__name__)
 
     def __get_initial_transformers(self, initial_transformers):
         for transformer in initial_transformers:
@@ -342,24 +353,143 @@ class HappyTransformer:
         return np.sum([softed[mask_id][op] for op in option])
 
 
-    def init_sequence_classifier(self, classifier_name: str):
+    def init_sequence_classifier(self):
+        """
+        Initializes a binary sequence classifier model with default settings
+        """
 
-        #TODO Test the sequence classifier with other models
+        # TODO Test the sequence classifier with other models
         if self.model == "XLNET":
             self.seq_args = classifier_args.copy()
-            self.classifier_name = classifier_name
             self.seq_args["model_type"] = self.model
-            self.seq_args['classifier_name'] = classifier_name
             self.seq_args['model_name'] = self.model_version
             self.seq_args['gpu_support'] = self.gpu_support
-            self.seq = SequenceClassifier(self.seq_args, self.tokenizer)
-            print(self.classifier_name, "has been initialized")
+            self.seq = SequenceClassifier(self.seq_args, self.tokenizer, self.logger)
+
+            self.logger.info("A binary sequence classifier for %s has been initialized", self.model)
         else:
-            print("Sequence classifier is not available for", self.model)
+            self.logger.error("Sequence classifier is not available for %s", self.model)
+
+    def advanced_init_sequence_classifier(self, args):
+        """
+        Initializes a binary sequence classifier model with custom settings..
+        The default settings args dicttionary can be found  happy_transformer/classifier_args.
+        This dictionary can then be modified and then used as the only input for this method.
+
+        """
+        if self.model == "XLNET":
+            self.seq = SequenceClassifier(args, self.tokenizer)
+            self.logger.info("A binary sequence classifier for %s has been initialized", self.model)
+        else:
+            self.logger.error("Sequence classifier is not available for %s", self.model)
+
+    def train_sequence_classifier(self, csv_path):
+        """
+        Trains the HappyTransformer's sequence classifier
+
+        :param csv_path: A path to the csv evaluation file.
+            Each test is contained within a row.
+            The first column is for the the correct answers, either 0 or 1 as an int or a string .
+            The second column is for the text.
+        """
+        self.logger.info("***** Running Training *****")
 
 
-    def __process_classifier_data(self, csv_path):
-        df = pd.read_csv(csv_path, header=None)
+        train_df = self.__process_classifier_data(csv_path)
+
+        if self.seq == None:
+            self.logger.error("Initialize the sequence classifier before training")
+            return
+        sys.stdout = open(os.devnull, 'w') # Disable printing to stop external libraries from printing
+        train_df = train_df.astype("str")
+        self.seq.train_list_data = train_df.values.tolist()
+        self.seq_args["task"] = "train"
+        self.seq.train_model()
+        self.seq_args["task"] = "idle"
+        self.seq_trained = True
+        sys.stdout = sys.__stdout__  # Enable printing
+
+
+    def eval_sequence_classifier(self, csv_path):
+        """
+        Evaluates the trained sequence classifier against a testing set.
+
+        :param csv_path: A path to the csv evaluation file.
+            Each test is contained within a row.
+            The first column is for the the correct answers, either 0 or 1 as an int or a string .
+            The second column is for the text.
+
+        :return: A dictionary evaluation matrix
+        """
+
+        self.logger.info("***** Running evaluation *****")
+
+        sys.stdout = open(os.devnull, 'w') # Disable printing
+
+        eval_df = self.__process_classifier_data(csv_path)
+
+        if self.seq_trained == False:
+            self.logger.error("Train the sequence classifier before evaluation")
+            return
+        eval_df = eval_df.astype("str")
+        self.seq.eval_list_data = eval_df.values.tolist()
+
+        self.seq_args["task"] = "eval"
+        results = self.seq.evaluate()
+        self.seq_args["task"] = "idle"
+        sys.stdout = sys.__stdout__  # Enable printing
+
+        return results
+
+    def test(self, csv_path):
+        """
+
+        :param csv_path: a path to the csv evaluation file.
+            Each test is contained within a row.
+            The first column is for the the correct answers, either 0 or 1 as an int or a string .
+            The second column is for the text.
+        :return: A list of predictions where each prediction index is the same as the corresponding test's index
+        """
+        self.logger.info("***** Running Testing *****")
+        # sys.stdout = open(os.devnull, 'w') # Disable printing
+
+        test_df = self.__process_classifier_data(csv_path, for_test_data=True)
+
+        # todo finish
+        if self.seq_trained == False:
+            self.logger.error("Train the sequence classifier before testing")
+            return
+
+        test_df = test_df.astype("str")
+        self.seq.test_list_data = test_df.values.tolist()
+
+        self.seq_args["task"] = "test"
+        results = self.seq.test()
+        self.seq_args["task"] = "idle"
+
+        sys.stdout = sys.__stdout__  # Enable printing
+
+        return results
+
+    def __process_classifier_data(self, csv_path, for_test_data=False):
+        """
+        :param csv_path: Path to csv file that must be processed
+        :return: A Panda dataframe with the proper information for classification tasks
+        """
+
+        if for_test_data:
+            with open(csv_path, 'r') as test_file:
+                reader = csv.reader(test_file)
+                text_list = list(reader)
+            # Blank values are required for the first column value the testing data to increase
+            # reusability of preprocessing methods between the tasks
+            blank_values= ["-1"]*len(text_list)
+            df = pd.DataFrame([*zip(blank_values, text_list)])
+            print(df.head())
+
+        else:
+            df = pd.read_csv(csv_path, header=None)
+
         df[0] = (df[0] == 2).astype(int)
         df = pd.DataFrame({
             'id': range(len(df)),
@@ -369,62 +499,3 @@ class HappyTransformer:
         })
 
         return df
-
-    def advanced_init_sequence_classifier(self, args):
-        if self.model == "XLNET":
-            self.seq = SequenceClassifier(args, self.tokenizer)
-            print(self.classifier_name, "has been initialized")
-        else:
-            print("Sequence classifier is not available for", self.model)
-
-    def train_sequence_classifier(self, csv_path):
-
-        train_df = self.__process_classifier_data(csv_path)
-
-        if self.seq == None:
-            print("First initialize the sequence classifier")
-            return
-        #  self.seq.train_tsv = train_df.to_csv(sep='\t', index=True, header=False, columns=train_df.columns)
-        train_df = train_df.astype("str")
-        self.seq.train_list_data = train_df.values.tolist()
-        self.seq_args["task"] = "train"
-        self.seq.train_model()
-        self.seq_args["task"] = "idle"
-        self.seq_trained = True
-
-    def eval_sequence_classifier(self, csv_path):
-        eval_df = self.__process_classifier_data(csv_path)
-
-        if self.seq_trained == False:
-            print("First train the sequence classifier")
-            return
-        eval_df = eval_df.astype("str")
-        self.seq.eval_list_data = eval_df.values.tolist()
-
-        self.seq_args["task"] = "eval"
-        results = self.seq.evaluate()
-        self.seq_args["task"] = "idle"
-        message = "Evaluation for "+ self.classifier_name+" has been completed"
-        self.seq.logger.info("%s", message)
-
-
-        return results
-
-
-    def test(self, csv_path):
-        test_df = self.__process_classifier_data(csv_path)
-
-        # todo finish
-        if self.seq_trained == False:
-            print("First train the sequence classifier")
-            return
-
-        test_df = test_df.astype("str")
-        self.seq.test_list_data = test_df.values.tolist()
-
-        self.seq_args["task"] = "test"
-        results = self.seq.test()
-        self.seq_args["task"] = "idle"
-        message = "Testing for "+ self.classifier_name+ " has been completed"
-        self.seq.logger.info("%s", message)
-        return results

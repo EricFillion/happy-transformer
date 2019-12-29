@@ -1,12 +1,11 @@
-import logging
 from happy_transformer.happy_xlnet import HappyXLNET
-import pandas as pd
 
 
 def main():
     """testing"""
 
     xl = HappyXLNET(model="xlnet-base-cased")
+
 
 
     xl.init_sequence_classifier()

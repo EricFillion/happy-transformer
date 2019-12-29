@@ -16,9 +16,7 @@ import torch
 from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
                               TensorDataset)
 
-
-from tensorboardX import SummaryWriter
-
+# from tensorboardX import SummaryWriter
 
 from pytorch_transformers import (BertForSequenceClassification,
                                   XLMForSequenceClassification,
@@ -31,7 +29,6 @@ from pytorch_transformers import AdamW, WarmupLinearSchedule
 from happy_transformer.classifier_utils import convert_examples_to_features, \
                                                output_modes, \
                                                processors
-
 
 class SequenceClassifier():
     """
