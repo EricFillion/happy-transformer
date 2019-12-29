@@ -1,4 +1,3 @@
-# pylint: disable=W0511
 from transformers import XLNetLMHeadModel, XLNetTokenizer
 
 from happy_transformer.happy_transformer import HappyTransformer

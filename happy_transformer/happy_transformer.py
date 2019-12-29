@@ -1,33 +1,47 @@
 # disable pylint TODO warning
 # pylint: disable=W0511
+# pylint: disable=C0301
+
 
 
 """
 HappyTransformer is a wrapper over pytorch_transformers to make it
 easier to use.
-
 """
+
 import string
 import re
 import numpy as np
 import torch
+import pandas as pd
+import logging
+import csv
+
+import sys
+import os
+
+
+from happy_transformer.classifier_args import classifier_args
+from happy_transformer.sequence_classification import SequenceClassifier
 
 
 class HappyTransformer:
     """
     Initializes pytroch's transformer models and provided methods for
     their basic functionality.
-
     Philosophy: Automatically make decisions for the user so that they don't
                 have to have any understanding of PyTorch or transformer
                 models to be able to utilize their capabilities.
     """
 
-    def __init__(self, model):
+    def __init__(self, model, initial_transformers=[]):
         # Transformer and tokenizer set in child class
         self.mlm = None  # Masked Language Model
         self.nsp = None  # Next Sentence Prediction
+        self.seq = None # Sequence Classification
         self.qa = None   # Question Answering
+
+
         self.model_to_use = model
         self.tokenizer = None
         # Child class sets to indicate which model is being used
@@ -38,8 +52,15 @@ class HappyTransformer:
         self.gpu_support = torch.device("cuda" if torch.cuda.is_available()
                                         else "cpu")
         print("Using model:", self.gpu_support)
+        self.model_version = model
+        self.seq_trained = False
+        self.seq_args = None
 
-    def _get_initial_transformers(self, initial_transformers):
+        #logging
+        logging.basicConfig(level=logging.INFO)
+        self.logger = logging.getLogger(__name__)
+
+    def __get_initial_transformers(self, initial_transformers):
         for transformer in initial_transformers:
             if transformer == 'mlm':
                 self._get_masked_language_model()
@@ -47,6 +68,7 @@ class HappyTransformer:
                 self._get_next_sentence_prediction()
             if transformer == 'qa':
                 self._get_question_answering()
+
 
     def _get_masked_language_model(self):
         # Must be overloaded
@@ -66,18 +88,15 @@ class HappyTransformer:
     def predict_mask(self, text: str, options=None, k=1):
         """
         Method to predict what the masked token in the given text string is.
-
         NOTE: This is the generic version of this predict_mask method. If a
         child class needs a different implementation they should overload this
         method, not create a new method.
-
         :param text: a string with a masked token within it
         :param options: list of options that the mask token may be [optional]
         :param k: the number of options to output if no output list is given
                   [optional]
         :return: list of dictionaries containing the predicted token(s) and
                  their corresponding score(s).
-
         NOTE: If no options are given, the returned list will be length 1
         """
         if self.mlm is None:
@@ -124,7 +143,6 @@ class HappyTransformer:
         """
         Some cased models like XLNet place a "▁" character in front of lower cased predictions.
         For most applications this extra bit of information is irrelevant.
-
         :param tupled_predictions: A list that contains tuples where the first index is
                                 the name of the prediction and the second index is the
                                 prediction's softmax
@@ -144,7 +162,6 @@ class HappyTransformer:
     def __get_tokenized_text(self, text):
         """
         Formats a sentence so that it can be tokenized by a transformer.
-
         :param text: a 1-2 sentence text that contains [MASK]
         :return: A string with the same sentence that contains the required
                  tokens for the transformer
@@ -184,7 +201,6 @@ class HappyTransformer:
         input string.
         Returned tensor will be in shape:
             [1, <tokens in string>, <possible options for token>]
-
         :param text: a tokenized string to be used by the transformer.
         :return: a tensor of the softmaxes of the predictions of the
                  transformer
@@ -211,7 +227,6 @@ class HappyTransformer:
         the first element in the list is the option with the highest score.
         Dictionary will be in the form:
              {'word': <the option>, 'score': <score for the option>}
-
         :param: ranked_scores: list of tuples to be converted into user
                 friendly dicitonary
         :return: formatted_ranked_scores: list of dictionaries of the ranked
@@ -233,7 +248,6 @@ class HappyTransformer:
         Converts a list of tokens into segment_ids. The segment id is a array
         representation of the location for each character in the
         first and second sentence. This method only words with 1-2 sentences.
-
         Example:
         tokenized_text = ['[CLS]', 'who', 'was', 'jim', 'henson', '?', '[SEP]',
                           'jim', '[MASK]', 'was', 'a', 'puppet', '##eer',
@@ -253,7 +267,6 @@ class HappyTransformer:
 
     def finish_sentence(self, text: str, maxPredictionLength=100):
         """
-
         :param text: a string that is the start of a sentence to be finished
         :param maxPredictionLength: an int with the maximum number of words to
                                     be predicted
@@ -289,7 +302,7 @@ class HappyTransformer:
             valid = False
         if '<mask>' in text or '<MASK>' in text:
             print('Instead of using <mask> or <MASK>, use [MASK] please as it is the convention')
-            valid = True 
+            valid = True
         if '[CLS]' in text:
             print("[CLS] was found in your string.  Remove it as it will be automatically added later")
             valid = False
@@ -303,7 +316,6 @@ class HappyTransformer:
         """
         Determines if sentence B is likely to be a continuation after sentence
         A.
-
         :param a: First sentence
         :param b: Second sentence to test if it comes after the first
         :return tuple: True if b is likely to follow a, False if b is unlikely
@@ -327,6 +339,7 @@ class HappyTransformer:
             return (True, softmax)
         else:
             return (False, softmax)
+
 
     def answer_question(self, question, context):
         """
@@ -368,3 +381,151 @@ class HappyTransformer:
         """
         # Collects the softmax of all tokens in list
         return np.sum([softed[mask_id][op] for op in option])
+
+
+    def init_sequence_classifier(self):
+        """
+        Initializes a binary sequence classifier model with default settings
+        """
+
+        # TODO Test the sequence classifier with other models
+        if self.model == "XLNET":
+            self.seq_args = classifier_args.copy()
+            self.seq_args["model_type"] = self.model
+            self.seq_args['model_name'] = self.model_version
+            self.seq_args['gpu_support'] = self.gpu_support
+            self.seq = SequenceClassifier(self.seq_args, self.tokenizer, self.logger)
+
+            self.logger.info("A binary sequence classifier for %s has been initialized", self.model)
+        else:
+            self.logger.error("Sequence classifier is not available for %s", self.model)
+
+    def advanced_init_sequence_classifier(self, args):
+        """
+        Initializes a binary sequence classifier model with custom settings..
+        The default settings args dicttionary can be found  happy_transformer/classifier_args.
+        This dictionary can then be modified and then used as the only input for this method.
+
+        """
+        if self.model == "XLNET":
+            self.seq = SequenceClassifier(args, self.tokenizer)
+            self.logger.info("A binary sequence classifier for %s has been initialized", self.model)
+        else:
+            self.logger.error("Sequence classifier is not available for %s", self.model)
+
+    def train_sequence_classifier(self, csv_path):
+        """
+        Trains the HappyTransformer's sequence classifier
+
+        :param csv_path: A path to the csv evaluation file.
+            Each test is contained within a row.
+            The first column is for the the correct answers, either 0 or 1 as an int or a string .
+            The second column is for the text.
+        """
+        self.logger.info("***** Running Training *****")
+
+
+        train_df = self.__process_classifier_data(csv_path)
+
+        if self.seq == None:
+            self.logger.error("Initialize the sequence classifier before training")
+            return
+        sys.stdout = open(os.devnull, 'w') # Disable printing to stop external libraries from printing
+        train_df = train_df.astype("str")
+        self.seq.train_list_data = train_df.values.tolist()
+        self.seq_args["task"] = "train"
+        self.seq.train_model()
+        self.seq_args["task"] = "idle"
+        self.seq_trained = True
+        sys.stdout = sys.__stdout__  # Enable printing
+
+
+    def eval_sequence_classifier(self, csv_path):
+        """
+        Evaluates the trained sequence classifier against a testing set.
+
+        :param csv_path: A path to the csv evaluation file.
+            Each test is contained within a row.
+            The first column is for the the correct answers, either 0 or 1 as an int or a string .
+            The second column is for the text.
+
+        :return: A dictionary evaluation matrix
+        """
+
+        self.logger.info("***** Running evaluation *****")
+
+        sys.stdout = open(os.devnull, 'w') # Disable printing
+
+        eval_df = self.__process_classifier_data(csv_path)
+
+        if self.seq_trained == False:
+            self.logger.error("Train the sequence classifier before evaluation")
+            return
+        eval_df = eval_df.astype("str")
+        self.seq.eval_list_data = eval_df.values.tolist()
+
+        self.seq_args["task"] = "eval"
+        results = self.seq.evaluate()
+        self.seq_args["task"] = "idle"
+        sys.stdout = sys.__stdout__  # Enable printing
+
+        return results
+
+    def test(self, csv_path):
+        """
+
+        :param csv_path: a path to the csv evaluation file.
+            Each test is contained within a row.
+            The first column is for the the correct answers, either 0 or 1 as an int or a string .
+            The second column is for the text.
+        :return: A list of predictions where each prediction index is the same as the corresponding test's index
+        """
+        self.logger.info("***** Running Testing *****")
+        # sys.stdout = open(os.devnull, 'w') # Disable printing
+
+        test_df = self.__process_classifier_data(csv_path, for_test_data=True)
+
+        # todo finish
+        if self.seq_trained == False:
+            self.logger.error("Train the sequence classifier before testing")
+            return
+
+        test_df = test_df.astype("str")
+        self.seq.test_list_data = test_df.values.tolist()
+
+        self.seq_args["task"] = "test"
+        results = self.seq.test()
+        self.seq_args["task"] = "idle"
+
+        sys.stdout = sys.__stdout__  # Enable printing
+
+        return results
+
+    def __process_classifier_data(self, csv_path, for_test_data=False):
+        """
+        :param csv_path: Path to csv file that must be processed
+        :return: A Panda dataframe with the proper information for classification tasks
+        """
+
+        if for_test_data:
+            with open(csv_path, 'r') as test_file:
+                reader = csv.reader(test_file)
+                text_list = list(reader)
+            # Blank values are required for the first column value the testing data to increase
+            # reusability of preprocessing methods between the tasks
+            blank_values= ["-1"]*len(text_list)
+            df = pd.DataFrame([*zip(blank_values, text_list)])
+            print(df.head())
+
+        else:
+            df = pd.read_csv(csv_path, header=None)
+
+        df[0] = (df[0] == 2).astype(int)
+        df = pd.DataFrame({
+            'id': range(len(df)),
+            'label': df[0],
+            'alpha': ['a'] * df.shape[0],
+            'text': df[1].replace(r'\n', ' ', regex=True)
+        })
+
+        return df
