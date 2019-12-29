@@ -60,7 +60,7 @@ class HappyTransformer:
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 
-    def __get_initial_transformers(self, initial_transformers):
+    def _get_initial_transformers(self, initial_transformers):
         for transformer in initial_transformers:
             if transformer == 'mlm':
                 self._get_masked_language_model()
