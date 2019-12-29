@@ -389,16 +389,13 @@ class HappyTransformer:
         """
 
         # TODO Test the sequence classifier with other models
-        if self.model == "XLNET":
-            self.seq_args = classifier_args.copy()
-            self.seq_args["model_type"] = self.model
-            self.seq_args['model_name'] = self.model_version
-            self.seq_args['gpu_support'] = self.gpu_support
-            self.seq = SequenceClassifier(self.seq_args, self.tokenizer, self.logger)
+        self.seq_args = classifier_args.copy()
+        self.seq_args["model_type"] = self.model
+        self.seq_args['model_name'] = self.model_version
+        self.seq_args['gpu_support'] = self.gpu_support
+        self.seq = SequenceClassifier(self.seq_args, self.tokenizer, self.logger)
 
-            self.logger.info("A binary sequence classifier for %s has been initialized", self.model)
-        else:
-            self.logger.error("Sequence classifier is not available for %s", self.model)
+        self.logger.info("A binary sequence classifier for %s has been initialized", self.model)
 
     def advanced_init_sequence_classifier(self, args):
         """
@@ -471,7 +468,7 @@ class HappyTransformer:
 
         return results
 
-    def test(self, csv_path):
+    def test_sequence_classifier(self, csv_path):
         """
 
         :param csv_path: a path to the csv evaluation file.

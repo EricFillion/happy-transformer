@@ -168,11 +168,11 @@ class SequenceClassifier():
                     #     # Only evaluate when single GPU otherwise metrics may not average well
                     #     if self.args['evaluate_during_training']:
                     #         results = self.evaluate()
-                    #     #     for key, value in results.items():
-                    #     #         tb_writer.add_scalar('eval_{}'.format(key), value, global_step)
-                    #     # tb_writer.add_scalar('lr', scheduler.get_lr()[0], global_step)
-                    #     # tb_writer.add_scalar('loss', (tr_loss - logging_loss) / self.args['logging_steps'], global_step)
-                    #     # logging_loss = tr_loss
+                    #         for key, value in results.items():
+                    #             tb_writer.add_scalar('eval_{}'.format(key), value, global_step)
+                    #     tb_writer.add_scalar('lr', scheduler.get_lr()[0], global_step)
+                    #     tb_writer.add_scalar('loss', (tr_loss - logging_loss) / self.args['logging_steps'], global_step)
+                    #     logging_loss = tr_loss
 
     def __get_eval_report(self, labels, preds):
         """
