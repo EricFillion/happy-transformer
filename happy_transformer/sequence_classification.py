@@ -16,8 +16,6 @@ import torch
 from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
                               TensorDataset)
 
-# from tensorboardX import SummaryWriter
-
 from pytorch_transformers import (BertForSequenceClassification,
                                   XLMForSequenceClassification,
                                   XLNetForSequenceClassification,
@@ -92,7 +90,6 @@ class SequenceClassifier():
         """
         Trains the binary sequence classifier
         """
-        # tb_writer = SummaryWriter()
 
         sampler = RandomSampler(self.train_dataset)
         train_dataloader = DataLoader(self.train_dataset,
@@ -163,16 +160,6 @@ class SequenceClassifier():
                     self.model.zero_grad()
                     global_step += 1
 
-                    # if self.args['logging_steps'] > 0 and global_step % self.args['logging_steps'] == 0:
-                    #     # Log metrics
-                    #     # Only evaluate when single GPU otherwise metrics may not average well
-                    #     if self.args['evaluate_during_training']:
-                    #         results = self.evaluate()
-                    #         for key, value in results.items():
-                    #             tb_writer.add_scalar('eval_{}'.format(key), value, global_step)
-                    #     tb_writer.add_scalar('lr', scheduler.get_lr()[0], global_step)
-                    #     tb_writer.add_scalar('loss', (tr_loss - logging_loss) / self.args['logging_steps'], global_step)
-                    #     logging_loss = tr_loss
 
     def __get_eval_report(self, labels, preds):
         """
