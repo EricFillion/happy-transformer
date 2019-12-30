@@ -1,7 +1,6 @@
 """
 Binary Sequence Classifier for BERT, XLNET and RoBERTa that has fine tuning capabilities.
 
-XLM is in pre alpha
 """
 
 # pylint: disable=C0301
