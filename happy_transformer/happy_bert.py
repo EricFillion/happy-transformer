@@ -46,19 +46,6 @@ class HappyBERT(HappyTransformer):
         self.nsp = BertForNextSentencePrediction.from_pretrained(self.model_to_use)
         self.nsp.eval()
 
-    def _get_question_answering(self):
-        """
-        Initializes the BertForQuestionAnswering transformer
-        NOTE: This uses the bert-large-uncased-whole-word-masking-finetuned-squad pretraining for best results.
-        """
-        self.qa = BertForQuestionAnswering.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
-        self.qa.eval()
-
-    def _get_prediction_softmax(self, text: str):
-        """
-        BERT's "_get_prediction_softmax" is the default in HappyTransformer
-        """
-        return self._get_prediction_softmax(text)
 
     def is_next_sentence(self, a, b):
         """
@@ -87,28 +74,3 @@ class HappyBERT(HappyTransformer):
             return (True, softmax)
         else:
             return (False, softmax)
-
-    def answer_question(self, question, context):
-        """
-        Using the given context returns the answer to the given question.
-
-        :param question:
-        :param context:
-        """
-        if self.qa is None:
-            self._get_question_answering()
-        input_text = "[CLS] " + question + " [SEP] " + context + " [SEP]"
-        input_ids = self.tokenizer.encode(input_text)
-        token_type_ids = [0 if i <= input_ids.index(102) else 1
-                          for i in range(len(input_ids))]
-        token_tensor = torch.tensor([input_ids])
-        segment_tensor = torch.tensor([token_type_ids])
-        with torch.no_grad():
-            start_scores, end_scores = self.qa(token_tensor,
-                                               token_type_ids=segment_tensor)
-        all_tokens = self.tokenizer.convert_ids_to_tokens(input_ids)
-        answer_list = all_tokens[torch.argmax(start_scores):
-                                 torch.argmax(end_scores)+1]
-        answer = self.tokenizer.convert_tokens_to_string(answer_list)
-        answer = answer.replace(' \' ', '\' ').replace('\' s ', '\'s ')
-        return answer

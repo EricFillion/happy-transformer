@@ -2,8 +2,6 @@
 # pylint: disable=W0511
 # pylint: disable=C0301
 
-
-
 """
 HappyTransformer is a wrapper over pytorch_transformers to make it
 easier to use.
@@ -37,13 +35,16 @@ class HappyTransformer:
     def __init__(self, model):
         # Transformer and tokenizer set in child class
         self.mlm = None  # Masked Language Model
-        self.nsp = None  # Next Sentence Prediction
         self.seq = None # Sequence Classification
-        self.qa = None   # Question Answering
-
 
         self.model_to_use = model
+
+        # the following variables are declared in the  child class:
         self.tokenizer = None
+        self.cls_token = None
+        self.sep_token = None
+        self.masked_token = None
+
         # Child class sets to indicate which model is being used
         self.model = ''
         self.tag_one_transformers = ['BERT', "ROBERTA", 'XLNET']
@@ -61,11 +62,6 @@ class HappyTransformer:
         self.logger = logging.getLogger(__name__)
 
     def _get_masked_language_model(self):
-        # Must be overloaded
-        # TODO make an exception to be thrown if not overloaded
-        pass
-
-    def _get_question_answering(self):
         # Must be overloaded
         # TODO make an exception to be thrown if not overloaded
         pass
@@ -115,9 +111,9 @@ class HappyTransformer:
         tupled_predictions = tuple(zip(options, scores))
 
         if self.model == "XLNET": # TODO find other models that also require this
-            tupled_predictions = self.__remove_staring_character(tupled_predictions, "▁")
-        if self.model == "RoBERTa":
-            tupled_predictions = self.__remove_staring_character(tupled_predictions, "Ġ")
+            tupled_predictions = self.__remove_starting_character(tupled_predictions, "▁")
+        if self.model == "ROBERTA":
+            tupled_predictions = self.__remove_starting_character(tupled_predictions, "Ġ")
 
 
         if self.gpu_support == "cuda":
@@ -125,7 +121,7 @@ class HappyTransformer:
 
         return self.__format_option_scores(tupled_predictions)
 
-    def __remove_staring_character(self, tupled_predictions, starting_char):
+    def __remove_starting_character(self, tupled_predictions, starting_char):
         """
         Some cased models like XLNet place a "▁" character in front of lower cased predictions.
         For most applications this extra bit of information is irrelevant.
