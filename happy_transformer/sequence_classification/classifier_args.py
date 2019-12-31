@@ -19,6 +19,4 @@ classifier_args = {
     'warmup_steps': 0,
     'max_grad_norm': 1.0,
 
-    'reprocess_input_data': True,
-    'gpu_support': 'cpu',
 }

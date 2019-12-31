@@ -34,7 +34,7 @@ class SequenceClassifier():
     Sequence Classifier with fine tuning capabilities
     """
 
-    def __init__(self, args, tokenizer, logger):
+    def __init__(self, args, tokenizer, logger, gpu_support):
         self.args = args
         self.processor = None
         self.train_dataset = None
@@ -47,16 +47,15 @@ class SequenceClassifier():
         self.train_list_data = None
         self.eval_list_data = None
         self.test_list_data = None
-        # self.features = False
-        # self.features_exist = False
         self.tokenizer = tokenizer
         self.logger = logger
+        self.gpu_support = gpu_support
 
 
         self.model_class = self.model_classes[self.args['model_type']]
 
         self.model = self.model_class.from_pretrained(self.args['model_name'])
-        self.model.to(self.args['gpu_support'])
+        self.model.to(self.gpu_support)
 
 
 
@@ -129,7 +128,7 @@ class SequenceClassifier():
             epoch_iterator = tqdm_notebook(train_dataloader, desc="Iteration")
             for step, batch in enumerate(epoch_iterator):
                 self.model.train()
-                batch = tuple(t.to(self.args['gpu_support']) for t in batch)
+                batch = tuple(t.to(self.gpu_support) for t in batch)
 
                 inputs = {'input_ids': batch[0],
                           'attention_mask': batch[1],
@@ -197,7 +196,7 @@ class SequenceClassifier():
         out_label_ids = None
         for batch in tqdm_notebook(eval_dataloader, desc="Evaluating"):
             self.model.eval()
-            batch = tuple(t.to(self.args['gpu_support']) for t in batch)
+            batch = tuple(t.to(self.gpu_support) for t in batch)
 
             with torch.no_grad():
                 inputs = {'input_ids': batch[0],
@@ -246,7 +245,7 @@ class SequenceClassifier():
         preds = None
         for batch in tqdm_notebook(eval_dataloader, desc="Evaluating"):
             self.model.eval()
-            batch = tuple(t.to(self.args['gpu_support']) for t in batch)
+            batch = tuple(t.to(self.gpu_support) for t in batch)
 
             with torch.no_grad():
                 inputs = {'input_ids': batch[0],
@@ -276,11 +275,6 @@ class SequenceClassifier():
         self.processor = processors[self.args["task_mode"]]()
         output_mode = "classification"
 
-        #
-        # if not self.features_exist and not self.args['reprocess_input_data']:
-        #     self.logger.info("Loading features from cached file %s")
-
-        # self.features_exist = True
         label_list = self.processor.get_labels()
 
         if self.args['task'] == 'eval':
