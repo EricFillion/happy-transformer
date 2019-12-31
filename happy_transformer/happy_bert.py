@@ -21,7 +21,7 @@ class HappyBERT(HappyTransformer):
     A wrapper over PyTorch's BERT transformer implementation
     """
 
-    def __init__(self, model='bert-large-uncased'):
+    def __init__(self, model='bert-base-uncased'):
         super().__init__(model)
         self.mlm = None  # Masked Language Model
         self.nsp = None  # Next Sentence Prediction

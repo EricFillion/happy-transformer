@@ -23,7 +23,7 @@ from pytorch_transformers import (BertForSequenceClassification,
 from pytorch_transformers import AdamW, WarmupLinearSchedule
 
 
-from happy_transformer.classifier_utils import convert_examples_to_features, \
+from happy_transformer.sequence_classification.classifier_utils import convert_examples_to_features, \
                                                output_modes, \
                                                processors
 
@@ -40,8 +40,7 @@ class SequenceClassifier():
         self.model_classes = {
             'BERT': (BertForSequenceClassification),
             'XLNET': (XLNetForSequenceClassification),
-            'xlm': (XLMForSequenceClassification),
-            'RoBERTa': (RobertaForSequenceClassification)
+            'ROBERTA': (RobertaForSequenceClassification)
         }
         self.train_list_data = None
         self.eval_list_data = None
@@ -132,8 +131,7 @@ class SequenceClassifier():
 
                 inputs = {'input_ids': batch[0],
                           'attention_mask': batch[1],
-                          'token_type_ids': batch[2] if self.args['model_type'] in ['bert', 'xlnet'] else None,
-                          # XLM don't use segment_ids
+                          'token_type_ids': batch[2],
                           'labels': batch[3]}
                 outputs = self.model(**inputs)
                 loss = outputs[0]  # model outputs are always tuple in pytorch-transformers (see doc)
@@ -202,8 +200,7 @@ class SequenceClassifier():
             with torch.no_grad():
                 inputs = {'input_ids': batch[0],
                           'attention_mask': batch[1],
-                          'token_type_ids': batch[2] if self.args['model_type'] in ['bert', 'xlnet'] else None,
-                          # XLM does not  use segment_ids
+                          'token_type_ids': batch[2],
                           'labels': batch[3]}
                 outputs = self.model(**inputs)
                 tmp_eval_loss, logits = outputs[:2]
@@ -252,8 +249,7 @@ class SequenceClassifier():
             with torch.no_grad():
                 inputs = {'input_ids': batch[0],
                           'attention_mask': batch[1],
-                          'token_type_ids': batch[2] if self.args['model_type'] in ['bert', 'xlnet'] else None,
-                          # XLM does not  use segment_ids
+                          'token_type_ids': batch[2],
                           'labels': batch[3]}
                 outputs = self.model(**inputs)
                 tmp_eval_loss, logits = outputs[:2]
@@ -294,19 +290,19 @@ class SequenceClassifier():
 
             self.features = convert_examples_to_features(examples, label_list, self.args['max_seq_length'], self.tokenizer,
                                                          output_mode,
-                                                         cls_token_at_end=bool(self.args['model_type'] in ['xlnet']),
+                                                         cls_token_at_end=bool(self.args['model_type'] in ['XLNET']),
                                                          # xlnet has a cls token at the end
                                                          cls_token=self.tokenizer.cls_token,
                                                          cls_token_segment_id=2 if self.args['model_type'] in [
-                                                             'xlnet'] else 0,
+                                                             'XLNET'] else 0,
                                                          sep_token=self.tokenizer.sep_token,
-                                                         sep_token_extra=bool(self.args['model_type'] in ['roberta']),
+                                                         sep_token_extra=bool(self.args['model_type'] in ['ROBERTA']),
                                                          # roberta uses an extra separator b/w pairs of sentences, cf. github.com/pytorch/fairseq/commit/1684e166e3da03f5b600dbb7855cb98ddfcd0805
-                                                         pad_on_left=bool(self.args['model_type'] in ['xlnet']),
+                                                         pad_on_left=bool(self.args['model_type'] in ['XLNET']),
                                                          # pad on the left for xlnet
                                                          pad_token=self.tokenizer.convert_tokens_to_ids([self.tokenizer.pad_token])[0],
                                                          pad_token_segment_id=4 if self.args['model_type'] in [
-                                                             'xlnet'] else 0)
+                                                             'XLNET'] else 0)
 
         all_input_ids = torch.tensor([f.input_ids for f in self.features], dtype=torch.long)
         all_input_mask = torch.tensor([f.input_mask for f in self.features], dtype=torch.long)

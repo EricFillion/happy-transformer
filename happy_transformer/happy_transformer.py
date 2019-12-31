@@ -19,8 +19,8 @@ import sys
 import os
 
 
-from happy_transformer.classifier_args import classifier_args
-from happy_transformer.sequence_classification import SequenceClassifier
+from happy_transformer.sequence_classification.classifier_args import classifier_args
+from happy_transformer.sequence_classification.sequence_classification import SequenceClassifier
 
 
 class HappyTransformer:
@@ -52,14 +52,17 @@ class HappyTransformer:
         # GPU support
         self.gpu_support = torch.device("cuda" if torch.cuda.is_available()
                                         else "cpu")
-        print("Using model:", self.gpu_support)
-        self.model_version = model
-        self.seq_trained = False
-        self.seq_args = None
 
         #logging
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger(__name__)
+
+        self.logger.info("Using model: %s", self.gpu_support)
+        self.model_version = model
+        self.seq_trained = False
+        self.seq_args = None
+
+
 
 
     def predict_mask(self, text: str, options=None, k=1):
@@ -251,16 +254,16 @@ class HappyTransformer:
         # TODO,  Add cases for the other masked tokens used in common transformer models
         valid = True
         if '[MASK]' not in text:
-            print("[MASK] was not found in your string. Change the word you want to predict to [MASK]")
+            self.logger.info("[MASK] was not found in your string. Change the word you want to predict to [MASK]")
             valid = False
         if '<mask>' in text or '<MASK>' in text:
-            print('Instead of using <mask> or <MASK>, use [MASK] please as it is the convention')
+            self.logger.info('Instead of using <mask> or <MASK>, use [MASK] please as it is the convention')
             valid = True
         if '[CLS]' in text:
-            print("[CLS] was found in your string.  Remove it as it will be automatically added later")
+            self.logger.info("[CLS] was found in your string.  Remove it as it will be automatically added later")
             valid = False
         if '[SEP]' in text:
-            print("[SEP] was found in your string.  Remove it as it will be automatically added later")
+            self.logger.info("[SEP] was found in your string.  Remove it as it will be automatically added later")
             valid = False
 
         return valid
@@ -378,7 +381,7 @@ class HappyTransformer:
         :return: A list of predictions where each prediction index is the same as the corresponding test's index
         """
         self.logger.info("***** Running Testing *****")
-        # sys.stdout = open(os.devnull, 'w') # Disable printing
+        sys.stdout = open(os.devnull, 'w') # Disable printing
 
         test_df = self.__process_classifier_data(csv_path, for_test_data=True)
 
@@ -412,8 +415,6 @@ class HappyTransformer:
             # reusability of preprocessing methods between the tasks
             blank_values= ["-1"]*len(text_list)
             df = pd.DataFrame([*zip(blank_values, text_list)])
-            print(df.head())
-
         else:
             df = pd.read_csv(csv_path, header=None)
 
