@@ -11,6 +11,8 @@ from transformers import (
     BertTokenizer
 )
 
+import torch
+
 from happy_transformer.happy_transformer import HappyTransformer
 
 
@@ -19,8 +21,8 @@ class HappyBERT(HappyTransformer):
     A wrapper over PyTorch's BERT transformer implementation
     """
 
-    def __init__(self, model='bert-large-uncased', initial_transformers=[]):
-        super().__init__(model, initial_transformers)
+    def __init__(self, model='bert-large-uncased'):
+        super().__init__(model)
         self.mlm = None  # Masked Language Model
         self.nsp = None  # Next Sentence Prediction
         self.qa = None   # Question Answering
@@ -29,7 +31,6 @@ class HappyBERT(HappyTransformer):
         self.sep_token = self.tokenizer.sep_token
         self.cls_token = self.tokenizer.cls_token
         self.model = 'BERT'
-        self._get_initial_transformers(initial_transformers)
 
     def _get_masked_language_model(self):
         """
@@ -58,3 +59,56 @@ class HappyBERT(HappyTransformer):
         BERT's "_get_prediction_softmax" is the default in HappyTransformer
         """
         return self._get_prediction_softmax(text)
+
+    def is_next_sentence(self, a, b):
+        """
+        Determines if sentence B is likely to be a continuation after sentence
+        A.
+        :param a: First sentence
+        :param b: Second sentence to test if it comes after the first
+        :return tuple: True if b is likely to follow a, False if b is unlikely
+                       to follow a, with the probabilities as the second item
+                       of the tuple
+        """
+        if self.nsp is None:
+            self._get_next_sentence_prediction()
+        connected = a + ' ' + b
+        tokenized_text = self._get_tokenized_text(connected)
+        indexed_tokens = self.tokenizer.convert_tokens_to_ids(tokenized_text)
+        segments_ids = self._get_segment_ids(tokenized_text)
+        # Convert inputs to PyTorch tensors
+        tokens_tensor = torch.tensor([indexed_tokens])
+        segments_tensors = torch.tensor([segments_ids])
+        with torch.no_grad():
+            predictions = self.nsp(tokens_tensor, token_type_ids=segments_tensors)[0]
+        print(type(predictions))
+        softmax = self._softmax(predictions)
+        if torch.argmax(softmax) == 0:
+            return (True, softmax)
+        else:
+            return (False, softmax)
+
+    def answer_question(self, question, context):
+        """
+        Using the given context returns the answer to the given question.
+
+        :param question:
+        :param context:
+        """
+        if self.qa is None:
+            self._get_question_answering()
+        input_text = "[CLS] " + question + " [SEP] " + context + " [SEP]"
+        input_ids = self.tokenizer.encode(input_text)
+        token_type_ids = [0 if i <= input_ids.index(102) else 1
+                          for i in range(len(input_ids))]
+        token_tensor = torch.tensor([input_ids])
+        segment_tensor = torch.tensor([token_type_ids])
+        with torch.no_grad():
+            start_scores, end_scores = self.qa(token_tensor,
+                                               token_type_ids=segment_tensor)
+        all_tokens = self.tokenizer.convert_ids_to_tokens(input_ids)
+        answer_list = all_tokens[torch.argmax(start_scores):
+                                 torch.argmax(end_scores)+1]
+        answer = self.tokenizer.convert_tokens_to_string(answer_list)
+        answer = answer.replace(' \' ', '\' ').replace('\' s ', '\'s ')
+        return answer

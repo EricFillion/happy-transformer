@@ -8,7 +8,7 @@ class HappyXLNET(HappyTransformer):
     Implementation of XLNET for masked word prediction
     """
 
-    def __init__(self, model='xlnet-large-cased', initial_transformers=[]):
+    def __init__(self, model='xlnet-large-cased'):
         super().__init__(model)
         self.mlm = None
         self.tokenizer = XLNetTokenizer.from_pretrained(model)
@@ -16,7 +16,6 @@ class HappyXLNET(HappyTransformer):
         self.sep_token = self.tokenizer.sep_token
         self.cls_token = self.tokenizer.cls_token
         self.model = 'XLNET'
-        self._get_initial_transformers(initial_transformers)
 
     def _get_masked_language_model(self):
         """

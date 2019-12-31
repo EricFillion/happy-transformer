@@ -15,7 +15,7 @@ class HappyRoBERTa(HappyTransformer):
     A wrapper over PyTorch's BERT transformer implementation
     """
 
-    def __init__(self, model='roberta-base', initial_transformers=[]):
+    def __init__(self, model='roberta-base'):
         super().__init__(model)
         self.mlm = None  # Masked Language Model
         self.nsp = None  # Next Sentence Prediction
@@ -23,8 +23,7 @@ class HappyRoBERTa(HappyTransformer):
         self.masked_token = self.tokenizer.mask_token
         self.sep_token = self.tokenizer.sep_token
         self.cls_token = self.tokenizer.cls_token
-        self.model = 'RoBERTa'
-        self._get_initial_transformers(initial_transformers)
+        self.model = 'ROBERTA'
 
     def _get_masked_language_model(self):
         """

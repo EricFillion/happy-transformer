@@ -34,7 +34,7 @@ class HappyTransformer:
                 models to be able to utilize their capabilities.
     """
 
-    def __init__(self, model, initial_transformers=[]):
+    def __init__(self, model):
         # Transformer and tokenizer set in child class
         self.mlm = None  # Masked Language Model
         self.nsp = None  # Next Sentence Prediction
@@ -46,7 +46,7 @@ class HappyTransformer:
         self.tokenizer = None
         # Child class sets to indicate which model is being used
         self.model = ''
-        self.tag_one_transformers = ['BERT', 'GPT2', 'XLM', 'XLNET']
+        self.tag_one_transformers = ['BERT', "ROBERTA", 'XLNET']
 
         # GPU support
         self.gpu_support = torch.device("cuda" if torch.cuda.is_available()
@@ -60,22 +60,7 @@ class HappyTransformer:
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 
-    def _get_initial_transformers(self, initial_transformers):
-        for transformer in initial_transformers:
-            if transformer == 'mlm':
-                self._get_masked_language_model()
-            if transformer == 'nsp':
-                self._get_next_sentence_prediction()
-            if transformer == 'qa':
-                self._get_question_answering()
-
-
     def _get_masked_language_model(self):
-        # Must be overloaded
-        # TODO make an exception to be thrown if not overloaded
-        pass
-
-    def _get_next_sentence_prediction(self):
         # Must be overloaded
         # TODO make an exception to be thrown if not overloaded
         pass
@@ -111,7 +96,8 @@ class HappyTransformer:
         if not self._text_verification(text):
             return
 
-        tokenized_text = self.__get_tokenized_text(text)
+        tokenized_text = self.\
+            _get_tokenized_text(text)
         masked_index = tokenized_text.index(self.masked_token)
         softmax = self._get_prediction_softmax(tokenized_text)
         if options is not None:
@@ -159,7 +145,7 @@ class HappyTransformer:
                 new_predictions.append(prediction)
         return new_predictions
 
-    def __get_tokenized_text(self, text):
+    def _get_tokenized_text(self, text):
         """
         Formats a sentence so that it can be tokenized by a transformer.
         :param text: a 1-2 sentence text that contains [MASK]
@@ -217,7 +203,7 @@ class HappyTransformer:
                                        token_type_ids=segments_tensors)
             predictions = outputs[0]
 
-            softmax = self.__softmax(predictions)
+            softmax = self._softmax(predictions)
             return softmax
 
     def __format_option_scores(self, tupled_predicitons: list):
@@ -239,7 +225,7 @@ class HappyTransformer:
             formatted_ranked_scores.append({'word': word, 'score': score})
         return formatted_ranked_scores
 
-    def __softmax(self, value):
+    def _softmax(self, value):
         # TODO: make it an external function
         return value.exp() / (value.exp().sum(-1)).unsqueeze(-1)
 
@@ -265,33 +251,6 @@ class HappyTransformer:
             # add exception case for XLNet
         return segment_ids
 
-    def finish_sentence(self, text: str, maxPredictionLength=100):
-        """
-        :param text: a string that is the start of a sentence to be finished
-        :param maxPredictionLength: an int with the maximum number of words to
-                                    be predicted
-        :return: the completed sentence
-        """
-        if self.mlm is None:
-            self._get_masked_language_model()
-
-        father_predict = ""
-        grand_father_predict = ""
-
-        for i in range(0, maxPredictionLength):
-            predict_text = text + self.masked_token
-            predict_word = self.predict_mask(predict_text)[0]
-
-            if predict_word == father_predict\
-                    and predict_word == grand_father_predict:
-                # if the same token was predicted three times in a row
-                return text
-
-            grand_father_predict = father_predict
-            father_predict = predict_word
-
-            text = text + predict_word
-        return text
 
     def _text_verification(self, text: str):
 
@@ -312,59 +271,6 @@ class HappyTransformer:
 
         return valid
 
-    def is_next_sentence(self, a, b):
-        """
-        Determines if sentence B is likely to be a continuation after sentence
-        A.
-        :param a: First sentence
-        :param b: Second sentence to test if it comes after the first
-        :return tuple: True if b is likely to follow a, False if b is unlikely
-                       to follow a, with the probabilities as the second item
-                       of the tuple
-        """
-        if self.nsp is None:
-            self._get_next_sentence_prediction()
-        connected = a + ' ' + b
-        tokenized_text = self.__get_tokenized_text(connected)
-        indexed_tokens = self.tokenizer.convert_tokens_to_ids(tokenized_text)
-        segments_ids = self._get_segment_ids(tokenized_text)
-        # Convert inputs to PyTorch tensors
-        tokens_tensor = torch.tensor([indexed_tokens])
-        segments_tensors = torch.tensor([segments_ids])
-        with torch.no_grad():
-            predictions = self.nsp(tokens_tensor, token_type_ids=segments_tensors)[0]
-        print(type(predictions))
-        softmax = self.__softmax(predictions)
-        if torch.argmax(softmax) == 0:
-            return (True, softmax)
-        else:
-            return (False, softmax)
-
-
-    def answer_question(self, question, context):
-        """
-        Using the given context returns the answer to the given question.
-
-        :param question: 
-        :param context:
-        """
-        if self.qa is None:
-            self._get_question_answering()
-        input_text = "[CLS] " + question + " [SEP] " + context + " [SEP]"
-        input_ids = self.tokenizer.encode(input_text)
-        token_type_ids = [0 if i <= input_ids.index(102) else 1
-                          for i in range(len(input_ids))]
-        token_tensor = torch.tensor([input_ids])
-        segment_tensor = torch.tensor([token_type_ids])
-        with torch.no_grad():
-            start_scores, end_scores = self.qa(token_tensor,
-                                               token_type_ids=segment_tensor)
-        all_tokens = self.tokenizer.convert_ids_to_tokens(input_ids)
-        answer_list = all_tokens[torch.argmax(start_scores):
-                                 torch.argmax(end_scores)+1]
-        answer = self.tokenizer.convert_tokens_to_string(answer_list)
-        answer = answer.replace(' \' ', '\' ').replace('\' s ', '\'s ')
-        return answer
 
     @staticmethod
     def soft_sum(option: list, softed, mask_id: int):
