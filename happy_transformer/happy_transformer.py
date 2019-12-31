@@ -294,8 +294,7 @@ class HappyTransformer:
         self.seq_args = classifier_args.copy()
         self.seq_args["model_type"] = self.model
         self.seq_args['model_name'] = self.model_version
-        self.seq_args['gpu_support'] = self.gpu_support
-        self.seq = SequenceClassifier(self.seq_args, self.tokenizer, self.logger)
+        self.seq = SequenceClassifier(self.seq_args, self.tokenizer, self.logger, self.gpu_support)
 
         self.logger.info("A binary sequence classifier for %s has been initialized", self.model)
 
@@ -307,7 +306,7 @@ class HappyTransformer:
 
         """
         self.seq_args = args
-        self.seq = SequenceClassifier(args, self.tokenizer, self.logger)
+        self.seq = SequenceClassifier(args, self.tokenizer, self.logger, self.gpu_support)
         self.logger.info("A binary sequence classifier for %s has been initialized", self.model)
 
     def train_sequence_classifier(self, train_csv_path):
