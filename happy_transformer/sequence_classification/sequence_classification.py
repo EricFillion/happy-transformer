@@ -1,6 +1,9 @@
 """
 Binary Sequence Classifier for BERT, XLNET and RoBERTa that has fine tuning capabilities.
 
+Credit: This code is a modified version of the  code found in this repository under "run_model.ipynb"
+    https://github.com/ThilinaRajapakse/pytorch-transformers-classification
+
 """
 
 # pylint: disable=C0301
@@ -44,8 +47,8 @@ class SequenceClassifier():
         self.train_list_data = None
         self.eval_list_data = None
         self.test_list_data = None
-        self.features = False
-        self.features_exists = False
+        # self.features = False
+        # self.features_exist = False
         self.tokenizer = tokenizer
         self.logger = logger
 
@@ -273,40 +276,40 @@ class SequenceClassifier():
         self.processor = processors[self.args["task_mode"]]()
         output_mode = "classification"
 
-        if not self.features_exists and not self.args['reprocess_input_data']:
-            self.logger.info("Loading features from cached file %s")
+        #
+        # if not self.features_exist and not self.args['reprocess_input_data']:
+        #     self.logger.info("Loading features from cached file %s")
 
+        # self.features_exist = True
+        label_list = self.processor.get_labels()
+
+        if self.args['task'] == 'eval':
+            examples = self.processor.get_dev_examples(self.eval_list_data)
+        elif self.args['task'] == 'train':
+            examples = self.processor.get_train_examples(self.train_list_data)
         else:
-            self.features_exists = True
-            label_list = self.processor.get_labels()
+            examples = self.processor.get_dev_examples(self.test_list_data)
 
-            if self.args['task'] == 'eval':
-                examples = self.processor.get_dev_examples(self.eval_list_data)
-            elif self.args['task'] == 'train':
-                examples = self.processor.get_train_examples(self.train_list_data)
-            else:
-                examples = self.processor.get_dev_examples(self.test_list_data)
+        features = convert_examples_to_features(examples, label_list, self.args['max_seq_length'], self.tokenizer,
+                                                     output_mode,
+                                                     cls_token_at_end=bool(self.args['model_type'] in ['XLNET']),
+                                                     # xlnet has a cls token at the end
+                                                     cls_token=self.tokenizer.cls_token,
+                                                     cls_token_segment_id=2 if self.args['model_type'] in [
+                                                         'XLNET'] else 0,
+                                                     sep_token=self.tokenizer.sep_token,
+                                                     sep_token_extra=bool(self.args['model_type'] in ['ROBERTA']),
+                                                     # roberta uses an extra separator b/w pairs of sentences, cf. github.com/pytorch/fairseq/commit/1684e166e3da03f5b600dbb7855cb98ddfcd0805
+                                                     pad_on_left=bool(self.args['model_type'] in ['XLNET']),
+                                                     # pad on the left for xlnet
+                                                     pad_token=self.tokenizer.convert_tokens_to_ids([self.tokenizer.pad_token])[0],
+                                                     pad_token_segment_id=4 if self.args['model_type'] in [
+                                                         'XLNET'] else 0)
 
-            self.features = convert_examples_to_features(examples, label_list, self.args['max_seq_length'], self.tokenizer,
-                                                         output_mode,
-                                                         cls_token_at_end=bool(self.args['model_type'] in ['XLNET']),
-                                                         # xlnet has a cls token at the end
-                                                         cls_token=self.tokenizer.cls_token,
-                                                         cls_token_segment_id=2 if self.args['model_type'] in [
-                                                             'XLNET'] else 0,
-                                                         sep_token=self.tokenizer.sep_token,
-                                                         sep_token_extra=bool(self.args['model_type'] in ['ROBERTA']),
-                                                         # roberta uses an extra separator b/w pairs of sentences, cf. github.com/pytorch/fairseq/commit/1684e166e3da03f5b600dbb7855cb98ddfcd0805
-                                                         pad_on_left=bool(self.args['model_type'] in ['XLNET']),
-                                                         # pad on the left for xlnet
-                                                         pad_token=self.tokenizer.convert_tokens_to_ids([self.tokenizer.pad_token])[0],
-                                                         pad_token_segment_id=4 if self.args['model_type'] in [
-                                                             'XLNET'] else 0)
-
-        all_input_ids = torch.tensor([f.input_ids for f in self.features], dtype=torch.long)
-        all_input_mask = torch.tensor([f.input_mask for f in self.features], dtype=torch.long)
-        all_segment_ids = torch.tensor([f.segment_ids for f in self.features], dtype=torch.long)
-        all_label_ids = torch.tensor([f.label_id for f in self.features], dtype=torch.long)
+        all_input_ids = torch.tensor([f.input_ids for f in features], dtype=torch.long)
+        all_input_mask = torch.tensor([f.input_mask for f in features], dtype=torch.long)
+        all_segment_ids = torch.tensor([f.segment_ids for f in features], dtype=torch.long)
+        all_label_ids = torch.tensor([f.label_id for f in features], dtype=torch.long)
 
 
         dataset = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_label_ids)

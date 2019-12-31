@@ -196,8 +196,7 @@ class HappyTransformer:
         segments_tensors = torch.tensor([segments_ids])
 
         with torch.no_grad():
-            outputs = self.mlm(tokens_tensor,
-                                       token_type_ids=segments_tensors)
+            outputs = self.mlm(tokens_tensor, token_type_ids=segments_tensors)
             predictions = outputs[0]
 
             softmax = self._softmax(predictions)
@@ -402,6 +401,8 @@ class HappyTransformer:
 
     def __process_classifier_data(self, csv_path, for_test_data=False):
         """
+         Credit: This code was modified from this repository
+         https://github.com/ThilinaRajapakse/pytorch-transformers-classification
         :param csv_path: Path to csv file that must be processed
         :return: A Panda dataframe with the proper information for classification tasks
         """
@@ -412,7 +413,7 @@ class HappyTransformer:
                 text_list = list(reader)
             # Blank values are required for the first column value the testing data to increase
             # reusability of preprocessing methods between the tasks
-            blank_values= ["-1"]*len(text_list)
+            blank_values = ["-1"]*len(text_list)
             df = pd.DataFrame([*zip(blank_values, text_list)])
         else:
             df = pd.read_csv(csv_path, header=None)
