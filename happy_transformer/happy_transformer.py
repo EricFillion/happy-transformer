@@ -61,10 +61,6 @@ class HappyTransformer:
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 
-    def _get_masked_language_model(self):
-        # Must be overloaded
-        # TODO make an exception to be thrown if not overloaded
-        pass
 
     def predict_mask(self, text: str, options=None, k=1):
         """
@@ -99,6 +95,8 @@ class HappyTransformer:
         if options is not None:
             option_ids = [self.tokenizer.encode(option) for option in options]
 
+
+            option_ids = option_ids[:k]
             scores = list(map(lambda x: self.soft_sum(x, softmax[0],
                                                       masked_index),
                               option_ids))
