@@ -16,7 +16,6 @@ from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
                               TensorDataset)
 
 from pytorch_transformers import (BertForSequenceClassification,
-                                  XLMForSequenceClassification,
                                   XLNetForSequenceClassification,
                                   RobertaForSequenceClassification)
 

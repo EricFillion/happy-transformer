@@ -302,22 +302,20 @@ class HappyTransformer:
 
     def advanced_init_sequence_classifier(self, args):
         """
-        Initializes a binary sequence classifier model with custom settings..
-        The default settings args dicttionary can be found  happy_transformer/classifier_args.
+        Initializes a binary sequence classifier model with custom settings.
+        The default settings args dictionary can be found  happy_transformer/sequence_classification/classifier_args.
         This dictionary can then be modified and then used as the only input for this method.
 
         """
-        if self.model == "XLNET":
-            self.seq = SequenceClassifier(args, self.tokenizer)
-            self.logger.info("A binary sequence classifier for %s has been initialized", self.model)
-        else:
-            self.logger.error("Sequence classifier is not available for %s", self.model)
+        self.seq_args = args
+        self.seq = SequenceClassifier(args, self.tokenizer, self.logger)
+        self.logger.info("A binary sequence classifier for %s has been initialized", self.model)
 
-    def train_sequence_classifier(self, csv_path):
+    def train_sequence_classifier(self, train_csv_path):
         """
         Trains the HappyTransformer's sequence classifier
 
-        :param csv_path: A path to the csv evaluation file.
+        :param train_csv_path: A path to the csv evaluation file.
             Each test is contained within a row.
             The first column is for the the correct answers, either 0 or 1 as an int or a string .
             The second column is for the text.
@@ -325,11 +323,12 @@ class HappyTransformer:
         self.logger.info("***** Running Training *****")
 
 
-        train_df = self.__process_classifier_data(csv_path)
+        train_df = self.__process_classifier_data(train_csv_path)
 
         if self.seq == None:
             self.logger.error("Initialize the sequence classifier before training")
             return
+
         sys.stdout = open(os.devnull, 'w') # Disable printing to stop external libraries from printing
         train_df = train_df.astype("str")
         self.seq.train_list_data = train_df.values.tolist()
@@ -340,7 +339,7 @@ class HappyTransformer:
         sys.stdout = sys.__stdout__  # Enable printing
 
 
-    def eval_sequence_classifier(self, csv_path):
+    def eval_sequence_classifier(self, eval_csv_path):
         """
         Evaluates the trained sequence classifier against a testing set.
 
@@ -356,7 +355,7 @@ class HappyTransformer:
 
         sys.stdout = open(os.devnull, 'w') # Disable printing
 
-        eval_df = self.__process_classifier_data(csv_path)
+        eval_df = self.__process_classifier_data(eval_csv_path)
 
         if self.seq_trained == False:
             self.logger.error("Train the sequence classifier before evaluation")
@@ -371,10 +370,10 @@ class HappyTransformer:
 
         return results
 
-    def test_sequence_classifier(self, csv_path):
+    def test_sequence_classifier(self, test_csv_path):
         """
 
-        :param csv_path: a path to the csv evaluation file.
+        :param test_csv_path: a path to the csv evaluation file.
             Each test is contained within a row.
             The first column is for the the correct answers, either 0 or 1 as an int or a string .
             The second column is for the text.
@@ -383,7 +382,7 @@ class HappyTransformer:
         self.logger.info("***** Running Testing *****")
         sys.stdout = open(os.devnull, 'w') # Disable printing
 
-        test_df = self.__process_classifier_data(csv_path, for_test_data=True)
+        test_df = self.__process_classifier_data(test_csv_path, for_test_data=True)
 
         # todo finish
         if self.seq_trained == False:

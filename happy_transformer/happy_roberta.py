@@ -1,8 +1,6 @@
 """
-HappyRoBERTa
+HappyROBERTA: A wrapper over PyTorch's RoBERTa implementation
 """
-
-
 # disable pylint TODO warning
 # pylint: disable=W0511
 
@@ -10,9 +8,18 @@ from happy_transformer.happy_transformer import HappyTransformer
 
 from transformers import RobertaForMaskedLM, RobertaTokenizer
 
-class HappyRoBERTa(HappyTransformer):
+class HappyROBERTA(HappyTransformer):
     """
-    A wrapper over PyTorch's BERT transformer implementation
+    Currently available public methods:
+        RobertaForMaskedLM:
+            1. predict_mask(text: str, options=None, k=1)
+        RobertaForSequenceClassification:
+            1. init_sequence_classifier()
+            2. advanced_init_sequence_classifier()
+            3. train_sequence_classifier(train_csv_path)
+            4. eval_sequence_classifier(eval_csv_path)
+            5. test_sequence_classifier(test_csv_path)
+
     """
 
     def __init__(self, model='roberta-base'):

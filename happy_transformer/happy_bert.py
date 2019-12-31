@@ -7,7 +7,6 @@ HappyBERT
 from transformers import (
     BertForMaskedLM,
     BertForNextSentencePrediction,
-    BertForQuestionAnswering,
     BertTokenizer
 )
 
@@ -18,8 +17,19 @@ from happy_transformer.happy_transformer import HappyTransformer
 
 class HappyBERT(HappyTransformer):
     """
-    A wrapper over PyTorch's BERT transformer implementation
-    """
+    Currently available public methods:
+        BertForMaskedLM:
+            1. predict_mask(text: str, options=None, k=1)
+        BertForSequenceClassification:
+            1. init_sequence_classifier()
+            2. advanced_init_sequence_classifier()
+            3. train_sequence_classifier(train_csv_path)
+            4. eval_sequence_classifier(eval_csv_path)
+            5. test_sequence_classifier(test_csv_path)
+        BertForNextSentencePrediction:
+
+
+            """
 
     def __init__(self, model='bert-base-uncased'):
         super().__init__(model)
@@ -47,19 +57,19 @@ class HappyBERT(HappyTransformer):
         self.nsp.eval()
 
 
-    def is_next_sentence(self, a, b):
+    def is_next_sentence(self, sentence_a, sentence_b):
         """
         Determines if sentence B is likely to be a continuation after sentence
         A.
-        :param a: First sentence
-        :param b: Second sentence to test if it comes after the first
+        :param sentence_a: First sentence
+        :param sentence_b: Second sentence to test if it comes after the first
         :return tuple: True if b is likely to follow a, False if b is unlikely
                        to follow a, with the probabilities as the second item
                        of the tuple
         """
         if self.nsp is None:
             self._get_next_sentence_prediction()
-        connected = a + ' ' + b
+        connected = sentence_a + ' ' + sentence_b
         tokenized_text = self._get_tokenized_text(connected)
         indexed_tokens = self.tokenizer.convert_tokens_to_ids(tokenized_text)
         segments_ids = self._get_segment_ids(tokenized_text)
