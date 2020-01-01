@@ -1,5 +1,6 @@
 """
-HappyBERT
+HappyBERT: a wrapper over PyTorch's BERT implementation
+
 """
 
 # disable pylint TODO warning

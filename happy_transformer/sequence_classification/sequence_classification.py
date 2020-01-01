@@ -1,7 +1,7 @@
 """
 Binary Sequence Classifier for BERT, XLNET and RoBERTa that has fine tuning capabilities.
 
-Credit: This code is a modified version of the  code found in this repository under "run_model.ipynb"
+Credit: This code is a modified version of the code found in this repository under "run_model.ipynb"
     https://github.com/ThilinaRajapakse/pytorch-transformers-classification
 
 """
@@ -111,14 +111,6 @@ class SequenceClassifier():
         optimizer = AdamW(optimizer_grouped_parameters, lr=self.args['learning_rate'], eps=self.args['adam_epsilon'])
         scheduler = WarmupLinearSchedule(optimizer, warmup_steps=self.args['warmup_steps'], t_total=t_total)
 
-        if self.args['fp16']:
-            try:
-                from apex import amp
-            except ImportError:
-                raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use fp16 training.")
-            self.model, optimizer = amp.initialize(self.model, optimizer, opt_level=self.args['fp16_opt_level'])
-
-
         global_step = 0
         tr_loss, logging_loss = 0.0, 0.0
         self.model.zero_grad()
@@ -140,11 +132,6 @@ class SequenceClassifier():
 
                 if self.args['gradient_accumulation_steps'] > 1:
                     loss = loss / self.args['gradient_accumulation_steps']
-
-                if self.args['fp16']:
-                    with amp.scale_loss(loss, optimizer) as scaled_loss:
-                        scaled_loss.backward()
-                    torch.nn.utils.clip_grad_norm_(amp.master_params(optimizer), self.args['max_grad_norm'])
 
                 else:
                     loss.backward()

@@ -319,7 +319,7 @@ class HappyTransformer:
 
         train_df = self.__process_classifier_data(train_csv_path)
 
-        if self.seq == None:
+        if self.seq is None:
             self.logger.error("Initialize the sequence classifier before training")
             exit()
 
@@ -349,9 +349,10 @@ class HappyTransformer:
 
         eval_df = self.__process_classifier_data(eval_csv_path)
 
-        if self.seq_trained == False:
+        if not self.seq_trained:
             self.logger.error("Train the sequence classifier before evaluation")
-            return
+            exit()
+
         eval_df = eval_df.astype("str")
         self.seq.eval_list_data = eval_df.values.tolist()
 
@@ -375,9 +376,9 @@ class HappyTransformer:
         test_df = self.__process_classifier_data(test_csv_path, for_test_data=True)
 
         # todo finish
-        if self.seq_trained == False:
+        if not self.seq_trained:
             self.logger.error("Train the sequence classifier before testing")
-            return
+            exit()
 
         test_df = test_df.astype("str")
         self.seq.test_list_data = test_df.values.tolist()

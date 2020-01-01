@@ -1,5 +1,5 @@
 """
-HappyROBERTA: A wrapper over PyTorch's RoBERTa implementation
+HappyROBERTA: a wrapper over PyTorch's RoBERTa implementation
 """
 # disable pylint TODO warning
 # pylint: disable=W0511
