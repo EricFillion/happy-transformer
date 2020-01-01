@@ -94,8 +94,6 @@ class BinaryProcessor(DataProcessor):
             """See base class."""
             return self._create_examples(data, "dev")
 
-
-
     def get_labels(self):
         """See base class."""
         return ["0", "1"]

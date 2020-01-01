@@ -34,7 +34,7 @@ class SequenceClassifier():
     Sequence Classifier with fine tuning capabilities
     """
 
-    def __init__(self, args, tokenizer, logger, gpu_support):
+    def __init__(self, args, tokenizer, logger, gpu_support, model, model_name):
         self.args = args
         self.processor = None
         self.train_dataset = None
@@ -50,11 +50,11 @@ class SequenceClassifier():
         self.tokenizer = tokenizer
         self.logger = logger
         self.gpu_support = gpu_support
+        self.model_name = model_name
 
+        self.model_class = self.model_classes[self.args['model_name']]
 
-        self.model_class = self.model_classes[self.args['model_type']]
-
-        self.model = self.model_class.from_pretrained(self.args['model_name'])
+        self.model = self.model_class.from_pretrained(model)
         self.model.to(self.gpu_support)
 
 
@@ -76,7 +76,7 @@ class SequenceClassifier():
         """
         self.check_task()
 
-        self.train_dataset = self.__load_and_cache_examples()
+        self.train_dataset = self.__load_and_cache_examples("train")
         self.__train()
 
         # Takes care of distributed/parallel training
@@ -92,7 +92,7 @@ class SequenceClassifier():
         sampler = RandomSampler(self.train_dataset)
         train_dataloader = DataLoader(self.train_dataset,
                                       sampler=sampler,
-                                      batch_size=self.args['train_batch_size'])
+                                      batch_size=self.args['batch_size'])
 
         t_total = len(train_dataloader) \
             // self.args['gradient_accumulation_steps'] * \
@@ -156,7 +156,6 @@ class SequenceClassifier():
                     scheduler.step()  # Update learning rate schedule
                     self.model.zero_grad()
                     global_step += 1
-                    
 
     def __get_eval_report(self, labels, preds):
         """
@@ -182,12 +181,12 @@ class SequenceClassifier():
         # Loop to handle MNLI double evaluation (matched, mis-matched)
         self.check_task()
 
-        self.eval_dataset = self.__load_and_cache_examples()
+        self.eval_dataset = self.__load_and_cache_examples("eval")
 
         results = {}
 
         eval_sampler = SequentialSampler(self.eval_dataset)
-        eval_dataloader = DataLoader(self.eval_dataset, sampler=eval_sampler, batch_size=self.args['eval_batch_size'])
+        eval_dataloader = DataLoader(self.eval_dataset, sampler=eval_sampler, batch_size=self.args['batch_size'])
 
         # Eval!
         eval_loss = 0.0
@@ -234,10 +233,10 @@ class SequenceClassifier():
         # Loop to handle MNLI double evaluation (matched, mis-matched)
         self.check_task()
 
-        self.eval_dataset = self.__load_and_cache_examples()
+        self.eval_dataset = self.__load_and_cache_examples("test")
 
         eval_sampler = SequentialSampler(self.eval_dataset)
-        eval_dataloader = DataLoader(self.eval_dataset, sampler=eval_sampler, batch_size=self.args['eval_batch_size'])
+        eval_dataloader = DataLoader(self.eval_dataset, sampler=eval_sampler, batch_size=self.args['batch_size'])
 
         # Eval!
         eval_loss = 0.0
@@ -267,7 +266,7 @@ class SequenceClassifier():
 
         return preds.tolist()
 
-    def __load_and_cache_examples(self):
+    def __load_and_cache_examples(self, task):
         """
         Converts the proper list_data variable to a TensorDataset for the current task
         :return: a TensorDataset for the requested task
@@ -277,28 +276,28 @@ class SequenceClassifier():
 
         label_list = self.processor.get_labels()
 
-        if self.args['task'] == 'eval':
+        if task == 'eval':
             examples = self.processor.get_dev_examples(self.eval_list_data)
-        elif self.args['task'] == 'train':
+        elif task == 'train':
             examples = self.processor.get_train_examples(self.train_list_data)
         else:
             examples = self.processor.get_dev_examples(self.test_list_data)
 
         features = convert_examples_to_features(examples, label_list, self.args['max_seq_length'], self.tokenizer,
-                                                     output_mode,
-                                                     cls_token_at_end=bool(self.args['model_type'] in ['XLNET']),
-                                                     # xlnet has a cls token at the end
-                                                     cls_token=self.tokenizer.cls_token,
-                                                     cls_token_segment_id=2 if self.args['model_type'] in [
-                                                         'XLNET'] else 0,
-                                                     sep_token=self.tokenizer.sep_token,
-                                                     sep_token_extra=bool(self.args['model_type'] in ['ROBERTA']),
-                                                     # roberta uses an extra separator b/w pairs of sentences, cf. github.com/pytorch/fairseq/commit/1684e166e3da03f5b600dbb7855cb98ddfcd0805
-                                                     pad_on_left=bool(self.args['model_type'] in ['XLNET']),
-                                                     # pad on the left for xlnet
-                                                     pad_token=self.tokenizer.convert_tokens_to_ids([self.tokenizer.pad_token])[0],
-                                                     pad_token_segment_id=4 if self.args['model_type'] in [
-                                                         'XLNET'] else 0)
+                                                output_mode,
+                                                cls_token_at_end=bool(self.model_name  in ['XLNET']),
+                                                # xlnet has a cls token at the end
+                                                cls_token=self.tokenizer.cls_token,
+                                                cls_token_segment_id=2 if self.model_name  in [
+                                                    'XLNET'] else 0,
+                                                sep_token=self.tokenizer.sep_token,
+                                                sep_token_extra=bool(self.model_name  in ['ROBERTA']),
+                                                # roberta uses an extra separator b/w pairs of sentences, cf. github.com/pytorch/fairseq/commit/1684e166e3da03f5b600dbb7855cb98ddfcd0805
+                                                pad_on_left=bool(self.model_name  in ['XLNET']),
+                                                # pad on the left for xlnet
+                                                pad_token=self.tokenizer.convert_tokens_to_ids([self.tokenizer.pad_token])[0],
+                                                pad_token_segment_id=4 if self.model_name  in [
+                                                    'XLNET'] else 0)
 
         all_input_ids = torch.tensor([f.input_ids for f in features], dtype=torch.long)
         all_input_mask = torch.tensor([f.input_mask for f in features], dtype=torch.long)

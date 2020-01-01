@@ -9,15 +9,13 @@ easier to use.
 
 import string
 import re
+import os
+import sys
+import csv
+import logging
 import numpy as np
 import torch
 import pandas as pd
-import logging
-import csv
-
-import sys
-import os
-
 
 from happy_transformer.sequence_classification.classifier_args import classifier_args
 from happy_transformer.sequence_classification.sequence_classification import SequenceClassifier
@@ -32,12 +30,12 @@ class HappyTransformer:
                 models to be able to utilize their capabilities.
     """
 
-    def __init__(self, model):
+    def __init__(self, model, model_name):
         # Transformer and tokenizer set in child class
+        self.model = model
+        self.model_name = model_name
         self.mlm = None  # Masked Language Model
         self.seq = None # Sequence Classification
-
-        self.model_to_use = model
 
         # the following variables are declared in the  child class:
         self.tokenizer = None
@@ -46,7 +44,6 @@ class HappyTransformer:
         self.masked_token = None
 
         # Child class sets to indicate which model is being used
-        self.model = ''
         self.tag_one_transformers = ['BERT', "ROBERTA", 'XLNET']
 
         # GPU support
@@ -58,11 +55,11 @@ class HappyTransformer:
         self.logger = logging.getLogger(__name__)
 
         self.logger.info("Using model: %s", self.gpu_support)
-        self.model_version = model
         self.seq_trained = False
         self.seq_args = None
 
-
+    def _get_masked_language_model(self):
+        pass
 
 
     def predict_mask(self, text: str, options=None, k=1):
@@ -82,14 +79,13 @@ class HappyTransformer:
         if self.mlm is None:
             self._get_masked_language_model()
 
-        if self.model in self.tag_one_transformers:
+        if self.model_name in self.tag_one_transformers:
             text = text.replace("<mask>", "[MASK]")
             text = text.replace("<MASK>", "[MASK]")
         else:
             text = text.replace("[MASK]", "<mask>")
 
-        if not self._text_verification(text):
-            return
+        self._text_verification(text)
 
         tokenized_text = self.\
             _get_tokenized_text(text)
@@ -111,9 +107,9 @@ class HappyTransformer:
 
         tupled_predictions = tuple(zip(options, scores))
 
-        if self.model == "XLNET": # TODO find other models that also require this
+        if self.model_name == "XLNET": # TODO find other models that also require this
             tupled_predictions = self.__remove_starting_character(tupled_predictions, "▁")
-        if self.model == "ROBERTA":
+        if self.model_name == "ROBERTA":
             tupled_predictions = self.__remove_starting_character(tupled_predictions, "Ġ")
 
 
@@ -253,19 +249,20 @@ class HappyTransformer:
         # TODO,  Add cases for the other masked tokens used in common transformer models
         valid = True
         if '[MASK]' not in text:
-            self.logger.info("[MASK] was not found in your string. Change the word you want to predict to [MASK]")
+            self.logger.error("[MASK] was not found in your string. Change the word you want to predict to [MASK]")
             valid = False
         if '<mask>' in text or '<MASK>' in text:
             self.logger.info('Instead of using <mask> or <MASK>, use [MASK] please as it is the convention')
             valid = True
         if '[CLS]' in text:
-            self.logger.info("[CLS] was found in your string.  Remove it as it will be automatically added later")
+            self.logger.error("[CLS] was found in your string.  Remove it as it will be automatically added later")
             valid = False
         if '[SEP]' in text:
-            self.logger.info("[SEP] was found in your string.  Remove it as it will be automatically added later")
+            self.logger.error("[SEP] was found in your string.  Remove it as it will be automatically added later")
             valid = False
+        if not valid:
+            exit()
 
-        return valid
 
 
     @staticmethod
@@ -292,11 +289,10 @@ class HappyTransformer:
 
         # TODO Test the sequence classifier with other models
         self.seq_args = classifier_args.copy()
-        self.seq_args["model_type"] = self.model
-        self.seq_args['model_name'] = self.model_version
-        self.seq = SequenceClassifier(self.seq_args, self.tokenizer, self.logger, self.gpu_support)
+        self.seq_args['model_name'] = self.model_name
+        self.seq = SequenceClassifier(self.seq_args, self.tokenizer, self.logger, self.gpu_support, self.model, self.model_name)
 
-        self.logger.info("A binary sequence classifier for %s has been initialized", self.model)
+        self.logger.info("A binary sequence classifier for %s has been initialized", self.model_name)
 
     def advanced_init_sequence_classifier(self, args):
         """
@@ -306,8 +302,8 @@ class HappyTransformer:
 
         """
         self.seq_args = args
-        self.seq = SequenceClassifier(args, self.tokenizer, self.logger, self.gpu_support)
-        self.logger.info("A binary sequence classifier for %s has been initialized", self.model)
+        self.seq = SequenceClassifier(args, self.tokenizer, self.logger, self.gpu_support, self.model, self.model_name)
+        self.logger.info("A binary sequence classifier for %s has been initialized", self.model_name)
 
     def train_sequence_classifier(self, train_csv_path):
         """
@@ -325,14 +321,12 @@ class HappyTransformer:
 
         if self.seq == None:
             self.logger.error("Initialize the sequence classifier before training")
-            return
+            exit()
 
         sys.stdout = open(os.devnull, 'w') # Disable printing to stop external libraries from printing
         train_df = train_df.astype("str")
         self.seq.train_list_data = train_df.values.tolist()
-        self.seq_args["task"] = "train"
         self.seq.train_model()
-        self.seq_args["task"] = "idle"
         self.seq_trained = True
         sys.stdout = sys.__stdout__  # Enable printing
 
@@ -361,9 +355,7 @@ class HappyTransformer:
         eval_df = eval_df.astype("str")
         self.seq.eval_list_data = eval_df.values.tolist()
 
-        self.seq_args["task"] = "eval"
         results = self.seq.evaluate()
-        self.seq_args["task"] = "idle"
         sys.stdout = sys.__stdout__  # Enable printing
 
         return results
@@ -390,9 +382,7 @@ class HappyTransformer:
         test_df = test_df.astype("str")
         self.seq.test_list_data = test_df.values.tolist()
 
-        self.seq_args["task"] = "test"
         results = self.seq.test()
-        self.seq_args["task"] = "idle"
 
         sys.stdout = sys.__stdout__  # Enable printing
 
@@ -413,16 +403,16 @@ class HappyTransformer:
             # Blank values are required for the first column value the testing data to increase
             # reusability of preprocessing methods between the tasks
             blank_values = ["-1"]*len(text_list)
-            df = pd.DataFrame([*zip(blank_values, text_list)])
+            data_frame = pd.DataFrame([*zip(blank_values, text_list)])
         else:
-            df = pd.read_csv(csv_path, header=None)
+            data_frame = pd.read_csv(csv_path, header=None)
 
-        df[0] = (df[0] == 2).astype(int)
-        df = pd.DataFrame({
-            'id': range(len(df)),
-            'label': df[0],
-            'alpha': ['a'] * df.shape[0],
-            'text': df[1].replace(r'\n', ' ', regex=True)
+        data_frame[0] = (data_frame[0] == 2).astype(int)
+        data_frame = pd.DataFrame({
+            'id': range(len(data_frame)),
+            'label': data_frame[0],
+            'alpha': ['a'] * data_frame.shape[0],
+            'text': data_frame[1].replace(r'\n', ' ', regex=True)
         })
 
-        return df
+        return data_frame

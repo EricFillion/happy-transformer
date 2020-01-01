@@ -23,18 +23,18 @@ class HappyROBERTA(HappyTransformer):
     """
 
     def __init__(self, model='roberta-base'):
-        super().__init__(model)
+        super().__init__(model, "ROBERTA")
+
         self.mlm = None  # Masked Language Model
         self.nsp = None  # Next Sentence Prediction
         self.tokenizer = RobertaTokenizer.from_pretrained(model)
         self.masked_token = self.tokenizer.mask_token
         self.sep_token = self.tokenizer.sep_token
         self.cls_token = self.tokenizer.cls_token
-        self.model = 'ROBERTA'
 
     def _get_masked_language_model(self):
         """
         Initializes the RoBERTaForMaskedLM transformer
         """
-        self.mlm = RobertaForMaskedLM.from_pretrained(self.model_to_use)
+        self.mlm = RobertaForMaskedLM.from_pretrained(self.model)
         self.mlm.eval()

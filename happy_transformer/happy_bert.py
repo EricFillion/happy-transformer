@@ -32,7 +32,7 @@ class HappyBERT(HappyTransformer):
             """
 
     def __init__(self, model='bert-base-uncased'):
-        super().__init__(model)
+        super().__init__(model, "BERT")
         self.mlm = None  # Masked Language Model
         self.nsp = None  # Next Sentence Prediction
         self.qa = None   # Question Answering
@@ -40,20 +40,19 @@ class HappyBERT(HappyTransformer):
         self.masked_token = self.tokenizer.mask_token
         self.sep_token = self.tokenizer.sep_token
         self.cls_token = self.tokenizer.cls_token
-        self.model = 'BERT'
 
     def _get_masked_language_model(self):
         """
         Initializes the BertForMaskedLM transformer
         """
-        self.mlm = BertForMaskedLM.from_pretrained(self.model_to_use)
+        self.mlm = BertForMaskedLM.from_pretrained(self.model)
         self.mlm.eval()
 
     def _get_next_sentence_prediction(self):
         """
         Initializes the BertForNextSentencePrediction transformer
         """
-        self.nsp = BertForNextSentencePrediction.from_pretrained(self.model_to_use)
+        self.nsp = BertForNextSentencePrediction.from_pretrained(self.model)
         self.nsp.eval()
 
 
@@ -82,5 +81,4 @@ class HappyBERT(HappyTransformer):
         softmax = self._softmax(predictions)
         if torch.argmax(softmax) == 0:
             return (True, softmax)
-        else:
-            return (False, softmax)
+        return (False, softmax)
