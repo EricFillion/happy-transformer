@@ -20,17 +20,28 @@ pip install happytransformer
 
 ```sh
 from happytransformer import HappyXLNET
-happy_xlnet = HappyXLNET()
+#--------------------------------------#
+xl_base_uncased = HappyXLNET("xlnet-base-uncased")
+xl_base_cased = HappyXLNET("xlnet-base-cased")
+xl_large_uncased = HappyXLNET("xlnet-large-uncased")
+xl_large_cased = HappyXLNET("xlnet-large-cased")
 ```
 ###### HappyROBERTA:
 ```sh
 from happytransformer import HappyROBERTA
-happy_roberta = HappyROBERTA()
+#--------------------------------------#
+happy_roberta_base = HappyROBERTA("roberta-base")
+happy_roberta_large = HappyROBERTA("roberta-large")
+
 ```
 ###### HappyBERT :
 ```sh
 from happytransformer import HappyBERT
-happy_bert = HappyBERT()
+#--------------------------------------#
+bert_base_uncased = HappyBERT("bert-base-uncased")
+bert_base_cased = HappyBERT("bert-base-cased")
+bert_large_uncased = HappyBERT("bert-large-uncased")
+bert_large_cased = HappyBERT("bert-large-cased")
 ```
 ## Word Prediction 
 
@@ -40,37 +51,68 @@ Each Happy Transformer has a public  method called "predict_mask" with the follo
 3. k (default = 1): The number of returned predictions 
 For all Happy Transformers, the masked token is "[MASK]"
 
-###### Example 1:
+ "predict_mask" returns a list of dictionaries which is exemplified below 
+
+It is recommended that you use HappyROBERTA("roberta-large") for masked word prediction.
+Avoid using HappyBERT for masked word prediction. 
+If you do decided to use HappyXLNET or HappyBERT, then also use their corresponding "large cased model'. 
+
+
+###### Example 1 :
 ```sh
-from happytransformer import HappyXLNET
+from happytransformer import HappyROBERTA
 #--------------------------------------#
-happy_xlnet = HappyXLNET()
-text = "To stop global warming we must invest in [MASK] power generation"
-result = happy_xlnet.predict_mask(text)
-print(type(result)) # returns: 
-print(result) # returns: 
+happy_roberta = HappROBERTA("roberta-large")
+text = "I think therefore I [MASK]"
+results = happy_roberta.predict_mask(text)
+
+print(type(results)) # prints: <class 'list'>
+print(results) # returns: [{'word': 'am', 'softmax': 0.24738965928554535}]
+
+print(type(results[0])) # prints: <class 'dict'>
+print(results[0]) # returns: {'word': 'am', 'softmax': 0.24738965928554535}
+
+
 ```
+
+
+
 ###### Example 2 :
 ```sh
 from happytransformer import HappyROBERTA
 #--------------------------------------#
-happy_roberta = HappyROBERTA()
-text = "To stop global warming we must invest in [MASK] power generation"
-options = ["wind", "oil", "solar", 'nuclear', 'wind']
-result = happy_roberta.predict_mask(text, options)
-print(type(result)) # returns :
-print(result) # returns: 
+happy_roberta = HappROBERTA("roberta-large")
+text = "To solve world poverty we must invest in [MASK]"
+results = happy_roberta.predict_mask(text, k = 2)
+
+print(type(results)) # prints: <class 'list'>
+print(results) # prints: [{'word': 'education', 'softmax': 0.34365904331207275}, {'word': 'children', 'softmax': 0.03996562585234642}]
+
+print(type(results[0])) # prints: <class 'dict'>
+print(results[0]) # prints: {'word': 'education', 'softmax': 0.34365904331207275}
+
+
 ```
+
+
 ###### Example 3 :
 ```sh
-from happytransformer import HappyBERT
+from happytransformer import HappyXLNET
 #--------------------------------------#
-happy_bert = HappyBERT()
-text = "To stop global warming we must invest in [MASK] power generation"
-options = ["wind", "oil", "solar", 'nuclear', 'wind']
-result = happy_bert.predict_mask(text, options, 3)
-print(type(result)) # returns :
-print(result) # returns: 
+happy_xlnet = HappyXLNET("xlnet-large-cased")
+text = "Can you please pass the [MASK] "
+options = ["pizza", "rice", "tofu", 'eggs', 'milk']
+results = happy_xlnet.predict_mask(text, options=options, k=3)
+
+print(type(results)) # prints: <class 'list'>
+print(results) # prints: [{'word': 'tofu', 'softmax': 0.007073382}, {'word': 'pizza', 'softmax': 0.00017212195}, {'word': 'rice', 'softmax': 2.843065e-07}]
+
+
+print(type(results[1]))# prints: <class 'dict'>
+print(results[1]) # prints: {'word': 'pizza', 'softmax': 0.00017212195}
+
+
+
 ```
 ## Binary Sequence Classification 
 
@@ -93,13 +135,13 @@ happy_roberta.train_sequence_classifier(train_csv_path)
 
 eval_csv_path = "data/eval.csv"
 eval_results = happy_roberta.eval_sequence_classifier(eval_csv_path)
-print(type(eval_results)) # Output: 
-print(eval_results) # Output: 
+print(type(eval_results)) # prints: 
+print(eval_results) # prings: 
 
 test_csv_path = "data/test.csv"
 test_results = happy_roberta.test_sequence_classifier(test_csv_path)
-print(type(test_results)) # Output: 
-print(test_results) # Output: 
+print(type(test_results)) # prints: 
+print(test_results) # prints: 
 ```
 ##### init_sequence_classifier()
 Initialize binary sequence classification for the Happy Transformer object with the default settings.
