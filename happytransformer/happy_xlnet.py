@@ -4,7 +4,7 @@ HappyXLNET: a wrapper over PyTorch's XLNet implementation
 
 from transformers import XLNetLMHeadModel, XLNetTokenizer
 
-from happy_transformer.happy_transformer import HappyTransformer
+from happytransformer.happy_transformer import HappyTransformer
 
 
 class HappyXLNET(HappyTransformer):

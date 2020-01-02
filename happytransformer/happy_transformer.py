@@ -17,8 +17,8 @@ import numpy as np
 import torch
 import pandas as pd
 
-from happy_transformer.sequence_classification.classifier_args import classifier_args
-from happy_transformer.sequence_classification.sequence_classification import SequenceClassifier
+from happytransformer.seq_class.classifier_args import classifier_args
+from happytransformer.seq_class.sequence_classifier import SequenceClassifier
 
 
 class HappyTransformer:
@@ -294,7 +294,7 @@ class HappyTransformer:
 
         self.logger.info("A binary sequence classifier for %s has been initialized", self.model_name)
 
-    def advanced_init_sequence_classifier(self, args):
+    def custom_init_sequence_classifier(self, args):
         """
         Initializes a binary sequence classifier model with custom settings.
         The default settings args dictionary can be found  happy_transformer/sequence_classification/classifier_args.

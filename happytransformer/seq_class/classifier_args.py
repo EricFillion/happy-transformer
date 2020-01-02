@@ -1,7 +1,7 @@
 classifier_args = {
     # Basic fine tuning parameters
     'learning_rate': 1e-5,
-    'num_train_epochs': 2,
+    'num_epochs': 2,
     'batch_size': 8,
 
     # More advanced fine tuning parameters

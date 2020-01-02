@@ -3,6 +3,9 @@ Binary Sequence Classifier for BERT, XLNET and RoBERTa that has fine tuning capa
 
 Credit: This code is a modified version of the code found in this repository under "run_model.ipynb"
     https://github.com/ThilinaRajapakse/pytorch-transformers-classification
+    # Licensed under the Apache License, Version 2.0
+    http://www.apache.org/licenses/LICENSE-2.0
+
 
 """
 
@@ -13,7 +16,6 @@ import math
 import numpy as np
 from tqdm import tqdm_notebook, trange
 from sklearn.metrics import confusion_matrix
-
 import torch
 from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
                               TensorDataset)
@@ -25,7 +27,7 @@ from pytorch_transformers import (BertForSequenceClassification,
 from pytorch_transformers import AdamW, WarmupLinearSchedule
 
 
-from happy_transformer.sequence_classification.classifier_utils import convert_examples_to_features, \
+from happytransformer.seq_class.classifier_utils import convert_examples_to_features, \
                                                output_modes, \
                                                processors
 
@@ -96,7 +98,7 @@ class SequenceClassifier():
 
         t_total = len(train_dataloader) \
             // self.args['gradient_accumulation_steps'] * \
-            self.args['num_train_epochs']
+            self.args['num_epochs']
 
         no_decay = ['bias', 'LayerNorm.weight']
         optimizer_grouped_parameters = [
@@ -114,7 +116,7 @@ class SequenceClassifier():
         global_step = 0
         tr_loss, logging_loss = 0.0, 0.0
         self.model.zero_grad()
-        train_iterator = trange(int(self.args['num_train_epochs']), desc="Epoch")
+        train_iterator = trange(int(self.args['num_epochs']), desc="Epoch")
 
         for _ in train_iterator:
             epoch_iterator = tqdm_notebook(train_dataloader, desc="Iteration")
