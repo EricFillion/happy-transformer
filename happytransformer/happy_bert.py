@@ -78,7 +78,6 @@ class HappyBERT(HappyTransformer):
         segments_tensors = torch.tensor([segments_ids])
         with torch.no_grad():
             predictions = self.nsp(tokens_tensor, token_type_ids=segments_tensors)[0]
-        print(type(predictions))
         softmax = self._softmax(predictions)
         if torch.argmax(softmax) == 0:
             return (True, softmax)
