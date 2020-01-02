@@ -67,10 +67,10 @@ text = "I think therefore I [MASK]"
 results = happy_roberta.predict_mask(text)
 
 print(type(results)) # prints: <class 'list'>
-print(results) # returns: [{'word': 'am', 'softmax': 0.24738965928554535}]
+print(results) # prints: [{'word': 'am', 'softmax': 0.24738965928554535}]
 
 print(type(results[0])) # prints: <class 'dict'>
-print(results[0]) # returns: {'word': 'am', 'softmax': 0.24738965928554535}
+print(results[0]) # prints: {'word': 'am', 'softmax': 0.24738965928554535}
 
 
 ```
@@ -136,7 +136,7 @@ happy_roberta.train_sequence_classifier(train_csv_path)
 eval_csv_path = "data/eval.csv"
 eval_results = happy_roberta.eval_sequence_classifier(eval_csv_path)
 print(type(eval_results)) # prints: 
-print(eval_results) # prings: 
+print(eval_results) # prints: 
 
 test_csv_path = "data/test.csv"
 test_results = happy_roberta.test_sequence_classifier(test_csv_path)
@@ -196,7 +196,7 @@ happy_xlnet.custom_init_sequence_classifier(custom_args)
 
 * [transformers](https://github.com/huggingface/transformers/stargazers) - State-of-the-art Natural Language Processing for TensorFlow 2.0 and PyTorch!
 *  [pytorch](https://github.com/pytorch/pytorch) - Tensors and Dynamic neural networks in Python
-*  [scikit-learn](https://github.com/scikit-learn/scikit-learn) - A set of python modules for machine learning and data mining
+* [scikit-learn](https://github.com/scikit-learn/scikit-learn) - A set of python modules for machine learning and data mining
 * [numpy](https://github.com/numpy/numpy) - Array computation 
 * [pandas](https://github.com/pandas-dev/pandas) - Powerful data structures for data analysis, time series, and statistics
 * [tqdm](https://github.com/tqdm/tqdm) - A Fast, Extensible Progress Bar for Python and CLI
