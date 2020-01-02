@@ -58,7 +58,7 @@ happy_roberta = HappyROBERTA()
 text = "To stop global warming we must invest in [MASK] power generation"
 options = ["wind", "oil", "solar", 'nuclear', 'wind']
 result = happy_roberta.predict_mask(text, options)
-print(type(result) # returns :
+print(type(result)) # returns :
 print(result) # returns: 
 ```
 ###### Example 3 :
@@ -69,7 +69,7 @@ happy_bert = HappyBERT()
 text = "To stop global warming we must invest in [MASK] power generation"
 options = ["wind", "oil", "solar", 'nuclear', 'wind']
 result = happy_bert.predict_mask(text, options, 3)
-print(type(result) # returns :
+print(type(result)) # returns :
 print(result) # returns: 
 ```
 ## Binary Sequence Classification 
