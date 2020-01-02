@@ -20,11 +20,11 @@ import torch
 from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
                               TensorDataset)
 
-from pytorch_transformers import (BertForSequenceClassification,
+from transformers import (BertForSequenceClassification,
                                   XLNetForSequenceClassification,
                                   RobertaForSequenceClassification)
 
-from pytorch_transformers import AdamW, WarmupLinearSchedule
+from transformers import AdamW, get_linear_schedule_with_warmup
 
 
 from happytransformer.seq_class.classifier_utils import convert_examples_to_features, \
@@ -111,7 +111,7 @@ class SequenceClassifier():
         self.args['warmup_steps'] = warmup_steps if self.args['warmup_steps'] == 0 else self.args['warmup_steps']
 
         optimizer = AdamW(optimizer_grouped_parameters, lr=self.args['learning_rate'], eps=self.args['adam_epsilon'])
-        scheduler = WarmupLinearSchedule(optimizer, warmup_steps=self.args['warmup_steps'], t_total=t_total)
+        scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=self.args['warmup_steps'], num_training_steps=t_total)
 
         global_step = 0
         tr_loss, logging_loss = 0.0, 0.0
