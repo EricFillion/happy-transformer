@@ -73,7 +73,7 @@ class HappyTransformer:
         :param k: the number of options to output if no output list is given
                   [optional]
         :return: list of dictionaries containing the predicted token(s) and
-                 their corresponding score(s).
+                 their corresponding softmax values
         NOTE: If no options are given, the returned list will be length 1
         """
         if self.mlm is None:
@@ -201,10 +201,10 @@ class HappyTransformer:
     def __format_option_scores(self, tupled_predicitons: list):
         """
         Formats the given list of tuples containing the option and its
-        corresponding score into a user friendly list of dictionaries where
-        the first element in the list is the option with the highest score.
+        corresponding softtmax into a user friendly list of dictionaries where
+        the first element in the list is the option with the highest softmax.
         Dictionary will be in the form:
-             {'word': <the option>, 'score': <score for the option>}
+             {'word': <the option>, 'softmax': <sofmax for the option>}
         :param: ranked_scores: list of tuples to be converted into user
                 friendly dicitonary
         :return: formatted_ranked_scores: list of dictionaries of the ranked
@@ -213,8 +213,8 @@ class HappyTransformer:
         ranked_scores = sorted(tupled_predicitons, key=lambda x: x[1],
                                reverse=True)
         formatted_ranked_scores = list()
-        for word, score in ranked_scores:
-            formatted_ranked_scores.append({'word': word, 'score': score})
+        for word, softmax in ranked_scores:
+            formatted_ranked_scores.append({'word': word, 'softmax': softmax})
         return formatted_ranked_scores
 
     def _softmax(self, value):
