@@ -189,7 +189,31 @@ custom_args["batch_size"] = 3
 happy_xlnet.custom_init_sequence_classifier(custom_args)
 # Continue from example 1 after "happy_roberta.init_sequence_classifier()""
 ```
+## Next Sentence Prediction
 
+The HappyBERT Transformer has a publich method called "is_next_sentence" which can be used for next Sentence Prediction tasks.
+The method takes the following arguments:
+1. A: the first sentence in question
+2. B: the second sentence in question
+
+The method takes the two sentences and determines the likelihood that sentence B follows sentence A.
+This likelihood is returned as a tuple where the first element is True or False, indicating if it is true that sentence B follows sentence A. The second element of the tuple is the softmax from the Next Sentence Prediction transformer which can be used to determine the confidence of the model in the answer.
+
+###### Example 1 :
+```sh
+from happytransformer import HappyBERT
+#--------------------------------------#
+happy_bert = HappyBERT()
+sentence_a = "How old are you?"
+sentence_b = "I am 93 years old."
+sentence_c = "The Eiffel Tower is in Paris."
+result = happy_bert.is_next_sentence(sentence_a, sentence_b)
+print(type(result)) # prints: <class 'tuple'>
+print(result) # prints: (True, 0.9999142289161682)
+result = happy_bert.is_next_sentence(sentence_a, sentence_c)
+print(type(result)) # prints: <class 'tuple'>
+print(result) # prints: (False, 0.9988276362419128) 
+```
 ### Tech
 
  Happy Transformer uses a number of open source projects to work properly:
