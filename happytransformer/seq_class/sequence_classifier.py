@@ -54,7 +54,7 @@ class SequenceClassifier():
         self.gpu_support = gpu_support
         self.model_name = model_name
 
-        self.model_class = self.model_classes[self.args['model_name']]
+        self.model_class = self.model_classes[model_name]
 
         self.model = self.model_class.from_pretrained(model)
         self.model.to(self.gpu_support)
