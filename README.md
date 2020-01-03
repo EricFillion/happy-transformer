@@ -24,7 +24,7 @@ pip install happytransformer
 ```
 ## Initialization 
 
-By default base models are use. They are smaller, faster and require significantly less training time
+By default base models are used. They are smaller, faster and require significantly less training time
 to obtain decent results.
 
 Large models are recommended for tasks that do not require fine tuning such as some predict word tasks. 
@@ -63,7 +63,7 @@ bert_large_cased = HappyBERT("bert-large-cased")
 ```
 ## Word Prediction 
 
-Each Happy Transformer has a public  method called "predict_mas(text, options, k)" with the following  input arguments.
+Each Happy Transformer has a public  method called "predict_mas(text, options, k)" with the following input arguments.
 1. Text: the text you wish to predict including a single masked token.
 2. options (default = every word): A limited set of words the model can return.
 3. k (default = 1): The number of returned predictions.
@@ -94,8 +94,6 @@ print(results[0]) # prints: {'word': 'am', 'softmax': 0.24738965928554535}
 
 ```
 
-
-
 #### Example 2 :
 ```sh
 from happytransformer import HappyROBERTA
@@ -113,7 +111,6 @@ print(results[0]) # prints: {'word': 'education', 'softmax': 0.34365904331207275
 
 ```
 
-
 #### Example 3 :
 ```sh
 from happytransformer import HappyXLNET
@@ -129,8 +126,6 @@ print(results) # prints: [{'word': 'tofu', 'softmax': 0.007073382}, {'word': 'pi
 
 print(type(results[1]))# prints: <class 'dict'>
 print(results[1]) # prints: {'word': 'pizza', 'softmax': 0.00017212195}
-
-
 
 ```
 ## Binary Sequence Classification 
@@ -152,7 +147,7 @@ Initialize binary sequence classification for the HappyTransformer object with t
 
 
 ### train_sequence_classifier(train_csv_path):
-*Trains the HappyTransformer's sequence classifier.*
+Trains the HappyTransformer's sequence classifier.
 
 One of the two init sequence classifier methods must be called before this method can be called.
 
@@ -160,7 +155,7 @@ Argument:
     1. train_csv_path: A string directory path to the csv that contains the training data.
 
 ##### train_csv requirements: 
-    1. The csv must contain **NO** header. 
+    1. The csv must contain *NO* header. 
     2. Each row contains a training case. 
     3. The first column contains either a 0 or a 1 to indicate the training case is for case "0" or case "1". 
     4. The second column contains the text for the training case
@@ -176,15 +171,15 @@ This method does not return anything
 
 
 ### eval_sequence_classifier(eval_csv_path):
-*Evaluates the trained model against an input.*
+Evaluates the trained model against an input.
 
-train_sequence_classifier(train_csv_path): must be called before this method can be called
+train_sequence_classifier(train_csv_path): must be called before this method can be called.
 
 Argument:
-    1. eval_csv_path: A string directory path to the csv that contains the evaluating data
+    1. eval_csv_path: A string directory path to the csv that contains the evaluating data.
 
 ##### eval_csv requirements: (same as train_csv requirements) 
-    1. The csv must contain **NO** header. 
+    1. The csv must contain *NO* header. 
     2. Each row contains a training case. 
     3. The first column contains either a 0 or a 1 to indicate the training case is for case "0" or case "1". 
     4. The second column contains the text for the training case
@@ -198,7 +193,7 @@ Argument:
 
 
 ### test_sequence_classifier(test_csv_path):
-*Tests the trained model against an input.*
+Tests the trained model against an input.
 
 train_sequence_classifier(train_csv_path): must be called before this method can be called.
 
@@ -206,7 +201,7 @@ Argument:
     1. test_csv_path: A string directory path to the csv that contains the testing data
 
 ##### test_csv requirements: 
-    1. The csv must contain **NO** header. 
+    1. The csv must contain *NO* header. 
     2. Each row contains a single test case. 
     3. The csv contains a single column with the text for each test case.
 
@@ -253,8 +248,6 @@ Initializing the sequence classifier with custom settings.
 Called instead of init_sequence_classifier(). 
 argument:
     1. args: a python dictionary that contains all of the same fields as the default arguments
-
-
 
 ### default classifier arguments
  
