@@ -287,7 +287,6 @@ class HappyTransformer:
 
         # TODO Test the sequence classifier with other models
         args = classifier_args.copy()
-        args['model_name'] = self.model_name
         self.seq = SequenceClassifier(args, self.tokenizer, self.logger, self.gpu_support, self.model, self.model_name)
 
         self.logger.info("A binary sequence classifier for %s has been initialized", self.model_name)
@@ -299,7 +298,6 @@ class HappyTransformer:
         This dictionary can then be modified and then used as the only input for this method.
 
         """
-        args['model_name'] = self.model_name
         self.seq = SequenceClassifier(args, self.tokenizer, self.logger, self.gpu_support, self.model, self.model_name)
         self.logger.info("A binary sequence classifier for %s has been initialized", self.model_name)
 
@@ -406,7 +404,7 @@ class HappyTransformer:
         else:
             data_frame = pd.read_csv(csv_path, header=None)
 
-        data_frame[0] = (data_frame[0] == 2).astype(int)
+        data_frame[0] = data_frame[0].astype("int")
         data_frame = pd.DataFrame({
             'id': range(len(data_frame)),
             'label': data_frame[0],

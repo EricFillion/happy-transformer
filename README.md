@@ -135,21 +135,24 @@ happy_roberta.train_sequence_classifier(train_csv_path)
 
 eval_csv_path = "data/eval.csv"
 eval_results = happy_roberta.eval_sequence_classifier(eval_csv_path)
-print(type(eval_results)) # prints: 
-print(eval_results) # prints: 
+print(type(eval_results)) # prints: <class 'dict'>
+print(eval_results) # prints: {'true_positive': 300', 'true_negative': 250, 'false_positive': 40, 'false_negative': 55}
 
 test_csv_path = "data/test.csv"
 test_results = happy_roberta.test_sequence_classifier(test_csv_path)
-print(type(test_results)) # prints: 
-print(test_results) # prints: 
+print(type(test_results)) # prints: <class 'list'>
+print(test_results) # prints: [1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0 ]
 ```
 ##### init_sequence_classifier()
 Initialize binary sequence classification for the Happy Transformer object with the default settings.
 
+
 ##### custom_init_sequence_classifier(args)
 
-Takes in a dictionary with custom settings for inializing and training the transformer. 
+Takes in a dictionary with custom settings for initializing and training the transformer. 
 Called instead of init_sequence_classifier(). 
+The custom settings must have all of the same fields as the default classifier 
+arguments shown below. 
 
 ###### default classifier arguments
  
@@ -188,7 +191,18 @@ custom_args["batch_size"] = 3
 
 happy_xlnet.custom_init_sequence_classifier(custom_args)
 # Continue from example 1 after "happy_roberta.init_sequence_classifier()""
+
 ```
+###### train_sequence_classifier(train_csv_path):
+Trains the HappyTransformer's sequence classifier. One of the two sequence classifier init methods 
+must be called first. 
+
+
+
+
+
+
+
 ## Next Sentence Prediction
 
 The HappyBERT Transformer has a publich method called "is_next_sentence" which can be used for next Sentence Prediction tasks.
