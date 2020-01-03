@@ -10,12 +10,30 @@ Happy Transformer is an API built on top of PyTorch's transformer library that m
   - Fine tune binary sequence classification models to solve problems like sentiment analysis 
   - Predict the likelihood that sentence B follows sentence A within a paragraph. 
   
+  
+| Public Methods              | HappyROBERTA | HappyXLNET | HappyBERT |
+|-----------------------------|--------------|------------|-----------|
+| predict_mask                | ✔            | ✔          | ✔         |
+| Sequence Classifier Methods | ✔            | ✔          | ✔         |
+| Next Sentence Prediction    |              |            | ✔         |
+  
 # Installation
 
 ```sh
 pip install happytransformer
 ```
 ## Initialization 
+
+By default base models are use. They are smaller, faster and require significantly less training time
+to obtain decent results.
+
+Large models are recommended for tasks that do not require fine tuning, like some predict word tasks. 
+
+Base models are recommended for tasks that require fine tuning with limited available training data. 
+
+Uncased models do not differentiate between cased and uncased words. For example, empire and Empire would be
+reduced to the same token. Cased models do differentiate between cased and uncased words. 
+
 ###### HappyXLNET:
 
 ```sh
@@ -122,7 +140,82 @@ Each Happy Transformer has four methods that are utilized  for binary sequence c
 
 They include, init_sequence_classifier(), custom_init_sequence_classifier(args), train_sequence_classifier(train_csv_path), and eval_sequence_classifier(eval_csv_path)
 
-Before we explore each method in depth, here is an example that shows how easily these methods can be used to accomplish binary sequence classification tasks. 
+
+##### init_sequence_classifier()
+Initialize binary sequence classification for the Happy Transformer object with the default settings.
+
+
+
+###### train_sequence_classifier(train_csv_path):
+Trains the HappyTransformer's sequence classifier. 
+
+One of the two init sequence classifier methods must be called before this method can be called
+
+Argument:
+1. train_csv_path: A string directory path to the csv that contains the training data
+
+The csv must contain *NO* header. 
+Each row contains a training case. 
+The first column contains either a 0 or a 1 to indicate the training case is for case "0" or case "1". 
+
+The second column contains the text for the training case
+
+|   |                                                              | 
+|---|--------------------------------------------------------------| 
+| 0 |  Terrible service and awful food                             | 
+| 1 |  My new favourite Chinese restaurant!!!!                     | 
+| 1 |  Amazing food and okay service. Overall a great place to eat | 
+| 0 |  The restaurant smells horrible.                             | 
+
+This method does not return anything 
+
+
+###### eval_sequence_classifier(eval_csv_path):
+Evaluates the trained model against an input. 
+
+train_sequence_classifier(train_csv_path): must be called before this method can be called
+
+Argument:
+1. eval_csv_path: A string directory path to the csv that contains the evaluating data
+
+The layout of the eval csv file is the same as the layout for the train csv file
+
+*returns* a python dictionary that contains a count for the following values
+
+*true_positive:* The model correctly predicted the value 1 .
+*true_negative:* The model correctly predicted the value 0.
+*false_positive':* The model incorrectly predicted the value 1.
+*false_negative* The model incorrectly predicted the value 0.
+
+
+###### test_sequence_classifier(test_csv_path):
+Tests the trained model against an input.
+train_sequence_classifier(train_csv_path): must be called before this method can be called.
+
+Argument:
+1. test_csv_path: A string directory path to the csv that contains the testing data
+
+The csv must contain *NO* header. 
+Each row contains a test case. 
+
+The csv contains a single column with the next for each test case.
+
+
+|                                           | 
+|-------------------------------------------| 
+| 5 stars!!!                                | 
+| Cheap food at an expensive price          | 
+| Great location and nice view of the ocean | 
+| two thumbs down                           | 
+
+*returns* a list of integer values in order of the test case rows in ascending order.
+For example, for the csv file above, the result would be [1, 0, 1, 0]. 
+Where the first index in the list  corresponds to "5 stars!!!" 
+and the last index corresponds to "two thumbs down."
+
+
+
+
 ###### Example 1:
 ```sh
 from happytransformer import HappyROBERTA
@@ -143,15 +236,15 @@ test_results = happy_roberta.test_sequence_classifier(test_csv_path)
 print(type(test_results)) # prints: <class 'list'>
 print(test_results) # prints: [1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0 ]
 ```
-##### init_sequence_classifier()
-Initialize binary sequence classification for the Happy Transformer object with the default settings.
+
+
 
 
 ##### custom_init_sequence_classifier(args)
 
-Takes in a dictionary with custom settings for initializing and training the transformer. 
+Initializing the sequence classifier with custom settings. 
 Called instead of init_sequence_classifier(). 
-The custom settings must have all of the same fields as the default classifier 
+The custom settings must have all of the same fields as the default classifier
 arguments shown below. 
 
 ###### default classifier arguments
@@ -193,24 +286,16 @@ happy_xlnet.custom_init_sequence_classifier(custom_args)
 # Continue from example 1 after "happy_roberta.init_sequence_classifier()""
 
 ```
-###### train_sequence_classifier(train_csv_path):
-Trains the HappyTransformer's sequence classifier. One of the two sequence classifier init methods 
-must be called first. 
-
-
-
-
-
 
 
 ## Next Sentence Prediction
 
-The HappyBERT Transformer has a publich method called "is_next_sentence" which can be used for next Sentence Prediction tasks.
+The *HappyBERT* Transformer has a public method called "is_next_sentence" which can be used for next Sentence Prediction tasks.
 The method takes the following arguments:
-1. A: the first sentence in question
-2. B: the second sentence in question
+1. sentence_a: the first sentence in question
+2. sentence_b: the second sentence in question
 
-The method takes the two sentences and determines the likelihood that sentence B follows sentence A.
+The method takes the two sentences and determines the likelihood that sentence_b follows sentence_a within a body of text.
 This likelihood is returned as a tuple where the first element is True or False, indicating if it is true that sentence B follows sentence A. The second element of the tuple is the softmax from the Next Sentence Prediction transformer which can be used to determine the confidence of the model in the answer.
 
 ###### Example 1 :
@@ -253,6 +338,3 @@ print(result) # prints: (False, 0.9988276362419128)
 
 License
 ----
-MIT
-
-
