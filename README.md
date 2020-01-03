@@ -17,7 +17,7 @@ Happy Transformer is an API built on top of PyTorch's transformer library that m
 | Sequence Classifier Methods | ✔            | ✔          | ✔         |
 | Next Sentence Prediction    |              |            | ✔         |
   
-# Installation
+## Installation
 
 ```sh
 pip install happytransformer
@@ -292,13 +292,15 @@ happy_xlnet.custom_init_sequence_classifier(custom_args)
 
 ## Next Sentence Prediction
 
-The HappyBERT Transformer has a publich method called "is_next_sentence" which can be used for next Sentence Prediction tasks.
-The method takes the following arguments:
-1. A: the first sentence in question
-2. B: the second sentence in question
+*Determine the likelihood that sentence B follows sentence A.*
 
-The method takes the two sentences and determines the likelihood that sentence B follows sentence A.
-This likelihood is returned as a tuple where the first element is True or False, indicating if it is true that sentence B follows sentence A. The second element of the tuple is the softmax from the Next Sentence Prediction transformer which can be used to determine the confidence of the model in the answer.
+
+**HappyBERT** has a method called "is_next_sentence" which is used for next sentence prediction tasks.
+The method takes the following arguments:
+    1. sentence_a: A sentence in a body of text
+    2. sentence_b: A sentence that may or may not follow sentence sentence_a
+
+This likelihood that sentence_b follows sentenced_a is returned as a tuple where the first element is True or False indicating if it is true that sentence B follows sentence A. The second element of the tuple is the softmax for the prediction which indicates the prediction's confidence. 
 
 ###### Example 1 :
 ```sh
@@ -314,7 +316,6 @@ print(result) # prints: (True, 0.9999142289161682)
 result = happy_bert.is_next_sentence(sentence_a, sentence_c)
 print(type(result)) # prints: <class 'tuple'>
 print(result) # prints: (False, 0.9988276362419128) 
-
 ```
 ### Tech
 
