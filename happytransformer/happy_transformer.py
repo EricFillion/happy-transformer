@@ -56,8 +56,6 @@ class HappyTransformer:
 
         self.logger.info("Using model: %s", self.gpu_support)
         self.seq_trained = False
-        self.seq_args = None
-
     def _get_masked_language_model(self):
         pass
 
@@ -288,9 +286,9 @@ class HappyTransformer:
         """
 
         # TODO Test the sequence classifier with other models
-        self.seq_args = classifier_args.copy()
-        self.seq_args['model_name'] = self.model_name
-        self.seq = SequenceClassifier(self.seq_args, self.tokenizer, self.logger, self.gpu_support, self.model, self.model_name)
+        args = classifier_args.copy()
+        args['model_name'] = self.model_name
+        self.seq = SequenceClassifier(args, self.tokenizer, self.logger, self.gpu_support, self.model, self.model_name)
 
         self.logger.info("A binary sequence classifier for %s has been initialized", self.model_name)
 
@@ -301,7 +299,7 @@ class HappyTransformer:
         This dictionary can then be modified and then used as the only input for this method.
 
         """
-        self.seq_args = args
+        args['model_name'] = self.model_name
         self.seq = SequenceClassifier(args, self.tokenizer, self.logger, self.gpu_support, self.model, self.model_name)
         self.logger.info("A binary sequence classifier for %s has been initialized", self.model_name)
 
