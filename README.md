@@ -5,9 +5,9 @@
 Happy Transformer is an API built on top of PyTorch's transformer library that makes it easy to utilize state-of-the-art NLP models. 
 ## Key Features!
 
-  -  Available language models: XLNet, BERT and RoBERTa 
-  -  Predict masked words within sentences 
-  - Fine tune binary sequence classification models to solve problems like sentiment analysis 
+  - Available language models: XLNET, BERT and ROBERTA.
+  - Predict a masked word within a sentence.
+  - Fine tune binary sequence classification models to solve problems like sentiment analysis.
   - Predict the likelihood that sentence B follows sentence A within a paragraph. 
   
   
@@ -27,14 +27,14 @@ pip install happytransformer
 By default base models are use. They are smaller, faster and require significantly less training time
 to obtain decent results.
 
-Large models are recommended for tasks that do not require fine tuning, like some predict word tasks. 
+Large models are recommended for tasks that do not require fine tuning such as some predict word tasks. 
 
 Base models are recommended for tasks that require fine tuning with limited available training data. 
 
-Uncased models do not differentiate between cased and uncased words. For example, empire and Empire would be
-reduced to the same token. Cased models do differentiate between cased and uncased words. 
+Uncased models do not differentiate between cased and uncased words. For example, the words
+"empire" and "Empire" would be reduced to the same token. In comparison, cased models do differentiate between cased and uncased words. 
 
-###### HappyXLNET:
+#### HappyXLNET:
 
 ```sh
 from happytransformer import HappyXLNET
@@ -44,7 +44,7 @@ xl_base_cased = HappyXLNET("xlnet-base-cased")
 xl_large_uncased = HappyXLNET("xlnet-large-uncased")
 xl_large_cased = HappyXLNET("xlnet-large-cased")
 ```
-###### HappyROBERTA:
+#### HappyROBERTA:
 ```sh
 from happytransformer import HappyROBERTA
 #--------------------------------------#
@@ -52,7 +52,7 @@ happy_roberta_base = HappyROBERTA("roberta-base")
 happy_roberta_large = HappyROBERTA("roberta-large")
 
 ```
-###### HappyBERT :
+#### HappyBERT :
 ```sh
 from happytransformer import HappyBERT
 #--------------------------------------#
@@ -63,20 +63,21 @@ bert_large_cased = HappyBERT("bert-large-cased")
 ```
 ## Word Prediction 
 
-Each Happy Transformer has a public  method called "predict_mask" with the following arguments 
-1. Text: the text you wish to predict including the masked token
-2. options (default = every word): A limited set of words the model can return 
-3. k (default = 1): The number of returned predictions 
-For all Happy Transformers, the masked token is "[MASK]"
+Each Happy Transformer has a public  method called "predict_mas(text, options, k)" with the following  input arguments.
+1. Text: the text you wish to predict including a single masked token.
+2. options (default = every word): A limited set of words the model can return.
+3. k (default = 1): The number of returned predictions.
 
- "predict_mask" returns a list of dictionaries which is exemplified below 
+For all Happy Transformers, the masked token is **"[MASK]"**
+
+"predict_mask(text, options, k)" returns a list of dictionaries which is exemplified in Example 1 .
 
 It is recommended that you use HappyROBERTA("roberta-large") for masked word prediction.
 Avoid using HappyBERT for masked word prediction. 
 If you do decided to use HappyXLNET or HappyBERT, then also use their corresponding "large cased model'. 
 
 
-###### Example 1 :
+#### Example 1 :
 ```sh
 from happytransformer import HappyROBERTA
 #--------------------------------------#
@@ -95,7 +96,7 @@ print(results[0]) # prints: {'word': 'am', 'softmax': 0.24738965928554535}
 
 
 
-###### Example 2 :
+#### Example 2 :
 ```sh
 from happytransformer import HappyROBERTA
 #--------------------------------------#
@@ -113,7 +114,7 @@ print(results[0]) # prints: {'word': 'education', 'softmax': 0.34365904331207275
 ```
 
 
-###### Example 3 :
+#### Example 3 :
 ```sh
 from happytransformer import HappyXLNET
 #--------------------------------------#
@@ -134,32 +135,36 @@ print(results[1]) # prints: {'word': 'pizza', 'softmax': 0.00017212195}
 ```
 ## Binary Sequence Classification 
 
-Binary sequence classification (BSC) has many applications. For example, by using BSC, you can train a model to predict if a yelp review is positive or negative. Another example includes determining if an email is spam or ham. 
+Binary sequence classification (BSC) has many applications. For example, by using BSC, you can train a model to predict if a yelp review is positive or negative. 
+Another example includes determining if an email is spam or ham. 
 
-Each Happy Transformer has four methods that are utilized  for binary sequence classification.
+Each Happy Transformer has four methods that are utilized for binary sequence classification.
 
-They include, init_sequence_classifier(), custom_init_sequence_classifier(args), train_sequence_classifier(train_csv_path), and eval_sequence_classifier(eval_csv_path)
+They are: 
+1. init_sequence_classifier()
+2. custom_init_sequence_classifier(args)
+3. train_sequence_classifier(train_csv_path)
+4. eval_sequence_classifier(eval_csv_path)
 
 
-##### init_sequence_classifier()
-Initialize binary sequence classification for the Happy Transformer object with the default settings.
+### init_sequence_classifier()
+Initialize binary sequence classification for the HappyTransformer object with the default settings.
 
 
+### train_sequence_classifier(train_csv_path):
+*Trains the HappyTransformer's sequence classifier.*
 
-###### train_sequence_classifier(train_csv_path):
-Trains the HappyTransformer's sequence classifier. 
-
-One of the two init sequence classifier methods must be called before this method can be called
+One of the two init sequence classifier methods must be called before this method can be called.
 
 Argument:
-1. train_csv_path: A string directory path to the csv that contains the training data
+    1. train_csv_path: A string directory path to the csv that contains the training data.
 
-The csv must contain *NO* header. 
-Each row contains a training case. 
-The first column contains either a 0 or a 1 to indicate the training case is for case "0" or case "1". 
-
-The second column contains the text for the training case
-
+##### train_csv requirements: 
+    1. The csv must contain **NO** header. 
+    2. Each row contains a training case. 
+    3. The first column contains either a 0 or a 1 to indicate the training case is for case "0" or case "1". 
+    4. The second column contains the text for the training case
+#### Example 1
 |   |                                                              | 
 |---|--------------------------------------------------------------| 
 | 0 |  Terrible service and awful food                             | 
@@ -170,17 +175,21 @@ The second column contains the text for the training case
 This method does not return anything 
 
 
-###### eval_sequence_classifier(eval_csv_path):
-Evaluates the trained model against an input. 
+### eval_sequence_classifier(eval_csv_path):
+*Evaluates the trained model against an input.*
 
 train_sequence_classifier(train_csv_path): must be called before this method can be called
 
 Argument:
-1. eval_csv_path: A string directory path to the csv that contains the evaluating data
+    1. eval_csv_path: A string directory path to the csv that contains the evaluating data
 
-The layout of the eval csv file is the same as the layout for the train csv file
-
-*returns* a python dictionary that contains a count for the following values
+##### eval_csv requirements: (same as train_csv requirements) 
+    1. The csv must contain **NO** header. 
+    2. Each row contains a training case. 
+    3. The first column contains either a 0 or a 1 to indicate the training case is for case "0" or case "1". 
+    4. The second column contains the text for the training case
+    
+**Returns** a python dictionary that contains a count for the following values
 
 *true_positive:* The model correctly predicted the value 1 .
 *true_negative:* The model correctly predicted the value 0.
@@ -188,18 +197,20 @@ The layout of the eval csv file is the same as the layout for the train csv file
 *false_negative* The model incorrectly predicted the value 0.
 
 
-###### test_sequence_classifier(test_csv_path):
-Tests the trained model against an input.
+### test_sequence_classifier(test_csv_path):
+*Tests the trained model against an input.*
+
 train_sequence_classifier(train_csv_path): must be called before this method can be called.
 
 Argument:
-1. test_csv_path: A string directory path to the csv that contains the testing data
+    1. test_csv_path: A string directory path to the csv that contains the testing data
 
-The csv must contain *NO* header. 
-Each row contains a test case. 
+##### test_csv requirements: 
+    1. The csv must contain **NO** header. 
+    2. Each row contains a single test case. 
+    3. The csv contains a single column with the text for each test case.
 
-The csv contains a single column with the next for each test case.
-
+#### Example 2:
 
 |                                           | 
 |-------------------------------------------| 
@@ -208,15 +219,13 @@ The csv contains a single column with the next for each test case.
 | Great location and nice view of the ocean | 
 | two thumbs down                           | 
 
-*returns* a list of integer values in order of the test case rows in ascending order.
-For example, for the csv file above, the result would be [1, 0, 1, 0]. 
+**Returns** a list of integer values in ascending order by test case row index.
+For example, for the csv file shown in Example 2, the result would be [1, 0, 1, 0]. 
 Where the first index in the list  corresponds to "5 stars!!!" 
 and the last index corresponds to "two thumbs down."
 
 
-
-
-###### Example 1:
+#### Example 3:
 ```sh
 from happytransformer import HappyROBERTA
 #------------------------------------------#
@@ -238,16 +247,16 @@ print(test_results) # prints: [1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0 ]
 ```
 
 
-
-
-##### custom_init_sequence_classifier(args)
+### custom_init_sequence_classifier(args)
 
 Initializing the sequence classifier with custom settings. 
 Called instead of init_sequence_classifier(). 
-The custom settings must have all of the same fields as the default classifier
-arguments shown below. 
+argument:
+    1. args: a python dictionary that contains all of the same fields as the default arguments
 
-###### default classifier arguments
+
+
+### default classifier arguments
  
 ```
 # found under "from happytransformer.sequence_classification.classifier_args"
@@ -270,7 +279,7 @@ classifier_args = {
     'task_mode': 'binary',
     }
  ```
-###### Example 2 :
+#### Example 4:
  ```sh
 from happytransformer import HappyROBERTA
 from happytransformer.seq_class.classifier_args import classifier_args
@@ -290,12 +299,12 @@ happy_xlnet.custom_init_sequence_classifier(custom_args)
 
 ## Next Sentence Prediction
 
-The *HappyBERT* Transformer has a public method called "is_next_sentence" which can be used for next Sentence Prediction tasks.
+The HappyBERT Transformer has a publich method called "is_next_sentence" which can be used for next Sentence Prediction tasks.
 The method takes the following arguments:
-1. sentence_a: the first sentence in question
-2. sentence_b: the second sentence in question
+1. A: the first sentence in question
+2. B: the second sentence in question
 
-The method takes the two sentences and determines the likelihood that sentence_b follows sentence_a within a body of text.
+The method takes the two sentences and determines the likelihood that sentence B follows sentence A.
 This likelihood is returned as a tuple where the first element is True or False, indicating if it is true that sentence B follows sentence A. The second element of the tuple is the softmax from the Next Sentence Prediction transformer which can be used to determine the confidence of the model in the answer.
 
 ###### Example 1 :
@@ -312,6 +321,7 @@ print(result) # prints: (True, 0.9999142289161682)
 result = happy_bert.is_next_sentence(sentence_a, sentence_c)
 print(type(result)) # prints: <class 'tuple'>
 print(result) # prints: (False, 0.9988276362419128) 
+
 ```
 ### Tech
 
@@ -328,7 +338,7 @@ print(result) # prints: (False, 0.9988276362419128)
  HappyTransformer is also an open source project with this [public repository](https://github.com/EricFillion/happy-transformer)
  on GitHub. 
  
- ### Call for contributors 
+### Call for contributors 
  Happy Transformer is a new and growing API. We're seeking more contributors to help accomplish our mission of making state-of-the-art AI easier to use.  
 
 
