@@ -2,8 +2,9 @@
 
 ![HappyTransformer](img/HappyTransformer.png)
 
-Happy Transformer is an API built on top of PyTorch's transformer library that makes it easy to utilize state-of-the-art NLP models. 
-## Key Features!
+Happy Transformer is an API built on top of [PyTorch's transformer library](https://pytorch.org/hub/huggingface_pytorch-transformers/)'s that makes it easy to utilize state-of-the-art NLP models. 
+
+## Key Features
 
   - Available language models: XLNET, BERT and ROBERTA.
   - Predict a masked word within a sentence.
@@ -27,7 +28,7 @@ pip install happytransformer
 By default base models are used. They are smaller, faster and require significantly less training time
 to obtain decent results.
 
-Large models are recommended for tasks that do not require fine tuning such as some predict word tasks. 
+Large models are recommended for tasks that do not require fine tuning such as some word prediction tasks. 
 
 Base models are recommended for tasks that require fine tuning with limited available training data. 
 
@@ -124,7 +125,7 @@ print(type(results)) # prints: <class 'list'>
 print(results) # prints: [{'word': 'tofu', 'softmax': 0.007073382}, {'word': 'pizza', 'softmax': 0.00017212195}, {'word': 'rice', 'softmax': 2.843065e-07}]
 
 
-print(type(results[1]))# prints: <class 'dict'>
+print(type(results[1])) # prints: <class 'dict'>
 print(results[1]) # prints: {'word': 'pizza', 'softmax': 0.00017212195}
 
 ```
@@ -133,9 +134,8 @@ print(results[1]) # prints: {'word': 'pizza', 'softmax': 0.00017212195}
 Binary sequence classification (BSC) has many applications. For example, by using BSC, you can train a model to predict if a yelp review is positive or negative. 
 Another example includes determining if an email is spam or ham. 
 
-Each Happy Transformer has four methods that are utilized for binary sequence classification.
+Each Happy Transformer has four methods that are utilized for binary sequence classification:
 
-They are: 
 1. init_sequence_classifier()
 2. custom_init_sequence_classifier(args)
 3. train_sequence_classifier(train_csv_path)
@@ -176,6 +176,7 @@ Evaluates the trained model against an input.
 train_sequence_classifier(train_csv_path): must be called before this method can be called.
 
 Argument:
+
     1. eval_csv_path: A string directory path to the csv that contains the evaluating data.
 
 ##### eval_csv requirements: (same as train_csv requirements) 
@@ -297,6 +298,7 @@ happy_xlnet.custom_init_sequence_classifier(custom_args)
 
 **HappyBERT** has a method called "is_next_sentence" which is used for next sentence prediction tasks.
 The method takes the following arguments:
+
     1. sentence_a: A sentence in a body of text
     2. sentence_b: A sentence that may or may not follow sentence sentence_a
 
@@ -319,7 +321,7 @@ print(result) # prints: (False, 0.9988276362419128)
 ```
 ### Tech
 
- Happy Transformer uses a number of open source projects to work properly:
+ Happy Transformer uses a number of open source projects:
 
 * [transformers](https://github.com/huggingface/transformers/stargazers) - State-of-the-art Natural Language Processing for TensorFlow 2.0 and PyTorch!
 *  [pytorch](https://github.com/pytorch/pytorch) - Tensors and Dynamic neural networks in Python
@@ -329,12 +331,12 @@ print(result) # prints: (False, 0.9988276362419128)
 * [tqdm](https://github.com/tqdm/tqdm) - A Fast, Extensible Progress Bar for Python and CLI
 *  [pytorch-transformers-classification](https://github.com/ThilinaRajapakse/pytorch-transformers-classification) - Text classification for BERT, RoBERTa, XLNet and XLM
 
+
  HappyTransformer is also an open source project with this [public repository](https://github.com/EricFillion/happy-transformer)
  on GitHub. 
  
 ### Call for contributors 
  Happy Transformer is a new and growing API. We're seeking more contributors to help accomplish our mission of making state-of-the-art AI easier to use.  
-
 
 ### Coming soon
  - Fine tuning for masked word prediction models
