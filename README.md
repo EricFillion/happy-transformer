@@ -152,6 +152,7 @@ Trains the HappyTransformer's sequence classifier.
 One of the two init sequence classifier methods must be called before this method can be called.
 
 Argument:
+
     1. train_csv_path: A string directory path to the csv that contains the training data.
 
 ##### train_csv requirements: 
