@@ -85,6 +85,7 @@ class SequenceClassifier():
         model_to_save = self.model.module if hasattr(self.model, 'module') else self.model
 
         self.model = model_to_save # new
+        del self.train_dataset
 
 
     def __train(self):
@@ -208,8 +209,9 @@ class SequenceClassifier():
 
 
         result = self.__get_eval_report(out_label_ids, preds)
-        results.update(result)
 
+        results.update(result)
+        del self.eval_dataset
         return results
 
     def test(self):
@@ -267,10 +269,14 @@ class SequenceClassifier():
 
         if task == 'eval':
             examples = self.processor.get_dev_examples(self.eval_list_data)
+            del self.eval_list_data
         elif task == 'train':
             examples = self.processor.get_train_examples(self.train_list_data)
+            del self.train_list_data
         else:
             examples = self.processor.get_dev_examples(self.test_list_data)
+            del self.test_list_data
+
 
         features = convert_examples_to_features(examples, label_list, self.args['max_seq_length'], self.tokenizer,
                                                 output_mode,
@@ -295,4 +301,6 @@ class SequenceClassifier():
 
 
         dataset = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_label_ids)
+        del all_input_ids, all_input_mask, all_segment_ids, all_label_ids
+
         return dataset

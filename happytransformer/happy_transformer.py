@@ -322,6 +322,7 @@ class HappyTransformer:
         sys.stdout = open(os.devnull, 'w') # Disable printing to stop external libraries from printing
         train_df = train_df.astype("str")
         self.seq.train_list_data = train_df.values.tolist()
+        del train_df  # done with train_df
         self.seq.train_model()
         self.seq_trained = True
         sys.stdout = sys.__stdout__  # Enable printing
@@ -378,6 +379,7 @@ class HappyTransformer:
 
         test_df = test_df.astype("str")
         self.seq.test_list_data = test_df.values.tolist()
+        del test_df  # done with test_df
 
         results = self.seq.test()
 
@@ -399,8 +401,10 @@ class HappyTransformer:
                 text_list = list(reader)
             # Blank values are required for the first column value the testing data to increase
             # reusability of preprocessing methods between the tasks
-            blank_values = ["-1"]*len(text_list)
+            blank_values = ["0"] * len(text_list)
             data_frame = pd.DataFrame([*zip(blank_values, text_list)])
+            del blank_values  # done with blank_values
+
         else:
             data_frame = pd.read_csv(csv_path, header=None)
 
