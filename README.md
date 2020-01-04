@@ -331,7 +331,6 @@ print(result) # prints: (False, 0.9988276362419128)
 * [tqdm](https://github.com/tqdm/tqdm) - A Fast, Extensible Progress Bar for Python and CLI
 *  [pytorch-transformers-classification](https://github.com/ThilinaRajapakse/pytorch-transformers-classification) - Text classification for BERT, RoBERTa, XLNet and XLM
 
-
  HappyTransformer is also an open source project with this [public repository](https://github.com/EricFillion/happy-transformer)
  on GitHub. 
  
