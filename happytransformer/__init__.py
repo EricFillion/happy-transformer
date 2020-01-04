@@ -1,4 +1,4 @@
-# from happy_transformer.happy_bert import HappyBERT
-# from happy_transformer.happy_xlnet import HappyXLNET
-# from happy_transformer.happy_roberta import HappyROBERTA
-# from happy_transformer.sequence_classification.classifier_args import classifier_args
+from happytransformer.happy_bert import HappyBERT
+from happytransformer.happy_xlnet import HappyXLNET
+from happytransformer.happy_roberta import HappyROBERTA
+from happytransformer.seq_class.classifier_args import classifier_args
