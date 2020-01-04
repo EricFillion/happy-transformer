@@ -1,39 +1,44 @@
-from distutils.core import setup
+# from distutils.core import setup
+from setuptools import setup
+
+import pathlib
+
+current_location = pathlib.Path(__file__).parent
+readme = (current_location / "README.md").read_text()
+
 setup(
-  name = 'happytransformer',
-  packages = ['happytransformer'],
-  version = '1.0',
-  license='MIT',
-  description = 'Easily use XLNet, BERT and RoBERTa for masked word prediction and binary sequence classification',
-  author = 'Eric Fillion, Umur Gokalp, Logan Roth and Xavier McMaster - Hubner',
-  author_email = 'happytransformer@gmail.com',
-  url = 'https://github.com/EricFillion/happy-transformer',
-  download_url = 'https://github.com/user/reponame/archive/v_01.tar.gz',
-  keywords = ['BERT', 'roberta', 'xlnet', "word prediction", "masked", "transformer", "happy", "HappyTransformer", "binary", "sequence", "classification", "pytorch", "nlp", "nlu", "natural", "language", "processing", "understanding"],   # Keywords that define your package best
+    name = 'happytransformer',
+    packages = ['happytransformer'],
+    version = '0.0.2',
+    license='Apache 2.0',
+    description = "Happy Transformer is an API built on top of PyTorch's transformer library that makes it easy to utilize state-of-the-art NLP models.",
+    long_description= readme,
+    long_description_content_type='text/markdown',
+    author = "The Happy Transformer Development Team",
+    author_email = 'happytransformer@gmail.com',
+    url = 'https://github.com/EricFillion/happy-transformer',
+    download_url = 'https://github.com/EricFillion/happy-transformer/archive/0.0.1.tar.gz',
+    keywords = ['bert', 'roberta', 'xlnet', "word",'prediction' "masked", "transformer", "happy", "HappyTransformer", "binary", "sequence", "classification", "pytorch", "nlp", "nlu", "natural", "language", "processing", "understanding"],
 
 
-  install_requires=[
-            'transformers',
-            'logging',
+    install_requires=[
             'numpy',
             'torch',
             'pandas',
-            'multiprocessing',
             'tqdm',
             'numpy',
-            'tqdm',
-            'sklearn',
+            'scikit_learn',
 
       ],
-  classifiers=[
-    'Development Status :: 4 - Beta',
-    'Intended Audience :: Developers',
-    'License :: OSI Approved :: MIT License',
-    # Check the code for other python version compatability
-    'Programming Language :: Python :: 3.7',
-    'Topic :: Software Development :: Build Tools',
-    "Topic :: Text Processing :: Linguistic",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+        'Intended Audience :: Developers',
+        "Intended Audience :: Science/Research",
+        'License :: OSI Approved :: Apache Software License',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        "Topic :: Text Processing :: Linguistic",
+        "Topic :: Scientific/Engineering :: Artificial Intelligence",
 
-  ],
-)
+      ],
+    )
