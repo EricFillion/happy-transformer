@@ -82,7 +82,7 @@ If you do decide to use HappyXLNET or HappyBERT, then also use their correspondi
 ```sh
 from happytransformer import HappyROBERTA
 #--------------------------------------#
-happy_roberta = HappROBERTA("roberta-large")
+happy_roberta = HappyROBERTA("roberta-large")
 text = "I think therefore I [MASK]"
 results = happy_roberta.predict_mask(text)
 
