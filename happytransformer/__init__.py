@@ -1,4 +1,5 @@
 from happytransformer.happy_bert import HappyBERT
 from happytransformer.happy_xlnet import HappyXLNET
 from happytransformer.happy_roberta import HappyROBERTA
-from happytransformer.seq_class.classifier_args import classifier_args
+
+name = "happytransformer"
