@@ -8,7 +8,7 @@ readme = (current_location / "README.md").read_text()
 
 setup(
     name = 'happytransformer',
-    packages = ['happytransformer'],
+    packages = ['happytransformer',],
     version = '0.0.2',
     license='Apache 2.0',
     description = "Happy Transformer is an API built on top of PyTorch's transformer library that makes it easy to utilize state-of-the-art NLP models.",
@@ -27,7 +27,9 @@ setup(
             'pandas',
             'tqdm',
             'numpy',
-            'scikit_learn',
+            'scikit_learn'
+            'pytorch_transformers',
+            'transformers',
 
       ],
     classifiers=[
