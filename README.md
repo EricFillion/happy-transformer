@@ -75,7 +75,7 @@ For all Happy Transformers, the masked token is **"[MASK]"**
 
 It is recommended that you use HappyROBERTA("roberta-large") for masked word prediction.
 Avoid using HappyBERT for masked word prediction. 
-If you do decided to use HappyXLNET or HappyBERT, then also use their corresponding "large cased model'. 
+If you do decide to use HappyXLNET or HappyBERT, then also use their corresponding "large cased model'. 
 
 
 #### Example 1 :
@@ -158,7 +158,7 @@ Argument:
 ##### train_csv requirements: 
     1. The csv must contain *NO* header. 
     2. Each row contains a training case. 
-    3. The first column contains either a 0 or a 1 to indicate the training case is for case "0" or case "1". 
+    3. The first column contains either a 0 or a 1 to indicate whether the training case is for case "0" or case "1". 
     4. The second column contains the text for the training case
 #### Example 1
 |   |                                                              | 
@@ -183,7 +183,7 @@ Argument:
 ##### eval_csv requirements: (same as train_csv requirements) 
     1. The csv must contain *NO* header. 
     2. Each row contains a training case. 
-    3. The first column contains either a 0 or a 1 to indicate the training case is for case "0" or case "1". 
+    3. The first column contains either a 0 or a 1 to indicate whether the training case is for case "0" or case "1". 
     4. The second column contains the text for the training case
     
 **Returns** a python dictionary that contains a count for the following values
