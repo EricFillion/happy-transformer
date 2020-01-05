@@ -13,7 +13,7 @@ from transformers import (
 
 import torch
 
-from happytransformer.happy_transformer import HappyTransformer
+from .happy_transformer import HappyTransformer
 
 
 class HappyBERT(HappyTransformer):
