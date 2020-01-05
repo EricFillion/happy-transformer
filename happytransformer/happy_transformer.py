@@ -17,8 +17,8 @@ import numpy as np
 import torch
 import pandas as pd
 
-from happytransformer.seq_class.classifier_args import classifier_args
-from happytransformer.seq_class.sequence_classifier import SequenceClassifier
+from happytransformer.sequence_classifier.classifier_args import classifier_args
+from happytransformer.sequence_classifier.sequence_classifier import SequenceClassifier
 
 
 class HappyTransformer:
