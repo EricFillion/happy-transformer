@@ -27,7 +27,7 @@ from transformers import (BertForSequenceClassification,
 from transformers import AdamW, get_linear_schedule_with_warmup
 
 
-from happytransformer.sequence_classifier.classifier_utils import convert_examples_to_features, \
+from happytransformer.classifier_utils import convert_examples_to_features, \
                                                output_modes, \
                                                processors
 
