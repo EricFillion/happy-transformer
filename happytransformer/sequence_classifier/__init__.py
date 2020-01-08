@@ -1,2 +1,0 @@
-from happytransformer.sequence_classifier.classifier_args import classifier_args
-from happytransformer.sequence_classifier.sequence_classifier import SequenceClassifier
