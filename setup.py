@@ -17,7 +17,7 @@ setup(
     author = "The Happy Transformer Development Team",
     author_email = 'happytransformer@gmail.com',
     url = 'https://github.com/EricFillion/happy-transformer',
-    download_url = 'https://github.com/EricFillion/happy-transformer/archive/v0.0.12.tar.gz',
+    download_url = 'https://github.com/EricFillion/happy-transformer/archive/0.0.12.tar.gz',
     keywords = ['bert', 'roberta', 'xlnet', "word",'prediction' "masked", "transformer", "happy", "HappyTransformer", "binary", "sequence", "classification", "pytorch", "nlp", "nlu", "natural", "language", "processing", "understanding"],
 
 
