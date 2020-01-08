@@ -9,7 +9,7 @@ readme = (current_location / "README.md").read_text()
 setup(
     name = 'happytransformer',
     packages = ['happytransformer',],
-    version = '0.0.9',
+    version = '0.0.12',
     license='Apache 2.0',
     description = "Happy Transformer is an API built on top of PyTorch's transformer library that makes it easy to utilize state-of-the-art NLP models.",
     long_description= readme,
@@ -17,7 +17,7 @@ setup(
     author = "The Happy Transformer Development Team",
     author_email = 'happytransformer@gmail.com',
     url = 'https://github.com/EricFillion/happy-transformer',
-    download_url = 'https://github.com/EricFillion/happy-transformer/archive/v0.0.7.tar.gz',
+    download_url = 'https://github.com/EricFillion/happy-transformer/archive/v0.0.12.tar.gz',
     keywords = ['bert', 'roberta', 'xlnet', "word",'prediction' "masked", "transformer", "happy", "HappyTransformer", "binary", "sequence", "classification", "pytorch", "nlp", "nlu", "natural", "language", "processing", "understanding"],
 
 
