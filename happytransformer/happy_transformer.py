@@ -90,12 +90,8 @@ class HappyTransformer:
         tokenized_text = self. \
             _get_tokenized_text(text)
         masked_index = tokenized_text.index(self.masked_token)
-        if self.model_name != "change":
 
-            softmax = self._get_prediction_softmax(tokenized_text)
-
-        else:
-            softmax = self._get_prediction_softmax_roberta(text)
+        softmax = self._get_prediction_softmax(tokenized_text)
 
 
         if options is not None:
