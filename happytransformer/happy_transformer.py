@@ -87,10 +87,13 @@ class HappyTransformer:
 
         self._text_verification(text)
 
-        tokenized_text = self.\
+        tokenized_text = self. \
             _get_tokenized_text(text)
         masked_index = tokenized_text.index(self.masked_token)
+
         softmax = self._get_prediction_softmax(tokenized_text)
+
+
         if options is not None:
             option_ids = [self.tokenizer.encode(option) for option in options]
 
@@ -111,12 +114,32 @@ class HappyTransformer:
             tupled_predictions = self.__remove_starting_character(tupled_predictions, "▁")
         if self.model_name == "ROBERTA":
             tupled_predictions = self.__remove_starting_character(tupled_predictions, "Ġ")
+            tupled_predictions = self.__switch_prediction(tupled_predictions, "</s>", '.')
 
 
         if self.gpu_support == "cuda":
             torch.cuda.empty_cache()
 
         return self.__format_option_scores(tupled_predictions)
+
+
+    def __switch_prediction(self, tupled_predictions, current_token, new_token):
+        """
+        Switches a token with a different token in final predictions  for predict_mask.
+        So far it is only used to switch the "</s>" token with "." for RoBERTA. "</s>" is meant to indicate
+        a new sentence.
+        """
+
+        new_predictions = list()
+        for prediction in tupled_predictions:
+            word_prediction = prediction[0]
+
+            if word_prediction == current_token:
+                new_prediction = (new_token, prediction[1])
+                new_predictions.append(new_prediction)
+            else:
+                new_predictions.append(prediction)
+        return new_predictions
 
     def __remove_starting_character(self, tupled_predictions, starting_char):
         """
@@ -168,13 +191,17 @@ class HappyTransformer:
                     pass
                 else:
                     new_text.append(self.sep_token)
+                    # if self.model_name == "ROBERTA":
+                    #     # ROBERTA requires two "</s>" tokens to separate sentences
+                    #     new_text.append(self.sep_token)
                 # must be a middle punctuation
         new_text.append(self.sep_token)
+
         text = " ".join(new_text).replace('[mask]', self.masked_token)
         text = self.tokenizer.tokenize(text)
         return text
 
-    def _get_prediction_softmax(self, text: str):
+    def _get_prediction_softmax(self, text):
         """
         Gets the softmaxes of the predictions for each index in the the given
         input string.
@@ -183,16 +210,25 @@ class HappyTransformer:
         :param text: a tokenized string to be used by the transformer.
         :return: a tensor of the softmaxes of the predictions of the
                  transformer
-        """
-        segments_ids = self._get_segment_ids(text)
-        indexed_tokens = self.tokenizer.convert_tokens_to_ids(text)
 
+        """
+
+
+        indexed_tokens = self.tokenizer.convert_tokens_to_ids(text)
         # Convert inputs to PyTorch tensors
         tokens_tensor = torch.tensor([indexed_tokens])
-        segments_tensors = torch.tensor([segments_ids])
 
         with torch.no_grad():
-            outputs = self.mlm(tokens_tensor, token_type_ids=segments_tensors)
+
+            if self.model_name != "ROBERTA":
+                segments_ids = self._get_segment_ids(text)
+                segments_tensors = torch.tensor([segments_ids])
+
+                outputs = self.mlm(tokens_tensor, token_type_ids=segments_tensors)
+            else:
+                outputs = self.mlm(tokens_tensor)
+
+
             predictions = outputs[0]
 
             softmax = self._softmax(predictions)
@@ -241,6 +277,7 @@ class HappyTransformer:
             else:
                 segment_ids.append(1)
             # add exception case for XLNet
+
         return segment_ids
 
 
