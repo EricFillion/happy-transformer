@@ -5,6 +5,7 @@ HappyBERT: a wrapper over PyTorch's BERT implementation
 
 # disable pylint TODO warning
 # pylint: disable=W0511
+import re
 from transformers import (
     BertForMaskedLM,
     BertForNextSentencePrediction,
@@ -57,7 +58,7 @@ class HappyBERT(HappyTransformer):
         self.nsp.eval()
 
 
-    def is_next_sentence(self, sentence_a, sentence_b):
+    def next_sentence_prediction(self, sentence_a, sentence_b):
         """
         Determines if sentence B is likely to be a continuation after sentence
         A.
@@ -67,6 +68,11 @@ class HappyBERT(HappyTransformer):
                        to follow a, with the probabilities as the second item
                        of the tuple
         """
+
+        if not self.__is_one_sentence(sentence_a) or not  self.__is_one_sentence(sentence_b):
+            self.logger.error("The each inputted text variable for sentence_relation must contain a single sentence")
+            exit()
+
         if self.nsp is None:
             self._get_next_sentence_prediction()
         connected = sentence_a + ' ' + sentence_b
@@ -78,7 +84,26 @@ class HappyBERT(HappyTransformer):
         segments_tensors = torch.tensor([segments_ids])
         with torch.no_grad():
             predictions = self.nsp(tokens_tensor, token_type_ids=segments_tensors)[0]
-        softmax = self._softmax(predictions)[0]
-        if torch.argmax(softmax) == 0:
-            return (True, softmax.tolist()[0])
-        return (False, softmax.tolist()[1])
+
+        if predictions[0][0] >= predictions[0][1]:
+            return True
+        return False
+
+    def __is_one_sentence(self, text):
+        """
+        Used to verify the proper input requirements for sentence_relation.
+        The text must contain no more than a single sentence.
+        Casual use of punctuation is accepted, such as using multiple exclamation marks.
+        :param text: A body of text
+        :return: True if the body of text contains a single sentence, else False
+        """
+        split_text = re.split('[?.!]', text)
+        sentence_found = False
+        for possible_sentence in split_text:
+            for char in possible_sentence:
+                if char.isalpha():
+                    if sentence_found:
+                        return False
+                    sentence_found = True
+                    break
+        return True
