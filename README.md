@@ -64,14 +64,14 @@ bert_large_cased = HappyBERT("bert-large-cased")
 ```
 ## Word Prediction 
 
-Each Happy Transformer has a public  method called "predict_mas(text, options, k)" with the following input arguments.
+Each Happy Transformer has a public  method called "predict_mask(text, options, num_results)" with the following input arguments.
 1. Text: the text you wish to predict including a single masked token.
 2. options (default = every word): A limited set of words the model can return.
-3. k (default = 1): The number of returned predictions.
+3. num_results (default = 1): The number of returned predictions.
 
 For all Happy Transformers, the masked token is **"[MASK]"**
 
-"predict_mask(text, options, k)" returns a list of dictionaries which is exemplified in Example 1 .
+"predict_mask(text, options, num_results)" returns a list of dictionaries which is exemplified in Example 1 .
 
 It is recommended that you use HappyROBERTA("roberta-large") for masked word prediction.
 Avoid using HappyBERT for masked word prediction. 
@@ -101,7 +101,7 @@ from happytransformer import HappyROBERTA
 #--------------------------------------#
 happy_roberta = HappROBERTA("roberta-large")
 text = "To solve world poverty we must invest in [MASK]"
-results = happy_roberta.predict_mask(text, k = 2)
+results = happy_roberta.predict_mask(text, num_results = 2)
 
 print(type(results)) # prints: <class 'list'>
 print(results) # prints: [{'word': 'education', 'softmax': 0.34365904331207275}, {'word': 'children', 'softmax': 0.03996562585234642}]
@@ -119,7 +119,7 @@ from happytransformer import HappyXLNET
 happy_xlnet = HappyXLNET("xlnet-large-cased")
 text = "Can you please pass the [MASK] "
 options = ["pizza", "rice", "tofu", 'eggs', 'milk']
-results = happy_xlnet.predict_mask(text, options=options, k=3)
+results = happy_xlnet.predict_mask(text, options=options, num_results=3)
 
 print(type(results)) # prints: <class 'list'>
 print(results) # prints: [{'word': 'tofu', 'softmax': 0.007073382}, {'word': 'pizza', 'softmax': 0.00017212195}, {'word': 'rice', 'softmax': 2.843065e-07}]
@@ -297,15 +297,15 @@ happy_xlnet.custom_init_sequence_classifier(custom_args)
 *Determine the likelihood that sentence B follows sentence A.*
 
 
-**HappyBERT** has a method called "is_next_sentence" which is used for next sentence prediction tasks.
+**HappyBERT** has a method called "predict_next_sentence" which is used for next sentence prediction tasks.
 The method takes the following arguments:
 
-    1. sentence_a: A sentence in a body of text
-    2. sentence_b: A sentence that may or may not follow sentence sentence_a
+    1. sentence_a: A **single** sentence in a body of text
+    2. sentence_b: A **single** sentence that may or may not follow sentence sentence_a
 
-This likelihood that sentence_b follows sentenced_a is returned as a tuple where the first element is True or False indicating if it is true that sentence B follows sentence A. The second element of the tuple is the softmax for the prediction which indicates the prediction's confidence. 
+This likelihood that sentence_b follows sentenced_a is returned as a boolean value that is either True or False indicating if it is true that sentence B follows sentence A.  
 
-###### Example 1 :
+###### Example 1:
 ```sh
 from happytransformer import HappyBERT
 #--------------------------------------#
@@ -314,13 +314,13 @@ sentence_a = "How old are you?"
 sentence_b = "I am 93 years old."
 sentence_c = "The Eiffel Tower is in Paris."
 result = happy_bert.is_next_sentence(sentence_a, sentence_b)
-print(type(result)) # prints: <class 'tuple'>
-print(result) # prints: (True, 0.9999142289161682)
+print(type(result)) # prints: <class 'bool'>
+print(result) # prints: True
 result = happy_bert.is_next_sentence(sentence_a, sentence_c)
-print(type(result)) # prints: <class 'tuple'>
-print(result) # prints: (False, 0.9988276362419128) 
+print(type(result)) # prints: <class 'bool'>
+print(result) # prints: False
 ```
-### Tech
+## Tech
 
  Happy Transformer uses a number of open source projects:
 
