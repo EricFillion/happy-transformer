@@ -62,7 +62,7 @@ class HappyTransformer:
         pass
 
 
-    def predict_mask(self, text: str, options=None, k=1):
+    def predict_mask(self, text: str, options=None, num_results=1):
         """
         Method to predict what the masked token in the given text string is.
         NOTE: This is the generic version of this predict_mask method. If a
@@ -98,12 +98,12 @@ class HappyTransformer:
             option_ids = [self.tokenizer.encode(option) for option in options]
 
 
-            option_ids = option_ids[:k]
+            option_ids = option_ids[:num_results]
             scores = list(map(lambda x: self.soft_sum(x, softmax[0],
                                                       masked_index),
                               option_ids))
         else:
-            top_predictions = torch.topk(softmax[0, masked_index], k)
+            top_predictions = torch.topk(softmax[0, masked_index], num_results)
             scores = top_predictions[0].tolist()
             prediction_index = top_predictions[1].tolist()
             options = self.tokenizer.convert_ids_to_tokens(prediction_index)
