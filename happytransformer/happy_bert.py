@@ -70,7 +70,7 @@ class HappyBERT(HappyTransformer):
         """
 
         if not self.__is_one_sentence(sentence_a) or not  self.__is_one_sentence(sentence_b):
-            self.logger.error("The each inputted text variable for sentence_relation must contain a single sentence")
+            self.logger.error("Each inputted text variable for the \"predict_next_sentence\" method must contain a single sentence")
             exit()
 
         if self.nsp is None:
