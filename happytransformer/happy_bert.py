@@ -58,7 +58,7 @@ class HappyBERT(HappyTransformer):
         self.nsp.eval()
 
 
-    def next_sentence_prediction(self, sentence_a, sentence_b):
+    def predict_next_sentence(self, sentence_a, sentence_b):
         """
         Determines if sentence B is likely to be a continuation after sentence
         A.
