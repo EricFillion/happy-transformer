@@ -254,7 +254,7 @@ argument:
 ### default classifier arguments
  
 ```
-# found under "from happytransformer.sequence_classification.classifier_args"
+# found under "from happytransformer.classifier_args"
 classifier_args = {
     # Basic fine tuning parameters
     'learning_rate': 1e-5,
@@ -277,7 +277,7 @@ classifier_args = {
 #### Example 4:
  ```sh
 from happytransformer import HappyROBERTA
-from happytransformer.seq_class.classifier_args import classifier_args
+from happytransformer import classifier_args
 #------------------------------------------#
 happy_xlnet = HappyXLNET()
 
