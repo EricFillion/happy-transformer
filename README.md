@@ -313,10 +313,10 @@ happy_bert = HappyBERT()
 sentence_a = "How old are you?"
 sentence_b = "I am 93 years old."
 sentence_c = "The Eiffel Tower is in Paris."
-result = happy_bert.is_next_sentence(sentence_a, sentence_b)
+result = happy_bert.predict_next_sentence(sentence_a, sentence_b)
 print(type(result)) # prints: <class 'bool'>
 print(result) # prints: True
-result = happy_bert.is_next_sentence(sentence_a, sentence_c)
+result = happy_bert.predict_next_sentence(sentence_a, sentence_c)
 print(type(result)) # prints: <class 'bool'>
 print(result) # prints: False
 ```
