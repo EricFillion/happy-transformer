@@ -1,3 +1,5 @@
+[![Downloads](https://pepy.tech/badge/happytransformer)](https://pepy.tech/project/happytransformer)
+
 # Happy Transformer 
 
 ![HappyTransformer](img/HappyTransformer.png)
