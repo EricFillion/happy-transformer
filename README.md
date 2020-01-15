@@ -1,4 +1,4 @@
-[![Downloads](https://pepy.tech/badge/happytransformer)](https://pepy.tech/project/happytransformer)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Downloads](https://pepy.tech/badge/happytransformer)](https://pepy.tech/project/happytransformer)
 
 # Happy Transformer 
 
@@ -343,7 +343,3 @@ print(result) # prints: False
 ### Coming soon
  - Fine tuning for masked word prediction models
  - Question answering models 
-
-License
-----
-Apache 2
