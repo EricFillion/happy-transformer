@@ -9,6 +9,7 @@ import re
 from transformers import (
     BertForMaskedLM,
     BertForNextSentencePrediction,
+    BertForQuestionAnswering,
     BertTokenizer
 )
 
@@ -29,7 +30,9 @@ class HappyBERT(HappyTransformer):
             4. eval_sequence_classifier(eval_csv_path)
             5. test_sequence_classifier(test_csv_path)
         BertForNextSentencePrediction:
-
+            1. predict_next_sentence(sentence_a, sentence_b)
+        BertForQuestionAnswering:
+            1. answer_question(question, text)
 
             """
 
@@ -57,6 +60,13 @@ class HappyBERT(HappyTransformer):
         self.nsp = BertForNextSentencePrediction.from_pretrained(self.model)
         self.nsp.eval()
 
+    def _get_question_answering(self):
+        """
+        Initializes the BertForQuestionAnswering transformer
+        NOTE: This uses the bert-large-uncased-whole-word-masking-finetuned-squad pretraining for best results.
+        """
+        self.qa = BertForQuestionAnswering.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
+        self.qa.eval()
 
     def predict_next_sentence(self, sentence_a, sentence_b):
         """
@@ -107,3 +117,30 @@ class HappyBERT(HappyTransformer):
                     sentence_found = True
                     break
         return True
+
+    def answer_question(self, question, text):
+        """
+        Using the given text, find the answer to the given question and return it.
+
+        :param question: The question to be answered
+        :param text: The text containing the answer to the question
+        :return: The answer to the given question, as a string
+        """
+        if self.qa is None:
+            self._get_question_answering()
+        input_text = self.cls_token + " " + question + " " + self.sep_token + " " + text + " " + self.sep_token
+        input_ids = self.tokenizer.encode(input_text)
+        sep_val = self.tokenizer.encode(self.sep_token)[-1]
+        token_type_ids = [0 if i <= input_ids.index(sep_val) else 1
+                          for i in range(len(input_ids))]
+        token_tensor = torch.tensor([input_ids])
+        segment_tensor = torch.tensor([token_type_ids])
+        with torch.no_grad():
+            start_scores, end_scores = self.qa(input_ids=token_tensor,
+                                               token_type_ids=segment_tensor)
+        all_tokens = self.tokenizer.convert_ids_to_tokens(input_ids)
+        answer_list = all_tokens[torch.argmax(start_scores):
+                                 torch.argmax(end_scores)+1]
+        answer = self.tokenizer.convert_tokens_to_string(answer_list)
+        answer = answer.replace(' \' ', '\' ').replace('\' s ', '\'s ')
+        return answer

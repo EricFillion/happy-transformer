@@ -35,6 +35,7 @@ class HappyTransformer:
         self.model_name = model_name
         self.mlm = None  # Masked Language Model
         self.seq = None # Sequence Classification
+        self.qa = None   # Question Answering
 
         # the following variables are declared in the  child class:
         self.tokenizer = None
@@ -55,9 +56,9 @@ class HappyTransformer:
 
         self.logger.info("Using model: %s", self.gpu_support)
         self.seq_trained = False
+
     def _get_masked_language_model(self):
         pass
-
 
     def predict_mask(self, text: str, options=None, num_results=1):
         """
