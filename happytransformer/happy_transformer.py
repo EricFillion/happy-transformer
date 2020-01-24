@@ -20,9 +20,6 @@ import pandas as pd
 from happytransformer.classifier_args import classifier_args
 from happytransformer.sequence_classifier import SequenceClassifier
 
-# from happytransformer.sequence_classifier import classifier_args
-# from happytransformer.sequence_classifier import SequenceClassifier
-
 class HappyTransformer:
     """
     Initializes pytroch's transformer models and provided methods for
@@ -95,27 +92,58 @@ class HappyTransformer:
 
 
         if options is not None:
-            option_ids = [self.tokenizer.encode(option) for option in options]
+
+            if self.model_name == "BERT":
+                option_ids = [self.tokenizer.encode(option) for option in options]
+
+                option_ids = option_ids[:num_results]
+
+                scores = list(map(lambda x: self.soft_sum(x, softmax[0],
+                                                          masked_index),
+                                  option_ids))
+                tupled_predictions = tuple(zip(options, scores))
+
+            else:
+                top_predictions = torch.topk(softmax[0, masked_index], 5000)
+                scores = top_predictions[0].tolist()
+                lowest_score = min(float(i) for i in scores)
+                prediction_index = top_predictions[1].tolist()
+                top_options = self.tokenizer.convert_ids_to_tokens(prediction_index)
 
 
-            option_ids = option_ids[:num_results]
-            scores = list(map(lambda x: self.soft_sum(x, softmax[0],
-                                                      masked_index),
-                              option_ids))
+                if self.model_name == "XLNET":
+                    top_options = self.__remove_starting_character(top_options, "▁")
+                if self.model_name == "ROBERTA":
+                    top_options = self.__remove_starting_character(top_options, "Ġ")
+                    top_options = self.__switch_prediction(top_options, "</s>", '.')
+
+                option_scores = list()
+                for option in options:
+                    if option in top_options:
+                        option_id = top_options.index(option)
+                        option_scores.append(scores[option_id])
+                    else:
+                        option_scores.append(lowest_score)
+
+                tupled_predictions = tuple(zip(options, option_scores))
+
+                sorted(tupled_predictions, key=lambda x: x[1])
+
+                tupled_predictions = tupled_predictions[:num_results]
+
+
         else:
             top_predictions = torch.topk(softmax[0, masked_index], num_results)
             scores = top_predictions[0].tolist()
             prediction_index = top_predictions[1].tolist()
             options = self.tokenizer.convert_ids_to_tokens(prediction_index)
 
-        tupled_predictions = tuple(zip(options, scores))
-
-        if self.model_name == "XLNET": # TODO find other models that also require this
-            tupled_predictions = self.__remove_starting_character(tupled_predictions, "▁")
-        if self.model_name == "ROBERTA":
-            tupled_predictions = self.__remove_starting_character(tupled_predictions, "Ġ")
-            tupled_predictions = self.__switch_prediction(tupled_predictions, "</s>", '.')
-
+            if self.model_name == "XLNET":  # TODO find other models that also require this
+                options = self.__remove_starting_character(options, "▁")
+            if self.model_name == "ROBERTA":
+                options = self.__remove_starting_character(options, "Ġ")
+                options = self.__switch_prediction(options, "</s>", '.')
+            tupled_predictions = tuple(zip(options, scores))
 
         if self.gpu_support == "cuda":
             torch.cuda.empty_cache()
@@ -123,7 +151,7 @@ class HappyTransformer:
         return self.__format_option_scores(tupled_predictions)
 
 
-    def __switch_prediction(self, tupled_predictions, current_token, new_token):
+    def __switch_prediction(self, predictions, current_token, new_token):
         """
         Switches a token with a different token in final predictions  for predict_mask.
         So far it is only used to switch the "</s>" token with "." for RoBERTA. "</s>" is meant to indicate
@@ -131,31 +159,26 @@ class HappyTransformer:
         """
 
         new_predictions = list()
-        for prediction in tupled_predictions:
-            word_prediction = prediction[0]
+        for prediction in predictions:
 
-            if word_prediction == current_token:
-                new_prediction = (new_token, prediction[1])
-                new_predictions.append(new_prediction)
+            if predictions == current_token:
+                new_predictions.append(new_token)
             else:
                 new_predictions.append(prediction)
         return new_predictions
 
-    def __remove_starting_character(self, tupled_predictions, starting_char):
+    def __remove_starting_character(self, options, starting_char):
         """
         Some cased models like XLNet place a "▁" character in front of lower cased predictions.
         For most applications this extra bit of information is irrelevant.
-        :param tupled_predictions: A list that contains tuples where the first index is
-                                the name of the prediction and the second index is the
-                                prediction's softmax
+        :param options: A list that contains word predictions
         ;param staring_char: The special character that is placed at the start of the predicted word
         :return: a new list of tuples where the prediction's name does not contains a special starting character
         """
         new_predictions = list()
-        for prediction in tupled_predictions:
-            word_prediction = prediction[0]
-            if word_prediction[0] == starting_char:
-                new_prediction = (word_prediction[1:], prediction[1])
+        for prediction in options:
+            if prediction[0] == starting_char:
+                new_prediction = prediction[1:]
                 new_predictions.append(new_prediction)
             else:
                 new_predictions.append(prediction)
