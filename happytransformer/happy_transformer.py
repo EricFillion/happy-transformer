@@ -151,21 +151,18 @@ class HappyTransformer:
         return self.__format_option_scores(tupled_predictions)
 
 
-    def __switch_prediction(self, predictions, current_token, new_token):
+    def __switch_prediction(self, options, current_token, new_token):
         """
         Switches a token with a different token in final predictions  for predict_mask.
         So far it is only used to switch the "</s>" token with "." for RoBERTA. "</s>" is meant to indicate
         a new sentence.
         """
 
-        new_predictions = list()
-        for prediction in predictions:
+        for n, i in enumerate(options):
+            if i == current_token:
+                options[n] = new_token
 
-            if predictions == current_token:
-                new_predictions.append(new_token)
-            else:
-                new_predictions.append(prediction)
-        return new_predictions
+        return options
 
     def __remove_starting_character(self, options, starting_char):
         """
