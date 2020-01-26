@@ -16,9 +16,10 @@ Happy Transformer is an API built on top of [PyTorch's transformer library](http
   
 | Public Methods              | HappyROBERTA | HappyXLNET | HappyBERT |
 |-----------------------------|--------------|------------|-----------|
-| predict_mask                | ✔            | ✔          | ✔         |
-| Sequence Classifier Methods | ✔            | ✔          | ✔         |
+| Masked Word Prediction      | ✔            | ✔          | ✔         |
+| Sequence Classification     | ✔            | ✔          | ✔         |
 | Next Sentence Prediction    |              |            | ✔         |
+| Question Answering          |              |            | ✔         |
   
 ## Installation
 
@@ -321,6 +322,32 @@ print(result) # prints: True
 result = happy_bert.predict_next_sentence(sentence_a, sentence_c)
 print(type(result)) # prints: <class 'bool'>
 print(result) # prints: False
+```
+
+
+## Question Answering
+
+*Determine the answer to a given question using a body of supplied text.*
+
+
+**HappyBERT** has a method called "answer_question" which is used for question answering tasks.
+The method takes the following arguments:
+
+    1. question: The question to be answered
+    2. text: The text containing the answer to the question
+
+The output from the method is the answer to the question, returned as a string.
+
+###### Example 1:
+```sh
+from happytransformer import HappyBERT
+#--------------------------------------#
+happy_bert = HappyBERT()
+question = "Who does Ernie live with?"
+text = "Ernie is an orange Muppet character on the long running PBS and HBO children's television show Sesame Street. He and his roommate Bert form the comic duo Bert and Ernie, one of the program's centerpieces, with Ernie acting the role of the naïve troublemaker and Bert the world weary foil."  # Source: https://en.wikipedia.org/wiki/Ernie_(Sesame_Street)
+result = happy_bert.answer_question(question, text)
+print(type(result)) # prints: <class 'str'>
+print(result) # prints: bert
 ```
 ## Tech
 
