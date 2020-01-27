@@ -19,6 +19,8 @@ import pandas as pd
 
 from happytransformer.classifier_args import classifier_args
 from happytransformer.sequence_classifier import SequenceClassifier
+from happytransformer.mlm_utils import FinetuneMlm, word_prediction_args
+
 
 class HappyTransformer:
     """
@@ -34,8 +36,9 @@ class HappyTransformer:
         self.model = model
         self.model_name = model_name
         self.mlm = None  # Masked Language Model
-        self.seq = None # Sequence Classification
-        self.qa = None   # Question Answering
+        self.seq = None  # Sequence Classification
+        self.qa = None  # Question Answering
+        self.mlm_args = None  # Mask Language Model Finetuning
 
         # the following variables are declared in the  child class:
         self.tokenizer = None
@@ -50,12 +53,14 @@ class HappyTransformer:
         self.gpu_support = torch.device("cuda" if torch.cuda.is_available()
                                         else "cpu")
 
-        #logging
+        # logging
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 
         self.logger.info("Using model: %s", self.gpu_support)
         self.seq_trained = False
+        self.mwp_trainer = None
+        self.mwp_trained = False
 
     def _get_masked_language_model(self):
         pass
@@ -91,7 +96,6 @@ class HappyTransformer:
 
         softmax = self._get_prediction_softmax(tokenized_text)
 
-
         if options is not None:
 
             if self.model_name == "BERT":
@@ -110,7 +114,6 @@ class HappyTransformer:
                 lowest_score = min(float(i) for i in scores)
                 prediction_index = top_predictions[1].tolist()
                 top_options = self.tokenizer.convert_ids_to_tokens(prediction_index)
-
 
                 if self.model_name == "XLNET":
                     top_options = self.__remove_starting_character(top_options, "▁")
@@ -150,7 +153,6 @@ class HappyTransformer:
             torch.cuda.empty_cache()
 
         return self.__format_option_scores(tupled_predictions)
-
 
     def __switch_prediction(self, options, current_token, new_token):
         """
@@ -204,7 +206,7 @@ class HappyTransformer:
             if char not in string.punctuation:
                 pass
             # must be a punctuation symbol
-            elif i+1 >= len(split_text):
+            elif i + 1 >= len(split_text):
                 # is the last punctuation so simply add to the new_text
                 pass
             else:
@@ -234,7 +236,6 @@ class HappyTransformer:
 
         """
 
-
         indexed_tokens = self.tokenizer.convert_tokens_to_ids(text)
         # Convert inputs to PyTorch tensors
         tokens_tensor = torch.tensor([indexed_tokens])
@@ -248,7 +249,6 @@ class HappyTransformer:
                 outputs = self.mlm(tokens_tensor, token_type_ids=segments_tensors)
             else:
                 outputs = self.mlm(tokens_tensor)
-
 
             predictions = outputs[0]
 
@@ -301,7 +301,6 @@ class HappyTransformer:
 
         return segment_ids
 
-
     def _text_verification(self, text: str):
 
         # TODO,  Add cases for the other masked tokens used in common transformer models
@@ -321,8 +320,6 @@ class HappyTransformer:
         if not valid:
             exit()
 
-
-
     @staticmethod
     def soft_sum(option: list, softed, mask_id: int):
         # TODO: Better logic.
@@ -338,7 +335,6 @@ class HappyTransformer:
         """
         # Collects the softmax of all tokens in list
         return np.sum([softed[mask_id][op] for op in option])
-
 
     def init_sequence_classifier(self):
         """
@@ -372,21 +368,20 @@ class HappyTransformer:
         """
         self.logger.info("***** Running Training *****")
 
-
         train_df = self.__process_classifier_data(train_csv_path)
 
         if self.seq is None:
             self.logger.error("Initialize the sequence classifier before training")
             exit()
 
-        sys.stdout = open(os.devnull, 'w') # Disable printing to stop external libraries from printing
+        sys.stdout = open(os.devnull,
+                          'w')  # Disable printing to stop external libraries from printing
         train_df = train_df.astype("str")
         self.seq.train_list_data = train_df.values.tolist()
         del train_df  # done with train_df
         self.seq.train_model()
         self.seq_trained = True
         sys.stdout = sys.__stdout__  # Enable printing
-
 
     def eval_sequence_classifier(self, eval_csv_path):
         """
@@ -402,7 +397,7 @@ class HappyTransformer:
 
         self.logger.info("***** Running evaluation *****")
 
-        sys.stdout = open(os.devnull, 'w') # Disable printing
+        sys.stdout = open(os.devnull, 'w')  # Disable printing
 
         eval_df = self.__process_classifier_data(eval_csv_path)
 
@@ -428,7 +423,7 @@ class HappyTransformer:
         :return: A list of predictions where each prediction index is the same as the corresponding test's index
         """
         self.logger.info("***** Running Testing *****")
-        sys.stdout = open(os.devnull, 'w') # Disable printing
+        sys.stdout = open(os.devnull, 'w')  # Disable printing
 
         test_df = self.__process_classifier_data(test_csv_path, for_test_data=True)
 
@@ -477,3 +472,92 @@ class HappyTransformer:
         })
 
         return data_frame
+
+    def init_train_mwp(self, args=None):
+        """
+        Initializes the MLM for fine-tuning on masked word prediction.
+        If args are not supplied the following hyperparameters are used:
+            batch size = 1
+            Number of epochs  = 1
+            Learning rate = 5e-5
+            Adam epsilon = 1e-8
+
+        """
+        if not args:
+            self.mlm_args = word_prediction_args
+        else:
+            self.mlm_args = args
+
+        # TODO Test the sequence classifier with other models
+
+        if self.model_name != "XLNET":
+
+            # current implementation:
+            if not self.mlm:
+                self._get_masked_language_model()  # if already has self.mlm
+                # don't call this
+            self.mwp_trainer = FinetuneMlm(self.mlm, self.mlm_args,
+                                           self.tokenizer, self.logger)
+
+            self.logger.info(
+                "You can now train a masked word prediction model using %s",
+                self.model_name)
+
+        else:
+            self.logger.error(
+                "Masked language model training is not available for XLNET")
+            sys.exit()
+
+    def train_mwp(self, train_path: str):
+        """
+        Trains the model with masked language modeling loss.
+
+        train_path: Path to the training file, expected to be a .txt or of
+        similar form.
+
+        """
+
+        if torch.cuda.is_available():
+            if self.mwp_trained and self.mwp_trainer:  # If model is trained
+                self.logger.warning("Training on the already fine-tuned model")
+                self.mwp_trainer.train(train_path)
+
+            elif self.mwp_trainer and not self.mwp_trained:  # If trainer
+                # exists but isn't trained
+                self.mlm, self.tokenizer = self.mwp_trainer.train(train_path)
+                self.mwp_trained = True
+
+            elif not self.mwp_trainer:  # If trainer doesn't exist
+                self.logger.error(
+                    "The model is not loaded, you should run init_train_mwp.")
+                sys.exit()
+
+        else:  # If the user doesn't have a gpu.
+            self.logger.error(
+                "You are using %s, you must use a GPU to train a MLM",
+                self.gpu_support)
+            sys.exit()
+
+    def eval_mwp(self, eval_path: str, batch_size: int = 2):
+        """
+        Evaluates the masked language model and returns the perplexity and
+        the evaluation loss.
+
+        eval_path: Path to the evaluation file, expected to be a .txt or
+        similar.
+        batch_size: Depending on the gpu the user may increase or decrease
+        batch size.
+
+        """
+        if not self.mwp_trainer:
+            self.logger.error(
+                "The model is not loaded, you should run init_train_mwp.")
+            sys.exit()
+
+        if not self.mwp_trained:
+            self.logger.warning(
+                "You are evaluating on the pretrained model, not the fine-tuned model.")
+
+        results = self.mwp_trainer.evaluate(eval_path, batch_size)
+
+        return results
