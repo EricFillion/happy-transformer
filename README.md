@@ -369,4 +369,3 @@ print(result) # prints: bert
 
 ### Coming soon
  - Fine tuning for masked word prediction models
- - Question answering models 
