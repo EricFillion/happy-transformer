@@ -7,19 +7,20 @@
 Happy Transformer is an API built on top of [PyTorch's transformer library](https://pytorch.org/hub/huggingface_pytorch-transformers/) that makes it easy to utilize state-of-the-art NLP models. 
 
 ## Key Features
-
+  - **New: Finetuning Masked Language Models**
   - Available language models: XLNET, BERT and ROBERTA.
   - Predict a masked word within a sentence.
   - Fine tune binary sequence classification models to solve problems like sentiment analysis.
   - Predict the likelihood that sentence B follows sentence A within a paragraph. 
   
   
-| Public Methods              | HappyROBERTA | HappyXLNET | HappyBERT |
-|-----------------------------|--------------|------------|-----------|
-| Masked Word Prediction      | ✔            | ✔          | ✔         |
-| Sequence Classification     | ✔            | ✔          | ✔         |
-| Next Sentence Prediction    |              |            | ✔         |
-| Question Answering          |              |            | ✔         |
+| Public Methods                     | HappyROBERTA | HappyXLNET | HappyBERT |
+|------------------------------------|--------------|------------|-----------|
+| Masked Word Prediction             | ✔            | ✔          | ✔         |
+| Sequence Classification            | ✔            | ✔          | ✔         |
+| Next Sentence Prediction           |              |            | ✔         |
+| Question Answering                 |              |            | ✔         |
+| Masked Word Prediction Finetuning  | ✔            |            | ✔         |
   
 ## Installation
 
@@ -349,6 +350,168 @@ result = happy_bert.answer_question(question, text)
 print(type(result)) # prints: <class 'str'>
 print(result) # prints: bert
 ```
+
+
+## Masked Word Prediction Fine-Tuning
+
+*Fine-tune a state-of-the-art masked word prediction model with just a text file*
+
+Each HappyBERT and HappyROBERTA both have 4 methods that are associated with masked word prediction fine-tuning
+They are:
+
+```
+1. init_mwp(args)
+2. train_mwp(training_path)
+3. eval_mwp(testing_path,batch_size)
+4. predict_mask(text, options, num_results)
+```
+
+### init_mwp(args)
+
+*Initialize the model for masked word prediction training.*
+
+#### Example 1 
+```python
+from happytransformer import HappyROBERTA
+#----------------------------------------#
+
+Roberta = HappyROBERTA()
+
+Roberta.init_mwp() # Initialize the training model with default settings
+
+```
+
+You can also customize the training parameters by inputting a dictionary with specific training parameters.  The dictionary must have the same keys as the dictionary shown below. 
+```python
+word_prediction_args = {
+
+"batch_size": 1,
+
+"epochs": 1,
+
+"lr": 5e-5,
+
+"adam_epsilon": 1e-8
+
+} 
+```
+The args are:
+
+- batch_size: How many sequences the model processes on one iteration.
+
+- epochs: This refers to how many times the model will train on the same dataset.
+
+-  lr (learning rate): How quickly the model learns.
+
+-  adam_epsilon: This is used to avoid diving by zero when gradient is almost zero.
+
+
+The recommended for the parameters are:
+
+- lr: 1e-4 used in BERT and ROBERTA [1]
+
+- Adam Epsilon: 1e-6 used by Huggingface team [2]
+
+- batch_size: Depend on the user's vram, Typically 2 to 3
+
+
+#### Example 2 
+
+```python
+from happytransformer import HappyROBERTA
+#----------------------------------------#
+
+happy_roberta = HappyROBERTA()
+
+word_prediction_args = {
+"batch_size": 4,
+
+"epochs": 2,
+
+"lr": 3e-5,
+
+"adam_epsilon": 1e-8
+
+} 
+
+happy_roberta.init_mwp(word_prediction_args)
+
+```
+
+
+### train_mwp(training_path)
+*Trains the model on Masked Language Modelling Loss.*
+
+Argument:
+1. testing_path: A string directory path to the .txt that contains the testing data.
+
+Example training.txt :
+```
+I want to get healthy in 2011 .
+I want to boost my immune system , cut that nasty dairy out , and start exercising on a regular basis .
+That doesn 't seem to hard to follow does it ?
+```
+
+### eval_mwp(testing_path,batch_size) <br />
+*Evaluates the model on Masked Language Modelling loss and return both perplexity and masked language modelling loss.*
+
+
+Perplexity: Mathematicall it is ![equation](https://latex.codecogs.com/gif.latex?2^{Entropy}) where Entropy is the disorder in the system. Lower the perplexity the better the model is performing.
+
+Masked language modelling loss:	see [BERT Explained: State of the art language model for NLP](https://towardsdatascience.com/perplexity-intuition-and-derivation-105dd481c8f3) for the explanation.
+
+Arguments:
+```
+1. testing_path: A string directory path to the .txt that contains the testing data.
+2. batch_size: An integer. Will default to 2.
+```
+
+Example testing.txt :
+```
+In the few short months since Dan 's mother had moved to town , Saturday had gone from being my favourite day of the week to the one I looked forward to the least.
+Although she came when Dan was at work , she invariably stayed all day .
+It was like living in a goldfish bowl and Dan was on edge the minute he came through the door.
+```
+
+
+Note 2: Evaluating on Cpu is not recommended as it will take considerably longer.
+
+## Example 3:
+
+```python
+from happytransformer import HappyROBERTA
+#----------------------------------------#
+
+happy_roberta = HappyROBERTA()
+happy_roberta.init_mwp(word_prediction_args)
+
+train_path = "data/train.txt"
+happy_roberta.train_mwp(train_path)
+
+eval_path = "data/eval.txt"
+eval_results = happy_roberta.eval_mwp(eval_path)
+
+print(type(eval_results)) # prints: <class 'dict'>
+print(eval_results) # prints: {'perplexity': 7.863316059112549, 'eval_loss': 2.0622084404198864}
+
+```
+
+
+### Predicting masked word with fine-tuned model
+
+```python
+text = "Linear algebra is a branch of [MASK]"
+
+options = ["music", "mathematics", "geography"]
+
+results = happy_roberta.predict_mask(text, options=options, num_results=3)
+
+print(type(results)) # prints: <class 'list'>
+
+print(results) # prints: [{'word': 'mathematics', 'softmax': 0.16551}, {'word': 'music', 'softmax': 3.91739e-05}, {'word': 'geography', 'softmax': 2.9731e-05}]
+
+```
+
 ## Tech
 
  Happy Transformer uses a number of open source projects:
@@ -366,6 +529,3 @@ print(result) # prints: bert
  
 ### Call for contributors 
  Happy Transformer is a new and growing API. We're seeking more contributors to help accomplish our mission of making state-of-the-art AI easier to use.  
-
-### Coming soon
- - Fine tuning for masked word prediction models
