@@ -35,6 +35,7 @@ class HappyTransformer:
         # Transformer and tokenizer set in child class
         self.model = model
         self.model_name = model_name
+        self.multilingual = model in ['bert-base-multilingual-uncased', 'bert-base-multilingual-cased']
         self.mlm = None  # Masked Language Model
         self.seq = None  # Sequence Classification
         self.qa = None  # Question Answering

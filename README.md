@@ -21,6 +21,7 @@ Happy Transformer is an API built on top of [PyTorch's transformer library](http
 | Next Sentence Prediction           |              |            | ✔         |
 | Question Answering                 |              |            | ✔         |
 | Masked Word Prediction Finetuning  | ✔            |            | ✔         |
+| Multilingual Support               |              |            | ✔         |
   
 ## Installation
 

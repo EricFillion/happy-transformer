@@ -36,8 +36,18 @@ class HappyBERT(HappyTransformer):
 
             """
 
+    @classmethod
+    def create_multilingual(cls):
+        """
+        Creates a HappyBERT model that supports multiple languages - not just English.
+
+        :return: HappyBERT instance
+        """
+        return cls('bert-base-multilingual-cased')
+
     def __init__(self, model='bert-base-uncased'):
         super().__init__(model, "BERT")
+
         self.mlm = None  # Masked Language Model
         self.nsp = None  # Next Sentence Prediction
         self.qa = None   # Question Answering
@@ -60,12 +70,16 @@ class HappyBERT(HappyTransformer):
         self.nsp = BertForNextSentencePrediction.from_pretrained(self.model)
         self.nsp.eval()
 
-    def _get_question_answering(self):
+    def _get_question_answering(self, model='bert-large-uncased-whole-word-masking-finetuned-squad'):
         """
         Initializes the BertForQuestionAnswering transformer
         NOTE: This uses the bert-large-uncased-whole-word-masking-finetuned-squad pretraining for best results.
         """
-        self.qa = BertForQuestionAnswering.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
+        if not self.multilingual:
+            self.qa = BertForQuestionAnswering.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
+        else:
+            self.qa = BertForQuestionAnswering.from_pretrained(self.model)
+
         self.qa.eval()
 
     def predict_next_sentence(self, sentence_a, sentence_b):
