@@ -70,7 +70,7 @@ class HappyBERT(HappyTransformer):
         self.nsp = BertForNextSentencePrediction.from_pretrained(self.model)
         self.nsp.eval()
 
-    def _get_question_answering(self, model='bert-large-uncased-whole-word-masking-finetuned-squad'):
+    def _get_question_answering(self):
         """
         Initializes the BertForQuestionAnswering transformer
         NOTE: This uses the bert-large-uncased-whole-word-masking-finetuned-squad pretraining for best results.
