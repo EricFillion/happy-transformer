@@ -377,7 +377,7 @@ from happytransformer import HappyROBERTA
 
 Roberta = HappyROBERTA()
 
-Roberta.init_mwp() # Initialize the training model with default settings
+Roberta.init_train_mwp() # Initialize the training model with default settings
 
 ```
 
@@ -434,7 +434,7 @@ word_prediction_args = {
 
 } 
 
-happy_roberta.init_mwp(word_prediction_args)
+happy_roberta.init_train_mwp(word_prediction_args)
 
 ```
 
@@ -483,7 +483,7 @@ from happytransformer import HappyROBERTA
 #----------------------------------------#
 
 happy_roberta = HappyROBERTA()
-happy_roberta.init_mwp(word_prediction_args)
+happy_roberta.init_train_mwp(word_prediction_args)
 
 train_path = "data/train.txt"
 happy_roberta.train_mwp(train_path)
