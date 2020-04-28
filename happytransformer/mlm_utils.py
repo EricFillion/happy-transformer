@@ -42,13 +42,12 @@ class TextDataset(Dataset):
         assert os.path.isfile(file_path)
         with open(file_path, encoding="utf-8") as f:
             text = f.read()
-
-        tokenized_text = tokenizer.encode(
-            text, add_special_tokens=True)  # Get ids from text
+        lines = text.split("\n")
         self.examples = []
-        # Truncate examples to a max blocksize
-        for i in range(0, len(tokenized_text) - block_size + 1, block_size):
-            self.examples.append(tokenized_text[i:i + block_size])
+        for line in lines:
+            tokenized_text = tokenizer.encode(line, max_length=block_size,
+                                              add_special_tokens=True, pad_to_max_length=True)  # Get ids from text
+            self.examples.append(tokenized_text)
 
     def __len__(self):
         return len(self.examples)
@@ -87,7 +86,7 @@ def mask_tokens(inputs, tokenizer):
     probability_matrix.masked_fill_(torch.tensor(
         special_tokens_mask, dtype=torch.bool), value=0.0)
     masked_indices = torch.bernoulli(probability_matrix).bool()
-    labels[~masked_indices] = -1  # We only compute loss on masked tokens
+    labels[~masked_indices] = -100  # We only compute loss on masked tokens
 
     # 80% of the time, we replace masked input tokens with
     # tokenizer.mask_token ([MASK])
