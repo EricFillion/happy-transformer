@@ -44,9 +44,7 @@ Uncased models do not differentiate between cased and uncased words. For example
 ```sh
 from happytransformer import HappyXLNET
 #--------------------------------------#
-xl_base_uncased = HappyXLNET("xlnet-base-uncased")
 xl_base_cased = HappyXLNET("xlnet-base-cased")
-xl_large_uncased = HappyXLNET("xlnet-large-uncased")
 xl_large_cased = HappyXLNET("xlnet-large-cased")
 ```
 #### HappyROBERTA:
