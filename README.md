@@ -4,7 +4,7 @@
 
 ![HappyTransformer](img/HappyTransformer.png)
 
-Happy Transformer is an API built on top of [PyTorch's transformer library](https://pytorch.org/hub/huggingface_pytorch-transformers/) that makes it easy to utilize state-of-the-art NLP models. 
+Happy Transformer is an API built on top of [Hugging Face's transformer library](https://huggingface.co/transformers/) that makes it easy to utilize state-of-the-art NLP models. 
 
 ## Key Features
   - **New: Finetuning Masked Language Models**
