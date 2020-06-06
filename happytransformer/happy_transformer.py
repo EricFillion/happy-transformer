@@ -13,6 +13,7 @@ import os
 import sys
 import csv
 import logging
+import logging.config
 import numpy as np
 import torch
 import pandas as pd
@@ -53,8 +54,15 @@ class HappyTransformer:
         self.gpu_support = torch.device("cuda" if torch.cuda.is_available()
                                         else "cpu")
 
-        # logging
-        logging.basicConfig(level=logging.INFO)
+        # show only happytransformer logs
+        handler = logging.StreamHandler()
+        handler.addFilter(logging.Filter('happytransformer'))
+        logging.basicConfig(
+            format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
+            datefmt='%m/%d/%Y %H:%M:%S',
+            level=logging.INFO,
+            handlers=[handler]
+        )
         self.logger = logging.getLogger(__name__)
 
         self.logger.info("Using model: %s", self.gpu_support)
