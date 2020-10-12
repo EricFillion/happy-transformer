@@ -68,6 +68,23 @@ class HappyBERT(HappyTransformer):
         self.qa = BertForQuestionAnswering.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
         self.qa.eval()
 
+    def next_sentence_probabilities(self, sentence_a, sentence_b):
+        if self.nsp is None:
+            self._get_next_sentence_prediction()
+        connected = sentence_a + ' ' + sentence_b
+        tokenized_text = self._get_tokenized_text(connected)
+        indexed_tokens = self.tokenizer.convert_tokens_to_ids(tokenized_text)
+        segments_ids = self._get_segment_ids(tokenized_text)
+        # Convert inputs to PyTorch tensors
+        tokens_tensor = torch.tensor([indexed_tokens])
+        segments_tensors = torch.tensor([segments_ids])
+        with torch.no_grad():
+            predictions = self.nsp(tokens_tensor, token_type_ids=segments_tensors)[0]
+
+        softmax = torch.nn.Softmax(dim=1)
+        probabilities = softmax(predictions)
+        return probabilities
+
     def predict_next_sentence(self, sentence_a, sentence_b):
         """
         Determines if sentence B is likely to be a continuation after sentence
@@ -83,21 +100,8 @@ class HappyBERT(HappyTransformer):
             self.logger.error("Each inputted text variable for the \"predict_next_sentence\" method must contain a single sentence")
             exit()
 
-        if self.nsp is None:
-            self._get_next_sentence_prediction()
-        connected = sentence_a + ' ' + sentence_b
-        tokenized_text = self._get_tokenized_text(connected)
-        indexed_tokens = self.tokenizer.convert_tokens_to_ids(tokenized_text)
-        segments_ids = self._get_segment_ids(tokenized_text)
-        # Convert inputs to PyTorch tensors
-        tokens_tensor = torch.tensor([indexed_tokens])
-        segments_tensors = torch.tensor([segments_ids])
-        with torch.no_grad():
-            predictions = self.nsp(tokens_tensor, token_type_ids=segments_tensors)[0]
-
-        if predictions[0][0] >= predictions[0][1]:
-            return True
-        return False
+        true_probability, false_probability = self.next_sentence_probabilities(sentence_a,sentence_b)
+        return true_probability > false_probability
 
     def __is_one_sentence(self, text):
         """
