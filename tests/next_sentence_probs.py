@@ -3,12 +3,27 @@ from happytransformer import HappyBERT
 def percent(x):
     return f"{x*100:.2f}%"
 
+# asserts that a function does throw an error
+def assert_errors(func):
+    try:
+        func()
+    except:
+        return
+    raise AssertionError()
+
+happy = HappyBERT()
 sentence_pairs = [
     ["How old are you?","The Eiffel Tower is in Paris",False],
     ["How old are you?","I am 40 years old",True]
 ]
 
-happy = HappyBERT()
+def nsp_with_multiple_sentences():
+    happy.next_sentence_probability(
+        "This is the first sentence. This is the second sentence",
+        "An error should be raised here"
+    )
+assert_errors(nsp_with_multiple_sentences)
+
 for a,b,follows in sentence_pairs:
     print('==============================')
     print(a)

@@ -69,6 +69,9 @@ class HappyBERT(HappyTransformer):
         self.qa.eval()
 
     def next_sentence_probability(self, sentence_a, sentence_b):
+        if not self.__is_one_sentence(sentence_a) or not  self.__is_one_sentence(sentence_b):
+            self.logger.error('Each inputted text variable for the "next_sentence_probability" method must contain a single sentence')
+            exit()
         if self.nsp is None:
             self._get_next_sentence_prediction()
         connected = sentence_a + ' ' + sentence_b
