@@ -23,8 +23,6 @@ def test_argument_errors():
     one_sentence = "This is one sentence."
     assert_errors(lambda: happy.predict_next_sentence(two_sentences,one_sentence))
     assert_errors(lambda: happy.predict_next_sentence(one_sentence,two_sentences))
-    assert_errors(lambda: happy.next_sentence_probability(one_sentence,two_sentences))
-    assert_errors(lambda: happy.next_sentence_probability(two_sentences,one_sentence))
 test_argument_errors()
 
 def test_nsp():
@@ -32,11 +30,9 @@ def test_nsp():
         print('==============================')
         print(a)
         print(b)
-        p = happy.next_sentence_probability(a,b)
-        assert p>=0 and p<=1
-        predict_follows = p > 0.5
-        assert predict_follows == follows
-
-        assert happy.predict_next_sentence(a,b) == follows
-        print(percent(p))
+        predict,probabilities = happy.predict_next_sentence(a,b)
+        for p in probabilities:
+            assert p>=0 and p<=1
+        assert predict == follows
+        print(predict,probabilities)
 test_nsp()
