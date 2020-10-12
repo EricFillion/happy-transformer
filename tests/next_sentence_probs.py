@@ -9,4 +9,4 @@ happy = HappyBERT()
 for a,b in sentence_pairs:
     print(a)
     print(b)
-    print(happy.next_sentence_probabilities(a,b))
+    print(happy.next_sentence_probability(a,b))

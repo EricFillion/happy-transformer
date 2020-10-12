@@ -68,7 +68,7 @@ class HappyBERT(HappyTransformer):
         self.qa = BertForQuestionAnswering.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
         self.qa.eval()
 
-    def next_sentence_probabilities(self, sentence_a, sentence_b):
+    def next_sentence_probability(self, sentence_a, sentence_b):
         if self.nsp is None:
             self._get_next_sentence_prediction()
         connected = sentence_a + ' ' + sentence_b
@@ -83,7 +83,7 @@ class HappyBERT(HappyTransformer):
 
         softmax = torch.nn.Softmax(dim=1)
         probabilities = softmax(predictions)
-        return probabilities
+        return probabilities[0][0].item()
 
     def predict_next_sentence(self, sentence_a, sentence_b):
         """
@@ -100,8 +100,8 @@ class HappyBERT(HappyTransformer):
             self.logger.error("Each inputted text variable for the \"predict_next_sentence\" method must contain a single sentence")
             exit()
 
-        true_probability, false_probability = self.next_sentence_probabilities(sentence_a,sentence_b)
-        return true_probability > false_probability
+        probability = self.next_sentence_probability(sentence_a,sentence_b)
+        return probability > 0.5
 
     def __is_one_sentence(self, text):
         """
