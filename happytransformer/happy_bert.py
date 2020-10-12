@@ -95,9 +95,13 @@ class HappyBERT(HappyTransformer):
         with torch.no_grad():
             predictions = self.nsp(tokens_tensor, token_type_ids=segments_tensors)[0]
 
-        if predictions[0][0] >= predictions[0][1]:
-            return True
-        return False
+        softmax = torch.nn.Softmax(dim=1)
+        probabilities = softmax(predictions)
+
+        list_probabilities = probabilities[0].tolist()
+        bool_prediction = (probabilities[0][0] > 0.5).item()
+        
+        return bool_prediction,list_probabilities
 
     def __is_one_sentence(self, text):
         """
