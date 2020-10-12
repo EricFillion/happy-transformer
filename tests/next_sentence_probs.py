@@ -4,6 +4,9 @@ from happytransformer import HappyBERT
 def percent(x):
     return f"{x*100:.2f}%"
 
+def eq_ish(x,y,epsilon):
+    return abs(y-x) < epsilon
+
 # asserts that a function does throw an error
 def assert_errors(func):
     try:
@@ -33,6 +36,7 @@ def test_nsp():
         predict,probabilities = happy.predict_next_sentence(a,b)
         for p in probabilities:
             assert p>=0 and p<=1
+        assert(eq_ish(sum(probabilities),1,0.1))
         assert predict == follows
         print(predict,probabilities)
 test_nsp()
