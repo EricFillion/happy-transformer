@@ -2,6 +2,9 @@
 
 # Happy Transformer 
 
+## News: 
+We're happy to announce that we won a Best Paper Award at the Canadian Undergraduate Conference for AI. We also received the highest score overall. The paper can be found [here](https://qmind.ca/wp-content/uploads/2020/05/Proceedings-of-CUCAI-2020.pdf) on page 67. 
+
 ![HappyTransformer](img/HappyTransformer.png)
 
 Happy Transformer is an API built on top of [Hugging Face's transformer library](https://huggingface.co/transformers/) that makes it easy to utilize state-of-the-art NLP models. 
