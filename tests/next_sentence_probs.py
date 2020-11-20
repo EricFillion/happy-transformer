@@ -46,10 +46,9 @@ def test_nsp():
         print('==============================')
         print(a)
         print(b)
-        predict, probabilities = happy.predict_next_sentence(a, b)
-        for p in probabilities:
-            assert 0 <= p <= 1
-        assert eq_ish(sum(probabilities), 1, 0.1)
+        predict = happy.predict_next_sentence(a, b)
+        probability = happy.predict_next_sentence(a, b, use_probability=True)
+        assert 0 <= probability <= 1
         assert predict == follows
-        print(predict, probabilities)
+        print(predict, probability)
 test_nsp()
