@@ -68,15 +68,15 @@ class HappyBERT(HappyTransformer):
         self.qa = BertForQuestionAnswering.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
         self.qa.eval()
 
-    def predict_next_sentence(self, sentence_a, sentence_b):
+    def predict_next_sentence(self, sentence_a, sentence_b, use_probability=False):
         """
         Determines if sentence B is likely to be a continuation after sentence
         A.
         :param sentence_a: First sentence
         :param sentence_b: Second sentence to test if it comes after the first
-        :return tuple: True if b is likely to follow a, False if b is unlikely
-                       to follow a, with the probabilities as the second item
-                       of the tuple
+        :param use_probability: Toggle outputting probability instead of boolean
+        :return Result of whether sentence B follows sentence A,
+                as either a probability or a boolean
         """
 
         if not self.__is_one_sentence(sentence_a) or not  self.__is_one_sentence(sentence_b):
@@ -95,9 +95,14 @@ class HappyBERT(HappyTransformer):
         with torch.no_grad():
             predictions = self.nsp(tokens_tensor, token_type_ids=segments_tensors)[0]
 
-        if predictions[0][0] >= predictions[0][1]:
-            return True
-        return False
+        probabilities = torch.nn.Softmax(dim=1)(predictions)
+        # probability that sentence B follows sentence A
+        correct_probability = probabilities[0][0].item()
+
+        return (
+            correct_probability if use_probability else 
+            correct_probability >= 0.5
+        )
 
     def __is_one_sentence(self, text):
         """
