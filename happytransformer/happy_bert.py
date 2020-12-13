@@ -141,8 +141,10 @@ class HappyBERT(HappyTransformer):
         token_tensor = torch.tensor([input_ids])
         segment_tensor = torch.tensor([token_type_ids])
         with torch.no_grad():
-            start_scores, end_scores = self.qa(input_ids=token_tensor,
-                                               token_type_ids=segment_tensor)
+           scores=  self.qa(input_ids=token_tensor,
+                    token_type_ids=segment_tensor)
+           start_scores = scores[0]
+           end_scores = scores[1]
         all_tokens = self.tokenizer.convert_ids_to_tokens(input_ids)
         answer_list = all_tokens[torch.argmax(start_scores):
                                  torch.argmax(end_scores)+1]
