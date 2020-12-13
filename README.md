@@ -112,7 +112,7 @@ print(results[0]) # prints: {'word': 'am', 'softmax': 0.24738965928554535}
 ```sh
 from happytransformer import HappyROBERTA
 #--------------------------------------#
-happy_roberta = HappROBERTA("roberta-large")
+happy_roberta = HappyROBERTA("roberta-large")
 text = "To solve world poverty we must invest in [MASK]"
 results = happy_roberta.predict_mask(text, num_results = 2)
 
@@ -333,7 +333,21 @@ result = happy_bert.predict_next_sentence(sentence_a, sentence_c)
 print(type(result)) # prints: <class 'bool'>
 print(result) # prints: False
 ```
+###### Example 2: (New feature)
+You can now set the use_probability parameter to True to make the next_sentence function output 
+a probability instead of a boolean answer. 
+```sh
+from happytransformer import HappyBERT
+#--------------------------------------#
+happy_bert = HappyBERT()
+sentence_a = "How old are you?"
+sentence_b = "I am 93 years old."
+result = happy_bert.predict_next_sentence(sentence_a, sentence_b,  use_probability=True)
+print(type(result)) # prints: <class 'float'>
+print(result) # prints: 0.999990701675415
 
+
+```
 
 ## Question Answering
 
