@@ -90,7 +90,7 @@ class HappyTransformer:
         if self.mlm is None:
             self._get_masked_language_model()
             
-        if self.gpu_support:
+        if self.gpu_support == "cuda":
             self.mlm.to("cuda")
 
         if self.model_name in self.tag_one_transformers:
@@ -251,7 +251,7 @@ class HappyTransformer:
         # Convert inputs to PyTorch tensors
         tokens_tensor = torch.tensor([indexed_tokens])
 
-        if self.gpu_support:
+        if self.gpu_support == "cuda":
             tokens_tensor = tokens_tensor.to('cuda')
 
         with torch.no_grad():
@@ -259,7 +259,7 @@ class HappyTransformer:
             if self.model_name != "ROBERTA":
                 segments_ids = self._get_segment_ids(text)
                 segments_tensors = torch.tensor([segments_ids])
-                if self.gpu_support:
+                if self.gpu_support == "cuda":
                     segments_tensors = segments_tensors.to('cuda')
                 outputs = self.mlm(tokens_tensor, token_type_ids=segments_tensors)
             else:
