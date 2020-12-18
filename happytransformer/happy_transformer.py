@@ -79,26 +79,32 @@ class HappyTransformer:
     def _get_masked_language_model(self):
         pass
 
+    def _standardize_mask_tokens(self, text):
+        if self.model_name in self.tag_one_transformers:
+            return (
+                text
+                .replace("<mask>", "[MASK]")
+                .replace("<MASK>", "[MASK]")
+            )
+        else:
+            return text.replace("[MASK]", "<mask>")
+
     def predict_masks(self, text: str, num_results=1):
         if self.mlm is None:
             self._get_masked_language_model()
         if self.gpu_support=='cuda':
             self.mlm.to('cuda')
         
-        if self.model_name in self.tag_one_transformers:
-            text = text.replace("<mask>", "[MASK]")
-            text = text.replace("<MASK>", "[MASK]")
-        else:
-            text = text.replace("[MASK]", "<mask>")
+        text = self._standardize_mask_tokens(text)
 
         self._text_verification(text)
 
-        tokenized_text = (
+        text_tokens = (
             self._get_tokenized_text(text)
         )
-        softmax = self._get_prediction_softmax(tokenized_text)
+        softmax = self._get_prediction_softmax(text_tokens)
         # TODO fix [MASK] nonsense (see above)
-        masked_indices = _indices_where(tokenized_text,lambda x: x=='[MASK]')
+        masked_indices = _indices_where(text_tokens,lambda x: x=='[MASK]')
         def options_at_index(masked_index):
             scores_tensor, token_ids_tensor = torch.topk(softmax[0, masked_index], num_results)
             scores_list = scores_tensor.tolist()
