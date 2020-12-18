@@ -7,6 +7,7 @@ HappyTransformer is a wrapper over pytorch_transformers to make it
 easier to use.
 """
 
+from collections import namedtuple
 import string
 import re
 import os
@@ -28,6 +29,8 @@ def _indices_where(items, predicate):
         for idx,item in enumerate(items)
         if predicate(item)
     ]
+
+MaskedPrediction = namedtuple('MaskedPrediction',['text','probability'])
 
 class HappyTransformer:
     """
@@ -111,8 +114,10 @@ class HappyTransformer:
             token_ids_list = token_ids_tensor.tolist()
             options = self.tokenizer.convert_ids_to_tokens(token_ids_list)
             
-            return list(zip(options,scores_list))
-
+            return [
+                MaskedPrediction(option,score)
+                for option,score in zip(options,scores_list)
+            ]
         return [
             options_at_index(masked_index)
             for masked_index in masked_indices
