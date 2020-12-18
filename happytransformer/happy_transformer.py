@@ -104,7 +104,8 @@ class HappyTransformer:
             scores = top_predictions[0].tolist()
             prediction_index = top_predictions[1].tolist()
             options = self.tokenizer.convert_ids_to_tokens(prediction_index)
-            return options
+            
+            return list(zip(options,scores))
 
         return [
             options_at_index(masked_index)

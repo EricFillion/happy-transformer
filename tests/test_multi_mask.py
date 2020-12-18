@@ -4,7 +4,8 @@ happy = HappyBERT()
 
 def test_multi_mask():
     all_predictions = happy.predict_masks(
-        "[MASK] have a [MASK] dog and I love [MASK] so much"
+        "[MASK] have a [MASK] dog and I love [MASK] so much",
+        num_results=2
     )
     print(all_predictions)
 
