@@ -101,8 +101,9 @@ class HappyTransformer:
 
         self._text_verification(text)
 
-        tokenized_text = self. \
-            _get_tokenized_text(text)
+        tokenized_text = (
+            self._get_tokenized_text(text)
+        )
         masked_index = tokenized_text.index(self.masked_token)
 
         softmax = self._get_prediction_softmax(tokenized_text)
