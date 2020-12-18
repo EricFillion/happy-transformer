@@ -100,12 +100,12 @@ class HappyTransformer:
         # TODO fix [MASK] nonsense (see above)
         masked_indices = _indices_where(tokenized_text,lambda x: x=='[MASK]')
         def options_at_index(masked_index):
-            top_predictions = torch.topk(softmax[0, masked_index], num_results)
-            scores = top_predictions[0].tolist()
-            prediction_index = top_predictions[1].tolist()
-            options = self.tokenizer.convert_ids_to_tokens(prediction_index)
+            scores_tensor, token_ids_tensor = torch.topk(softmax[0, masked_index], num_results)
+            scores_list = scores_tensor.tolist()
+            token_ids_list = token_ids_tensor.tolist()
+            options = self.tokenizer.convert_ids_to_tokens(token_ids_list)
             
-            return list(zip(options,scores))
+            return list(zip(options,scores_list))
 
         return [
             options_at_index(masked_index)
