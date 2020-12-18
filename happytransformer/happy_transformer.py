@@ -22,6 +22,12 @@ from happytransformer.classifier_args import classifier_args
 from happytransformer.sequence_classifier import SequenceClassifier
 from happytransformer.mlm_utils import FinetuneMlm, word_prediction_args
 
+def _indices_where(items, predicate):
+    return [
+        idx
+        for idx,item in enumerate(items)
+        if predicate(item)
+    ]
 
 class HappyTransformer:
     """
@@ -72,6 +78,38 @@ class HappyTransformer:
 
     def _get_masked_language_model(self):
         pass
+
+    def predict_masks(self, text: str, num_results=1):
+        if self.mlm is None:
+            self._get_masked_language_model()
+        if self.gpu_support=='cuda':
+            self.mlm.to('cuda')
+        
+        if self.model_name in self.tag_one_transformers:
+            text = text.replace("<mask>", "[MASK]")
+            text = text.replace("<MASK>", "[MASK]")
+        else:
+            text = text.replace("[MASK]", "<mask>")
+
+        self._text_verification(text)
+
+        tokenized_text = (
+            self._get_tokenized_text(text)
+        )
+        softmax = self._get_prediction_softmax(tokenized_text)
+        # TODO fix [MASK] nonsense (see above)
+        masked_indices = _indices_where(tokenized_text,lambda x: x=='[MASK]')
+        def options_at_index(masked_index):
+            top_predictions = torch.topk(softmax[0, masked_index], num_results)
+            scores = top_predictions[0].tolist()
+            prediction_index = top_predictions[1].tolist()
+            options = self.tokenizer.convert_ids_to_tokens(prediction_index)
+            return options
+
+        return [
+            options_at_index(masked_index)
+            for masked_index in masked_indices
+        ]
 
     def predict_mask(self, text: str, options=None, num_results=1):
         """
