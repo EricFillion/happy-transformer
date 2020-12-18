@@ -14,22 +14,27 @@ Credit: This code is a modified version of the code found in this repository und
 from __future__ import absolute_import, division, print_function
 import math
 import numpy as np
-from tqdm import tqdm_notebook, trange
+from tqdm import tqdm, trange
 from sklearn.metrics import confusion_matrix
 import torch
-from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
-                              TensorDataset)
+from torch.utils.data import (
+    DataLoader, RandomSampler, SequentialSampler,
+    TensorDataset
+)
 
-from transformers import (BertForSequenceClassification,
-                                  XLNetForSequenceClassification,
-                                  RobertaForSequenceClassification)
+from transformers import (
+    BertForSequenceClassification,
+    XLNetForSequenceClassification,
+    RobertaForSequenceClassification
+)
 
 from transformers import AdamW, get_linear_schedule_with_warmup
 
-
-from happytransformer.classifier_utils import convert_examples_to_features, \
-                                               output_modes, \
-                                               processors
+from happytransformer.classifier_utils import (
+    convert_examples_to_features,
+    output_modes,
+    processors
+)
 
 class SequenceClassifier():
     """
@@ -42,9 +47,9 @@ class SequenceClassifier():
         self.train_dataset = None
         self.eval_dataset = None
         self.model_classes = {
-            'BERT': (BertForSequenceClassification),
-            'XLNET': (XLNetForSequenceClassification),
-            'ROBERTA': (RobertaForSequenceClassification)
+            'BERT': BertForSequenceClassification,
+            'XLNET': XLNetForSequenceClassification,
+            'ROBERTA': RobertaForSequenceClassification
         }
         self.train_list_data = None
         self.eval_list_data = None
@@ -58,7 +63,6 @@ class SequenceClassifier():
 
         self.model = self.model_class.from_pretrained(model)
         self.model.to(self.gpu_support)
-
 
 
     def check_task(self):
@@ -120,7 +124,7 @@ class SequenceClassifier():
         train_iterator = trange(int(self.args['num_epochs']), desc="Epoch")
 
         for _ in train_iterator:
-            epoch_iterator = tqdm_notebook(train_dataloader, desc="Iteration")
+            epoch_iterator = tqdm(train_dataloader, desc="Iteration")
             for step, batch in enumerate(epoch_iterator):
                 self.model.train()
                 batch = tuple(t.to(self.gpu_support) for t in batch)
@@ -161,7 +165,7 @@ class SequenceClassifier():
             "true_negative": true_negative,
             "false_positive": false_positive,
             "false_negative": false_negative
-            }
+        }
 
     def evaluate(self):
         """
@@ -183,7 +187,7 @@ class SequenceClassifier():
         nb_eval_steps = 0
         preds = None
         out_label_ids = None
-        for batch in tqdm_notebook(eval_dataloader, desc="Evaluating"):
+        for batch in tqdm(eval_dataloader, desc="Evaluating"):
             self.model.eval()
             batch = tuple(t.to(self.gpu_support) for t in batch)
 
@@ -233,7 +237,7 @@ class SequenceClassifier():
         eval_loss = 0.0
         nb_eval_steps = 0
         preds = None
-        for batch in tqdm_notebook(eval_dataloader, desc="Evaluating"):
+        for batch in tqdm(eval_dataloader, desc="Evaluating"):
             self.model.eval()
             batch = tuple(t.to(self.gpu_support) for t in batch)
 
