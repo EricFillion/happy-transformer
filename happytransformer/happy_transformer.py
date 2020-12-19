@@ -60,8 +60,10 @@ class HappyTransformer:
         self.tag_one_transformers = ['BERT', "ROBERTA", 'XLNET']
 
         # GPU support
-        self.gpu_support = torch.device("cuda" if torch.cuda.is_available()
-                                        else "cpu")
+        self.gpu_support = torch.device(
+            "cuda" if torch.cuda.is_available()
+            else "cpu"
+        )
 
         # show only happytransformer logs
         handler = logging.StreamHandler()
