@@ -139,7 +139,7 @@ class HappyTransformer:
         """
         if self.mlm is None:
             self._get_masked_language_model()
-            
+        
         if self.gpu_support == "cuda":
             self.mlm.to("cuda")
 
@@ -162,14 +162,15 @@ class HappyTransformer:
 
             if self.model_name == "BERT":
                 option_ids = [self.tokenizer.encode(option) for option in options]
-
-                option_ids = option_ids[:num_results]
-
-                scores = list(map(lambda x: self.soft_sum(x, softmax[0],
-                                                          masked_index),
-                                  option_ids))
-                tupled_predictions = tuple(zip(options, scores))
-
+                scores = [
+                    self.soft_sum(option_id, softmax[0], masked_index)
+                    for option_id in option_ids
+                ]
+                tupled_predictions = tuple(sorted(
+                    zip(options, scores),
+                    # sort by score (descending)
+                    key=lambda pair: -pair[1]
+                ))[:num_results]
             else:
                 top_predictions = torch.topk(softmax[0, masked_index], 5000)
                 scores = top_predictions[0].tolist()
