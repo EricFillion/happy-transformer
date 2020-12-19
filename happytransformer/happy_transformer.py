@@ -94,7 +94,7 @@ class HappyTransformer:
         if self.gpu_support=='cuda':
             self.mlm.to('cuda')
 
-    def _masked_predictions_at_index_any(self, softmax, index, k, **kwargs):
+    def _masked_predictions_at_index_any(self, softmax, index, k):
         scores_tensor, token_ids_tensor = torch.topk(softmax[0, index], k)
         scores = scores_tensor.tolist()
         token_ids = token_ids_tensor.tolist()
@@ -104,7 +104,7 @@ class HappyTransformer:
             for token, score in zip(tokens, scores)
         ]
 
-    def _masked_predictions_at_index_options(self, softmax, index, options, **kwargs):
+    def _masked_predictions_at_index_options(self, softmax, index, options):
         option_ids = [
             self.tokenizer.encode(option) 
             for option in options
