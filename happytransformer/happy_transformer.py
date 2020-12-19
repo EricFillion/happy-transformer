@@ -52,9 +52,6 @@ class HappyTransformer:
 
         # the following variables are declared in the  child class:
         self.tokenizer = None
-        self.cls_token = None
-        self.sep_token = None
-        self.masked_token = None
 
         # Child class sets to indicate which model is being used
         self.tag_one_transformers = ['BERT', "ROBERTA", 'XLNET']
@@ -156,7 +153,7 @@ class HappyTransformer:
         tokenized_text = (
             self._get_tokenized_text(text)
         )
-        masked_index = tokenized_text.index(self.masked_token)
+        masked_index = tokenized_text.index(self.tokenizer.mask_token)
 
         softmax = self._get_prediction_softmax(tokenized_text)
 
@@ -264,7 +261,7 @@ class HappyTransformer:
 
         split_text = text.split()
         new_text = list()
-        new_text.append(self.cls_token)
+        new_text.append(self.tokenizer.cls_token)
 
         for i, char in enumerate(split_text):
             new_text.append(char.lower())
@@ -278,14 +275,14 @@ class HappyTransformer:
                 if split_text[i + 1] in string.punctuation:
                     pass
                 else:
-                    new_text.append(self.sep_token)
+                    new_text.append(self.tokenizer.sep_token)
                     # if self.model_name == "ROBERTA":
                     #     # ROBERTA requires two "</s>" tokens to separate sentences
                     #     new_text.append(self.sep_token)
                 # must be a middle punctuation
-        new_text.append(self.sep_token)
+        new_text.append(self.tokenizer.sep_token)
 
-        text = " ".join(new_text).replace('[mask]', self.masked_token)
+        text = " ".join(new_text).replace('[mask]', self.tokenizer.mask_token)
         text = self.tokenizer.tokenize(text)
         return text
 
@@ -359,7 +356,7 @@ class HappyTransformer:
         segments_ids = [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1]
         returns segments_ids
         """
-        split_location = tokenized_text.index(self.sep_token)
+        split_location = tokenized_text.index(self.tokenizer.sep_token)
 
         segment_ids = [
             0 if idx <= split_location else 1
