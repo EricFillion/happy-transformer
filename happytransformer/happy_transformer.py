@@ -99,9 +99,13 @@ class HappyTransformer:
         scores = scores_tensor.tolist()
         token_ids = token_ids_tensor.tolist()
         tokens = self.tokenizer.convert_ids_to_tokens(token_ids)
+        options = [
+            self._postprocess_option(token)
+            for token in tokens
+        ]
         return [
-            MaskedPrediction(token, score)
-            for token, score in zip(tokens, scores)
+            MaskedPrediction(option, score)
+            for token, score in zip(options, scores)
         ]
 
     def _masked_predictions_at_index_options(self, softmax, index, options):
@@ -117,6 +121,12 @@ class HappyTransformer:
             MaskedPrediction(option,score)
             for option,score in zip(options,scores)
         ]
+
+    def _postprocess_option(self, text):
+        '''
+        override in subclass to filter out weird characters
+        '''
+        return text
 
     def predict_masks(self, text: str, masks_options=None, num_results=1):
         self._prepare_mlm()
@@ -255,23 +265,6 @@ class HappyTransformer:
                 options[n] = new_token
 
         return options
-
-    def __remove_starting_character(self, options, starting_char):
-        """
-        Some cased models like XLNet place a "▁" character in front of lower cased predictions.
-        For most applications this extra bit of information is irrelevant.
-        :param options: A list that contains word predictions
-        ;param staring_char: The special character that is placed at the start of the predicted word
-        :return: a new list of tuples where the prediction's name does not contains a special starting character
-        """
-        new_predictions = list()
-        for prediction in options:
-            if prediction[0] == starting_char:
-                new_prediction = prediction[1:]
-                new_predictions.append(new_prediction)
-            else:
-                new_predictions.append(prediction)
-        return new_predictions
 
     def _get_tokenized_text(self, text):
         """
