@@ -104,9 +104,11 @@ class HappyTransformer:
             self._get_tokenized_text(text)
         )
         softmax = self._get_prediction_softmax(text_tokens)
-        def token_is_mask(text):
-            return text == self.tokenizer.mask_token
-        masked_indices = _indices_where(text_tokens, token_is_mask)
+        
+        masked_indices = _indices_where(
+            text_tokens,
+            lambda text: text == self.tokenizer.mask_token
+        )
         def options_at_index(masked_index):
             scores_tensor, token_ids_tensor = torch.topk(softmax[0, masked_index], num_results)
             scores_list = scores_tensor.tolist()
