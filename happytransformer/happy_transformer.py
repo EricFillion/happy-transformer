@@ -94,7 +94,7 @@ class HappyTransformer:
         if self.gpu_support=='cuda':
             self.mlm.to('cuda')
 
-    def predict_masks(self, text: str, num_results=1):
+    def predict_masks(self, text: str, options=None, num_results=1):
         self._prepare_mlm()
         text = self._standardize_mask_tokens(text)
 
@@ -104,13 +104,27 @@ class HappyTransformer:
             self._get_tokenized_text(text)
         )
         softmax = self._get_prediction_softmax(text_tokens)
-        
+
         masked_indices = _indices_where(
             text_tokens,
             lambda text: text == self.tokenizer.mask_token
         )
-        def options_at_index(masked_index):
-            scores_tensor, token_ids_tensor = torch.topk(softmax[0, masked_index], num_results)
+        def top_predictions(masked_index):
+            if options is None:
+                return torch.topk(softmax[0, masked_index], num_results)
+            else:
+                option_ids = torch.tensor(
+                    [self.tokenizer.encode(option) for option in options],
+                    dtype=int
+                )
+                scores = torch.tensor([
+                    self.soft_sum(option_id, softmax[0], masked_index)
+                    for option_id in option_ids
+                ], dtype=float)
+                return scores,option_ids
+
+        def predictions_at_index(masked_index):
+            scores_tensor, token_ids_tensor = top_predictions(masked_index)
             scores_list = scores_tensor.tolist()
             token_ids_list = token_ids_tensor.tolist()
             options = self.tokenizer.convert_ids_to_tokens(token_ids_list)
@@ -119,8 +133,9 @@ class HappyTransformer:
                 MaskedPrediction(option,score)
                 for option,score in zip(options,scores_list)
             ]
+        
         return [
-            options_at_index(masked_index)
+            predictions_at_index(masked_index)
             for masked_index in masked_indices
         ]
 
