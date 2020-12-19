@@ -20,12 +20,24 @@ def test_multi_mask():
     assert all_predictions[2][0].text == 'him'
 
 def test_multi_mask_options():
+    MASKS_OPTIONS = [
+        ['I','You'],
+        ['big','small'],
+        ['him','her']
+    ]
+    options_set = set(
+        option
+        for mask in MASKS_OPTIONS
+        for option in mask
+    )
     all_predictions = happy.predict_masks(
         "[MASK] have a [MASK] dog and I love [MASK] so much",
-        masks_options=[
-            ['I','You'],
-            ['big','small'],
-            ['him','her']
-        ]
+        masks_options=MASKS_OPTIONS
     )
     print(all_predictions)
+    assert len(all_predictions) == 3
+    assert all(
+        prediction.text in options_set
+        for mask_predictions in all_predictions
+        for prediction in mask_predictions
+    )
