@@ -105,7 +105,7 @@ class HappyTransformer:
         ]
         return [
             MaskedPrediction(option, score)
-            for token, score in zip(options, scores)
+            for option, score in zip(options, scores)
         ]
 
     def _masked_predictions_at_index_options(self, softmax, index, options):
@@ -160,6 +160,11 @@ class HappyTransformer:
             ]
 
     def predict_mask(self, text: str, options=None, num_results=1):
+        masks_options = None if options is None else [options]
+        predictions = self.predict_masks(text, masks_options, num_results)
+        return self.__format_option_scores(predictions[0])
+
+    def predict_mask_old(self, text: str, options=None, num_results=1):
         """
         Method to predict what the masked token in the given text string is.
         NOTE: This is the generic version of this predict_mask method. If a
