@@ -19,5 +19,13 @@ def test_multi_mask():
 
     assert all_predictions[2][0].text == 'him'
 
-if __name__=='__main__':
-    test_multi_mask()
+def test_multi_mask_options():
+    all_predictions = happy.predict_masks(
+        "[MASK] have a [MASK] dog and I love [MASK] so much",
+        masks_options=[
+            ['I','You'],
+            ['big','small'],
+            ['him','her']
+        ]
+    )
+    print(all_predictions)
