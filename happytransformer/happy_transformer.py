@@ -94,17 +94,25 @@ class HappyTransformer:
         if self.gpu_support=='cuda':
             self.mlm.to('cuda')
 
-    def _masked_predictions_at_index(self, softmax, index, options):
-        option_ids = (
-            list(range(self.tokenizer.vocab_size))
-            if options is None else
-            [self.tokenizer.encode(option) for option in options]
-        )
+    def _masked_predictions_at_index_any(self, softmax, index, k, **kwargs):
+        scores_tensor, token_ids_tensor = torch.topk(softmax[0, index], k)
+        scores = scores_tensor.tolist()
+        token_ids = token_ids_tensor.tolist()
+        tokens = self.tokenizer.convert_ids_to_tokens(token_ids)
+        return [
+            MaskedPrediction(token, score)
+            for token, score in zip(tokens, scores)
+        ]
+
+    def _masked_predictions_at_index_options(self, softmax, index, options, **kwargs):
+        option_ids = [
+            self.tokenizer.encode(option) 
+            for option in options
+        ]
         scores = [
             self.soft_sum(option_id, softmax[0], index)
             for option_id in option_ids
         ]
-        options = self.tokenizer.convert_ids_to_tokens(option_ids)
         return [
             MaskedPrediction(option,score)
             for option,score in zip(options,scores)
@@ -125,9 +133,18 @@ class HappyTransformer:
             text_tokens,
             lambda text: text == self.tokenizer.mask_token
         )
+        masked_predictions_at_index = (
+            self._masked_predictions_at_index_any
+            if masks_options is None else
+            self._masked_predictions_at_index_options
+        )
         
         return [
-            self._masked_predictions_at_index(softmax, masked_index, mask_options)
+            masked_predictions_at_index(
+                softmax, 
+                index=masked_index, options=mask_options,
+                k=num_results
+            )
             for masked_index, mask_options in zip(masked_indices, masks_options)
         ]
 
