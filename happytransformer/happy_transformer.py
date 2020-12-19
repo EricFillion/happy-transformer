@@ -32,6 +32,8 @@ def _indices_where(items, predicate):
 
 MaskedPrediction = namedtuple('MaskedPrediction',['text','probability'])
 
+_POSSIBLE_MASK_TOKENS = ['<mask>', '<MASK>', '[MASK]']
+
 class HappyTransformer:
     """
     Initializes pytroch's transformer models and provided methods for
@@ -82,14 +84,9 @@ class HappyTransformer:
         pass
 
     def _standardize_mask_tokens(self, text):
-        if self.model_name in self.tag_one_transformers:
-            return (
-                text
-                .replace("<mask>", "[MASK]")
-                .replace("<MASK>", "[MASK]")
-            )
-        else:
-            return text.replace("[MASK]", "<mask>")
+        for possible_mask_token in _POSSIBLE_MASK_TOKENS:
+            text = text.replace(possible_mask_token, self.tokenizer.mask_token)
+        return text
 
     def predict_masks(self, text: str, num_results=1):
         if self.mlm is None:
