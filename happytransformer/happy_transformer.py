@@ -133,20 +133,21 @@ class HappyTransformer:
             text_tokens,
             lambda text: text == self.tokenizer.mask_token
         )
-        masked_predictions_at_index = (
-            self._masked_predictions_at_index_any
-            if masks_options is None else
-            self._masked_predictions_at_index_options
-        )
         
-        return [
-            masked_predictions_at_index(
-                softmax, 
-                index=masked_index, options=mask_options,
-                k=num_results
-            )
-            for masked_index, mask_options in zip(masked_indices, masks_options)
-        ]
+        if masks_options is None: 
+            return [
+                self._masked_predictions_at_index_any(
+                    softmax, masked_index, num_results
+                )
+                for masked_index in masked_indices
+            ]
+        else:
+            return [
+                self._masked_predictions_at_index_options(
+                    softmax, masked_index, mask_options
+                )
+                for masked_index, mask_options in zip(masked_indices, masks_options)
+            ]
 
     def predict_mask(self, text: str, options=None, num_results=1):
         """
