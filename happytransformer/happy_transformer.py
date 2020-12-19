@@ -358,13 +358,12 @@ class HappyTransformer:
         returns segments_ids
         """
         split_location = tokenized_text.index(self.sep_token)
-        segment_ids = list()
-        for i in range(0, len(tokenized_text)):
-            if i <= split_location:
-                segment_ids.append(0)
-            else:
-                segment_ids.append(1)
-            # add exception case for XLNet
+
+        segment_ids = [
+            0 if idx <= split_location else 1
+            for idx in range(len(tokenized_text))
+        ]
+        # add exception case for XLNet
 
         return segment_ids
 
