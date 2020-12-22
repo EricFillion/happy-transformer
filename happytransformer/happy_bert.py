@@ -15,21 +15,24 @@ from transformers import (
 )
 
 import torch
+import numpy as np
 
 from happytransformer.happy_transformer import HappyTransformer
+from happytransformer.math import softmax
 
-_QaAnswer = namedtuple('_QaAnswer', [
+_QaAnswerLogit = namedtuple('_QaAnswerLogit', [
     'start_idx','end_idx', 'logit'
 ])
 
 def _qa_start_end_pairs(start_logits, end_logits):
     pairs = (
-        _QaAnswer(
+        _QaAnswerLogit(
             start_idx, end_idx, 
             logit=start_logit+end_logit
-        )
+        ) 
         for start_idx, start_logit in enumerate(start_logits)
         for end_idx, end_logit in enumerate(end_logits)
+        if end_idx > start_idx
     )
     return sorted(pairs, key=lambda answer: answer.logit, reverse=True)
 
@@ -138,28 +141,6 @@ class HappyBERT(HappyTransformer):
                     break
         return True
 
-    def _run_qa_model(self, question, context):
-        if self.qa is None:
-            self._get_question_answering()
-        input_text = ' '.join([
-            self.cls_token, question,
-            self.sep_token,
-            context,self.sep_token
-        ])
-        input_ids = self.tokenizer.encode(input_text)
-        sep_id = self.tokenizer.encode(self.sep_token)[-1]
-        before_after_ids_tensor = [
-            0 if i <= input_ids.index(sep_id) else 1
-            for i in range(len(input_ids))
-        ]
-        input_ids_tensor = torch.tensor([input_ids])
-        before_after_ids_tensor = torch.tensor([before_after_ids_tensor])
-        with torch.no_grad():
-            return self.qa(
-                input_ids=input_ids_tensor,
-                token_type_ids=before_after_ids_tensor
-            )
-
     def answer_question(self, question, text):
         """
         Using the given text, find the answer to the given question and return it.
@@ -189,7 +170,41 @@ class HappyBERT(HappyTransformer):
         answer = answer.replace(' \' ', '\' ').replace('\' s ', '\'s ')
         return answer
 
+    def _tokenize_qa(self, question, context):
+        input_text = self.cls_token + " " + question + " " + self.sep_token + " " + context + " " + self.sep_token
+        input_ids = self.tokenizer.encode(input_text)
+        return input_ids
+
+    def _run_qa_model(self, input_ids):
+        if self.qa is None:
+            self._get_question_answering()
+        sep_id = self.tokenizer.encode(self.sep_token)[-1]
+        before_after_ids_tensor = [
+            0 if i <= input_ids.index(sep_id) else 1
+            for i in range(len(input_ids))
+        ]
+        input_ids_tensor = torch.tensor([input_ids])
+        before_after_ids_tensor = torch.tensor([before_after_ids_tensor])
+        with torch.no_grad():
+            return self.qa(
+                input_ids=input_ids_tensor,
+                token_type_ids=before_after_ids_tensor
+            )
+
+
     def answers_to_question(self, question, context):
-        start_logits, end_logits = self._run_qa_model(question, context)
-        pairs = _qa_start_end_pairs(start_logits, end_logits)
-        print(pairs)
+        input_ids = self._tokenize_qa(question, context)
+        qa_output = self._run_qa_model(input_ids)
+        pairs = _qa_start_end_pairs(qa_output.start_logits[0], qa_output.end_logits[0])
+        pair_logits = torch.tensor([
+            pair.logit
+            for pair in pairs
+        ])
+        probabilities = softmax(pair_logits)
+        all_tokens = self.tokenizer.convert_ids_to_tokens(input_ids)
+        for pair, probability in zip(pairs, probabilities):
+            print(probability)
+            tokens = all_tokens[pair.start_idx:pair.end_idx+1]
+            text = self.tokenizer.convert_tokens_to_string(tokens)
+            print(text)
+            return
