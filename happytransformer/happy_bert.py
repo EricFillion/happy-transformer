@@ -171,7 +171,11 @@ class HappyBERT(HappyTransformer):
         return answer
 
     def _tokenize_qa(self, question, context):
-        input_text = self.cls_token + " " + question + " " + self.sep_token + " " + context + " " + self.sep_token
+        input_text = ' '.join([
+            self.cls_token, question, 
+            self.sep_token,
+            context, self.sep_token
+        ])
         input_ids = self.tokenizer.encode(input_text)
         return input_ids
 
@@ -179,18 +183,15 @@ class HappyBERT(HappyTransformer):
         if self.qa is None:
             self._get_question_answering()
         sep_id = self.tokenizer.encode(self.sep_token)[-1]
-        before_after_ids_tensor = [
+        before_after_ids = [
             0 if i <= input_ids.index(sep_id) else 1
             for i in range(len(input_ids))
         ]
-        input_ids_tensor = torch.tensor([input_ids])
-        before_after_ids_tensor = torch.tensor([before_after_ids_tensor])
         with torch.no_grad():
             return self.qa(
-                input_ids=input_ids_tensor,
-                token_type_ids=before_after_ids_tensor
+                input_ids=torch.tensor([input_ids]),
+                token_type_ids=torch.tensor([before_after_ids])
             )
-
 
     def answers_to_question(self, question, context):
         input_ids = self._tokenize_qa(question, context)
