@@ -3,6 +3,7 @@ HappyBERT: a wrapper over PyTorch's BERT implementation
 
 """
 
+from collections import namedtuple
 # disable pylint TODO warning
 # pylint: disable=W0511
 import re
@@ -17,6 +18,20 @@ import torch
 
 from happytransformer.happy_transformer import HappyTransformer
 
+_QaAnswer = namedtuple('_QaAnswer', [
+    'start_idx','end_idx', 'logit'
+])
+
+def _qa_start_end_pairs(start_logits, end_logits):
+    pairs = (
+        _QaAnswer(
+            start_idx, end_idx, 
+            logit=start_logit+end_logit
+        )
+        for start_idx, start_logit in enumerate(start_logits)
+        for end_idx, end_logit in enumerate(end_logits)
+    )
+    return sorted(pairs, key=lambda answer: answer.logit, reverse=True)
 
 class HappyBERT(HappyTransformer):
     """
@@ -123,6 +138,28 @@ class HappyBERT(HappyTransformer):
                     break
         return True
 
+    def _run_qa_model(self, question, context):
+        if self.qa is None:
+            self._get_question_answering()
+        input_text = ' '.join([
+            self.cls_token, question,
+            self.sep_token,
+            context,self.sep_token
+        ])
+        input_ids = self.tokenizer.encode(input_text)
+        sep_id = self.tokenizer.encode(self.sep_token)[-1]
+        before_after_ids_tensor = [
+            0 if i <= input_ids.index(sep_id) else 1
+            for i in range(len(input_ids))
+        ]
+        input_ids_tensor = torch.tensor([input_ids])
+        before_after_ids_tensor = torch.tensor([before_after_ids_tensor])
+        with torch.no_grad():
+            return self.qa(
+                input_ids=input_ids_tensor,
+                token_type_ids=before_after_ids_tensor
+            )
+
     def answer_question(self, question, text):
         """
         Using the given text, find the answer to the given question and return it.
@@ -151,3 +188,8 @@ class HappyBERT(HappyTransformer):
         answer = self.tokenizer.convert_tokens_to_string(answer_list)
         answer = answer.replace(' \' ', '\' ').replace('\' s ', '\'s ')
         return answer
+
+    def answers_to_question(self, question, context):
+        start_logits, end_logits = self._run_qa_model(question, context)
+        pairs = _qa_start_end_pairs(start_logits, end_logits)
+        print(pairs)
