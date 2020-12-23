@@ -167,7 +167,7 @@ class HappyBERT(HappyTransformer):
     def _run_qa_model(self, input_ids):
         if self.qa is None:
             self._get_question_answering()
-        sep_id = self.tokenizer.encode(self.sep_token)[-1]
+        sep_id = self.tokenizer.sep_token_id
         before_after_ids = [
             0 if i <= input_ids.index(sep_id) else 1
             for i in range(len(input_ids))
@@ -179,6 +179,7 @@ class HappyBERT(HappyTransformer):
             )
 
     def answers_to_question(self, question, context, k=10):
+        # TODO: filter out [SEP] and [CLS]
         input_ids = self._tokenize_qa(question, context)
         qa_output = self._run_qa_model(input_ids)
         probabilities = qa_probabilities(

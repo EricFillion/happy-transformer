@@ -80,7 +80,6 @@ def qa_probabilities(start_logits, end_logits, k):
     ])
 
     probabilities = torch.nn.Softmax(dim=0)(logit_scores).tolist()
-    # NOTE: throwing away indices. Do we care?
     return [
         QaProbability(
             start_idx=answer.start_idx,
