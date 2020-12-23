@@ -134,26 +134,7 @@ class HappyBERT(HappyTransformer):
         :param text: The text containing the answer to the question
         :return: The answer to the given question, as a string
         """
-        if self.qa is None:
-            self._get_question_answering()
-        input_text = self.cls_token + " " + question + " " + self.sep_token + " " + text + " " + self.sep_token
-        input_ids = self.tokenizer.encode(input_text)
-        sep_val = self.tokenizer.encode(self.sep_token)[-1]
-        token_type_ids = [0 if i <= input_ids.index(sep_val) else 1
-                          for i in range(len(input_ids))]
-        token_tensor = torch.tensor([input_ids])
-        segment_tensor = torch.tensor([token_type_ids])
-        with torch.no_grad():
-           scores=  self.qa(input_ids=token_tensor,
-                    token_type_ids=segment_tensor)
-           start_scores = scores[0]
-           end_scores = scores[1]
-        all_tokens = self.tokenizer.convert_ids_to_tokens(input_ids)
-        answer_list = all_tokens[torch.argmax(start_scores):
-                                 torch.argmax(end_scores)+1]
-        answer = self.tokenizer.convert_tokens_to_string(answer_list)
-        answer = answer.replace(' \' ', '\' ').replace('\' s ', '\'s ')
-        return answer
+        return self.answers_to_question(question, text, 1)[0].text
 
     def _tokenize_qa(self, question, context):
         input_text = ' '.join([
