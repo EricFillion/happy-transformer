@@ -84,6 +84,9 @@ class HappyTransformer:
         pass
 
     def _standardize_mask_tokens(self, text):
+        '''
+        convert mask tokens to mask token preferred by tokenizer
+        '''
         for possible_mask_token in _POSSIBLE_MASK_TOKENS:
             text = text.replace(possible_mask_token, self.tokenizer.mask_token)
         return text
@@ -95,6 +98,9 @@ class HappyTransformer:
             self.mlm.to('cuda')
 
     def _masked_predictions_at_index_any(self, softmax, index, k):
+        '''
+        return top predictions for a mask token from all embeddings
+        '''
         scores_tensor, token_ids_tensor = torch.topk(softmax[0, index], k)
         scores = scores_tensor.tolist()
         token_ids = token_ids_tensor.tolist()
@@ -109,6 +115,9 @@ class HappyTransformer:
         ]
 
     def _masked_predictions_at_index_options(self, softmax, index, options):
+        '''
+        return top predictions for a mask token from a list of options
+        '''
         option_ids = [
             self.tokenizer.encode(option) 
             for option in options
