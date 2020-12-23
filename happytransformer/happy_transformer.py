@@ -7,6 +7,7 @@ HappyTransformer is a wrapper over pytorch_transformers to make it
 easier to use.
 """
 
+from collections import namedtuple
 import string
 import re
 import os
@@ -22,6 +23,16 @@ from happytransformer.classifier_args import classifier_args
 from happytransformer.sequence_classifier import SequenceClassifier
 from happytransformer.mlm_utils import FinetuneMlm, word_prediction_args
 
+def _indices_where(items, predicate):
+    return [
+        idx
+        for idx,item in enumerate(items)
+        if predicate(item)
+    ]
+
+MaskedPrediction = namedtuple('MaskedPrediction',['text','probability'])
+
+_POSSIBLE_MASK_TOKENS = ['<mask>', '<MASK>', '[MASK]']
 
 class HappyTransformer:
     """
@@ -43,16 +54,15 @@ class HappyTransformer:
 
         # the following variables are declared in the  child class:
         self.tokenizer = None
-        self.cls_token = None
-        self.sep_token = None
-        self.masked_token = None
 
         # Child class sets to indicate which model is being used
         self.tag_one_transformers = ['BERT', "ROBERTA", 'XLNET']
 
         # GPU support
-        self.gpu_support = torch.device("cuda" if torch.cuda.is_available()
-                                        else "cpu")
+        self.gpu_support = torch.device(
+            "cuda" if torch.cuda.is_available()
+            else "cpu"
+        )
 
         # show only happytransformer logs
         handler = logging.StreamHandler()
@@ -73,128 +83,114 @@ class HappyTransformer:
     def _get_masked_language_model(self):
         pass
 
-    def predict_mask(self, text: str, options=None, num_results=1):
-        """
-        Method to predict what the masked token in the given text string is.
-        NOTE: This is the generic version of this predict_mask method. If a
-        child class needs a different implementation they should overload this
-        method, not create a new method.
-        :param text: a string with a masked token within it
-        :param options: list of options that the mask token may be [optional]
-        :param k: the number of options to output if no output list is given
-                  [optional]
-        :return: list of dictionaries containing the predicted token(s) and
-                 their corresponding softmax values
-        NOTE: If no options are given, the returned list will be length 1
-        """
+    def _standardize_mask_tokens(self, text):
+        '''
+        convert mask tokens to mask token preferred by tokenizer
+        '''
+        for possible_mask_token in _POSSIBLE_MASK_TOKENS:
+            text = text.replace(possible_mask_token, self.tokenizer.mask_token)
+        return text
+
+    def _prepare_mlm(self):
         if self.mlm is None:
             self._get_masked_language_model()
-        
-        if self.gpu_support == "cuda":
-            self.mlm.to("cuda")
+        if self.gpu_support=='cuda':
+            self.mlm.to('cuda')
 
-        if self.model_name in self.tag_one_transformers:
-            text = text.replace("<mask>", "[MASK]")
-            text = text.replace("<MASK>", "[MASK]")
-        else:
-            text = text.replace("[MASK]", "<mask>")
+    def _masked_predictions_at_index_any(self, softmax, index, k):
+        '''
+        return top predictions for a mask token from all embeddings
+        '''
+        scores_tensor, token_ids_tensor = torch.topk(softmax[0, index], k)
+        scores = scores_tensor.tolist()
+        token_ids = token_ids_tensor.tolist()
+        tokens = self.tokenizer.convert_ids_to_tokens(token_ids)
+        options = [
+            self._postprocess_option(token)
+            for token in tokens
+        ]
+        return [
+            MaskedPrediction(option, score)
+            for option, score in zip(options, scores)
+        ]
+
+    def _masked_predictions_at_index_options(self, softmax, index, options):
+        '''
+        return top predictions for a mask token from a list of options
+        '''
+        option_ids = [
+            self.tokenizer.encode(option) 
+            for option in options
+        ]
+        scores = [
+            self.soft_sum(option_id, softmax[0], index)
+            for option_id in option_ids
+        ]
+        return [
+            MaskedPrediction(option,score)
+            for option,score in zip(options,scores)
+        ]
+
+    def _postprocess_option(self, text: str):
+        '''
+        modifies option text as seen by predict_masks() output.
+        override in subclass to filter out weird characters.
+        :param text: original text of prediction option
+        :returns text: processed text of prediction option
+        '''
+        return text
+
+    def predict_masks(self, text: str, masks_options=None, num_results=1):
+        '''
+        Predict multiple [MASK] tokens in some text.
+        :param text: text containing the mask tokens
+        :param masks_options: list of lists of options as strings
+        :param num_results: number of results to return per mask token
+        num_results is ignored if options are supplied.
+        :returns: A list of list of namedtuples of the form (text,probability),
+        where predictions are ordered descendingly by likelihood
+        '''
+        self._prepare_mlm()
+        text = self._standardize_mask_tokens(text)
 
         self._text_verification(text)
 
-        tokenized_text = self. \
-            _get_tokenized_text(text)
-        masked_index = tokenized_text.index(self.masked_token)
+        text_tokens = (
+            self._get_tokenized_text(text)
+        )
+        softmax = self._get_prediction_softmax(text_tokens)
 
-        softmax = self._get_prediction_softmax(tokenized_text)
-
-        if options is not None:
-
-            if self.model_name == "BERT":
-                option_ids = [self.tokenizer.encode(option) for option in options]
-                scores = [
-                    self.soft_sum(option_id, softmax[0], masked_index)
-                    for option_id in option_ids
-                ]
-                tupled_predictions = tuple(sorted(
-                    zip(options, scores),
-                    # sort by score (descending)
-                    key=lambda pair: -pair[1]
-                ))[:num_results]
-            else:
-                top_predictions = torch.topk(softmax[0, masked_index], 5000)
-                scores = top_predictions[0].tolist()
-                lowest_score = min(float(i) for i in scores)
-                prediction_index = top_predictions[1].tolist()
-                top_options = self.tokenizer.convert_ids_to_tokens(prediction_index)
-
-                if self.model_name == "XLNET":
-                    top_options = self.__remove_starting_character(top_options, "▁")
-                if self.model_name == "ROBERTA":
-                    top_options = self.__remove_starting_character(top_options, "Ġ")
-                    top_options = self.__switch_prediction(top_options, "</s>", '.')
-
-                option_scores = list()
-                for option in options:
-                    if option in top_options:
-                        option_id = top_options.index(option)
-                        option_scores.append(scores[option_id])
-                    else:
-                        option_scores.append(lowest_score)
-
-                tupled_predictions = tuple(zip(options, option_scores))
-
-                sorted(tupled_predictions, key=lambda x: x[1])
-
-                tupled_predictions = tupled_predictions[:num_results]
-
-
+        masked_indices = _indices_where(
+            text_tokens,
+            lambda text: text == self.tokenizer.mask_token
+        )
+        
+        if masks_options is None: 
+            return [
+                self._masked_predictions_at_index_any(
+                    softmax, masked_index, num_results
+                )
+                for masked_index in masked_indices
+            ]
         else:
-            top_predictions = torch.topk(softmax[0, masked_index], num_results)
-            scores = top_predictions[0].tolist()
-            prediction_index = top_predictions[1].tolist()
-            options = self.tokenizer.convert_ids_to_tokens(prediction_index)
+            return [
+                self._masked_predictions_at_index_options(
+                    softmax, masked_index, mask_options
+                )
+                for masked_index, mask_options in zip(masked_indices, masks_options)
+            ]
 
-            if self.model_name == "XLNET":  # TODO find other models that also require this
-                options = self.__remove_starting_character(options, "▁")
-            if self.model_name == "ROBERTA":
-                options = self.__remove_starting_character(options, "Ġ")
-                options = self.__switch_prediction(options, "</s>", '.')
-            tupled_predictions = tuple(zip(options, scores))
-
-        if self.gpu_support == "cuda":
-            torch.cuda.empty_cache()
-
-        return self.__format_option_scores(tupled_predictions)
-
-    def __switch_prediction(self, options, current_token, new_token):
-        """
-        Switches a token with a different token in final predictions  for predict_mask.
-        So far it is only used to switch the "</s>" token with "." for RoBERTA. "</s>" is meant to indicate
-        a new sentence.
-        """
-
-        for n, i in enumerate(options):
-            if i == current_token:
-                options[n] = new_token
-
-        return options
-
-    def __remove_starting_character(self, options, starting_char):
-        """
-        Some cased models like XLNet place a "▁" character in front of lower cased predictions.
-        For most applications this extra bit of information is irrelevant.
-        :param options: A list that contains word predictions
-        ;param staring_char: The special character that is placed at the start of the predicted word
-        :return: a new list of tuples where the prediction's name does not contains a special starting character
-        """
-        new_predictions = list()
-        for prediction in options:
-            if prediction[0] == starting_char:
-                new_prediction = prediction[1:]
-                new_predictions.append(new_prediction)
-            else:
-                new_predictions.append(prediction)
-        return new_predictions
+    def predict_mask(self, text: str, options=None, num_results=1):
+        '''
+        Predict a single [MASK] token in some text.
+        :param text: text containing the mask token
+        :param options: list of options as strings
+        :param num_results: number of predictions to return if no options supplied
+        :returns: list of dictionaries with keys 'word' and 'softmax'
+        '''
+        masks_options = None if options is None else [options]
+        predictions = self.predict_masks(text, masks_options, num_results)
+        return self.__format_option_scores(predictions[0])
 
     def _get_tokenized_text(self, text):
         """
@@ -211,7 +207,7 @@ class HappyTransformer:
 
         split_text = text.split()
         new_text = list()
-        new_text.append(self.cls_token)
+        new_text.append(self.tokenizer.cls_token)
 
         for i, char in enumerate(split_text):
             new_text.append(char.lower())
@@ -225,14 +221,14 @@ class HappyTransformer:
                 if split_text[i + 1] in string.punctuation:
                     pass
                 else:
-                    new_text.append(self.sep_token)
+                    new_text.append(self.tokenizer.sep_token)
                     # if self.model_name == "ROBERTA":
                     #     # ROBERTA requires two "</s>" tokens to separate sentences
                     #     new_text.append(self.sep_token)
                 # must be a middle punctuation
-        new_text.append(self.sep_token)
+        new_text.append(self.tokenizer.sep_token)
 
-        text = " ".join(new_text).replace('[mask]', self.masked_token)
+        text = " ".join(new_text).replace('[mask]', self.tokenizer.mask_token)
         text = self.tokenizer.tokenize(text)
         return text
 
@@ -306,14 +302,13 @@ class HappyTransformer:
         segments_ids = [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1]
         returns segments_ids
         """
-        split_location = tokenized_text.index(self.sep_token)
-        segment_ids = list()
-        for i in range(0, len(tokenized_text)):
-            if i <= split_location:
-                segment_ids.append(0)
-            else:
-                segment_ids.append(1)
-            # add exception case for XLNet
+        split_location = tokenized_text.index(self.tokenizer.sep_token)
+
+        segment_ids = [
+            0 if idx <= split_location else 1
+            for idx in range(len(tokenized_text))
+        ]
+        # add exception case for XLNet
 
         return segment_ids
 

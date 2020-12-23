@@ -38,3 +38,8 @@ class HappyXLNET(HappyTransformer):
         """
         self.mlm = XLNetLMHeadModel.from_pretrained(self.model)
         self.mlm.eval()
+
+    def _postprocess_option(self, text):
+        if text.startswith('▁'):
+            text = text[1:]
+        return text

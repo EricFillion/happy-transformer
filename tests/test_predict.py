@@ -13,5 +13,5 @@ def test_prediction_options():
         num_results=1
     )
     print(predictions)
-    # top and only predictions should be cheese and not death
-    assert len(predictions) == 1 and predictions[0]['word'] == 'cheese'
+    # top prediction should be cheese and not death
+    assert predictions[0]['word'] == 'cheese'
