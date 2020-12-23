@@ -81,12 +81,16 @@ class HappyBERT(HappyTransformer):
                 as either a probability or a boolean
         """
 
-        if not self.__is_one_sentence(sentence_a) or not  self.__is_one_sentence(sentence_b):
-            self.logger.error("Each inputted text variable for the \"predict_next_sentence\" method must contain a single sentence")
+        if not self.__is_one_sentence(sentence_a) or not self.__is_one_sentence(sentence_b):
+            self.logger.error('Each inputted text variable for the "predict_next_sentence" method must contain a single sentence')
             exit()
 
         if self.nsp is None:
             self._get_next_sentence_prediction()
+
+        if self.gpu_support == 'cuda':
+            self.nsp.to('cuda')
+
         connected = sentence_a + ' ' + sentence_b
         tokenized_text = self._get_tokenized_text(connected)
         indexed_tokens = self.tokenizer.convert_tokens_to_ids(tokenized_text)
@@ -100,6 +104,9 @@ class HappyBERT(HappyTransformer):
         probabilities = torch.nn.Softmax(dim=1)(predictions)
         # probability that sentence B follows sentence A
         correct_probability = probabilities[0][0].item()
+
+        if self.gpu_support == 'cuda':
+            torch.cuda.empty_cache()
 
         return (
             correct_probability if use_probability else 
