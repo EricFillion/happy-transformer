@@ -69,10 +69,9 @@ QaAnswer = namedtuple('QaAnswer',[
 ])
 
 def qa_probabilities(start_logits, end_logits, k):
-    answer_logits_iterator = qa_logits(start_logits, end_logits)
     top_answers = [
-        next(answer_logits_iterator)
-        for _ in range(k)
+        qa_logit
+        for qa_logit, _ in zip(qa_logits(start_logits, end_logits), range(k))
     ]
     logit_scores = torch.tensor([
         answer.logit
