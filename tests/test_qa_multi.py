@@ -19,5 +19,11 @@ def test_qa_multi():
     for question, expected_answer in QA_PAIRS:
         computed_answers = happy.answers_to_question(question, PARAGRAPH, k=10)
         computed_answer = happy.answer_question(question, PARAGRAPH)
+        # k is being respected
         assert len(computed_answers) == 10
-        assert computed_answers[0].text.lower() == computed_answer.lower() == expected_answer.lower()
+        # both answering methods yield correct result
+        assert computed_answers[0].text.lower() == expected_answer.lower()
+        assert computed_answer.lower() == expected_answer.lower()
+        total_p = sum(answer.probability for answer in computed_answers)
+        # probabilties for answers_to_question() add up to 1 ish
+        assert abs(total_p-1) < 0.01
