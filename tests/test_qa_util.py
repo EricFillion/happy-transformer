@@ -6,8 +6,8 @@ def test_biggest_sums():
     expected_pairs = [
         SumPair(idx1=0, idx2=0 ,sum=14), # 7+7
         SumPair(idx1=0, idx2=1, sum=13), # 7+6
-        SumPair(idx1=0, idx2=2, sum=11), # 4+6
-        SumPair(idx1=1, idx2=2, sum=8), # 3+6
+        SumPair(idx1=0, idx2=2, sum=11), # 7+4
+        SumPair(idx1=1, idx2=2, sum=8), # 4+4
         SumPair(idx1=2, idx2=2, sum=7) # 3+4
     ]
     computed_pairs = biggest_sums(items_a, items_b)
