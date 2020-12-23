@@ -19,7 +19,6 @@ import numpy as np
 
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.qa_util import qa_probabilities, QaAnswer
-from happytransformer.math import softmax
 
 class HappyBERT(HappyTransformer):
     """
