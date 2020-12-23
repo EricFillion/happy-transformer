@@ -157,9 +157,9 @@ class HappyBERT(HappyTransformer):
 
     def _tokenize_qa(self, question, context):
         input_text = ' '.join([
-            self.cls_token, question, 
+            question, 
             self.sep_token,
-            context, self.sep_token
+            context
         ])
         input_ids = self.tokenizer.encode(input_text)
         return input_ids
@@ -167,10 +167,10 @@ class HappyBERT(HappyTransformer):
     def _run_qa_model(self, input_ids):
         if self.qa is None:
             self._get_question_answering()
-        sep_id = self.tokenizer.sep_token_id
+        sep_id_index = input_ids.index(self.tokenizer.sep_token_id)
         before_after_ids = [
-            0 if i <= input_ids.index(sep_id) else 1
-            for i in range(len(input_ids))
+            0 if idx <= sep_id_index else 1
+            for idx, _ in enumerate(input_ids)
         ]
         with torch.no_grad():
             return self.qa(
@@ -179,19 +179,19 @@ class HappyBERT(HappyTransformer):
             )
 
     def answers_to_question(self, question, context, k=10):
-        # TODO: filter out [SEP] and [CLS]
         input_ids = self._tokenize_qa(question, context)
         qa_output = self._run_qa_model(input_ids)
+        sep_id_index = input_ids.index(self.tokenizer.sep_token_id)
         probabilities = qa_probabilities(
-            qa_output.start_logits[0],
-            qa_output.end_logits[0],
+            qa_output.start_logits[0][sep_id_index+1:-1],
+            qa_output.end_logits[0][sep_id_index+1:-1],
             k
         )
 
         return [
             QaAnswer(
                 text=self.tokenizer.decode(
-                    input_ids[answer.start_idx:answer.end_idx+1]
+                    input_ids[sep_id_index+1+answer.start_idx:sep_id_index+1+answer.end_idx+1]
                 ),
                 probability=answer.probability
             )
