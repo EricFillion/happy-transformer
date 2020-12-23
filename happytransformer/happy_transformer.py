@@ -126,17 +126,19 @@ class HappyTransformer:
         '''
         modifies option text as seen by predict_masks() output.
         override in subclass to filter out weird characters.
+        :param text: original text of prediction option
+        :returns text: processed text of prediction option
         '''
         return text
 
     def predict_masks(self, text: str, masks_options=None, num_results=1):
         '''
-        Predict multiple mask tokens in some text.
+        Predict multiple [MASK] tokens in some text.
         :param text: text containing the mask tokens
-        :param masks_options: list of lists of options
-        :param num_results: number of results to return.
+        :param masks_options: list of lists of options as strings
+        :param num_results: number of results to return per mask token
         num_results is ignored if options are supplied.
-        :returns: A list of namedtuples of the form (text,probability),
+        :returns: A list of list of namedtuples of the form (text,probability),
         where predictions are ordered descendingly by likelihood
         '''
         self._prepare_mlm()
@@ -170,6 +172,13 @@ class HappyTransformer:
             ]
 
     def predict_mask(self, text: str, options=None, num_results=1):
+        '''
+        Predict a single [MASK] token in some text.
+        :param text: text containing the mask token
+        :param options: list of options as strings
+        :param num_results: number of predictions to return if no options supplied
+        :returns: list of dictionaries with keys 'word' and 'softmax'
+        '''
         masks_options = None if options is None else [options]
         predictions = self.predict_masks(text, masks_options, num_results)
         return self.__format_option_scores(predictions[0])
