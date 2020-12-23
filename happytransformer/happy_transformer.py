@@ -122,13 +122,23 @@ class HappyTransformer:
             for option,score in zip(options,scores)
         ]
 
-    def _postprocess_option(self, text):
+    def _postprocess_option(self, text: str):
         '''
-        override in subclass to filter out weird characters
+        modifies option text as seen by predict_masks() output.
+        override in subclass to filter out weird characters.
         '''
         return text
 
     def predict_masks(self, text: str, masks_options=None, num_results=1):
+        '''
+        Predict multiple mask tokens in some text.
+        :param text: text containing the mask tokens
+        :param masks_options: list of lists of options
+        :param num_results: number of results to return.
+        num_results is ignored if options are supplied.
+        :returns: A list of namedtuples of the form (text,probability),
+        where predictions are ordered descendingly by likelihood
+        '''
         self._prepare_mlm()
         text = self._standardize_mask_tokens(text)
 
