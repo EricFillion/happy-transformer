@@ -34,8 +34,8 @@ QaAnswerLogit = namedtuple('QaAnswerLogit', [
 ])
 
 def qa_logits(start_logits, end_logits):
-    sorted_starts_tensors = torch.sort(start_logits)
-    sorted_ends_tensors = torch.sort(end_logits)
+    sorted_starts_tensors = torch.sort(start_logits, descending=True)
+    sorted_ends_tensors = torch.sort(end_logits, descending=True)
     # start logits sorted in descending order INDEPENDENTLY
     sorted_start_scores = sorted_starts_tensors.values.tolist()
     sorted_start_indices = sorted_starts_tensors.indices.tolist()
@@ -79,7 +79,7 @@ def qa_probabilities(start_logits, end_logits, k):
         for answer in top_answers
     ])
 
-    probabilities = torch.nn.Softmax()(logit_scores).tolist()
+    probabilities = torch.nn.Softmax(dim=0)(logit_scores).tolist()
     # NOTE: throwing away indices. Do we care?
     return [
         QaProbability(

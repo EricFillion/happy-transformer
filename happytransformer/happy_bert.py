@@ -186,11 +186,11 @@ class HappyBERT(HappyTransformer):
             qa_output.end_logits[0],
             10
         )
-        all_tokens = self.tokenizer.convert_ids_to_tokens(input_ids)
+
         return [
             QaAnswer(
                 text=self.tokenizer.decode(
-                    all_tokens[answer.start_idx:answer.end_idx+1]
+                    input_ids[answer.start_idx:answer.end_idx+1]
                 ),
                 probability=answer.probability
             )
