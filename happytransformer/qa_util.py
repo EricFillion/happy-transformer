@@ -5,9 +5,12 @@ SumPair = namedtuple('SumPair',['idx1', 'idx2', 'sum'])
 
 def biggest_sums(items_a, items_b):
     '''
-    assumes items_a and items_b sorted (descending)
-    return (idx1,idx2,sum) for all the biggest sums
-    from items_a and items_b, in decreasing order
+    compute biggest sums from two descending ordered lists,
+    labeled by indices
+    :param items_a: list of numeric values, sorted descendingly
+    :param items_b: list of numeric values, sorted descendingly
+    :returns: list of namedtuples of the form (idx1,idx2,sum),
+    sorted by descending sum
     '''
     a_index = b_index = 0
     while a_index < len(items_a) and b_index < len(items_b):
@@ -34,6 +37,14 @@ QaAnswerLogit = namedtuple('QaAnswerLogit', [
 ])
 
 def qa_logits(start_logits, end_logits):
+    '''
+    Compute the logits for top qa pairs
+    :param start_logits: tensor from qa model output
+    :param end_logits: tensor from qa model output
+    :returns: generator of namedtuples of the form
+    (start_idx, end_idx, logit), sorted in descending order
+    by score
+    ''' 
     sorted_starts_tensors = torch.sort(start_logits, descending=True)
     sorted_ends_tensors = torch.sort(end_logits, descending=True)
     # start logits sorted in descending order INDEPENDENTLY
@@ -69,6 +80,13 @@ QaAnswer = namedtuple('QaAnswer',[
 ])
 
 def qa_probabilities(start_logits, end_logits, k):
+    '''
+    Computes the top k qa probabilities, in terms of indices.
+    :param start_logits: tensor from qa model output
+    :param end_logits: tensor from qa model output
+    :param k: number of results to return
+    :returns: list of namedtuples of the form (text,probability)
+    '''
     top_answers = [
         qa_logit
         for qa_logit, _ in zip(qa_logits(start_logits, end_logits), range(k))
