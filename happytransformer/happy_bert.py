@@ -18,7 +18,7 @@ import torch
 import numpy as np
 
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.qa_util import qa_start_end_pairs
+from happytransformer.qa_util import qa_probabilities, QaAnswer
 from happytransformer.math import softmax
 
 class HappyBERT(HappyTransformer):
@@ -181,16 +181,18 @@ class HappyBERT(HappyTransformer):
     def answers_to_question(self, question, context):
         input_ids = self._tokenize_qa(question, context)
         qa_output = self._run_qa_model(input_ids)
-        pairs = qa_start_end_pairs(qa_output.start_logits[0], qa_output.end_logits[0])
-        pair_logits = torch.tensor([
-            pair.logit
-            for pair in pairs
-        ])
-        probabilities = softmax(pair_logits)
+        probabilities = qa_probabilities(
+            qa_output.start_logits[0],
+            qa_output.end_logits[0],
+            10
+        )
         all_tokens = self.tokenizer.convert_ids_to_tokens(input_ids)
-        for pair, probability in zip(pairs, probabilities):
-            print(probability)
-            tokens = all_tokens[pair.start_idx:pair.end_idx+1]
-            text = self.tokenizer.convert_tokens_to_string(tokens)
-            print(text)
-            return
+        return [
+            QaAnswer(
+                text=self.tokenizer.decode(
+                    all_tokens[answer.start_idx:answer.end_idx+1]
+                ),
+                probability=answer.probability
+            )
+            for answer in probabilities
+        ]

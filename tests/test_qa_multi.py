@@ -9,6 +9,5 @@ PARAGRAPH = (
 )
 
 def test_qa_multi():
-    happy.answers_to_question('How did Jesus die?', PARAGRAPH)
-
-test_qa_multi()
+    answers = happy.answers_to_question('How did Jesus die?', PARAGRAPH)
+    print(answers)
