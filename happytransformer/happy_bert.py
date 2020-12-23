@@ -25,16 +25,17 @@ _QaAnswerLogit = namedtuple('_QaAnswerLogit', [
 ])
 
 def _qa_start_end_pairs(start_logits, end_logits):
-    pairs = (
-        _QaAnswerLogit(
-            start_idx, end_idx, 
-            logit=start_logit+end_logit
-        ) 
-        for start_idx, start_logit in enumerate(start_logits)
-        for end_idx, end_logit in enumerate(end_logits)
-        if end_idx > start_idx
-    )
-    return sorted(pairs, key=lambda answer: answer.logit, reverse=True)
+    sorted_starts_tensors = torch.sort(start_logits)
+    sorted_ends_tensors = torch.sort(end_logits)
+
+    sorted_start_scores = sorted_starts_tensors.values.tolist()
+    sorted_start_indices = sorted_starts_tensors.indices.tolist()
+
+    sorted_end_scores = sorted_ends_tensors.values.tolist()
+    sorted_end_indices = sorted_ends_tensors.indices.tolist()
+
+    
+
 
 class HappyBERT(HappyTransformer):
     """
