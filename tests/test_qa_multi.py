@@ -8,7 +8,7 @@ PARAGRAPH = (
     'A variety of authors detail the events. '
     'Britian has the largest army and France has the longest road. '
 )
-QUESTION = 'How did Jesus die?'
+QUESTION = 'Who has the longest road?'
 
 def test_qa_multi():
     answers = happy.answers_to_question(QUESTION, PARAGRAPH)

@@ -178,13 +178,13 @@ class HappyBERT(HappyTransformer):
                 token_type_ids=torch.tensor([before_after_ids])
             )
 
-    def answers_to_question(self, question, context):
+    def answers_to_question(self, question, context, k=10):
         input_ids = self._tokenize_qa(question, context)
         qa_output = self._run_qa_model(input_ids)
         probabilities = qa_probabilities(
             qa_output.start_logits[0],
             qa_output.end_logits[0],
-            10
+            k
         )
 
         return [
