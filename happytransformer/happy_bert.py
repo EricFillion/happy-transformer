@@ -183,15 +183,23 @@ class HappyBERT(HappyTransformer):
         qa_output = self._run_qa_model(input_ids)
         sep_id_index = input_ids.index(self.tokenizer.sep_token_id)
         probabilities = qa_probabilities(
+            # only consider logits from the context part of the embedding.
+            # that is, between the middle [SEP] token
+            # and the final [SEP] token
             qa_output.start_logits[0][sep_id_index+1:-1],
             qa_output.end_logits[0][sep_id_index+1:-1],
             k
         )
+        # qa probabilities use indices relative to context.
+        # tokens use indices relative to overall question [SEP] context embedding.
+        # need offset to resolve this difference
+        token_offset = sep_id_index + 1
 
         return [
             QaAnswer(
                 text=self.tokenizer.decode(
-                    input_ids[sep_id_index+1+answer.start_idx:sep_id_index+1+answer.end_idx+1]
+                    # grab ids from start to end (inclusive) and decode to text
+                    input_ids[token_offset+answer.start_idx : token_offset+answer.end_idx+1]
                 ),
                 probability=answer.probability
             )
