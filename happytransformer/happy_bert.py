@@ -18,24 +18,8 @@ import torch
 import numpy as np
 
 from happytransformer.happy_transformer import HappyTransformer
+from happytransformer.qa_util import qa_start_end_pairs
 from happytransformer.math import softmax
-
-_QaAnswerLogit = namedtuple('_QaAnswerLogit', [
-    'start_idx','end_idx', 'logit'
-])
-
-def _qa_start_end_pairs(start_logits, end_logits):
-    sorted_starts_tensors = torch.sort(start_logits)
-    sorted_ends_tensors = torch.sort(end_logits)
-
-    sorted_start_scores = sorted_starts_tensors.values.tolist()
-    sorted_start_indices = sorted_starts_tensors.indices.tolist()
-
-    sorted_end_scores = sorted_ends_tensors.values.tolist()
-    sorted_end_indices = sorted_ends_tensors.indices.tolist()
-
-    
-
 
 class HappyBERT(HappyTransformer):
     """
@@ -197,7 +181,7 @@ class HappyBERT(HappyTransformer):
     def answers_to_question(self, question, context):
         input_ids = self._tokenize_qa(question, context)
         qa_output = self._run_qa_model(input_ids)
-        pairs = _qa_start_end_pairs(qa_output.start_logits[0], qa_output.end_logits[0])
+        pairs = qa_start_end_pairs(qa_output.start_logits[0], qa_output.end_logits[0])
         pair_logits = torch.tensor([
             pair.logit
             for pair in pairs
