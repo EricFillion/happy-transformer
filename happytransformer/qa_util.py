@@ -53,11 +53,11 @@ def qa_logits(start_logits, end_logits):
         for sum_pair in 
         biggest_sums(sorted_start_scores, sorted_end_scores)
     )
-    # filter for only answers which have end after start
+    # filter for only answers which have end at or after start
     legit_answers = (
         answer
         for answer in all_answers
-        if answer.end_idx > answer.start_idx
+        if answer.end_idx >= answer.start_idx
     )
     return legit_answers
 
