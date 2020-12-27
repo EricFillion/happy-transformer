@@ -1,18 +1,19 @@
 from happytransformer import HappyBERT
 
-happy = HappyBERT('madlag/bert-base-uncased-squad-v1-sparse0.25')
+happy = HappyBERT('bert-large-uncased-whole-word-masking-finetuned-squad')
 
 PARAGRAPH = (
-    'Jesus was crucified on the cross. '
-    'The bible contains many stories such as this one. '
-    'A variety of authors detail the events. '
-    'Britain has the largest army and France has the longest road. '
+    'McGill is a university located in Montreal. '
+    'It was founded in 1821, making it the eight oldest university in Canada. '
+    'It is currently ranked 31st worldwide according to the QS Global World Ranking '
+
 )
 
 QA_PAIRS = [
-    ('Who has the largest army?', 'Britain'),
-    ('Who has the longest road?', 'France'),
-    ('How did Jesus die?', 'Crucified on the cross')
+    ('When was McGill founded?', '1821'),
+    ('Where is McGill located?', 'Montreal'),
+    ('What is McGill\'s worldwide ranking?', '31st'),
+
 ]
 
 def test_qa_multi():
