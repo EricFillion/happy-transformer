@@ -32,7 +32,7 @@ def biggest_sums(items_a, items_b):
         else:
             a_index += 1
 
-QaAnswerLogit = namedtuple('QaAnswerLogit', [
+QAAnswerLogit = namedtuple('QaAnswerLogit', [
     'start_idx','end_idx', 'logit'
 ])
 
@@ -56,7 +56,7 @@ def qa_logits(start_logits, end_logits):
     # start logit + end logit pairs sorted in descending order 
     # of their sum TOGETHER
     all_answers = (
-        QaAnswerLogit(
+        QAAnswerLogit(
             start_idx=sorted_start_indices[sum_pair.idx1],
             end_idx=sorted_end_indices[sum_pair.idx2],
             logit=sum_pair.sum
@@ -72,10 +72,10 @@ def qa_logits(start_logits, end_logits):
     )
     return legit_answers
 
-QaProbability = namedtuple('QaProbability', [
+QAProbability = namedtuple('QaProbability', [
     'start_idx', 'end_idx', 'probability'
 ])
-QaAnswer = namedtuple('QaAnswer',[
+QAAnswer = namedtuple('QaAnswer',[
     'text', 'softmax'
 ])
 
@@ -98,7 +98,7 @@ def qa_probabilities(start_logits, end_logits, k):
 
     probabilities = torch.nn.Softmax(dim=0)(logit_scores).tolist()
     return [
-        QaProbability(
+        QAProbability(
             start_idx=answer.start_idx,
             end_idx=answer.end_idx,
             probability=probability

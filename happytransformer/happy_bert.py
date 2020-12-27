@@ -18,7 +18,7 @@ import torch
 import numpy as np
 
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.qa_util import qa_probabilities, QaAnswer
+from happytransformer.qa_util import qa_probabilities, QAAnswer
 
 class HappyBERT(HappyTransformer):
     """
@@ -183,7 +183,7 @@ class HappyBERT(HappyTransformer):
         token_offset = sep_id_index + 1
 
         return [
-            QaAnswer(
+            QAAnswer(
                 text=self.tokenizer.decode(
                     # grab ids from start to end (inclusive) and decode to text
                     input_ids[token_offset+answer.start_idx : token_offset+answer.end_idx+1]
