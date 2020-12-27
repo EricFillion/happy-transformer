@@ -1,7 +1,11 @@
+"""
+Contains named tuples and functions used by questions answering methods
+"""
+
 from collections import namedtuple
 import torch
 
-SumPair = namedtuple('SumPair',['idx1', 'idx2', 'sum'])
+SumPair = namedtuple('SumPair', ['idx1', 'idx2', 'sum'])
 
 def biggest_sums(items_a, items_b):
     '''
@@ -33,18 +37,19 @@ def biggest_sums(items_a, items_b):
             a_index += 1
 
 QAAnswerLogit = namedtuple('QaAnswerLogit', [
-    'start_idx','end_idx', 'logit'
+    'start_idx', 'end_idx', 'logit'
 ])
 
 def qa_logits(start_logits, end_logits):
-    '''
+    """
     Compute the logits for top qa pairs
     :param start_logits: tensor from qa model output
     :param end_logits: tensor from qa model output
     :returns: generator of namedtuples of the form
     (start_idx, end_idx, logit), sorted in descending order
     by score
-    ''' 
+    """
+
     sorted_starts_tensors = torch.sort(start_logits, descending=True)
     sorted_ends_tensors = torch.sort(end_logits, descending=True)
     # start logits sorted in descending order INDEPENDENTLY
@@ -72,21 +77,24 @@ def qa_logits(start_logits, end_logits):
     )
     return legit_answers
 
+
 QAProbability = namedtuple('QaProbability', [
     'start_idx', 'end_idx', 'probability'
 ])
-QAAnswer = namedtuple('QaAnswer',[
+
+
+QAAnswer = namedtuple('QaAnswer', [
     'text', 'softmax'
 ])
 
 def qa_probabilities(start_logits, end_logits, k):
-    '''
+    """
     Computes the top k qa probabilities, in terms of indices.
     :param start_logits: tensor from qa model output
     :param end_logits: tensor from qa model output
     :param k: number of results to return
     :returns: list of namedtuples of the form (text,probability)
-    '''
+    """
     top_answers = [
         qa_logit
         for qa_logit, _ in zip(qa_logits(start_logits, end_logits), range(k))

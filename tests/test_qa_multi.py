@@ -1,6 +1,10 @@
+"""
+Tests for the "answers_to_question" method that can be accessed through a HappyBERT object
+"""
+
 from happytransformer import HappyBERT
 
-happy = HappyBERT('bert-large-uncased-whole-word-masking-finetuned-squad')
+happy_bert = HappyBERT('bert-large-uncased-whole-word-masking-finetuned-squad')
 
 PARAGRAPH = (
     'McGill is a university located in Montreal. '
@@ -18,14 +22,13 @@ QA_PAIRS = [
 
 def test_qa_multi():
     for question, expected_answer in QA_PAIRS:
-        computed_answers = happy.answers_to_question(question, PARAGRAPH, k=10)
-        computed_answer = happy.answer_question(question, PARAGRAPH)
+        computed_answers = happy_bert.answers_to_question(question, PARAGRAPH, k=10)
+        computed_answer = happy_bert.answer_question(question, PARAGRAPH)
         # k is being respected
         assert len(computed_answers) == 10
         # both answering methods yield correct result
         assert computed_answers[0].text.lower() == expected_answer.lower()
         assert computed_answer.lower() == expected_answer.lower()
-        
         total_p = sum(answer.softmax for answer in computed_answers)
         # probabilties for answers_to_question() add up to 1 ish
         assert abs(total_p-1) < 0.01
