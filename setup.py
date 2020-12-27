@@ -26,7 +26,7 @@ setup(
             'pandas',
             'tqdm',
             'scikit_learn',
-            'transformers',
+            'transformers>=4.0.0',
 
       ],
     classifiers=[
