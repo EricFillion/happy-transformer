@@ -165,7 +165,7 @@ class HappyBERT(HappyTransformer):
                 token_type_ids=torch.tensor([before_after_ids])
             )
 
-    def answers_to_question(self, question, context, k=10):
+    def answers_to_question(self, question, context, k=3):
         input_ids = self._tokenize_qa(question, context)
         qa_output = self._run_qa_model(input_ids)
         sep_id_index = input_ids.index(self.tokenizer.sep_token_id)
