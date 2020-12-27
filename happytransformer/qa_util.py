@@ -76,7 +76,7 @@ QaProbability = namedtuple('QaProbability', [
     'start_idx', 'end_idx', 'probability'
 ])
 QaAnswer = namedtuple('QaAnswer',[
-    'text', 'probability'
+    'text', 'softmax'
 ])
 
 def qa_probabilities(start_logits, end_logits, k):

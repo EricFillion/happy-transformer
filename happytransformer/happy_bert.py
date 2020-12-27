@@ -188,7 +188,7 @@ class HappyBERT(HappyTransformer):
                     # grab ids from start to end (inclusive) and decode to text
                     input_ids[token_offset+answer.start_idx : token_offset+answer.end_idx+1]
                 ),
-                probability=answer.probability
+                softmax=answer.probability
             )
             for answer in probabilities
         ]
