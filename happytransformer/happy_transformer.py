@@ -370,8 +370,7 @@ class HappyTransformer:
         train_df = self.__process_classifier_data(train_csv_path)
 
         if self.seq is None:
-            self.logger.error("Initialize the sequence classifier before training")
-            exit()
+            raise ValueError("Initialize the sequence classifier before training")
 
         sys.stdout = open(os.devnull,
                           'w')  # Disable printing to stop external libraries from printing
@@ -401,8 +400,7 @@ class HappyTransformer:
         eval_df = self.__process_classifier_data(eval_csv_path)
 
         if not self.seq_trained:
-            self.logger.error("Train the sequence classifier before evaluation")
-            exit()
+            raise ValueError("Train the sequence classifier before evaluation")
 
         eval_df = eval_df.astype("str")
         self.seq.eval_list_data = eval_df.values.tolist()
@@ -426,10 +424,8 @@ class HappyTransformer:
 
         test_df = self.__process_classifier_data(test_csv_path, for_test_data=True)
 
-        # todo finish
         if not self.seq_trained:
-            self.logger.error("Train the sequence classifier before testing")
-            exit()
+            raise ValueError("Train the sequence classifier before testing")
 
         test_df = test_df.astype("str")
         self.seq.test_list_data = test_df.values.tolist()
@@ -503,9 +499,8 @@ class HappyTransformer:
                 self.model_name)
 
         else:
-            self.logger.error(
+            raise ValueError(
                 "Masked language model training is not available for XLNET")
-            sys.exit()
 
     def train_mwp(self, train_path: str):
         """
@@ -527,15 +522,13 @@ class HappyTransformer:
                 self.mwp_trained = True
 
             elif not self.mwp_trainer:  # If trainer doesn't exist
-                self.logger.error(
+                raise ValueError(
                     "The model is not loaded, you should run init_train_mwp.")
-                sys.exit()
 
         else:  # If the user doesn't have a gpu.
-            self.logger.error(
+            raise ValueError(
                 "You are using %s, you must use a GPU to train a MLM",
                 self.gpu_support)
-            sys.exit()
 
     def eval_mwp(self, eval_path: str, batch_size: int = 2):
         """
@@ -549,9 +542,8 @@ class HappyTransformer:
 
         """
         if not self.mwp_trainer:
-            self.logger.error(
+            raise ValueError(
                 "The model is not loaded, you should run init_train_mwp.")
-            sys.exit()
 
         if not self.mwp_trained:
             self.logger.warning(
