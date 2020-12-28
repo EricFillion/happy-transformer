@@ -18,7 +18,7 @@ import torch
 import numpy as np
 
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.qa_util import qa_probabilities, QAAnswer
+from happytransformer.qa_util import qa_probabilities
 
 class HappyBERT(HappyTransformer):
     """
@@ -140,7 +140,7 @@ class HappyBERT(HappyTransformer):
         :param text: The text containing the answer to the question
         :return: The answer to the given question, as a string
         """
-        return self.answers_to_question(question, text, 1)[0].text
+        return self.answers_to_question(question, text, 1)[0]["text"]
 
     def _tokenize_qa(self, question, context):
         input_text = ' '.join([
@@ -183,12 +183,11 @@ class HappyBERT(HappyTransformer):
         token_offset = sep_id_index + 1
 
         return [
-            QAAnswer(
-                text=self.tokenizer.decode(
+            {"text": self.tokenizer.decode(
                     # grab ids from start to end (inclusive) and decode to text
                     input_ids[token_offset+answer.start_idx : token_offset+answer.end_idx+1]
                 ),
-                softmax=answer.probability
-            )
+            "softmax": answer.probability}
+
             for answer in probabilities
         ]

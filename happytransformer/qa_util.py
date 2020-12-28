@@ -83,10 +83,6 @@ QAProbability = namedtuple('QaProbability', [
 ])
 
 
-QAAnswer = namedtuple('QaAnswer', [
-    'text', 'softmax'
-])
-
 def qa_probabilities(start_logits, end_logits, k):
     """
     Computes the top k qa probabilities, in terms of indices.

@@ -30,7 +30,6 @@ def _indices_where(items, predicate):
         if predicate(item)
     ]
 
-MaskedPrediction = namedtuple('MaskedPrediction',['text','probability'])
 
 _POSSIBLE_MASK_TOKENS = ['<mask>', '<MASK>', '[MASK]']
 
@@ -110,7 +109,7 @@ class HappyTransformer:
             for token in tokens
         ]
         return [
-            MaskedPrediction(option, score)
+            {"word": option, "softmax": score}
             for option, score in zip(options, scores)
         ]
 
@@ -127,7 +126,7 @@ class HappyTransformer:
             for option_id in option_ids
         ]
         return [
-            MaskedPrediction(option,score)
+            {"word": option, "softmax": score}
             for option,score in zip(options,scores)
         ]
 
@@ -140,7 +139,7 @@ class HappyTransformer:
         '''
         return text
 
-    def predict_masks(self, text: str, masks_options=None, num_results=1):
+    def predict_masks(self, text: str, options=None, num_results=1):
         '''
         Predict multiple [MASK] tokens in some text.
         :param text: text containing the mask tokens
@@ -165,7 +164,7 @@ class HappyTransformer:
             lambda text: text == self.tokenizer.mask_token
         )
         
-        if masks_options is None: 
+        if options is None:
             return [
                 self._masked_predictions_at_index_any(
                     softmax, masked_index, num_results
@@ -177,7 +176,7 @@ class HappyTransformer:
                 self._masked_predictions_at_index_options(
                     softmax, masked_index, mask_options
                 )
-                for masked_index, mask_options in zip(masked_indices, masks_options)
+                for masked_index, mask_options in zip(masked_indices, options)
             ]
 
     def predict_mask(self, text: str, options=None, num_results=1):
@@ -279,11 +278,12 @@ class HappyTransformer:
         :return: formatted_ranked_scores: list of dictionaries of the ranked
                  scores
         """
-        ranked_scores = sorted(tupled_predicitons, key=lambda x: x[1],
+        ranked_scores = sorted(tupled_predicitons, key=lambda x: x["softmax"],
                                reverse=True)
         formatted_ranked_scores = list()
-        for word, softmax in ranked_scores:
-            formatted_ranked_scores.append({'word': word, 'softmax': softmax})
+        for dic in ranked_scores:
+
+            formatted_ranked_scores.append({'word': dic["word"], 'softmax': dic["softmax"]})
         return formatted_ranked_scores
 
     def _softmax(self, value):
