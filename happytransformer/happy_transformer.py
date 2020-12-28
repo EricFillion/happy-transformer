@@ -152,7 +152,7 @@ class HappyTransformer:
         self._prepare_mlm()
         text = self._standardize_mask_tokens(text)
 
-        self._text_verification(text)
+        self._verify_mask_text(text)
 
         text_tokens = (
             self._get_tokenized_text(text)
@@ -312,24 +312,19 @@ class HappyTransformer:
 
         return segment_ids
 
-    def _text_verification(self, text: str):
+    def _verify_mask_text(self, text: str):
 
-        # TODO,  Add cases for the other masked tokens used in common transformer models
-        valid = True
         if '[MASK]' not in text:
-            self.logger.error("[MASK] was not found in your string. Change the word you want to predict to [MASK]")
-            valid = False
-        if '<mask>' in text or '<MASK>' in text:
-            self.logger.info('Instead of using <mask> or <MASK>, use [MASK] please as it is the convention')
-            valid = True
+            self.logger.warn("[MASK] was not found in your string. Change the word you want to predict to [MASK]")
+        if all(
+            mask_token not in text
+            for mask_token in _POSSIBLE_MASK_TOKENS
+        ):
+            raise ValueError('No mask token found')
         if '[CLS]' in text:
-            self.logger.error("[CLS] was found in your string.  Remove it as it will be automatically added later")
-            valid = False
+            raise ValueError("[CLS] was found in your string.  Remove it as it will be automatically added later")
         if '[SEP]' in text:
-            self.logger.error("[SEP] was found in your string.  Remove it as it will be automatically added later")
-            valid = False
-        if not valid:
-            exit()
+            raise ValueError("[SEP] was found in your string.  Remove it as it will be automatically added later")
 
     @staticmethod
     def soft_sum(option: list, softed, mask_id: int):
