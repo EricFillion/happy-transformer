@@ -32,7 +32,7 @@ def test_multi_mask_options():
     )
     all_predictions = happy.predict_masks(
         "[MASK] have a [MASK] dog and I love [MASK] so much",
-        masks_options=MASKS_OPTIONS
+        options=MASKS_OPTIONS
     )
     assert len(all_predictions) == 3
     assert all(
