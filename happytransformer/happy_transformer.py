@@ -139,7 +139,7 @@ class HappyTransformer:
         '''
         return text
 
-    def predict_masks(self, text: str, masks_options=None, num_results=1):
+    def predict_masks(self, text: str, options=None, num_results=1):
         '''
         Predict multiple [MASK] tokens in some text.
         :param text: text containing the mask tokens
@@ -164,7 +164,7 @@ class HappyTransformer:
             lambda text: text == self.tokenizer.mask_token
         )
         
-        if masks_options is None: 
+        if options is None:
             return [
                 self._masked_predictions_at_index_any(
                     softmax, masked_index, num_results
@@ -176,7 +176,7 @@ class HappyTransformer:
                 self._masked_predictions_at_index_options(
                     softmax, masked_index, mask_options
                 )
-                for masked_index, mask_options in zip(masked_indices, masks_options)
+                for masked_index, mask_options in zip(masked_indices, options)
             ]
 
     def predict_mask(self, text: str, options=None, num_results=1):
