@@ -23,14 +23,6 @@ from happytransformer.classifier_args import classifier_args
 from happytransformer.sequence_classifier import SequenceClassifier
 from happytransformer.mlm_utils import FinetuneMlm, word_prediction_args
 
-def _indices_where(items, predicate):
-    return [
-        idx
-        for idx,item in enumerate(items)
-        if predicate(item)
-    ]
-
-
 _POSSIBLE_MASK_TOKENS = ['<mask>', '<MASK>', '[MASK]']
 
 class HappyTransformer:
@@ -159,10 +151,11 @@ class HappyTransformer:
         )
         softmax = self._get_prediction_softmax(text_tokens)
 
-        masked_indices = _indices_where(
-            text_tokens,
-            lambda text: text == self.tokenizer.mask_token
-        )
+        masked_indices = [
+            idx
+            for idx, token in enumerate(text_tokens)
+            if token == self.tokenizer.mask_token
+        ]
         
         if options is None:
             return [
