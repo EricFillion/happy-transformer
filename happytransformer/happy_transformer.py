@@ -72,7 +72,7 @@ class HappyTransformer:
         self.mwp_trained = False
 
     def _get_masked_language_model(self):
-        pass
+        raise NotImplementedError()
 
     def _standardize_mask_tokens(self, text):
         '''
