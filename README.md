@@ -2,6 +2,19 @@
 
 # Happy Transformer 
 
+## Table of Contents
+* [News](#News)
+* [Key Features](#Key-Features)
+* [Installation](#Installation)
+* [Initialization](#Initialization)
+* [Word Prediction](#Word-Prediction)
+* [Binary Sequence Classification](#Binary-Sequence-Classification)
+* [Next Sentence Prediction](#Next-Sentence-Prediction)
+* [Question Answering](#Question-Answering)
+* [Masked Word Prediction Fine-Tuning](#Masked-Word-Prediction-Fine-Tuning)
+* [Tech](#Tech)
+* [Call For Contributors](#Call-For-Contributors)
+
 ## News: 
 
 ### November 23rd, 2020
@@ -534,7 +547,7 @@ It was like living in a goldfish bowl and Dan was on edge the minute he came thr
 
 Note 2: Evaluating on Cpu is not recommended as it will take considerably longer.
 
-## Example 3:
+#### Example 3:
 
 ```python
 from happytransformer import HappyROBERTA
