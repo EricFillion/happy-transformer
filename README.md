@@ -381,10 +381,10 @@ print(result) # prints: bert
     2. text: The text containing the answer to the question
     3. k: The number of answers that will be returned 
 
-The output is a list of named tuples in descending order according to their probability. 
-Each tuple contains two fields: text and softmax. 
-The text field contains the answer in the form of a string. 
-The softmax field contains the "probability" of the answer as a float between 0 and 1. 
+The output is a list of  dictionaries. 
+Each dictionary contains two keys: text and softmax. 
+The text key contains the answer in the form of a string. 
+The softmax key contains the "probability" of the answer as a float between 0 and 1. 
 
 ###### Example 1:
 ```sh
@@ -395,18 +395,19 @@ question = "Who does Ernie live with?"
 text = "Ernie is an orange Muppet character on the long running PBS and HBO children's television show Sesame Street. He and his roommate Bert form the comic duo Bert and Ernie, one of the program's centerpieces, with Ernie acting the role of the naïve troublemaker and Bert the world weary foil."  # Source: https://en.wikipedia.org/wiki/Ernie_(Sesame_Street)
 result = happy_bert.answers_to_question(question, text, k=3)
 print(type(result)) # prints: <class 'list'>
-print(result) # prints: [QAAnswer(text='bert', probability=0.9916905164718628), QAAnswer(text='roommate bert', probability=0.004403269849717617), QAAnswer(text='his roommate bert', probability=0.0039062034338712692)]
+print(result) # prints: [{'text': 'bert', 'softmax': 0.9916905164718628}, {'text': 'roommate bert', 'softmax': 0.004403269849717617}, {'text': 'his roommate bert', 'softmax': 0.0039062034338712692}]
+
 
 best_answer = result[0]
 second_best_answer = result[1]
 
-print(type(best_answer)) # prints: <class 'happytransformer.qa_util.QAAnswer'>
-print(best_answer) # prints: QAAnswer(text='bert', probability=0.9916905164718628)
+print(type(best_answer)) # prints:<class 'dict'>
 
-print(best_answer.text) # prints: bert
-print(best_answer.softmax) # prints: 0.9916905164718628
-print(best_answer[0]) # prints: bert
-print(best_answer[1]) # prints:  0.9916905164718628
+print(best_answer) # prints: {'text': 'bert', 'softmax': 0.9916905164718628}
+
+print(best_answer["text"]) # prints: bert
+print(best_answer["softmax"]) # prints: 0.9916905164718628
+
 ```
 
 

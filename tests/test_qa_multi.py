@@ -27,8 +27,8 @@ def test_qa_multi():
         # k is being respected
         assert len(computed_answers) == 10
         # both answering methods yield correct result
-        assert computed_answers[0].text.lower() == expected_answer.lower()
+        assert computed_answers[0]["text"].lower() == expected_answer.lower()
         assert computed_answer.lower() == expected_answer.lower()
-        total_p = sum(answer.softmax for answer in computed_answers)
+        total_p = sum(answer["softmax"] for answer in computed_answers)
         # probabilties for answers_to_question() add up to 1 ish
         assert abs(total_p-1) < 0.01
