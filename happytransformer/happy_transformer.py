@@ -147,7 +147,7 @@ class HappyTransformer:
 
         self._verify_mask_text(text)
 
-        text_tokens = tokenize_sentences(text)
+        text_tokens = tokenize_sentences(self.tokenizer, text)
         softmax = self._get_prediction_softmax(text_tokens)
 
         masked_indices = [

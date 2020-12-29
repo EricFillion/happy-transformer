@@ -92,7 +92,7 @@ class HappyBERT(HappyTransformer):
             self.nsp.to('cuda')
 
         connected = sentence_a + ' ' + sentence_b
-        tokenized_text = tokenize_sentences(connected)
+        tokenized_text = tokenize_sentences(self.tokenizer, connected)
         indexed_tokens = self.tokenizer.convert_tokens_to_ids(tokenized_text)
         segments_ids = self._get_segment_ids(tokenized_text)
         # Convert inputs to PyTorch tensors
