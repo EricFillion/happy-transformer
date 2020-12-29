@@ -1,4 +1,5 @@
 from happytransformer import HappyBERT
+from tests.error import get_error
 
 happy = HappyBERT()
 
@@ -40,3 +41,9 @@ def test_multi_mask_options():
         for mask_predictions in all_predictions
         for prediction in mask_predictions
     )
+
+def test_predict_no_mask_tokens_errors():
+    error = get_error(
+        lambda: happy.predict_masks('There is no mask token in here')
+    )
+    assert type(error) is ValueError
