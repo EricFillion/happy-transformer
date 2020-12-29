@@ -47,3 +47,15 @@ def test_predict_no_mask_tokens_errors():
         lambda: happy.predict_masks('There is no mask token in here')
     )
     assert type(error) is ValueError
+
+def test_predict_with_cls_errors():
+    error = get_error(
+        lambda: happy.predict_masks('There is a [CLS] token in here')
+    )
+    assert type(error) is ValueError
+
+def test_predict_with_sep_errors():
+    error = get_error(
+        lambda: happy.predict_masks('There is a [SEP] token in here')
+    )
+    assert type(error) is ValueError
