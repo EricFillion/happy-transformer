@@ -22,6 +22,7 @@ import pandas as pd
 from happytransformer.classifier_args import classifier_args
 from happytransformer.sequence_classifier import SequenceClassifier
 from happytransformer.mlm_utils import FinetuneMlm, word_prediction_args
+from happytransformer.tokenize import tokenize_sentences
 
 _POSSIBLE_MASK_TOKENS = ['<mask>', '<MASK>', '[MASK]']
 
@@ -146,9 +147,7 @@ class HappyTransformer:
 
         self._verify_mask_text(text)
 
-        text_tokens = (
-            self._get_tokenized_text(text)
-        )
+        text_tokens = tokenize_sentences(text)
         softmax = self._get_prediction_softmax(text_tokens)
 
         masked_indices = [
@@ -183,46 +182,6 @@ class HappyTransformer:
         masks_options = None if options is None else [options]
         predictions = self.predict_masks(text, masks_options, num_results)
         return self.__format_option_scores(predictions[0])
-
-    def _get_tokenized_text(self, text):
-        """
-        Formats a sentence so that it can be tokenized by a transformer.
-        :param text: a 1-2 sentence text that contains [MASK]
-        :return: A string with the same sentence that contains the required
-                 tokens for the transformer
-        """
-
-        # Create a spacing around each punctuation character. eg "!" -> " ! "
-        # TODO: easy: find a cleaner way to do punctuation spacing
-        text = re.sub('([.,!?()])', r' \1 ', text)
-        # text = re.sub('\s{2,}', ' ', text)
-
-        split_text = text.split()
-        new_text = list()
-        new_text.append(self.tokenizer.cls_token)
-
-        for i, char in enumerate(split_text):
-            new_text.append(char.lower())
-            if char not in string.punctuation:
-                pass
-            # must be a punctuation symbol
-            elif i + 1 >= len(split_text):
-                # is the last punctuation so simply add to the new_text
-                pass
-            else:
-                if split_text[i + 1] in string.punctuation:
-                    pass
-                else:
-                    new_text.append(self.tokenizer.sep_token)
-                    # if self.model_name == "ROBERTA":
-                    #     # ROBERTA requires two "</s>" tokens to separate sentences
-                    #     new_text.append(self.sep_token)
-                # must be a middle punctuation
-        new_text.append(self.tokenizer.sep_token)
-
-        text = " ".join(new_text).replace('[mask]', self.tokenizer.mask_token)
-        text = self.tokenizer.tokenize(text)
-        return text
 
     def _get_prediction_softmax(self, text):
         """

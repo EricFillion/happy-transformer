@@ -19,6 +19,7 @@ import numpy as np
 
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.qa_util import qa_probabilities
+from happytransformer.tokenize import tokenize_sentences
 
 class HappyBERT(HappyTransformer):
     """
@@ -91,7 +92,7 @@ class HappyBERT(HappyTransformer):
             self.nsp.to('cuda')
 
         connected = sentence_a + ' ' + sentence_b
-        tokenized_text = self._get_tokenized_text(connected)
+        tokenized_text = tokenize_sentences(connected)
         indexed_tokens = self.tokenizer.convert_tokens_to_ids(tokenized_text)
         segments_ids = self._get_segment_ids(tokenized_text)
         # Convert inputs to PyTorch tensors
