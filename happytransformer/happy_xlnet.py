@@ -28,9 +28,6 @@ class HappyXLNET(HappyTransformer):
         super().__init__(model, "XLNET")
         self.mlm = None
         self.tokenizer = XLNetTokenizer.from_pretrained(model)
-        self.masked_token = self.tokenizer.mask_token
-        self.sep_token = self.tokenizer.sep_token
-        self.cls_token = self.tokenizer.cls_token
 
     def _get_masked_language_model(self):
         """

@@ -11,7 +11,7 @@ from transformers import (
     BertForMaskedLM,
     BertForNextSentencePrediction,
     BertForQuestionAnswering,
-    BertTokenizer
+    BertTokenizerFast
 )
 
 import torch
@@ -43,10 +43,7 @@ class HappyBERT(HappyTransformer):
         self.mlm = None  # Masked Language Model
         self.nsp = None  # Next Sentence Prediction
         self.qa = None   # Question Answering
-        self.tokenizer = BertTokenizer.from_pretrained(model)
-        self.masked_token = self.tokenizer.mask_token
-        self.sep_token = self.tokenizer.sep_token
-        self.cls_token = self.tokenizer.cls_token
+        self.tokenizer = BertTokenizerFast.from_pretrained(model)
 
     def _get_masked_language_model(self):
         """
@@ -138,7 +135,7 @@ class HappyBERT(HappyTransformer):
     def _tokenize_qa(self, question, context):
         input_text = ' '.join([
             question, 
-            self.sep_token,
+            self.tokenizer.sep_token,
             context
         ])
         input_ids = self.tokenizer.encode(input_text)
