@@ -143,9 +143,9 @@ class HappyTransformer:
         where predictions are ordered descendingly by likelihood
         '''
         self._prepare_mlm()
+        self._verify_mask_text(text)
         text = self._standardize_mask_tokens(text)
 
-        self._verify_mask_text(text)
 
         text_tokens = tokenize_sentences(self.tokenizer, text)
         softmax = self._get_prediction_softmax(text_tokens)
