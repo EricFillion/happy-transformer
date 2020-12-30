@@ -22,7 +22,6 @@ import pandas as pd
 from happytransformer.classifier_args import classifier_args
 from happytransformer.sequence_classifier import SequenceClassifier
 from happytransformer.mlm_utils import FinetuneMlm, word_prediction_args
-from happytransformer.tokenize import tokenize_sentences
 
 _POSSIBLE_MASK_TOKENS = ['<mask>', '<MASK>', '[MASK]']
 
@@ -93,7 +92,7 @@ class HappyTransformer:
         '''
         return top predictions for a mask token from all embeddings
         '''
-        scores_tensor, token_ids_tensor = torch.topk(softmax[0, index], k)
+        scores_tensor, token_ids_tensor = torch.topk(softmax[index], k)
         scores = scores_tensor.tolist()
         token_ids = token_ids_tensor.tolist()
         tokens = self.tokenizer.convert_ids_to_tokens(token_ids)
@@ -115,7 +114,7 @@ class HappyTransformer:
             for option in options
         ]
         scores = [
-            self.soft_sum(option_id, softmax[0], index)
+            self.soft_sum(option_id, softmax, index)
             for option_id in option_ids
         ]
         return [
@@ -146,14 +145,13 @@ class HappyTransformer:
         self._verify_mask_text(text)
         text = self._standardize_mask_tokens(text)
 
-
-        text_tokens = tokenize_sentences(self.tokenizer, text)
-        softmax = self._get_prediction_softmax(text_tokens)
+        token_ids = self.tokenizer.encode(text, return_tensors='pt')
+        softmax = self._get_prediction_softmax(token_ids)
 
         masked_indices = [
             idx
-            for idx, token in enumerate(text_tokens)
-            if token == self.tokenizer.mask_token
+            for idx, token_id in enumerate(token_ids[0].tolist())
+            if token_id == self.tokenizer.mask_token_id
         ]
         
         if options is None:
@@ -183,7 +181,7 @@ class HappyTransformer:
         predictions = self.predict_masks(text, masks_options, num_results)
         return self.__format_option_scores(predictions[0])
 
-    def _get_prediction_softmax(self, text):
+    def _get_prediction_softmax(self, token_ids):
         """
         Gets the softmaxes of the predictions for each index in the the given
         input string.
@@ -195,28 +193,12 @@ class HappyTransformer:
 
         """
 
-        indexed_tokens = self.tokenizer.convert_tokens_to_ids(text)
-        # Convert inputs to PyTorch tensors
-        tokens_tensor = torch.tensor([indexed_tokens])
-
         if self.gpu_support == "cuda":
-            tokens_tensor = tokens_tensor.to('cuda')
+            token_ids = token_ids.to('cuda')
 
         with torch.no_grad():
-
-            if self.model_name != "ROBERTA":
-                segments_ids = self._get_segment_ids(text)
-                segments_tensors = torch.tensor([segments_ids])
-                if self.gpu_support == "cuda":
-                    segments_tensors = segments_tensors.to('cuda')
-                outputs = self.mlm(tokens_tensor, token_type_ids=segments_tensors)
-            else:
-                outputs = self.mlm(tokens_tensor)
-
-            predictions = outputs[0]
-
-            softmax = self._softmax(predictions)
-            return softmax
+            outputs = self.mlm(token_ids)
+            return torch.softmax(outputs.logits[0], dim=-1)
 
     def __format_option_scores(self, tupled_predicitons: list):
         """
@@ -237,10 +219,6 @@ class HappyTransformer:
 
             formatted_ranked_scores.append({'word': dic["word"], 'softmax': dic["softmax"]})
         return formatted_ranked_scores
-
-    def _softmax(self, value):
-        # TODO: make it an external function
-        return value.exp() / (value.exp().sum(-1)).unsqueeze(-1)
 
     def _get_segment_ids(self, tokenized_text: list):
         """
