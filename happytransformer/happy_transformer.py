@@ -23,14 +23,6 @@ from happytransformer.classifier_args import classifier_args
 from happytransformer.sequence_classifier import SequenceClassifier
 from happytransformer.mlm_utils import FinetuneMlm, word_prediction_args
 
-def _indices_where(items, predicate):
-    return [
-        idx
-        for idx,item in enumerate(items)
-        if predicate(item)
-    ]
-
-
 _POSSIBLE_MASK_TOKENS = ['<mask>', '<MASK>', '[MASK]']
 
 class HappyTransformer:
@@ -80,7 +72,7 @@ class HappyTransformer:
         self.mwp_trained = False
 
     def _get_masked_language_model(self):
-        pass
+        raise NotImplementedError()
 
     def _standardize_mask_tokens(self, text):
         '''
@@ -100,7 +92,7 @@ class HappyTransformer:
         '''
         return top predictions for a mask token from all embeddings
         '''
-        scores_tensor, token_ids_tensor = torch.topk(softmax[0, index], k)
+        scores_tensor, token_ids_tensor = torch.topk(softmax[index], k)
         scores = scores_tensor.tolist()
         token_ids = token_ids_tensor.tolist()
         tokens = self.tokenizer.convert_ids_to_tokens(token_ids)
@@ -122,7 +114,7 @@ class HappyTransformer:
             for option in options
         ]
         scores = [
-            self.soft_sum(option_id, softmax[0], index)
+            self.soft_sum(option_id, softmax, index)
             for option_id in option_ids
         ]
         return [
@@ -150,19 +142,17 @@ class HappyTransformer:
         where predictions are ordered descendingly by likelihood
         '''
         self._prepare_mlm()
+        self._verify_mask_text(text)
         text = self._standardize_mask_tokens(text)
 
-        self._text_verification(text)
+        token_ids = self.tokenizer.encode(text, return_tensors='pt')
+        softmax = self._get_prediction_softmax(token_ids)
 
-        text_tokens = (
-            self._get_tokenized_text(text)
-        )
-        softmax = self._get_prediction_softmax(text_tokens)
-
-        masked_indices = _indices_where(
-            text_tokens,
-            lambda text: text == self.tokenizer.mask_token
-        )
+        masked_indices = [
+            idx
+            for idx, token_id in enumerate(token_ids[0].tolist())
+            if token_id == self.tokenizer.mask_token_id
+        ]
         
         if options is None:
             return [
@@ -191,47 +181,7 @@ class HappyTransformer:
         predictions = self.predict_masks(text, masks_options, num_results)
         return self.__format_option_scores(predictions[0])
 
-    def _get_tokenized_text(self, text):
-        """
-        Formats a sentence so that it can be tokenized by a transformer.
-        :param text: a 1-2 sentence text that contains [MASK]
-        :return: A string with the same sentence that contains the required
-                 tokens for the transformer
-        """
-
-        # Create a spacing around each punctuation character. eg "!" -> " ! "
-        # TODO: easy: find a cleaner way to do punctuation spacing
-        text = re.sub('([.,!?()])', r' \1 ', text)
-        # text = re.sub('\s{2,}', ' ', text)
-
-        split_text = text.split()
-        new_text = list()
-        new_text.append(self.tokenizer.cls_token)
-
-        for i, char in enumerate(split_text):
-            new_text.append(char.lower())
-            if char not in string.punctuation:
-                pass
-            # must be a punctuation symbol
-            elif i + 1 >= len(split_text):
-                # is the last punctuation so simply add to the new_text
-                pass
-            else:
-                if split_text[i + 1] in string.punctuation:
-                    pass
-                else:
-                    new_text.append(self.tokenizer.sep_token)
-                    # if self.model_name == "ROBERTA":
-                    #     # ROBERTA requires two "</s>" tokens to separate sentences
-                    #     new_text.append(self.sep_token)
-                # must be a middle punctuation
-        new_text.append(self.tokenizer.sep_token)
-
-        text = " ".join(new_text).replace('[mask]', self.tokenizer.mask_token)
-        text = self.tokenizer.tokenize(text)
-        return text
-
-    def _get_prediction_softmax(self, text):
+    def _get_prediction_softmax(self, token_ids):
         """
         Gets the softmaxes of the predictions for each index in the the given
         input string.
@@ -243,28 +193,12 @@ class HappyTransformer:
 
         """
 
-        indexed_tokens = self.tokenizer.convert_tokens_to_ids(text)
-        # Convert inputs to PyTorch tensors
-        tokens_tensor = torch.tensor([indexed_tokens])
-
         if self.gpu_support == "cuda":
-            tokens_tensor = tokens_tensor.to('cuda')
+            token_ids = token_ids.to('cuda')
 
         with torch.no_grad():
-
-            if self.model_name != "ROBERTA":
-                segments_ids = self._get_segment_ids(text)
-                segments_tensors = torch.tensor([segments_ids])
-                if self.gpu_support == "cuda":
-                    segments_tensors = segments_tensors.to('cuda')
-                outputs = self.mlm(tokens_tensor, token_type_ids=segments_tensors)
-            else:
-                outputs = self.mlm(tokens_tensor)
-
-            predictions = outputs[0]
-
-            softmax = self._softmax(predictions)
-            return softmax
+            outputs = self.mlm(token_ids)
+            return torch.softmax(outputs.logits[0], dim=-1)
 
     def __format_option_scores(self, tupled_predicitons: list):
         """
@@ -285,10 +219,6 @@ class HappyTransformer:
 
             formatted_ranked_scores.append({'word': dic["word"], 'softmax': dic["softmax"]})
         return formatted_ranked_scores
-
-    def _softmax(self, value):
-        # TODO: make it an external function
-        return value.exp() / (value.exp().sum(-1)).unsqueeze(-1)
 
     def _get_segment_ids(self, tokenized_text: list):
         """
@@ -312,24 +242,19 @@ class HappyTransformer:
 
         return segment_ids
 
-    def _text_verification(self, text: str):
+    def _verify_mask_text(self, text: str):
 
-        # TODO,  Add cases for the other masked tokens used in common transformer models
-        valid = True
+        if all(
+            mask_token not in text
+            for mask_token in _POSSIBLE_MASK_TOKENS
+        ):
+            raise ValueError('No mask token found')
         if '[MASK]' not in text:
-            self.logger.error("[MASK] was not found in your string. Change the word you want to predict to [MASK]")
-            valid = False
-        if '<mask>' in text or '<MASK>' in text:
-            self.logger.info('Instead of using <mask> or <MASK>, use [MASK] please as it is the convention')
-            valid = True
+            self.logger.warn("[MASK] was not found in your string. Change the word you want to predict to [MASK]")
         if '[CLS]' in text:
-            self.logger.error("[CLS] was found in your string.  Remove it as it will be automatically added later")
-            valid = False
+            raise ValueError("[CLS] was found in your string.  Remove it as it will be automatically added later")
         if '[SEP]' in text:
-            self.logger.error("[SEP] was found in your string.  Remove it as it will be automatically added later")
-            valid = False
-        if not valid:
-            exit()
+            raise ValueError("[SEP] was found in your string.  Remove it as it will be automatically added later")
 
     @staticmethod
     def soft_sum(option: list, softed, mask_id: int):
@@ -382,8 +307,7 @@ class HappyTransformer:
         train_df = self.__process_classifier_data(train_csv_path)
 
         if self.seq is None:
-            self.logger.error("Initialize the sequence classifier before training")
-            exit()
+            raise ValueError("Initialize the sequence classifier before training")
 
         sys.stdout = open(os.devnull,
                           'w')  # Disable printing to stop external libraries from printing
@@ -413,8 +337,7 @@ class HappyTransformer:
         eval_df = self.__process_classifier_data(eval_csv_path)
 
         if not self.seq_trained:
-            self.logger.error("Train the sequence classifier before evaluation")
-            exit()
+            raise ValueError("Train the sequence classifier before evaluation")
 
         eval_df = eval_df.astype("str")
         self.seq.eval_list_data = eval_df.values.tolist()
@@ -438,10 +361,8 @@ class HappyTransformer:
 
         test_df = self.__process_classifier_data(test_csv_path, for_test_data=True)
 
-        # todo finish
         if not self.seq_trained:
-            self.logger.error("Train the sequence classifier before testing")
-            exit()
+            raise ValueError("Train the sequence classifier before testing")
 
         test_df = test_df.astype("str")
         self.seq.test_list_data = test_df.values.tolist()
@@ -515,9 +436,8 @@ class HappyTransformer:
                 self.model_name)
 
         else:
-            self.logger.error(
+            raise ValueError(
                 "Masked language model training is not available for XLNET")
-            sys.exit()
 
     def train_mwp(self, train_path: str):
         """
@@ -539,15 +459,13 @@ class HappyTransformer:
                 self.mwp_trained = True
 
             elif not self.mwp_trainer:  # If trainer doesn't exist
-                self.logger.error(
+                raise ValueError(
                     "The model is not loaded, you should run init_train_mwp.")
-                sys.exit()
 
         else:  # If the user doesn't have a gpu.
-            self.logger.error(
+            raise ValueError(
                 "You are using %s, you must use a GPU to train a MLM",
                 self.gpu_support)
-            sys.exit()
 
     def eval_mwp(self, eval_path: str, batch_size: int = 2):
         """
@@ -561,9 +479,8 @@ class HappyTransformer:
 
         """
         if not self.mwp_trainer:
-            self.logger.error(
+            raise ValueError(
                 "The model is not loaded, you should run init_train_mwp.")
-            sys.exit()
 
         if not self.mwp_trained:
             self.logger.warning(

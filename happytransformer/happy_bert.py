@@ -82,8 +82,7 @@ class HappyBERT(HappyTransformer):
         """
 
         if not self.__is_one_sentence(sentence_a) or not self.__is_one_sentence(sentence_b):
-            self.logger.error('Each inputted text variable for the "predict_next_sentence" method must contain a single sentence')
-            exit()
+            raise ValueError('Each inputted text variable for the "predict_next_sentence" method must contain a single sentence')
 
         if self.nsp is None:
             self._get_next_sentence_prediction()
@@ -91,19 +90,13 @@ class HappyBERT(HappyTransformer):
         if self.gpu_support == 'cuda':
             self.nsp.to('cuda')
 
-        connected = sentence_a + ' ' + sentence_b
-        tokenized_text = self._get_tokenized_text(connected)
-        indexed_tokens = self.tokenizer.convert_tokens_to_ids(tokenized_text)
-        segments_ids = self._get_segment_ids(tokenized_text)
-        # Convert inputs to PyTorch tensors
-        tokens_tensor = torch.tensor([indexed_tokens])
-        segments_tensors = torch.tensor([segments_ids])
+        encoded = self.tokenizer(sentence_a, sentence_b, return_tensors='pt')
         with torch.no_grad():
-            predictions = self.nsp(tokens_tensor, token_type_ids=segments_tensors)[0]
+            scores = self.nsp(encoded['input_ids'], token_type_ids=encoded['token_type_ids']).logits[0]
 
-        probabilities = torch.nn.Softmax(dim=1)(predictions)
+        probabilities = torch.softmax(scores, dim=0)
         # probability that sentence B follows sentence A
-        correct_probability = probabilities[0][0].item()
+        correct_probability = probabilities[0].item()
 
         if self.gpu_support == 'cuda':
             torch.cuda.empty_cache()
