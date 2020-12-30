@@ -91,17 +91,11 @@ class HappyBERT(HappyTransformer):
         if self.gpu_support == 'cuda':
             self.nsp.to('cuda')
 
-        connected = sentence_a + ' ' + sentence_b
-        tokenized_text = tokenize_sentences(self.tokenizer, connected)
-        indexed_tokens = self.tokenizer.convert_tokens_to_ids(tokenized_text)
-        segments_ids = self._get_segment_ids(tokenized_text)
-        # Convert inputs to PyTorch tensors
-        tokens_tensor = torch.tensor([indexed_tokens])
-        segments_tensors = torch.tensor([segments_ids])
+        encoded = self.tokenizer(sentence_a, sentence_b, return_tensors='pt')
         with torch.no_grad():
-            predictions = self.nsp(tokens_tensor, token_type_ids=segments_tensors)[0]
+            predictions = self.nsp(encoded['input_ids'], token_type_ids=encoded['token_type_ids'])[0]
 
-        probabilities = torch.nn.Softmax(dim=1)(predictions)
+        probabilities = torch.softmax(predictions,dim=1)
         # probability that sentence B follows sentence A
         correct_probability = probabilities[0][0].item()
 
