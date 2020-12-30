@@ -266,13 +266,13 @@ class HappyTransformer:
 
     def _verify_mask_text(self, text: str):
 
-        if '[MASK]' not in text:
-            self.logger.warn("[MASK] was not found in your string. Change the word you want to predict to [MASK]")
         if all(
             mask_token not in text
             for mask_token in _POSSIBLE_MASK_TOKENS
         ):
             raise ValueError('No mask token found')
+        if '[MASK]' not in text:
+            self.logger.warn("[MASK] was not found in your string. Change the word you want to predict to [MASK]")
         if '[CLS]' in text:
             raise ValueError("[CLS] was found in your string.  Remove it as it will be automatically added later")
         if '[SEP]' in text:
