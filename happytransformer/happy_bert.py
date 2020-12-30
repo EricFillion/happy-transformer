@@ -19,7 +19,6 @@ import numpy as np
 
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.qa_util import qa_probabilities
-from happytransformer.tokenize import tokenize_sentences
 
 class HappyBERT(HappyTransformer):
     """
@@ -93,11 +92,11 @@ class HappyBERT(HappyTransformer):
 
         encoded = self.tokenizer(sentence_a, sentence_b, return_tensors='pt')
         with torch.no_grad():
-            predictions = self.nsp(encoded['input_ids'], token_type_ids=encoded['token_type_ids'])[0]
+            scores = self.nsp(encoded['input_ids'], token_type_ids=encoded['token_type_ids']).logits[0]
 
-        probabilities = torch.softmax(predictions,dim=1)
+        probabilities = torch.softmax(scores, dim=0)
         # probability that sentence B follows sentence A
-        correct_probability = probabilities[0][0].item()
+        correct_probability = probabilities[0].item()
 
         if self.gpu_support == 'cuda':
             torch.cuda.empty_cache()
