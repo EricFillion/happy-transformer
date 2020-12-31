@@ -96,7 +96,7 @@ class HappyTransformer:
         with torch.no_grad():
             qa_output = self.qa(
                 input_ids=encoded['input_ids'],
-                token_type_ids=encoded['token_type_ids']
+                token_type_ids=encoded.get('token_type_ids',None)
             )
         sep_id_index = input_ids_list.index(self.tokenizer.sep_token_id)
         probabilities = qa_probabilities(

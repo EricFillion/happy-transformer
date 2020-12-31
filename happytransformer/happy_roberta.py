@@ -6,7 +6,10 @@ HappyROBERTA: a wrapper over PyTorch's RoBERTa implementation
 
 from happytransformer.happy_transformer import HappyTransformer
 
-from transformers import RobertaForMaskedLM, RobertaTokenizerFast
+from transformers import (
+    RobertaForMaskedLM, RobertaTokenizerFast, 
+    RobertaForQuestionAnswering
+)
 
 class HappyROBERTA(HappyTransformer):
     """
@@ -35,6 +38,10 @@ class HappyROBERTA(HappyTransformer):
         """
         self.mlm = RobertaForMaskedLM.from_pretrained(self.model)
         self.mlm.eval()
+
+    def _get_question_answering(self):
+        self.qa = RobertaForQuestionAnswering.from_pretrained("deepset/roberta-base-squad2")
+        self.qa.eval()  
 
     def _postprocess_option(self, text):
         if text.startswith("Ġ"):
