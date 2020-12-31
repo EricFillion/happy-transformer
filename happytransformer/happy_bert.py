@@ -67,61 +67,6 @@ class HappyBERT(HappyTransformer):
         self.qa = BertForQuestionAnswering.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
         self.qa.eval()
 
-    def predict_next_sentence(self, sentence_a, sentence_b, use_probability=False):
-        """
-        Determines if sentence B is likely to be a continuation after sentence
-        A.
-        :param sentence_a: First sentence
-        :param sentence_b: Second sentence to test if it comes after the first
-        :param use_probability: Toggle outputting probability instead of boolean
-        :return Result of whether sentence B follows sentence A,
-                as either a probability or a boolean
-        """
-
-        if not self.__is_one_sentence(sentence_a) or not self.__is_one_sentence(sentence_b):
-            raise ValueError('Each inputted text variable for the "predict_next_sentence" method must contain a single sentence')
-
-        if self.nsp is None:
-            self._get_next_sentence_prediction()
-
-        if self.gpu_support == 'cuda':
-            self.nsp.to('cuda')
-
-        encoded = self.tokenizer(sentence_a, sentence_b, return_tensors='pt')
-        with torch.no_grad():
-            scores = self.nsp(encoded['input_ids'], token_type_ids=encoded['token_type_ids']).logits[0]
-
-        probabilities = torch.softmax(scores, dim=0)
-        # probability that sentence B follows sentence A
-        correct_probability = probabilities[0].item()
-
-        if self.gpu_support == 'cuda':
-            torch.cuda.empty_cache()
-
-        return (
-            correct_probability if use_probability else 
-            correct_probability >= 0.5
-        )
-
-    def __is_one_sentence(self, text):
-        """
-        Used to verify the proper input requirements for sentence_relation.
-        The text must contain no more than a single sentence.
-        Casual use of punctuation is accepted, such as using multiple exclamation marks.
-        :param text: A body of text
-        :return: True if the body of text contains a single sentence, else False
-        """
-        split_text = re.split('[?.!]', text)
-        sentence_found = False
-        for possible_sentence in split_text:
-            for char in possible_sentence:
-                if char.isalpha():
-                    if sentence_found:
-                        return False
-                    sentence_found = True
-                    break
-        return True
-
     def answer_question(self, question, text):
         """
         Using the given text, find the answer to the given question and return it.

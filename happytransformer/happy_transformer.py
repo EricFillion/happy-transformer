@@ -22,6 +22,7 @@ import pandas as pd
 from happytransformer.classifier_args import classifier_args
 from happytransformer.sequence_classifier import SequenceClassifier
 from happytransformer.mlm_utils import FinetuneMlm, word_prediction_args
+from happytransformer.sentence import is_one_sentence
 
 _POSSIBLE_MASK_TOKENS = ['<mask>', '<MASK>', '[MASK]']
 
@@ -67,6 +68,12 @@ class HappyTransformer:
         self.mwp_trained = False
 
     def _get_masked_language_model(self):
+        raise NotImplementedError()
+
+    def _get_next_sentence_prediction(self):
+        raise NotImplementedError()
+
+    def _get_question_answering(self):
         raise NotImplementedError()
 
     def _standardize_mask_tokens(self, text):
@@ -214,6 +221,42 @@ class HappyTransformer:
 
             formatted_ranked_scores.append({'word': dic["word"], 'softmax': dic["softmax"]})
         return formatted_ranked_scores
+
+    def predict_next_sentence(self, sentence_a, sentence_b, use_probability=False):
+        """
+        Determines if sentence B is likely to be a continuation after sentence
+        A.
+        :param sentence_a: First sentence
+        :param sentence_b: Second sentence to test if it comes after the first
+        :param use_probability: Toggle outputting probability instead of boolean
+        :return Result of whether sentence B follows sentence A,
+                as either a probability or a boolean
+        """
+
+        if not is_one_sentence(sentence_a) or not is_one_sentence(sentence_b):
+            raise ValueError('Each inputted text variable for the "predict_next_sentence" method must contain a single sentence')
+
+        if self.nsp is None:
+            self._get_next_sentence_prediction()
+
+        if self.gpu_support == 'cuda':
+            self.nsp.to('cuda')
+
+        encoded = self.tokenizer(sentence_a, sentence_b, return_tensors='pt')
+        with torch.no_grad():
+            scores = self.nsp(encoded['input_ids'], token_type_ids=encoded['token_type_ids']).logits[0]
+
+        probabilities = torch.softmax(scores, dim=0)
+        # probability that sentence B follows sentence A
+        correct_probability = probabilities[0].item()
+
+        if self.gpu_support == 'cuda':
+            torch.cuda.empty_cache()
+
+        return (
+            correct_probability if use_probability else 
+            correct_probability >= 0.5
+        )
 
     def _get_segment_ids(self, tokenized_text: list):
         """
