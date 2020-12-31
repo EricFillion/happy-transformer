@@ -94,10 +94,7 @@ class HappyTransformer:
         if self.qa is None:
             self._get_question_answering()
         with torch.no_grad():
-            qa_output = self.qa(
-                input_ids=encoded['input_ids'],
-                token_type_ids=encoded.get('token_type_ids',None)
-            )
+            qa_output = self.qa(**encoded)
         sep_id_index = input_ids_list.index(self.tokenizer.sep_token_id)
         probabilities = qa_probabilities(
             # only consider logits from the context part of the embedding.
@@ -291,7 +288,7 @@ class HappyTransformer:
 
         encoded = self.tokenizer(sentence_a, sentence_b, return_tensors='pt')
         with torch.no_grad():
-            scores = self.nsp(encoded['input_ids'], token_type_ids=encoded['token_type_ids']).logits[0]
+            scores = self.nsp(**encoded).logits[0]
 
         probabilities = torch.softmax(scores, dim=0)
         # probability that sentence B follows sentence A
