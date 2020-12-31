@@ -77,15 +77,6 @@ class HappyBERT(HappyTransformer):
         """
         return self.answers_to_question(question, text, 1)[0]["text"]
 
-    def _tokenize_qa(self, question, context):
-        input_text = ' '.join([
-            question, 
-            self.tokenizer.sep_token,
-            context
-        ])
-        input_ids = self.tokenizer.encode(input_text)
-        return input_ids
-
     def _run_qa_model(self, input_ids):
         if self.qa is None:
             self._get_question_answering()
@@ -101,7 +92,7 @@ class HappyBERT(HappyTransformer):
             )
 
     def answers_to_question(self, question, context, k=3):
-        input_ids = self._tokenize_qa(question, context)
+        input_ids = self.tokenizer.encode(question, context)
         qa_output = self._run_qa_model(input_ids)
         sep_id_index = input_ids.index(self.tokenizer.sep_token_id)
         probabilities = qa_probabilities(
