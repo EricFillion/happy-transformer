@@ -18,7 +18,6 @@ import torch
 import numpy as np
 
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.qa_util import qa_probabilities
 
 class HappyBERT(HappyTransformer):
     """
@@ -66,48 +65,3 @@ class HappyBERT(HappyTransformer):
         """
         self.qa = BertForQuestionAnswering.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
         self.qa.eval()
-
-    def answer_question(self, question, text):
-        """
-        Using the given text, find the answer to the given question and return it.
-
-        :param question: The question to be answered
-        :param text: The text containing the answer to the question
-        :return: The answer to the given question, as a string
-        """
-        return self.answers_to_question(question, text, 1)[0]["text"]
-
-    def answers_to_question(self, question, context, k=3):
-        encoded = self.tokenizer(question, context, return_tensors='pt')
-        input_ids_list = encoded['input_ids'][0].tolist()
-        if self.qa is None:
-            self._get_question_answering()
-        with torch.no_grad():
-            qa_output = self.qa(
-                input_ids=encoded['input_ids'],
-                token_type_ids=encoded['token_type_ids']
-            )
-        sep_id_index = input_ids_list.index(self.tokenizer.sep_token_id)
-        probabilities = qa_probabilities(
-            # only consider logits from the context part of the embedding.
-            # that is, between the middle [SEP] token
-            # and the final [SEP] token
-            qa_output.start_logits[0][sep_id_index+1:-1],
-            qa_output.end_logits[0][sep_id_index+1:-1],
-            k
-        )
-        # qa probabilities use indices relative to context.
-        # tokens use indices relative to overall question [SEP] context embedding.
-        # need offset to resolve this difference
-        token_offset = sep_id_index + 1
-
-        return [
-            {
-                "text": self.tokenizer.decode(
-                    # grab ids from start to end (inclusive) and decode to text
-                    input_ids_list[token_offset+answer.start_idx : token_offset+answer.end_idx+1]
-                ),
-                "softmax": answer.probability
-            }
-            for answer in probabilities
-        ]
