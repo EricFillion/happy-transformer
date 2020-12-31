@@ -302,28 +302,6 @@ class HappyTransformer:
             correct_probability >= 0.5
         )
 
-    def _get_segment_ids(self, tokenized_text: list):
-        """
-        Converts a list of tokens into segment_ids. The segment id is a array
-        representation of the location for each character in the
-        first and second sentence. This method only words with 1-2 sentences.
-        Example:
-        tokenized_text = ['[CLS]', 'who', 'was', 'jim', 'henson', '?', '[SEP]',
-                          'jim', '[MASK]', 'was', 'a', 'puppet', '##eer',
-                          '[SEP]']
-        segments_ids = [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1]
-        returns segments_ids
-        """
-        split_location = tokenized_text.index(self.tokenizer.sep_token)
-
-        segment_ids = [
-            0 if idx <= split_location else 1
-            for idx in range(len(tokenized_text))
-        ]
-        # add exception case for XLNet
-
-        return segment_ids
-
     def _verify_mask_text(self, text: str):
 
         if all(
