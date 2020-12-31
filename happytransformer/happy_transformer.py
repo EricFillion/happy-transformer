@@ -88,6 +88,9 @@ class HappyTransformer:
         """
         return self.answers_to_question(question, text, 1)[0]["text"]
 
+    def _postprocess_qa_answer(self, text):
+        return text
+
     def answers_to_question(self, question, context, k=3):
         encoded = self.tokenizer(question, context, return_tensors='pt')
         input_ids_list = encoded['input_ids'][0].tolist()
@@ -111,10 +114,10 @@ class HappyTransformer:
 
         return [
             {
-                "text": self.tokenizer.decode(
+                "text": self._postprocess_qa_answer(self.tokenizer.decode(
                     # grab ids from start to end (inclusive) and decode to text
                     input_ids_list[token_offset+answer.start_idx : token_offset+answer.end_idx+1]
-                ),
+                )),
                 "softmax": answer.probability
             }
             for answer in probabilities

@@ -49,3 +49,6 @@ class HappyROBERTA(HappyTransformer):
         if text == '</s>':
             return '.'
         return text
+
+    def _postprocess_qa_answer(self, text):
+        return text.strip()
