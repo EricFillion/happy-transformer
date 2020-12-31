@@ -77,24 +77,17 @@ class HappyBERT(HappyTransformer):
         """
         return self.answers_to_question(question, text, 1)[0]["text"]
 
-    def _run_qa_model(self, input_ids):
+    def answers_to_question(self, question, context, k=3):
+        encoded = self.tokenizer(question, context, return_tensors='pt')
+        input_ids_list = encoded['input_ids'][0].tolist()
         if self.qa is None:
             self._get_question_answering()
-        sep_id_index = input_ids.index(self.tokenizer.sep_token_id)
-        before_after_ids = [
-            0 if idx <= sep_id_index else 1
-            for idx, _ in enumerate(input_ids)
-        ]
         with torch.no_grad():
-            return self.qa(
-                input_ids=torch.tensor([input_ids]),
-                token_type_ids=torch.tensor([before_after_ids])
+            qa_output = self.qa(
+                input_ids=encoded['input_ids'],
+                token_type_ids=encoded['token_type_ids']
             )
-
-    def answers_to_question(self, question, context, k=3):
-        input_ids = self.tokenizer.encode(question, context)
-        qa_output = self._run_qa_model(input_ids)
-        sep_id_index = input_ids.index(self.tokenizer.sep_token_id)
+        sep_id_index = input_ids_list.index(self.tokenizer.sep_token_id)
         probabilities = qa_probabilities(
             # only consider logits from the context part of the embedding.
             # that is, between the middle [SEP] token
@@ -109,11 +102,12 @@ class HappyBERT(HappyTransformer):
         token_offset = sep_id_index + 1
 
         return [
-            {"text": self.tokenizer.decode(
+            {
+                "text": self.tokenizer.decode(
                     # grab ids from start to end (inclusive) and decode to text
-                    input_ids[token_offset+answer.start_idx : token_offset+answer.end_idx+1]
+                    input_ids_list[token_offset+answer.start_idx : token_offset+answer.end_idx+1]
                 ),
-            "softmax": answer.probability}
-
+                "softmax": answer.probability
+            }
             for answer in probabilities
         ]
