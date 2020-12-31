@@ -67,14 +67,15 @@ class HappyTransformer:
         self.mwp_trainer = None
         self.mwp_trained = False
 
+    # override these methods in subclasses
     def _get_masked_language_model(self):
-        raise NotImplementedError()
+        raise NotImplementedError('This model does not support Masked Language Modeling')
 
     def _get_next_sentence_prediction(self):
-        raise NotImplementedError()
+        raise NotImplementedError('This model does not support Next Sentence Prediction')
 
     def _get_question_answering(self):
-        raise NotImplementedError()
+        raise NotImplementedError('This model does not support Question Answering')
 
     def _standardize_mask_tokens(self, text):
         '''
