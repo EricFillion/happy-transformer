@@ -42,12 +42,7 @@ class HappyTransformer:
         self.seq = None  # Sequence Classification
         self.qa = None  # Question Answering
         self.mlm_args = None  # Mask Language Model Finetuning
-
-        # the following variables are declared in the  child class:
         self.tokenizer = None
-
-        # Child class sets to indicate which model is being used
-        self.tag_one_transformers = ['BERT', "ROBERTA", 'XLNET']
 
         # GPU support
         self.gpu_support = torch.device(

@@ -6,7 +6,7 @@ HappyROBERTA: a wrapper over PyTorch's RoBERTa implementation
 
 from happytransformer.happy_transformer import HappyTransformer
 
-from transformers import RobertaForMaskedLM, RobertaTokenizer
+from transformers import RobertaForMaskedLM, RobertaTokenizerFast
 
 class HappyROBERTA(HappyTransformer):
     """
@@ -27,10 +27,7 @@ class HappyROBERTA(HappyTransformer):
 
         self.mlm = None  # Masked Language Model
         self.nsp = None  # Next Sentence Prediction
-        self.tokenizer = RobertaTokenizer.from_pretrained(model)
-        self.masked_token = self.tokenizer.mask_token
-        self.sep_token = self.tokenizer.sep_token
-        self.cls_token = self.tokenizer.cls_token
+        self.tokenizer = RobertaTokenizerFast.from_pretrained(model)
 
     def _get_masked_language_model(self):
         """
