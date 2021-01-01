@@ -3,7 +3,6 @@ HappyBERT: a wrapper over PyTorch's BERT implementation
 
 """
 
-from collections import namedtuple
 # disable pylint TODO warning
 # pylint: disable=W0511
 import re
@@ -11,14 +10,15 @@ from transformers import (
     BertForMaskedLM,
     BertForNextSentencePrediction,
     BertForQuestionAnswering,
-    BertTokenizer
+    BertTokenizerFast
+
 )
 
 import torch
-import numpy as np
+from happytransformer.runners.runner_answer_question import AnswerQuestionRunner
 
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.qa_util import qa_probabilities
+from happytransformer.trainers.trainer_qa import QATrainer
 
 class HappyBERT(HappyTransformer):
     """
@@ -39,14 +39,24 @@ class HappyBERT(HappyTransformer):
             """
 
     def __init__(self, model='bert-base-uncased'):
+        # todo remove model parameter. Each model will have its own
         super().__init__(model, "BERT")
         self.mlm = None  # Masked Language Model
         self.nsp = None  # Next Sentence Prediction
-        self.qa = None   # Question Answering
-        self.tokenizer = BertTokenizer.from_pretrained(model)
+
+        #todo separate tokenizer for each model
+        self.tokenizer = BertTokenizerFast.from_pretrained("bert-base-uncased")
         self.masked_token = self.tokenizer.mask_token
         self.sep_token = self.tokenizer.sep_token
         self.cls_token = self.tokenizer.cls_token
+
+        # ------------------------ QA
+        self.__qa_model = None   # Question Answering
+        self.__qa_tokenizer = None
+
+        self.__qa_init = False
+        self.__qa_trainer = None
+        self.__qa_runner = None
 
     def _get_masked_language_model(self):
         """
@@ -62,13 +72,8 @@ class HappyBERT(HappyTransformer):
         self.nsp = BertForNextSentencePrediction.from_pretrained(self.model)
         self.nsp.eval()
 
-    def _get_question_answering(self):
-        """
-        Initializes the BertForQuestionAnswering transformer
-        NOTE: This uses the bert-large-uncased-whole-word-masking-finetuned-squad pretraining for best results.
-        """
-        self.qa = BertForQuestionAnswering.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
-        self.qa.eval()
+
+
 
     def predict_next_sentence(self, sentence_a, sentence_b, use_probability=False):
         """
@@ -131,63 +136,72 @@ class HappyBERT(HappyTransformer):
                     sentence_found = True
                     break
         return True
+#-------------------------------------------------------#
+
+                # QUESTION ANSWERING #
+#-------------------------------------------------------#
+
+    def init_qa(self, model='bert-large-uncased-whole-word-masking-finetuned-squad'):
+        """
+        Initializes the BertForQuestionAnswering transformer
+        NOTE: This uses the bert-large-uncased-whole-word-masking-finetuned-squad pretraining for best results.
+        """
+        self.__qa_model = BertForQuestionAnswering.from_pretrained(model)
+        self.__qa_tokenizer = BertTokenizerFast.from_pretrained(model)
+        self.__qa_model.eval()
+
+        if self.gpu_support == 'cuda':
+            self.__qa_model.to('cuda')
+
+        self.__qa_runner = AnswerQuestionRunner(self._model_name, self.__qa_model, self.__qa_tokenizer)
+        self.__qa_init = True
+
+    def answers_to_question(self, question, context, k=3):
+        if self.__qa_init:
+            return self.__qa_runner.run_answers_to_question(question, context, k=k)
+        else:
+            self._init_model_first_warning("question answering", "init_qa(model_name)")
+
 
     def answer_question(self, question, text):
         """
         Using the given text, find the answer to the given question and return it.
 
         :param question: The question to be answered
+        #todo breaking change: change text to context
         :param text: The text containing the answer to the question
         :return: The answer to the given question, as a string
         """
-        return self.answers_to_question(question, text, 1)[0]["text"]
+        if self.__qa_init:
+            return self.__qa_runner.run_answer_question(question, text)
+        else:
+            self._init_model_first_warning("question answering", "init_qa(model_name)")
 
-    def _tokenize_qa(self, question, context):
-        input_text = ' '.join([
-            question, 
-            self.sep_token,
-            context
-        ])
-        input_ids = self.tokenizer.encode(input_text)
-        return input_ids
+    def train_qa(self, filepath, args=None):
+        if self.__qa_init:
+            if self.__qa_trainer==None:
+                # model, model_name, tokenizer, args, model_type, device, runne
+                self.__qa_trainer = QATrainer(self.__qa_model, "bert", self.tokenizer,  self.gpu_support, self.__qa_runner, self.logger)
 
-    def _run_qa_model(self, input_ids):
-        if self.qa is None:
-            self._get_question_answering()
-        sep_id_index = input_ids.index(self.tokenizer.sep_token_id)
-        before_after_ids = [
-            0 if idx <= sep_id_index else 1
-            for idx, _ in enumerate(input_ids)
-        ]
-        with torch.no_grad():
-            return self.qa(
-                input_ids=torch.tensor([input_ids]),
-                token_type_ids=torch.tensor([before_after_ids])
-            )
+            self.__qa_trainer.train(filepath, args)
+        else:
+            self._init_model_first_warning("question answering", "init_qa(model_name)")
 
-    def answers_to_question(self, question, context, k=3):
-        input_ids = self._tokenize_qa(question, context)
-        qa_output = self._run_qa_model(input_ids)
-        sep_id_index = input_ids.index(self.tokenizer.sep_token_id)
-        probabilities = qa_probabilities(
-            # only consider logits from the context part of the embedding.
-            # that is, between the middle [SEP] token
-            # and the final [SEP] token
-            qa_output.start_logits[0][sep_id_index+1:-1],
-            qa_output.end_logits[0][sep_id_index+1:-1],
-            k
-        )
-        # qa probabilities use indices relative to context.
-        # tokens use indices relative to overall question [SEP] context embedding.
-        # need offset to resolve this difference
-        token_offset = sep_id_index + 1
+    def test_qa(self, filepath, args=None):
+        if self.__qa_init:
+            if self.qa_trainer == None:
+                self.qa_trainer = QATrainer(self.__qa_model, "bert", self.tokenizer, self.gpu_support, self.__qa_runner, self.logger)
 
-        return [
-            {"text": self.tokenizer.decode(
-                    # grab ids from start to end (inclusive) and decode to text
-                    input_ids[token_offset+answer.start_idx : token_offset+answer.end_idx+1]
-                ),
-            "softmax": answer.probability}
+            self.__qa_trainer.train(filepath, args)
+        else:
+            self._init_model_first_warning("question answering", "init_qa(model_name)")
 
-            for answer in probabilities
-        ]
+    def eval_qa(self, filepath, output_filepath=None, args=None):
+        if self.__qa_init:
+            if self.__qa_trainer == None:
+                self.__qa_trainer = QATrainer(self.__qa_model, "bert", self.tokenizer, self.gpu_support,  self.__qa_runner, self.logger)
+
+            return self.__qa_trainer.eval(filepath, args, output_filepath)
+        else:
+            self._init_model_first_warning("question answering", "init_qa(model_name)")
+            return - 1

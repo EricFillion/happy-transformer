@@ -7,7 +7,6 @@ HappyTransformer is a wrapper over pytorch_transformers to make it
 easier to use.
 """
 
-from collections import namedtuple
 import string
 import re
 import os
@@ -45,7 +44,7 @@ class HappyTransformer:
     def __init__(self, model, model_name):
         # Transformer and tokenizer set in child class
         self.model = model
-        self.model_name = model_name
+        self._model_name = model_name
         self.mlm = None  # Masked Language Model
         self.seq = None  # Sequence Classification
         self.qa = None  # Question Answering
@@ -62,6 +61,9 @@ class HappyTransformer:
             "cuda" if torch.cuda.is_available()
             else "cpu"
         )
+
+        self.device = True if torch.cuda.is_available() else False
+
 
         # show only happytransformer logs
         handler = logging.StreamHandler()
@@ -572,3 +574,8 @@ class HappyTransformer:
         results = self.mwp_trainer.evaluate(eval_path, batch_size)
 
         return results
+
+    def _init_model_first_warning(self, model_type, method_name):
+
+        # todo make this a logger message
+        print("First initialize the", model_type, "using the", method_name, "method")

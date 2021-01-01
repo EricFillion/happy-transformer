@@ -4,7 +4,8 @@ Tests for the "answers_to_question" method that can be accessed through a HappyB
 
 from happytransformer import HappyBERT
 
-happy_bert = HappyBERT('bert-large-uncased-whole-word-masking-finetuned-squad')
+happy_bert = HappyBERT()
+happy_bert.init_qa()
 
 PARAGRAPH = (
     'McGill is a university located in Montreal. '
