@@ -122,7 +122,8 @@ class QATrainer(Trainer):
         #todo
         pass
 
-    def __get_train_eval_data(self, filepath):
+    @staticmethod
+    def __get_train_eval_data(filepath):
         """
         Used for parsing data for training and evaluating (both contain labels)
         :param filepath: a string that contains the location of the data
@@ -145,8 +146,9 @@ class QATrainer(Trainer):
 
         return contexts, questions, answers
 
+    @staticmethod
 
-    def __add_end_idx(self, contexts, answers):
+    def __add_end_idx(contexts, answers):
         for answer, context in zip(answers, contexts):
 
             gold_text = answer['answer_text']

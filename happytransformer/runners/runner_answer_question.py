@@ -1,11 +1,9 @@
 import torch
 
+from happytransformer.runners.runner_util import biggest_sums
 from collections import namedtuple
 
-
-class AnswerQuestionRunner():
-    SumPair = namedtuple('SumPair', ['idx1', 'idx2', 'sum'])
-
+class QuestionAnswering():
     def __init__(self, type, model, tokenizer):
         self.type = type # BERT, ROBERTA, ALBERT etc
         self.model = model
@@ -70,35 +68,6 @@ class AnswerQuestionRunner():
                 token_type_ids=torch.tensor([before_after_ids])
             )
 
-    def biggest_sums(self, items_a, items_b):
-        '''
-        compute biggest sums from two descending ordered lists,
-        labeled by indices
-        :param items_a: list of numeric values, sorted descendingly
-        :param items_b: list of numeric values, sorted descendingly
-        :returns: list of namedtuples of the form (idx1,idx2,sum),
-        sorted by descending sum
-        '''
-        a_index = b_index = 0
-        while a_index < len(items_a) and b_index < len(items_b):
-            yield self.SumPair(
-                a_index, b_index,
-                sum=items_a[a_index] + items_b[b_index]
-            )
-            # increment in whichever direction has smaller gain
-            # fallback to -inf at end of list.
-            # this will always be taken last.
-            next_from_a = items_a[a_index + 1] if a_index + 1 < len(items_a) else float('-inf')
-            next_from_b = items_b[b_index + 1] if b_index + 1 < len(items_b) else float('-inf')
-
-            diff_a = items_a[a_index] - next_from_a
-            diff_b = items_b[b_index] - next_from_b
-
-            if diff_a >= diff_b:
-                b_index += 1
-            else:
-                a_index += 1
-
     QAAnswerLogit = namedtuple('QaAnswerLogit', [
         'start_idx', 'end_idx', 'logit'
     ])
@@ -130,7 +99,7 @@ class AnswerQuestionRunner():
                 logit=sum_pair.sum
             )
             for sum_pair in
-            self.biggest_sums(sorted_start_scores, sorted_end_scores)
+            biggest_sums(sorted_start_scores, sorted_end_scores)
         )
         # filter for only answers which have end at or after start
         legit_answers = (

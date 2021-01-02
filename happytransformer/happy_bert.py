@@ -15,7 +15,7 @@ from transformers import (
 )
 
 import torch
-from happytransformer.runners.runner_answer_question import AnswerQuestionRunner
+from happytransformer.runners.runner_answer_question import QuestionAnswering
 
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.trainers.trainer_qa import QATrainer
@@ -45,7 +45,7 @@ class HappyBERT(HappyTransformer):
         self.nsp = None  # Next Sentence Prediction
 
         #todo separate tokenizer for each model
-        self.tokenizer = BertTokenizerFast.from_pretrained("bert-base-uncased")
+        self.tokenizer = BertTokenizerFast.from_pretrained(model)
         self.masked_token = self.tokenizer.mask_token
         self.sep_token = self.tokenizer.sep_token
         self.cls_token = self.tokenizer.cls_token
@@ -153,7 +153,7 @@ class HappyBERT(HappyTransformer):
         if self.gpu_support == 'cuda':
             self.__qa_model.to('cuda')
 
-        self.__qa_runner = AnswerQuestionRunner(self._model_name, self.__qa_model, self.__qa_tokenizer)
+        self.__qa_runner = QuestionAnswering(self._model_name, self.__qa_model, self.__qa_tokenizer)
         self.__qa_init = True
 
     def answers_to_question(self, question, context, k=3):

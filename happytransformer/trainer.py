@@ -83,11 +83,10 @@ class Trainer:
             self.logger.info(status_output)
 
     def _output_result_to_csv(self, output_filepath, fieldnames, results):
-            with open(output_filepath, 'w') as csv_file:
-                csv_writer = DictWriter(csv_file, fieldnames=fieldnames)
-                csv_writer.writeheader()
-                for result in results:
-                    csv_writer.writerow(
-                        result
-                    )
-            csv_file.close()
+        with open(output_filepath, 'w') as csv_file:
+            csv_writer = DictWriter(csv_file, fieldnames=fieldnames)
+            csv_writer.writeheader()
+            for result in results:
+                csv_writer.writerow(
+                    result
+                )
