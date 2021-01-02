@@ -9,7 +9,7 @@ class QuestionAnswering():
         self.model = model
         self.tokenizer = tokenizer
 
-    def run_answers_to_question(self,  question, context, k=3):
+    def answers_to_question(self,  question, context, k=3):
         input_ids = self._tokenize_qa(question, context)
         qa_output = self._run_qa_model(input_ids)
         sep_id_index = input_ids.index(self.tokenizer.sep_token_id)
@@ -35,7 +35,7 @@ class QuestionAnswering():
             for answer in probabilities
         ]
 
-    def run_answer_question(self, question, text):
+    def answer_question(self, question, text):
         """
         Using the given text, find the answer to the given question and return it.
 
@@ -43,7 +43,7 @@ class QuestionAnswering():
         :param text: The text containing the answer to the question
         :return: The answer to the given question, as a string
         """
-        return self.run_answers_to_question(question, text,  1)[0]["text"]
+        return self.answers_to_question(question, text,  1)[0]["text"]
 
     def _tokenize_qa(self, question, context):
         input_text = ' '.join([

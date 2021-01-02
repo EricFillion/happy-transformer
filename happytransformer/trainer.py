@@ -15,12 +15,15 @@ class Trainer:
 
 
     def train(self, filepath, args):
+        raise NotImplementedError()
         pass
 
     def test(self, filepath, args, output_filepath):
+        raise NotImplementedError()
         pass
 
     def eval(self, filepath, args, output_filepath):
+        raise NotImplementedError()
         pass
 
     def _get_train_eval_data(self, filepath):
@@ -60,7 +63,7 @@ class Trainer:
         x = count / 50
         order = math.floor(math.log(x, 10))
 
-        update_interval = order ** 10
+        update_interval = 10 ** order
         if update_interval == 0:
             return 1
         return update_interval

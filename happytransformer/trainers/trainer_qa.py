@@ -12,7 +12,6 @@ import torch
 from happytransformer.trainer import Trainer
 import csv
 from torch.utils.data import DataLoader
-from torch.utils.data import DataLoader
 from transformers import AdamW
 import time
 from happytransformer.trainers.default_args.default_args_qa import ARGS_QA_TRAINING
@@ -82,7 +81,7 @@ class QATrainer(Trainer):
             context = case[0]
             question = case[1]
             answer = case[2]
-            output = self.runner.run_answer_question(question, context)
+            output = self.runner.answer_question(question, context)
 
             # todo modify the qa functionality to output with correct capitalization
 

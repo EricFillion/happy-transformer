@@ -50,13 +50,6 @@ class HappyBERT(HappyTransformer):
         self.sep_token = self.tokenizer.sep_token
         self.cls_token = self.tokenizer.cls_token
 
-        # ------------------------ QA
-        self.__qa_model = None   # Question Answering
-        self.__qa_tokenizer = None
-
-        self.__qa_init = False
-        self.__qa_trainer = None
-        self.__qa_runner = None
 
     def _get_masked_language_model(self):
         """
@@ -146,21 +139,31 @@ class HappyBERT(HappyTransformer):
         Initializes the BertForQuestionAnswering transformer
         NOTE: This uses the bert-large-uncased-whole-word-masking-finetuned-squad pretraining for best results.
         """
-        self.__qa_model = BertForQuestionAnswering.from_pretrained(model)
-        self.__qa_tokenizer = BertTokenizerFast.from_pretrained(model)
-        self.__qa_model.eval()
+        self._qa_model = BertForQuestionAnswering.from_pretrained(model)
+        self._qa_tokenizer = BertTokenizerFast.from_pretrained(model)
+        self._qa_model.eval()
 
         if self.gpu_support == 'cuda':
-            self.__qa_model.to('cuda')
+            self._qa_model.to('cuda')
 
-        self.__qa_runner = QuestionAnswering(self._model_name, self.__qa_model, self.__qa_tokenizer)
-        self.__qa_init = True
+        self._qa_runner = QuestionAnswering(self.model_name, self._qa_model, self._qa_tokenizer)
+        self._qa_init = True
 
-    def answers_to_question(self, question, context, k=3):
-        if self.__qa_init:
-            return self.__qa_runner.run_answers_to_question(question, context, k=k)
+    def __check_if_init(self, check_trainer=False):
+        if self._qa_init:
+            if check_trainer:
+                if self._qa_trainer == None:
+                    self._qa_trainer = QATrainer(self._qa_model, "bert", self.tokenizer, self.gpu_support,
+                                                self._qa_runner,
+                                                self.logger)
+            return True
         else:
             self._init_model_first_warning("question answering", "init_qa(model_name)")
+            return False
+
+    def answers_to_question(self, question, context, k=3):
+        if self.__check_if_init():
+            return self._qa_runner.answers_to_question(question, context, k=k)
 
 
     def answer_question(self, question, text):
@@ -172,36 +175,21 @@ class HappyBERT(HappyTransformer):
         :param text: The text containing the answer to the question
         :return: The answer to the given question, as a string
         """
-        if self.__qa_init:
-            return self.__qa_runner.run_answer_question(question, text)
-        else:
-            self._init_model_first_warning("question answering", "init_qa(model_name)")
+
+        if self.__check_if_init():
+            return self._qa_runner.answer_question(question, text)
+
 
     def train_qa(self, filepath, args=None):
-        if self.__qa_init:
-            if self.__qa_trainer==None:
-                # model, model_name, tokenizer, args, model_type, device, runne
-                self.__qa_trainer = QATrainer(self.__qa_model, "bert", self.tokenizer,  self.gpu_support, self.__qa_runner, self.logger)
+        if self.__check_if_init(True):
+            self._qa_trainer.train(filepath, args)
 
-            self.__qa_trainer.train(filepath, args)
-        else:
-            self._init_model_first_warning("question answering", "init_qa(model_name)")
 
     def test_qa(self, filepath, args=None):
-        if self.__qa_init:
-            if self.qa_trainer == None:
-                self.qa_trainer = QATrainer(self.__qa_model, "bert", self.tokenizer, self.gpu_support, self.__qa_runner, self.logger)
-
-            self.__qa_trainer.train(filepath, args)
-        else:
-            self._init_model_first_warning("question answering", "init_qa(model_name)")
+        if self.__check_if_init(True):
+            raise NotImplementedError()
 
     def eval_qa(self, filepath, output_filepath=None, args=None):
-        if self.__qa_init:
-            if self.__qa_trainer == None:
-                self.__qa_trainer = QATrainer(self.__qa_model, "bert", self.tokenizer, self.gpu_support,  self.__qa_runner, self.logger)
+        if self.__check_if_init(True):
+             return self._qa_trainer.eval(filepath, args, output_filepath)
 
-            return self.__qa_trainer.eval(filepath, args, output_filepath)
-        else:
-            self._init_model_first_warning("question answering", "init_qa(model_name)")
-            return - 1

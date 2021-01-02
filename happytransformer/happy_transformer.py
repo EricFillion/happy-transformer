@@ -44,7 +44,7 @@ class HappyTransformer:
     def __init__(self, model, model_name):
         # Transformer and tokenizer set in child class
         self.model = model
-        self._model_name = model_name
+        self.model_name = model_name
         self.mlm = None  # Masked Language Model
         self.seq = None  # Sequence Classification
         self.qa = None  # Question Answering
@@ -62,8 +62,6 @@ class HappyTransformer:
             else "cpu"
         )
 
-        self.device = True if torch.cuda.is_available() else False
-
 
         # show only happytransformer logs
         handler = logging.StreamHandler()
@@ -80,6 +78,14 @@ class HappyTransformer:
         self.seq_trained = False
         self.mwp_trainer = None
         self.mwp_trained = False
+
+        # ------------------------ QA
+        self._qa_model = None  # Question Answering
+        self._qa_tokenizer = None
+
+        self._qa_init = False
+        self._qa_trainer = None
+        self._qa_runner = None
 
     def _get_masked_language_model(self):
         pass
