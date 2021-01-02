@@ -16,15 +16,12 @@ class Trainer:
 
     def train(self, filepath, args):
         raise NotImplementedError()
-        pass
 
     def test(self, filepath, args, output_filepath):
         raise NotImplementedError()
-        pass
 
     def eval(self, filepath, args, output_filepath):
         raise NotImplementedError()
-        pass
 
     def _get_train_eval_data(self, filepath):
         """
@@ -32,10 +29,10 @@ class Trainer:
         :param filepath: a string that contains the location of the data
         :return:
         """
-        pass
+        raise NotImplementedError()
 
     def _get_test_data(self, filepath):
-        pass
+        raise NotImplementedError()
 
     def _format_time(self, time):
         """
