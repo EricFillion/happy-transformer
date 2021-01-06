@@ -17,6 +17,10 @@
 
 ## News: 
 
+### January x, 2021
+Introducing Version 2.0.0! 
+...
+
 ### November 23rd, 2020
 
 Last month, Happy Transformer was presented at a conference called C-Search, and the presentation won the Best Presentation Award. C-Search is the Queen's University Student Research Conference and had Turing Award Winner Professor Bengio as the Keynote Speaker this year. The video for the presentation can be found [here](https://www.youtube.com/watch?v=nNdFkq-y8Ng&t=12s). 
