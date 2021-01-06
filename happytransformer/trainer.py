@@ -5,22 +5,21 @@ from csv import DictWriter
 
 
 class Trainer:
-    def __init__(self, model, model_type, tokenizer, device, runner, logger):
+    def __init__(self, model, model_type, tokenizer, device, logger):
         self.model = model
         self.model_type = model_type
         self.tokenizer = tokenizer
         self.device = device
-        self.runner = runner
         self.logger = logger
 
 
-    def train(self, filepath, args):
+    def train(self, input_filepath, args):
         raise NotImplementedError()
 
-    def test(self, filepath, args, output_filepath):
+    def test(self, input_filepath, solve, output_filepath, args):
         raise NotImplementedError()
 
-    def eval(self, filepath, args, output_filepath):
+    def eval(self, input_filepath, solve, output_filepath, args):
         raise NotImplementedError()
 
     def _get_train_eval_data(self, filepath):
@@ -65,7 +64,7 @@ class Trainer:
             return 1
         return update_interval
 
-    def _print_status(self, init_time, count, total, update_interval, percentage = None):
+    def _print_status(self, init_time, count, total, update_interval, percentage=None):
         if count % update_interval and not count == 0:
             current_time = time.time()
             elapsed_time_string = self._format_time(current_time - init_time)
@@ -74,12 +73,11 @@ class Trainer:
             rem_time_int = avg_ex * (total - count)
             rem_time_string = self._format_time(rem_time_int)
             ending = ""
-            if percentage != None:
+            if percentage is not None:
                 ending = "Correct: " + str(round(percentage, 2)*100) + "%"
             status_output = "Done: ", str(count) + "/" + str(
-                total) + "  ----  Elapsed: " + elapsed_time_string + "   Estimated Remaining: " + rem_time_string +"  " + ending
-
-
+                total) + "  ----  Elapsed: " + elapsed_time_string +\
+                            "   Estimated Remaining: " + rem_time_string +"  " + ending
             self.logger.info(status_output)
 
     def _output_result_to_csv(self, output_filepath, fieldnames, results):

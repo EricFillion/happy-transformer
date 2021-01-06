@@ -1,6 +1,6 @@
-from happytransformer.happy_roberta import HappyROBERTA
-from happytransformer.happy_xlnet import HappyXLNET
-from happytransformer.happy_bert import HappyBERT
-from happytransformer.classifier_args import classifier_args
+from happytransformer.to_delete.happy_roberta import HappyROBERTA
+from happytransformer.to_delete.happy_xlnet import HappyXLNET
+from happytransformer.to_delete.happy_bert import HappyBERT
+from happytransformer.to_delete.classifier_args import classifier_args
 
 name = "happytransformer"

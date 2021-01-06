@@ -30,7 +30,7 @@ from transformers import (
 
 from transformers import AdamW, get_linear_schedule_with_warmup
 
-from happytransformer.classifier_utils import (
+from happytransformer.to_delete.classifier_utils import (
     convert_examples_to_features,
     output_modes,
     processors

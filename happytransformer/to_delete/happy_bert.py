@@ -9,16 +9,13 @@ import re
 from transformers import (
     BertForMaskedLM,
     BertForNextSentencePrediction,
-    BertForQuestionAnswering,
     BertTokenizerFast
 
 )
 
 import torch
-from happytransformer.runners.runner_answer_question import QuestionAnswering
 
-from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.trainers.trainer_qa import QATrainer
+from happytransformer.to_delete.happy_transformer import HappyTransformer
 
 class HappyBERT(HappyTransformer):
     """
@@ -64,7 +61,6 @@ class HappyBERT(HappyTransformer):
         """
         self.nsp = BertForNextSentencePrediction.from_pretrained(self.model)
         self.nsp.eval()
-
 
 
 
@@ -129,67 +125,6 @@ class HappyBERT(HappyTransformer):
                     sentence_found = True
                     break
         return True
-#-------------------------------------------------------#
-
-                # QUESTION ANSWERING #
-#-------------------------------------------------------#
-
-    def init_qa(self, model='bert-large-uncased-whole-word-masking-finetuned-squad'):
-        """
-        Initializes the BertForQuestionAnswering transformer
-        NOTE: This uses the bert-large-uncased-whole-word-masking-finetuned-squad pretraining for best results.
-        """
-        self._qa_model = BertForQuestionAnswering.from_pretrained(model)
-        self._qa_tokenizer = BertTokenizerFast.from_pretrained(model)
-        self._qa_model.eval()
-
-        if self.gpu_support == 'cuda':
-            self._qa_model.to('cuda')
-
-        self._qa_runner = QuestionAnswering(self.model_name, self._qa_model, self._qa_tokenizer)
-        self._qa_init = True
-
-    def __check_if_init(self, check_trainer=False):
-        if self._qa_init:
-            if check_trainer:
-                if self._qa_trainer == None:
-                    self._qa_trainer = QATrainer(self._qa_model, "bert", self.tokenizer, self.gpu_support,
-                                                self._qa_runner,
-                                                self.logger)
-            return True
-        else:
-            self._init_model_first_warning("question answering", "init_qa(model_name)")
-            return False
-
-    def answers_to_question(self, question, context, k=3):
-        if self.__check_if_init():
-            return self._qa_runner.answers_to_question(question, context, k=k)
 
 
-    def answer_question(self, question, text):
-        """
-        Using the given text, find the answer to the given question and return it.
-
-        :param question: The question to be answered
-        #todo breaking change: change text to context
-        :param text: The text containing the answer to the question
-        :return: The answer to the given question, as a string
-        """
-
-        if self.__check_if_init():
-            return self._qa_runner.answer_question(question, text)
-
-
-    def train_qa(self, filepath, args=None):
-        if self.__check_if_init(True):
-            self._qa_trainer.train(filepath, args)
-
-
-    def test_qa(self, filepath, args=None):
-        if self.__check_if_init(True):
-            raise NotImplementedError()
-
-    def eval_qa(self, filepath, output_filepath=None, args=None):
-        if self.__check_if_init(True):
-             return self._qa_trainer.eval(filepath, args, output_filepath)
 

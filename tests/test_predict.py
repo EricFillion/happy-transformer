@@ -1,4 +1,4 @@
-from happytransformer.happy_bert import HappyBERT
+from happytransformer.to_delete.happy_bert import HappyBERT
 
 happy = HappyBERT()
 
@@ -9,7 +9,7 @@ def test_prediction_options():
     '''
     predictions = happy.predict_mask(
         'I want crackers and [MASK]',
-        options=['death','cheese'],
+        options=['death', 'cheese'],
         num_results=1
     )
     print(predictions)

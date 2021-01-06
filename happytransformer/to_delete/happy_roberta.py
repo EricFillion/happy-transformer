@@ -4,7 +4,7 @@ HappyROBERTA: a wrapper over PyTorch's RoBERTa implementation
 # disable pylint TODO warning
 # pylint: disable=W0511
 
-from happytransformer.happy_transformer import HappyTransformer
+from happytransformer.to_delete.happy_transformer import HappyTransformer
 
 from transformers import RobertaForMaskedLM, RobertaTokenizer
 

@@ -7,7 +7,7 @@ from transformers import (
     XLNetTokenizer
 )
 
-from happytransformer.happy_transformer import HappyTransformer
+from happytransformer.to_delete.happy_transformer import HappyTransformer
 
 
 class HappyXLNET(HappyTransformer):
