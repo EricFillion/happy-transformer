@@ -10,7 +10,7 @@ from transformers import (
 from happytransformer.happy_transformer import HappyTransformer
 
 
-class HappyWorkPrediction(HappyTransformer):
+class HappyWordPrediction(HappyTransformer):
     def __init__(self, model_type="BERT",
                  model_name="bert-large-uncased-whole-word-masking-finetuned-squad", device=None):
         model = None
