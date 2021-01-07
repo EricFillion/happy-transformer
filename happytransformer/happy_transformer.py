@@ -37,7 +37,7 @@ class HappyTransformer():
         self.logger.info("Using model: %s", self._device)
 
 
-    def train(self, input_filepath, args):
+    def train(self, input_filepath, output_path, args):
         """
         Trains a model
         :param input_filepath: a string that contains a path to a csv file
@@ -47,29 +47,25 @@ class HappyTransformer():
         """
         raise NotImplementedError()
 
-    def eval(self, input_filepath, output_filepath, args):
+    def eval(self, input_filepath, output_path):
         """
         Evaluates the model. Determines how well the model performs on a given dataset
 
         :param input_filepath: a string that contains a path to a
          csv file that contains evaluating data
-        :param output_filepath: a string that contains a path to a
-        csv file that will be created to store the results
-        :param args: settings in the form of a dictionary
+
 
         :return: correct percentage
         """
         raise NotImplementedError()
 
-    def test(self, input_filepath, output_filepath, args):
+    def test(self, input_filepath, output_path):
         """
         Used to generate predictions for a given dataset.
         The dataset may not be labelled.
 
         :param input_filepath: a string that contains a path to
         a csv file that contains testing data
-        :param output_filepath: a string that contains a path to
-         a csv file that will be created to store the results
-        :param args: settings in the form of a dictionary
+
         """
         raise NotImplementedError()

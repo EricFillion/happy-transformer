@@ -11,59 +11,58 @@ import csv
 import torch
 from torch.utils.data import DataLoader
 
-from transformers import Trainer, AdamW
+from transformers import Trainer
 
+from happytransformer.happy_trainer import HappyTrainer
 
-class TCTrainer(Trainer):
+class TCTrainer(HappyTrainer):
 
     def __init__(self, model, model_type, tokenizer, device, logger):
         super().__init__(model, model_type, tokenizer, device, logger)
 
-    def train(self, input_filepath, args):
+    def train(self, input_filepath,  output_path, args):
         contexts, labels = self.__get_data(input_filepath)
         train_encodings = self.tokenizer(contexts, truncation=True, padding=True)
         train_dataset = TextClassificationDataset(train_encodings, labels)
 
-        train_loader = DataLoader(train_dataset, batch_size=args['batch_size'], shuffle=True)
+        training_args = self._get_training_args(args, output_path)
 
-        optim = AdamW(self.model.parameters(), lr=args['learning_rate'])
-        self.model.train()
+        trainer = Trainer(
+            model=self.model,  # the instantiated 🤗 Transformers model to be trained
+            args=training_args,  # training arguments, defined above
+            train_dataset=train_dataset,  # training dataset
+        )
+        trainer.train()
 
-        for epoch in range(args['epochs']):
-            epoch_output = "Epoch: " + str(epoch) + "\n\n"
-            self.logger.info(epoch_output)
-            batch_num = 1
-            for batch in train_loader:
-
-                batch_output = "Batch: " + str(batch_num)
-                self.logger.info(batch_output)
-                optim.zero_grad()
-                input_ids = batch['input_ids'].to(self.device)
-                attention_mask = batch['attention_mask'].to(self.device)
-                labels = batch['labels'].to(self.device)
-                outputs = self.model(input_ids, attention_mask=attention_mask, labels=labels)
-                loss = outputs[0]
-                loss.backward()
-                optim.step()
-                batch_num += 1
-
-        self.model.eval()
-
-
-
-
-    def eval(self, input_filepath, solve, output_filepath, args):
+    def eval(self, input_filepath, output_path):
         contexts, labels = self.__get_data(input_filepath)
         eval_encodings = self.tokenizer(contexts, truncation=True, padding=True)
+
         eval_dataset = TextClassificationDataset(eval_encodings, labels)
+        eval_args = self._get_test_eval_args(output_path)
+
+        trainer = Trainer(
+            model=self.model,  # the instantiated 🤗 Transformers model to be trained
+            args=eval_args,
+            eval_dataset=eval_dataset,  # training dataset
+
+        )
+
+        return trainer.evaluate()
 
 
-
-
-
-    def test(self, input_filepath, solve, output_filepath, args):
+    def test(self, input_filepath, output_path):
         contexts = self.__get_data(input_filepath, True)
         test_encodings = self.tokenizer(contexts, truncation=True, padding=True)
+
+        test_dataset = TextClassificationDatasetTest(test_encodings, len(contexts))
+        test_args = self._get_test_eval_args(output_path)
+
+        trainer = Trainer(
+            model=self.model,  # the instantiated 🤗 Transformers model to be trained
+            args=test_args
+        )
+        print(trainer.predict(test_dataset))
 
 
     @staticmethod
@@ -80,12 +79,13 @@ class TCTrainer(Trainer):
             for row in reader:
                 contexts.append(row['text'])
                 if not test_data:
-                    labels.append(row['label'])
+                    labels.append(int(row['label']))
         csv_file.close()
 
         if not test_data:
             return contexts, labels
         return contexts
+
 
 
 class TextClassificationDataset(torch.utils.data.Dataset):
@@ -100,3 +100,15 @@ class TextClassificationDataset(torch.utils.data.Dataset):
 
     def __len__(self):
         return len(self.labels)
+
+class TextClassificationDatasetTest(torch.utils.data.Dataset):
+    def __init__(self, encodings, length):
+        self.encodings = encodings
+        self.length = length
+
+    def __getitem__(self, idx):
+        item = {key: torch.tensor(val[idx]) for key, val in self.encodings.items()}
+        return item
+
+    def __len__(self):
+        return self.length

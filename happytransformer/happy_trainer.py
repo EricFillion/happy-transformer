@@ -3,8 +3,9 @@ import datetime
 import math
 from csv import DictWriter
 
+from transformers import TrainingArguments
 
-class Trainer:
+class HappyTrainer:
     def __init__(self, model, model_type, tokenizer, device, logger):
         self.model = model
         self.model_type = model_type
@@ -13,14 +14,39 @@ class Trainer:
         self.logger = logger
 
 
-    def train(self, input_filepath, args):
+    def train(self, input_filepath, output_path, args):
         raise NotImplementedError()
 
-    def test(self, input_filepath, solve, output_filepath, args):
+    def test(self, input_filepath, output_path):
         raise NotImplementedError()
 
-    def eval(self, input_filepath, solve, output_filepath, args):
+    def eval(self, input_filepath, output_path):
         raise NotImplementedError()
+
+    @staticmethod
+    def _get_training_args(args, output_path):
+        return TrainingArguments(
+            output_dir=output_path,
+            learning_rate=args["learning_rate"],
+            weight_decay=args["weight_decay"],
+            adam_beta1=args["adam_beta1"],
+            adam_beta2=args["adam_beta2"],
+            adam_epsilon=args["adam_epsilon"],
+            max_grad_norm=args["max_grad_norm"],
+            num_train_epochs=args["num_train_epochs"],
+
+        )
+
+
+    @staticmethod
+    def _get_test_eval_args(output_path):
+        return TrainingArguments(
+            output_dir=output_path,
+            seed=42
+
+        )
+
+
 
     def _get_train_eval_data(self, filepath):
         """

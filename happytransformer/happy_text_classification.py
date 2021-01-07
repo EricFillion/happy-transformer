@@ -8,11 +8,11 @@ from transformers import (
 )
 
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.tc.default_args import ARGS_TC_EVAL, ARGS_TC_TEST, ARGS_TC_TRAIN
+from happytransformer.tc.default_args import ARGS_TC_TRAIN
 
 class HappyTextClassification(HappyTransformer):
     def __init__(self, model_type="BERT",
-                 model_name="'bert-large-uncased-whole-word-masking-finetuned-squad'", device=None):
+                 model_name="bert-large-uncased-whole-word-masking-finetuned-squad", device=None):
         model = None
         tokenizer = None
 
@@ -29,7 +29,7 @@ class HappyTextClassification(HappyTransformer):
     def predict_text(self, text):
         raise NotImplementedError()
 
-    def train(self, input_filepath, args=ARGS_TC_TRAIN):
+    def train(self, input_filepath, output_path, args=ARGS_TC_TRAIN):
         """
         Trains the question answering model
 
@@ -40,9 +40,9 @@ class HappyTextClassification(HappyTransformer):
         happytransformer.happytasks.happy_qa.default_args.py
         return: None
         """
-        self._trainer.train(input_filepath=input_filepath, args=args)
+        self._trainer.train(input_filepath=input_filepath, args=args, output_path=output_path)
 
-    def eval(self, input_filepath, output_filepath, args=ARGS_TC_EVAL):
+    def eval(self, input_filepath, output_path):
         """
         Trains the question answering model
 
@@ -56,11 +56,9 @@ class HappyTextClassification(HappyTransformer):
         label, output, correct, softmax
         return: correct ration (correct/total)
         """
-        return self._trainer.eval(input_filepath=input_filepath,
-                                  solve=self.predict_text, args=args,
-                                  output_filepath=output_filepath)
+        return self._trainer.eval(input_filepath=input_filepath, output_path=output_path)
 
-    def test(self, input_filepath, output_filepath, args=ARGS_TC_TEST):
+    def test(self, input_filepath, output_path):
         """
         Tests the text classification  model. Used to obtain results
 
@@ -73,6 +71,4 @@ class HappyTextClassification(HappyTransformer):
         This file contains the following header values: text, output, softmax
         return: None
         """
-        self._trainer.test(input_filepath=input_filepath,
-                           solve=self.predict_text, args=args,
-                           output_filepath=output_filepath)
+        self._trainer.test(input_filepath=input_filepath, output_path=output_path)
