@@ -1,6 +1,6 @@
 from collections import namedtuple
 import torch
-from happytransformer.happytasks.tasks_util import biggest_sums
+from happytransformer.tasks_util import biggest_sums
 
 QAAnswerLogit = namedtuple('QaAnswerLogit', [
     'start_idx', 'end_idx', 'logit'

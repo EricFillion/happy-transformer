@@ -1,5 +1,5 @@
 from happytransformer.trainer import Trainer
-from happytransformer.happytasks.happy_mwp.default_args_mwp import ARGS_MWP_EVAL, ARGS_MWP_TEST, ARGS_MWP_TRAIN
+from happytransformer.mwp.default_args import ARGS_MWP_EVAL, ARGS_MWP_TEST, ARGS_MWP_TRAIN
 
 
 class QATrainer(Trainer):

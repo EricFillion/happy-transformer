@@ -5,9 +5,9 @@ Contains the HappyQuestionAnswering class.
 
 import torch
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.happytasks.happy_qa.qa_util import qa_probabilities
-from happytransformer.happytasks.happy_qa.trainer_qa import QATrainer
-from happytransformer.happytasks.happy_qa.default_args_qa \
+from happytransformer.qa.util import qa_probabilities
+from happytransformer.qa.trainer import QATrainer
+from happytransformer.qa.default_args \
     import ARGS_QA_EVAL, ARGS_QA_TEST, ARGS_QA_TRAIN
 from transformers import (
     BertForQuestionAnswering,
@@ -101,7 +101,7 @@ class HappyQuestionAnswering(HappyTransformer):
         for training. Contains the following header values: context,
          question, answer_text, answer_start
         args: a dictionary that contains settings found under
-        happytransformer.happytasks.happy_qa.default_args_qa.py
+        happytransformer.happytasks.happy_qa.default_args.py
         return: None
         """
         self._trainer.train(input_filepath=input_filepath, args=args)
@@ -114,7 +114,7 @@ class HappyQuestionAnswering(HappyTransformer):
         for training. Contains the following header values:
          context, question, answer_text, answer_start
         args: a dictionary that contains settings found under
-        happytransformer.happytasks.happy_qa.default_args_qa.py
+        happytransformer.happytasks.happy_qa.default_args.py
         output_filepath: a path to a csv file to output the results.
         This file contains the following header values: contexts,
         questions, answer, outputs, correct, softmax
@@ -132,7 +132,7 @@ class HappyQuestionAnswering(HappyTransformer):
         for training. Contains the following header values:
          context, question
         args: a dictionary that contains settings found under
-        happytransformer.happytasks.happy_qa.default_args_qa.py
+        happytransformer.happytasks.happy_qa.default_args.py
         output_filepath: a path to a csv file to output the results.
         This file contains the following header values: contexts, questions, outputs, softmax
         return: None

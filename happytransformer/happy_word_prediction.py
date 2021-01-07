@@ -1,4 +1,4 @@
-from happytransformer.happytasks.happy_qa.trainer_qa import QATrainer
+from happytransformer.qa.trainer import QATrainer
 
 from transformers import (
     BertForMaskedLM,

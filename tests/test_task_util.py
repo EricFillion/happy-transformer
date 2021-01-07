@@ -1,8 +1,8 @@
 """
-Contains tests for functions found within qa_util.py
+Contains tests for functions found within util.py
 """
 
-from happytransformer.happytasks.tasks_util import SumPair, biggest_sums
+from happytransformer.tasks_util import SumPair, biggest_sums
 def test_biggest_sums():
     """
     Tests the biggest_sums function
