@@ -13,9 +13,9 @@ import torch
 from torch.utils.data import DataLoader
 from transformers import AdamW
 
-from happytransformer.trainer import Trainer
+from happytransformer.happy_trainer import HappyTrainer
 
-class QATrainer(Trainer):
+class QATrainer(HappyTrainer):
 
     def __init__(self, model, model_type, tokenizer, device, logger):
         super().__init__(model, model_type, tokenizer, device, logger)
