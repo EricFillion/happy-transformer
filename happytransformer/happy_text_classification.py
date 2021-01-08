@@ -3,72 +3,87 @@ from happytransformer.tc.trainer import TCTrainer
 from transformers import (
     BertForSequenceClassification,
     BertTokenizerFast,
-
-
+    DistilBertForSequenceClassification,
+    DistilBertTokenizerFast
 )
 
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.tc.default_args import ARGS_TC_TRAIN
+import numpy as np
+
+from happytransformer.util import softmax_of_matrix
+
 
 class HappyTextClassification(HappyTransformer):
-    def __init__(self, model_type="BERT",
-                 model_name="bert-large-uncased-whole-word-masking-finetuned-squad", device=None):
+
+    def __init__(self, model_type="DISTILBERT",
+                 model_name="distilbert-base-uncased-finetuned-sst-2-english", device=None):
         model = None
         tokenizer = None
 
         if model_type == "BERT":
             model = BertForSequenceClassification.from_pretrained(model_name)
             tokenizer = BertTokenizerFast.from_pretrained(model_name)
-
+        elif model_type == "DISTILBERT":
+            model = DistilBertForSequenceClassification.from_pretrained(model_name)
+            tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
 
         super().__init__(model_type, model_name, model, tokenizer, device)
 
-        self._trainer = TCTrainer(model,
-                                  model_type, tokenizer, self._device, self.logger)
+        self._trainer = TCTrainer(self._model,
+                                  self.model_type, self._tokenizer, self._device, self.logger)
 
-    def predict_text(self, text):
-        raise NotImplementedError()
+    def classify_text(self, text):
+        """
+        :param text: A text string to be classified
+        :return:
+        """
 
-    def train(self, input_filepath, output_path, args=ARGS_TC_TRAIN):
+        inputs = self._tokenizer(text, return_tensors="pt")
+        output = self._model(**inputs)
+        logits = output.logits
+        scores = logits.detach().cpu()
+        softmax = softmax_of_matrix(scores)[0]
+        preds = np.argmax(scores.numpy(), axis=1)
+        return {
+            "answer": preds[0],
+            'softmax': softmax
+        }
+
+    def train(self, input_filepath, args=ARGS_TC_TRAIN):
         """
         Trains the question answering model
 
         input_filepath: a string that contains the location of a csv file
         for training. Contains the following header values: text,
          label
-        args: a dictionary that contains settings found under
-        happytransformer.happytasks.happy_qa.default_args.py
-        return: None
-        """
-        self._trainer.train(input_filepath=input_filepath, args=args, output_path=output_path)
 
-    def eval(self, input_filepath, output_path):
+        args: a dictionary that contains settings found under
+
+        return: None
+
         """
-        Trains the question answering model
+        self._trainer.train(input_filepath=input_filepath, args=args)
+
+    def eval(self, input_filepath):
+        """
+        Evaluated the text classification answering model
 
         input_filepath: a string that contains the location of a csv file
         for training. Contains the following header values:
          text, label
-        args: a dictionary that contains settings found under
-        happytransformer.happytasks.happy_qa.default_args.py
-        output_filepath: a path to a csv file to output the results.
-        This file contains the following header values: text,
-        label, output, correct, softmax
-        return: correct ration (correct/total)
-        """
-        return self._trainer.eval(input_filepath=input_filepath, output_path=output_path)
 
-    def test(self, input_filepath, output_path):
+        return: #todo
+        """
+        return self._trainer.eval(input_filepath=input_filepath)
+
+    def test(self, input_filepath):
         """
         Tests the text classification  model. Used to obtain results
 
         input_filepath: a string that contains the location of a csv file
         for training. Contains the following header value:
          text
-        args: a dictionary that contains settings found under
-        happytransformer.happytasks.happy_qa.default_args.py
-        output_filepath: a path to a csv file to output the results.
-        This file contains the following header values: text, output, softmax
-        return: None
+        return: #todo
         """
-        self._trainer.test(input_filepath=input_filepath, output_path=output_path)
+        return self._trainer.test(input_filepath=input_filepath)

@@ -1,6 +1,5 @@
 from collections import namedtuple
-
-
+from numpy import exp
 SumPair = namedtuple('SumPair', ['idx1', 'idx2', 'sum'])
 
 
@@ -32,3 +31,18 @@ def biggest_sums(items_a, items_b):
             b_index += 1
         else:
             a_index += 1
+
+
+def softmax_of_matrix(matrix):
+    """
+
+    :param matrix: A list of lists of logits
+    :return: a list of lists of softmax values
+    """
+    result = list()
+
+    for logits in matrix:
+        e_logits = exp(logits)
+        softmax = e_logits/e_logits.sum()
+        result.append(softmax.tolist())
+    return result

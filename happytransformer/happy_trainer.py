@@ -1,8 +1,11 @@
+"""
+Parent class for training classes, such as TCTrainer and QATrainer
+"""
+
 import time
 import datetime
 import math
 from csv import DictWriter
-
 from transformers import TrainingArguments
 
 class HappyTrainer:
@@ -14,17 +17,26 @@ class HappyTrainer:
         self.logger = logger
 
 
-    def train(self, input_filepath, output_path, args):
+    def train(self, input_filepath, args):
         raise NotImplementedError()
 
-    def test(self, input_filepath, output_path):
+    def test(self, input_filepath):
         raise NotImplementedError()
 
-    def eval(self, input_filepath, output_path):
+    def eval(self, input_filepath):
+        raise NotImplementedError()
+
+    @staticmethod
+    def _get_data(filepath, test_data=False):
         raise NotImplementedError()
 
     @staticmethod
     def _get_training_args(args, output_path):
+        """
+        :param args: a dictionary of arguments for training
+        :param output_path: A string to a temporary directory
+        :return: A TrainingArguments object
+        """
         return TrainingArguments(
             output_dir=output_path,
             learning_rate=args["learning_rate"],
@@ -37,27 +49,18 @@ class HappyTrainer:
 
         )
 
-
     @staticmethod
     def _get_test_eval_args(output_path):
+        """
+
+        :param output_path: A string to a temporary directory
+        :return: A TrainingArguments object
+        """
         return TrainingArguments(
             output_dir=output_path,
             seed=42
 
         )
-
-
-
-    def _get_train_eval_data(self, filepath):
-        """
-        Used for parsing data for training and evaluating (both contain labels)
-        :param filepath: a string that contains the location of the data
-        :return:
-        """
-        raise NotImplementedError()
-
-    def _get_test_data(self, filepath):
-        raise NotImplementedError()
 
     def _format_time(self, time):
         """
@@ -65,7 +68,6 @@ class HappyTrainer:
         return: time outputted in hh:mm:ss format
         """
         time_rounded = int(round((time)))
-
         # Format as hh:mm:ss
         return str(datetime.timedelta(seconds=time_rounded))
 
@@ -76,7 +78,6 @@ class HappyTrainer:
 
         First determines how often to update for exactly 50 updates.
         Then, rounds to the nearest power of ten (10, 100, 1000 etc)
-
 
         :param count:
         :return:
@@ -114,3 +115,4 @@ class HappyTrainer:
                 csv_writer.writerow(
                     result
                 )
+

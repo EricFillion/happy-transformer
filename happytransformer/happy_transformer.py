@@ -1,16 +1,22 @@
+"""
+Parent class to HappyTextClassification, HappyWordPrediction, HappyQuestionAnswering
+and HappyNextSentencePrediction.
+
+Contains shared variables and methods for these classes.
+"""
+
 import torch
 import logging
-
 
 class HappyTransformer():
 
     def __init__(self, model_type, model_name, model, tokenizer, device):
-        self.model_type = model_type  # BERT, ROBERTA, ALBERT etc
+        self.model_type = model_type  # BERT, #DISTILBERT, ROBERTA, ALBERT etc
         self.model_name = model_name
         self._model = model
         self._tokenizer = tokenizer
         self._model.eval()
-        self._trainer = None
+        self._trainer = None  # initialized in child class
 
         # todo  change logging system
         self.logger = logging.getLogger(__name__)
@@ -37,7 +43,7 @@ class HappyTransformer():
         self.logger.info("Using model: %s", self._device)
 
 
-    def train(self, input_filepath, output_path, args):
+    def train(self, input_filepath, args):
         """
         Trains a model
         :param input_filepath: a string that contains a path to a csv file
@@ -47,19 +53,16 @@ class HappyTransformer():
         """
         raise NotImplementedError()
 
-    def eval(self, input_filepath, output_path):
+    def eval(self, input_filepath):
         """
         Evaluates the model. Determines how well the model performs on a given dataset
-
         :param input_filepath: a string that contains a path to a
          csv file that contains evaluating data
-
-
         :return: correct percentage
         """
         raise NotImplementedError()
 
-    def test(self, input_filepath, output_path):
+    def test(self, input_filepath):
         """
         Used to generate predictions for a given dataset.
         The dataset may not be labelled.
