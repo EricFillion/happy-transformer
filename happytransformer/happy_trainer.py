@@ -8,6 +8,7 @@ import math
 import tempfile
 from csv import DictWriter
 from transformers import TrainingArguments, Trainer
+from happytransformer.util import softmax_of_matrix
 
 
 class HappyTrainer:
@@ -74,7 +75,17 @@ class HappyTrainer:
 
             return trainer.evaluate()
 
+    def _run_test(self, dataset):
+        with tempfile.TemporaryDirectory() as tmp_dir_name:
+            test_args = self._get_test_eval_args(tmp_dir_name)
+            trainer = Trainer(
+                model=self.model,  # the instantiated 🤗 Transformers model to be trained
+                args=test_args
+            )
+            result_logits = trainer.predict(dataset).predictions
 
+            result_softmax = softmax_of_matrix(result_logits.tolist())
+            return result_softmax
 
     @staticmethod
     def _get_test_eval_args(output_path):

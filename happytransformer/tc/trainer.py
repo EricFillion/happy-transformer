@@ -8,12 +8,8 @@ robust methods. And also, to improve maintainability as they update the document
 https://huggingface.co/transformers/custom_datasets.html#sequence-classification-with-imdb-reviews"""
 
 import csv
-import tempfile
-
 import torch
-from transformers import Trainer
 from happytransformer.happy_trainer import HappyTrainer
-from happytransformer.util import softmax_of_matrix
 
 
 class TCTrainer(HappyTrainer):
@@ -22,16 +18,15 @@ class TCTrainer(HappyTrainer):
     """
 
     def train(self, input_filepath, args):
-
         contexts, labels = self._get_data(input_filepath)
         train_encodings = self.tokenizer(contexts, truncation=True, padding=True)
         train_dataset = TextClassificationDataset(train_encodings, labels)
+
         self._run_train(train_dataset, args)
 
     def eval(self, input_filepath):
         contexts, labels = self._get_data(input_filepath)
         eval_encodings = self.tokenizer(contexts, truncation=True, padding=True)
-
         eval_dataset = TextClassificationDataset(eval_encodings, labels)
 
         return self._run_eval(eval_dataset)
@@ -40,18 +35,10 @@ class TCTrainer(HappyTrainer):
     def test(self, input_filepath):
         contexts = self._get_data(input_filepath, True)
         test_encodings = self.tokenizer(contexts, truncation=True, padding=True)
-
         test_dataset = TextClassificationDatasetTest(test_encodings, len(contexts))
-        with tempfile.TemporaryDirectory() as tmp_dir_name:
-            test_args = self._get_test_eval_args(tmp_dir_name)
-            trainer = Trainer(
-                model=self.model,  # the instantiated 🤗 Transformers model to be trained
-                args=test_args
-            )
-            result_logits = trainer.predict(test_dataset).predictions
 
-            result_softmax = softmax_of_matrix(result_logits.tolist())
-            return result_softmax
+        return self._run_test(test_dataset)
+
 
     @staticmethod
     def _get_data(filepath, test_data=False):
