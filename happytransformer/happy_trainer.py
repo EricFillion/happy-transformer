@@ -61,6 +61,19 @@ class HappyTrainer:
             )
             trainer.train()
 
+    def _run_eval(self, dataset):
+        with tempfile.TemporaryDirectory() as tmp_dir_name:
+            eval_args = self._get_test_eval_args(tmp_dir_name)
+
+            trainer = Trainer(
+                model=self.model,  # the instantiated 🤗 Transformers model to be trained
+                args=eval_args,
+                eval_dataset=dataset,  # training dataset
+
+            )
+
+            return trainer.evaluate()
+
 
 
     @staticmethod

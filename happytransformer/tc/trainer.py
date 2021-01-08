@@ -33,17 +33,9 @@ class TCTrainer(HappyTrainer):
         eval_encodings = self.tokenizer(contexts, truncation=True, padding=True)
 
         eval_dataset = TextClassificationDataset(eval_encodings, labels)
-        with tempfile.TemporaryDirectory() as tmp_dir_name:
-            eval_args = self._get_test_eval_args(tmp_dir_name)
 
-            trainer = Trainer(
-                model=self.model,  # the instantiated 🤗 Transformers model to be trained
-                args=eval_args,
-                eval_dataset=eval_dataset,  # training dataset
+        return self._run_eval(eval_dataset)
 
-            )
-
-            return trainer.evaluate()
 
     def test(self, input_filepath):
         contexts = self._get_data(input_filepath, True)
