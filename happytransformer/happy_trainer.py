@@ -5,8 +5,10 @@ Parent class for training classes, such as TCTrainer and QATrainer
 import time
 import datetime
 import math
+import tempfile
 from csv import DictWriter
-from transformers import TrainingArguments
+from transformers import TrainingArguments, Trainer
+
 
 class HappyTrainer:
     def __init__(self, model, model_type, tokenizer, device, logger):
@@ -48,6 +50,18 @@ class HappyTrainer:
             num_train_epochs=args["num_train_epochs"],
 
         )
+
+    def _run_train(self, dataset, args):
+        with tempfile.TemporaryDirectory() as tmp_dir_name:
+            training_args = self._get_training_args(args, tmp_dir_name)
+            trainer = Trainer(
+                model=self.model,  # the instantiated 🤗 Transformers model to be trained
+                args=training_args,  # training arguments, defined above
+                train_dataset=dataset,  # training dataset
+            )
+            trainer.train()
+
+
 
     @staticmethod
     def _get_test_eval_args(output_path):
