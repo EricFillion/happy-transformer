@@ -7,18 +7,15 @@ robust methods. And also, to improve maintainability as they update the document
 
 https://huggingface.co/transformers/custom_datasets.html#question-answering-with-squad-2-0
 """
-import time
 import csv
+from tqdm import tqdm
 import torch
-from torch.utils.data import DataLoader
-from transformers import AdamW
+from happytransformer.happy_trainer import HappyTrainer
 
-from happytransformer.trainer import Trainer
-
-class QATrainer(Trainer):
-
-    def __init__(self, model, model_type, tokenizer, device, logger):
-        super().__init__(model, model_type, tokenizer, device, logger)
+class QATrainer(HappyTrainer):
+    """
+    Trainer class for HappyTextClassification
+    """
 
     def train(self, input_filepath, args):
         """
@@ -26,149 +23,56 @@ class QATrainer(Trainer):
         """
         #todo: add time elapsed and test time remaining similar to what is within eval
 
-        contexts, questions, answers = self.__get_data(input_filepath)
+        contexts, questions, answers = self._get_data(input_filepath)
         self.__add_end_idx(contexts, answers)
         encodings = self.tokenizer(contexts, questions, truncation=True, padding=True)
         self.__add_token_positions(encodings, answers)
         dataset = QuestionAnsweringDataset(encodings)
-        self.model.train()
+        self._run_train(dataset, args)
 
-        train_loader = DataLoader(dataset, batch_size=args['batch_size'], shuffle=True)
 
-        optim = AdamW(self.model.parameters(), lr=args['learning_rate'])
-
-        for epoch in range(args['epochs']):
-            epoch_output = "Epoch: " + str(epoch) + "\n\n"
-            self.logger.info(epoch_output)
-            batch_num = 0
-            for batch in train_loader:
-                batch_output = "Batch: " + str(batch_num)
-                self.logger.info(batch_output)
-                optim.zero_grad()
-                input_ids = batch['input_ids'].to(self.device)
-                attention_mask = batch['attention_mask'].to(self.device)
-                start_positions = batch['start_positions'].to(self.device)
-                end_positions = batch['end_positions'].to(self.device)
-                outputs = self.model(input_ids, attention_mask=attention_mask,
-                                     start_positions=start_positions,
-                                     end_positions=end_positions)
-                loss = outputs[0]
-                loss.backward()
-                optim.step()
-                batch_logger_output = "Batch: " + str(batch_num)\
-                                      + "   loss: " + str(round(loss.item(), 6))
-                self.logger.info(batch_logger_output)
-                batch_num += 1
-        self.model.eval()
-
-    def eval(self, input_filepath, solve, output_filepath, args):
+    def eval(self, input_filepath):
         """
         See docstring in HappyQuestionAnswering.eval()
 
-        solve: HappyQuestionAnswering.answers_to_question()
         """
 
-        contexts, questions, answers = self.__get_data(input_filepath)
-        init_time = time.time()
-        correct = 0
-        count = 0
-        total = len(contexts)
-        update_interval = self._get_update_interval(total)
+        contexts, questions, answers = self._get_data(input_filepath)
 
-        results = list()
+        self.__add_end_idx(contexts, answers)
+        encodings = self.tokenizer(contexts, questions, truncation=True, padding=True)
+        self.__add_token_positions(encodings, answers)
+        dataset = QuestionAnsweringDataset(encodings)
+        return self._run_eval(dataset)
 
-        for case in zip(contexts, questions, answers):
-            context = case[0]
-            question = case[1]
-            answer = case[2]
 
-            result = solve(question, context, k=1000)[0]
-            output_text = result["text"]
-            output_softmax = result["softmax"]
-
-            # todo modify the qa functionality to output with correct capitalization
-
-            compare_answer = answer["answer_text"].lower()
-
-            if output_text == compare_answer:
-                correct += 1
-
-            results.append(
-                {
-                    "contexts": context,
-                    "questions": question,
-                    "answer": answer["answer_text"].lower(),
-                    "outputs": output_text,
-                    "correct": output_text == compare_answer,
-                    "softmax": output_softmax
-
-                }
-                )
-            count += 1
-
-            self._print_status(init_time, count, total, update_interval, correct/count)
-
-        score = correct/total
-        ending = str(round(score, 2) * 100) + "%"
-
-        result_output = "Evaluating Result: " + str(correct) + "/" + str(total) + " -- " + ending
-        self.logger.info(result_output)
-
-        fieldnames = ["contexts", "questions", "answer", "outputs", "correct", "softmax"]
-        self._output_result_to_csv(output_filepath, fieldnames, results)
-
-        return score
-
-    def test(self, input_filepath, solve, output_filepath, args):
+    def test(self, input_filepath, pipeline):
         """
         See docstring in HappyQuestionAnswering.test()
 
-        solve: HappyQuestionAnswering.answers_to_question()
-
         """
-        contexts, questions = self.__get_data(input_filepath, test_data=True)
-        init_time = time.time()
-        total = len(contexts)
-        count = 0
-        update_interval = self._get_update_interval(total)
+        contexts, questions = self._get_data(input_filepath, test_data=True)
 
         results = list()
 
-        for case in zip(contexts, questions):
+        for case in tqdm(zip(contexts, questions)):
             context = case[0]
             question = case[1]
+            result = pipeline(question, context)
 
-            result = solve(question, context, k=1000)[0]
-            output_text = result["text"]
-            output_softmax = result["softmax"]
+            results.append(result)
 
-            # todo modify the qa functionality to output with correct capitalization
-            results.append(
-                {
-                    "contexts": context,
-                    "questions": question,
-                    "outputs": output_text,
-                    "softmax": output_softmax
-                }
-                )
+        return results
 
-            self._print_status(init_time, count, total, update_interval, None)
-            count += 1
 
-        fieldnames = ["contexts", "questions", "outputs", "softmax"]
-        self._output_result_to_csv(output_filepath, fieldnames, results)
-
-        result_output = "Output saved to: " + output_filepath
-
-        count += 1
-        self.logger.info(result_output)
 
     @staticmethod
-    def __get_data(filepath, test_data=False):
+    def _get_data(filepath, test_data=False):
         """
-        Used for parsing data for training and evaluating (both contain labels)
+        Used to collect
         :param filepath: a string that contains the location of the data
-        :return:
+        :return: if test_data = False contexts, questions, answers (all strings)
+        else: contexts, questions
         """
         contexts = []
         questions = []
@@ -203,10 +107,10 @@ class QATrainer(Trainer):
                 answer['answer_end'] = end_idx
             elif context[start_idx - 1:end_idx - 1] == gold_text:
                 answer['answer_start'] = start_idx - 1
-                answer['answer_end'] = end_idx - 1  # When the gold label is off by one character
+                answer['answer_end'] = end_idx - 1
             elif context[start_idx - 2:end_idx - 2] == gold_text:
                 answer['answer_start'] = start_idx - 2
-                answer['answer_end'] = end_idx - 2  # When the gold label is off by two characters
+                answer['answer_end'] = end_idx - 2  
             else:
                 print("error: implement skipping training answer")
 
@@ -216,7 +120,6 @@ class QATrainer(Trainer):
         for i in range(len(answers)):
             start_positions.append(encodings.char_to_token(i, answers[i]['answer_start']))
             end_positions.append(encodings.char_to_token(i, answers[i]['answer_end'] - 1))
-            # if None, the answer passage has been truncated
             if start_positions[-1] is None:
                 start_positions[-1] = self.tokenizer.model_max_length
             if end_positions[-1] is None:

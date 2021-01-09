@@ -1,19 +1,10 @@
 ARGS_MWP_TRAIN = {
-    'max_length': 300,
-    'batch_size': 16,
     'learning_rate': 5e-5,
-    'epochs': 2,
-
-
-}
-
-ARGS_MWP_TEST = {
-    # eventually we'll add settings
-
-}
-
-ARGS_MWP_EVAL = {
-
-    # eventually we'll add settings
+    'weight_decay': 0,
+    'adam_beta1': 0.9,
+    'adam_beta2': 0.999,
+    'adam_epsilon': 1e-8,
+    'max_grad_norm':  1.0,
+    'num_train_epochs': 3.0,
 
 }

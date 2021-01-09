@@ -1,4 +1,4 @@
-ARGS_QA_TRAIN = {
+ARGS_TC_TRAIN = {
     'learning_rate': 5e-5,
     'weight_decay': 0,
     'adam_beta1': 0.9,
