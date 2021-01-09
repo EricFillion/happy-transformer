@@ -2,7 +2,7 @@ from happytransformer.happy_trainer import HappyTrainer
 from happytransformer.mwp.default_args import ARGS_MWP_TRAIN
 
 
-class MWPTrainer(HappyTrainer):
+class WPTrainer(HappyTrainer):
 
     def train(self, input_filepath, args=ARGS_MWP_TRAIN):
         raise NotImplementedError()

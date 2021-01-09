@@ -9,7 +9,7 @@ from transformers import (
 import torch
 import collections
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.mwp.trainer import MWPTrainer
+from happytransformer.mwp.trainer import WPTrainer
 
 WPOutput = collections.namedtuple("WPOutput", ["token_str", "score"])
 
@@ -34,7 +34,7 @@ class HappyWordPrediction(HappyTransformer):
         super().__init__(model_type, model_name, model, tokenizer)
         device_number = 1 if torch.cuda.is_available() else -1
         self._pipeline = FillMaskPipeline(model=model, tokenizer=tokenizer, device=device_number)
-        self._trainer = MWPTrainer(model, model_type, tokenizer, self._device, self.logger)
+        self._trainer = WPTrainer(model, model_type, tokenizer, self._device, self.logger)
 
     def predict_mask(self, text, targets=None, top_k=1):
         """
