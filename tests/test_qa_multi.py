@@ -2,9 +2,8 @@
 Tests for the "answers_to_question" method that can be accessed through a HappyBERT object
 """
 
-from happytransformer import HappyBERT
-
-happy_bert = HappyBERT('bert-large-uncased-whole-word-masking-finetuned-squad')
+from happytransformer.happy_question_answering import HappyQuestionAnswering
+happy_qa = HappyQuestionAnswering()
 
 PARAGRAPH = (
     'McGill is a university located in Montreal. '
@@ -22,8 +21,9 @@ QA_PAIRS = [
 
 def test_qa_multi():
     for question, expected_answer in QA_PAIRS:
-        computed_answers = happy_bert.answers_to_question(question, PARAGRAPH, k=10)
-        computed_answer = happy_bert.answer_question(question, PARAGRAPH)
+
+        computed_answers = happy_qa.answers_to_question(question, PARAGRAPH, k=10)
+        computed_answer = happy_qa.answer_question(question, PARAGRAPH)
         # k is being respected
         assert len(computed_answers) == 10
         # both answering methods yield correct result
