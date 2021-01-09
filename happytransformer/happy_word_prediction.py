@@ -11,7 +11,7 @@ import collections
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.mwp.trainer import WPTrainer
 
-WPOutput = collections.namedtuple("WPOutput", ["token_str", "score"])
+WordPredictionResult = collections.namedtuple("WordPredictionResult", ["token_str", "score"])
 
 
 class HappyWordPrediction(HappyTransformer):
@@ -42,17 +42,13 @@ class HappyWordPrediction(HappyTransformer):
         :param targets: Optional. A list of strings of potential answers.
         All other answers will be ignored
         :param top_k: number of results. Default is 1
-        :return: If top_k ==1: a dictionary with the keys "score" and "token_str"
-                if  top_k >1: a list of dictionaries described above in order by score
+        :return: A named WordPredictionResult Named Tuple with the following keys: token_str and score
         """
         if not isinstance(text, str):
             raise ValueError("the \"text\" argument must be a single string")
 
         result = self._pipeline(text, targets=targets, top_k=top_k)
-        results = list()
-        for answer in result:
-            result = WPOutput(token_str=answer["token_str"], score=answer["score"])
-            results.append(result)
+        results = [WordPredictionResult(token_str=answer["token_str"], score=answer["score"]) for answer in result]
 
         return results
 
