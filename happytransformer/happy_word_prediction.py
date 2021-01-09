@@ -9,11 +9,11 @@ from transformers import (
 
 )
 import torch
-import collections
+from collections import namedtuple
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.mwp.trainer import WPTrainer
 
-WordPredictionResult = collections.namedtuple("WordPredictionResult", ["token_str", "score"])
+WordPredictionResult = namedtuple("WordPredictionResult", ["token_str", "score"])
 
 
 class HappyWordPrediction(HappyTransformer):
@@ -60,9 +60,14 @@ class HappyWordPrediction(HappyTransformer):
             for answer in result:
                 if answer["token_str"][0] == "▁":
                     answer["token_str"] = answer["token_str"][1:]
-
-        results = [WordPredictionResult(token_str=answer["token_str"], score=answer["score"]) for answer in result]
-
+        results = [
+            WordPredictionResult(
+                token_str=answer["token_str"], 
+                score=answer["score"]
+            )
+            for answer in result
+        ]
+        
         return results
 
     def train(self, input_filepath, args):
