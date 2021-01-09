@@ -4,10 +4,14 @@ from transformers import (
     BertForMaskedLM,
     BertTokenizerFast,
     RobertaForMaskedLM,
-    RobertaTokenizerFast
+    RobertaTokenizerFast,
+    FillMaskPipeline,
+
 )
+import torch
 
 from happytransformer.happy_transformer import HappyTransformer
+from happytransformer.mwp.trainer import  MWPTrainer
 
 
 class HappyWordPrediction(HappyTransformer):
@@ -25,8 +29,10 @@ class HappyWordPrediction(HappyTransformer):
             tokenizer = RobertaTokenizerFast.from_pretrained(model_name)
 
         super().__init__(model_type, model_name, model, tokenizer, device)
-
-        self._trainer = QATrainer(model,
+        device_number = 1 if torch.cuda.is_available() else -1
+        self._pipeline = FillMaskPipeline(model=model,
+                                                    tokenizer=tokenizer, device=device_number)
+        self._trainer = MWPTrainer(model,
                                   model_type, tokenizer, self._device, self.logger)
     def predict_masks(self):
         raise NotImplementedError()
@@ -35,10 +41,10 @@ class HappyWordPrediction(HappyTransformer):
         raise NotImplementedError()
 
     def train(self, input_filepath, args):
-        raise NotImplementedError()
+        self._trainer.train(input_filepath=input_filepath, args=args)
 
-    def test(self, input_filepath, output_filepath, args):
-        raise NotImplementedError()
+    def eval(self, input_filepath):
+        return self._trainer.eval(input_filepath=input_filepath)
 
-    def eval(self, input_filepath, output_filepath, args):
-        raise NotImplementedError()
+    def test(self, input_filepath):
+        return self._trainer.test(input_filepath=input_filepath,)

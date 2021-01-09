@@ -10,6 +10,7 @@ https://huggingface.co/transformers/custom_datasets.html#sequence-classification
 import csv
 import torch
 from happytransformer.happy_trainer import HappyTrainer
+from tqdm import tqdm
 
 
 class TCTrainer(HappyTrainer):
@@ -31,14 +32,20 @@ class TCTrainer(HappyTrainer):
 
         return self._run_eval(eval_dataset)
 
+    def test(self, input_filepath, pipeline):
+        """
+        See docstring in HappyQuestionAnswering.test()
+        solve: HappyQuestionAnswering.answers_to_question()
+        """
+        contexts = self._get_data(input_filepath, test_data=True)
 
-    def test(self, input_filepath):
-        contexts = self._get_data(input_filepath, True)
-        test_encodings = self.tokenizer(contexts, truncation=True, padding=True)
-        test_dataset = TextClassificationDatasetTest(test_encodings, len(contexts))
+        results = list()
 
-        return self._run_test(test_dataset)
+        for context in tqdm(contexts):
+            result = pipeline(context)
+            results.append(result)
 
+        return results
 
     @staticmethod
     def _get_data(filepath, test_data=False):
@@ -60,7 +67,6 @@ class TCTrainer(HappyTrainer):
         if not test_data:
             return contexts, labels
         return contexts
-
 
 
 class TextClassificationDataset(torch.utils.data.Dataset):

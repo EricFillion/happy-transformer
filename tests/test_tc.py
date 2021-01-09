@@ -12,7 +12,21 @@ def test_classify_text():
     """
     happy_tc = HappyTextClassification()
     result = happy_tc.classify_text("What a great movie")
-    assert result["answer"] == 1 and result["softmax"][1] == 0.9998726844787598
+    print(result)
+    answer = [{'label': 'POSITIVE', 'score': 0.9998726844787598}]
+    assert result == answer
+
+def test_classify_texts():
+    """
+    Tests
+    HappyQuestionAnswering.classify_text()
+
+    """
+    happy_tc = HappyTextClassification()
+    input = ["What a great movie", "Horrible movie", "Bad restaurant"]
+    result = happy_tc.classify_text(input)
+    answer = [{'label': 'POSITIVE', 'score': 0.9998726844787598}, {'label': 'NEGATIVE', 'score': 0.9997945427894592}, {'label': 'NEGATIVE', 'score': 0.9997393488883972}]
+    assert result == answer
 
 def test_qa_train():
     """
@@ -43,9 +57,8 @@ def test_qa_test():
     happy_tc = HappyTextClassification()
 
     result = happy_tc.test("../data/tc/test.csv")
-    expected_result = [[0.00015978473364387978, 0.9998402152663561], [0.9772132247336673, 0.022786775266332746], [0.9966067733093962, 0.0033932266906038368], [0.020770484301764973, 0.979229515698235]]
-
-    assert result == expected_result
+    answer = [[{'label': 'POSITIVE', 'score': 0.9998401999473572}], [{'label': 'NEGATIVE', 'score': 0.9772131443023682}], [{'label': 'NEGATIVE', 'score': 0.9966067671775818}], [{'label': 'POSITIVE', 'score': 0.9792295098304749}]]
+    assert result == answer
 
 
 def test_qa_train_effectiveness():

@@ -1,16 +1,20 @@
 """
-Parent class to HappyTextClassification, HappyWordPrediction, HappyQuestionAnswering
-and HappyNextSentencePrediction.
+Contains the parent class to HappyTextClassification, HappyWordPrediction, HappyQuestionAnswering
+and HappyNextSentencePrediction called HappyTransformer
 
 Contains shared variables and methods for these classes.
 """
-
-import torch
 import logging
+import torch
 
 class HappyTransformer():
+    """
+    Parent class to HappyTextClassification, HappyWordPrediction, HappyQuestionAnswering
+    and HappyNextSentencePrediction.
 
-    def __init__(self, model_type, model_name, model, tokenizer, device):
+    """
+
+    def __init__(self, model_type, model_name, model, tokenizer):
         self.model_type = model_type  # BERT, #DISTILBERT, ROBERTA, ALBERT etc
         self.model_name = model_name
         self._model = model
@@ -30,13 +34,10 @@ class HappyTransformer():
             handlers=[handler]
         )
 
-        if device is None:
-            self._device = torch.device(
-                "cuda" if torch.cuda.is_available()
-                else "cpu"
-            )
-        else:
-            self._device = device
+        self._device = torch.device(
+            "cuda" if torch.cuda.is_available()
+            else "cpu"
+        )
 
         if self._device == 'cuda':
             self._model.to(self._device)
