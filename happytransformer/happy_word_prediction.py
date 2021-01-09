@@ -3,8 +3,10 @@ from happytransformer.qa.trainer import QATrainer
 from transformers import (
     BertForMaskedLM,
     BertTokenizerFast,
-    RobertaForMaskedLM,
-    RobertaTokenizerFast,
+    AlbertForMaskedLM,
+    AlbertTokenizerFast,
+    DistilBertForMaskedLM,
+    DistilBertTokenizerFast,
     FillMaskPipeline,
 
 )
@@ -20,15 +22,23 @@ class HappyWordPrediction(HappyTransformer):
         model = None
         tokenizer = None
 
-        if model_type == "BERT":
+        if model_type == "ALBERT":
+            model = AlbertForMaskedLM.from_pretrained(model_name)
+            tokenizer = AlbertTokenizerFast.from_pretrained(model_name)
+
+        elif model_type == "BERT":
             model = BertForMaskedLM.from_pretrained(model_name)
             tokenizer = BertTokenizerFast.from_pretrained(model_name)
 
-        elif model_type == "ROBERTA":
-            model = RobertaForMaskedLM.from_pretrained(model_name)
-            tokenizer = RobertaTokenizerFast.from_pretrained(model_name)
+        elif model_type == "DISTILBERT":
+            model = DistilBertForMaskedLM.from_pretrained(model_name)
+            tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
 
-        super().__init__(model_type, model_name, model, tokenizer, device)
+        else:
+            raise ValueError("model_type must be BERT, DISTILBERT or ALBERT")
+
+
+        super().__init__(model_type, model_name, model, tokenizer)
         device_number = 1 if torch.cuda.is_available() else -1
         self._pipeline = FillMaskPipeline(model=model,
                                                     tokenizer=tokenizer, device=device_number)
