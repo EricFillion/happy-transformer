@@ -73,3 +73,28 @@ def test_qa_train_effectiveness():
     happy_tc.train("../data/tc/train-eval.csv")
     after_loss = happy_tc.eval("../data/tc/train-eval.csv")["eval_loss"]
     assert after_loss < before_loss
+
+def test_qa_test_albert():
+    """
+    Tests
+    HappyQuestionAnswering.test()
+    """
+    happy_tc = HappyTextClassification(model_type="ALBERT", model_name="textattack/albert-base-v2-SST-2")
+
+    result = happy_tc.test("../data/tc/test.csv")
+    answer = [[{'label': 'LABEL_1', 'score': 0.9990348815917969}], [{'label': 'LABEL_0', 'score': 0.9947203397750854}], [{'label': 'LABEL_0', 'score': 0.9958302974700928}], [{'label': 'LABEL_1', 'score': 0.9986426830291748}]]
+    assert result == answer
+
+
+def test_qa_train_effectiveness_albert():
+    """
+    Tests
+    Ensures that HappyQuestionAnswering.train() results in
+    lowering the loss as determined by HappyQuestionAnswering.eval()
+    """
+
+    happy_tc = HappyTextClassification(model_type="ALBERT", model_name="textattack/albert-base-v2-SST-2")
+    before_loss = happy_tc.eval("../data/tc/train-eval.csv")["eval_loss"]
+    happy_tc.train("../data/tc/train-eval.csv")
+    after_loss = happy_tc.eval("../data/tc/train-eval.csv")["eval_loss"]
+    assert after_loss < before_loss

@@ -9,6 +9,10 @@ from transformers import (
     BertTokenizerFast,
     DistilBertForSequenceClassification,
     DistilBertTokenizerFast,
+    AlbertForSequenceClassification,
+    AlbertTokenizerFast,
+
+
     TextClassificationPipeline
 )
 from happytransformer.tc.trainer import TCTrainer
@@ -33,8 +37,11 @@ class HappyTextClassification(HappyTransformer):
         elif model_type == "DISTILBERT":
             model = DistilBertForSequenceClassification.from_pretrained(model_name)
             tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
+        elif model_type == "ALBERT":
+            model = AlbertForSequenceClassification.from_pretrained(model_name)
+            tokenizer = AlbertTokenizerFast.from_pretrained(model_name)
         else:
-            raise ValueError("model_type must be BERT or DISTILBERT")
+            raise ValueError("model_type must be BERT, DISTILBERT or ALBERT")
 
         super().__init__(model_type, model_name, model, tokenizer)
 
