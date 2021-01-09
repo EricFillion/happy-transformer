@@ -3,7 +3,7 @@ from happytransformer import HappyWordPrediction
 
 def test_mwp_basic():
     happy_mwp = HappyWordPrediction()
-    result = happy_mwp.predict_masks(
+    result = happy_mwp.predict_mask(
         "Please pass the salt and [MASK]",
     )
     answer = {'score': 0.2664579749107361, 'token_str': 'pepper'}
@@ -12,7 +12,7 @@ def test_mwp_basic():
 
 def test_mwp_top_k():
     happy_mwp = HappyWordPrediction()
-    result = happy_mwp.predict_masks(
+    result = happy_mwp.predict_mask(
         "Please pass the salt and [MASK]",
         top_k=2
     )
@@ -22,7 +22,7 @@ def test_mwp_top_k():
 
 def test_mwp_targets():
     happy_mwp = HappyWordPrediction()
-    result = happy_mwp.predict_masks(
+    result = happy_mwp.predict_mask(
         "Please pass the salt and [MASK]",
         targets=["water", "spices"]
     )

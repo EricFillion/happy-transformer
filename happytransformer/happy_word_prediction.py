@@ -34,7 +34,7 @@ class HappyWordPrediction(HappyTransformer):
         self._pipeline = FillMaskPipeline(model=model, tokenizer=tokenizer, device=device_number)
         self._trainer = MWPTrainer(model, model_type, tokenizer, self._device, self.logger)
 
-    def predict_masks(self, text, targets=None, top_k=1):
+    def predict_mask(self, text, targets=None, top_k=1):
         """
         :param text: A string that contains the model's mask token
         :param targets: Optional. A list of strings of potential answers.
