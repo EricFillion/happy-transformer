@@ -34,15 +34,17 @@ class HappyQuestionAnswering(HappyTransformer):
                  model_name="distilbert-base-cased-distilled-squad"):
         model = None
         tokenizer = None
-        if model_type == "BERT":
+
+        if model_type == "ALBERT":
+            model = AlbertForQuestionAnswering.from_pretrained(model_name)
+            tokenizer = AlbertTokenizerFast.from_pretrained(model_name)
+        elif model_type == "BERT":
             model = BertForQuestionAnswering.from_pretrained(model_name)
             tokenizer = BertTokenizerFast.from_pretrained(model_name)
         elif model_type == "DISTILBERT":
             model = DistilBertForQuestionAnswering.from_pretrained(model_name)
             tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
-        elif model_type == "ALBERT":
-            model = AlbertForQuestionAnswering.from_pretrained(model_name)
-            tokenizer = AlbertTokenizerFast.from_pretrained(model_name)
+
         else:
             raise ValueError("model_type must be BERT, DISTILBERT or ALBERT")
 
