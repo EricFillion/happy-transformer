@@ -28,8 +28,3 @@ def test_mwp_targets():
     )
     answer = {'score': 0.014856964349746704, 'token_str': 'water'}
     assert result == answer
-
-
-def test_mwp_train():
-    happy_mwp = HappyWordPrediction()
-    happy_mwp.train()
