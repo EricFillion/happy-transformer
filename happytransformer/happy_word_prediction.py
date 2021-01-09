@@ -7,11 +7,11 @@ from transformers import (
 
 )
 import torch
-import collections
+from collections import namedtuple
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.mwp.trainer import WPTrainer
 
-WordPredictionResult = collections.namedtuple("WordPredictionResult", ["token_str", "score"])
+WordPredictionResult = namedtuple("WordPredictionResult", ["token_str", "score"])
 
 
 class HappyWordPrediction(HappyTransformer):
@@ -48,7 +48,13 @@ class HappyWordPrediction(HappyTransformer):
             raise ValueError("the \"text\" argument must be a single string")
 
         result = self._pipeline(text, targets=targets, top_k=top_k)
-        results = [WordPredictionResult(token_str=answer["token_str"], score=answer["score"]) for answer in result]
+        results = [
+            WordPredictionResult(
+                token_str=answer["token_str"], 
+                score=answer["score"]
+            )
+            for answer in result
+        ]
 
         return results
 
