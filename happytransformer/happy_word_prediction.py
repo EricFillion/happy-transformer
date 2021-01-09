@@ -1,5 +1,3 @@
-from happytransformer.qa.trainer import QATrainer
-
 from transformers import (
     BertForMaskedLM,
     BertTokenizerFast,
@@ -11,14 +9,19 @@ from transformers import (
 
 )
 import torch
-
+import collections
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.mwp.trainer import  MWPTrainer
+from happytransformer.mwp.trainer import WPTrainer
+
+WordPredictionResult = collections.namedtuple("WordPredictionResult", ["token_str", "score"])
 
 
 class HappyWordPrediction(HappyTransformer):
-    def __init__(self, model_type="BERT",
-                 model_name="bert-large-uncased-whole-word-masking-finetuned-squad", device=None):
+    """
+    A user facing class for text classification
+    """
+    def __init__(self, model_type="DISTILBERT",
+                 model_name="distilbert-base-uncased"):
         model = None
         tokenizer = None
 
@@ -33,28 +36,40 @@ class HappyWordPrediction(HappyTransformer):
         elif model_type == "DISTILBERT":
             model = DistilBertForMaskedLM.from_pretrained(model_name)
             tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
-
         else:
             raise ValueError("model_type must be BERT, DISTILBERT or ALBERT")
-
-
         super().__init__(model_type, model_name, model, tokenizer)
         device_number = 1 if torch.cuda.is_available() else -1
-        self._pipeline = FillMaskPipeline(model=model,
-                                                    tokenizer=tokenizer, device=device_number)
-        self._trainer = MWPTrainer(model,
-                                  model_type, tokenizer, self._device, self.logger)
-    def predict_masks(self):
-        raise NotImplementedError()
+        self._pipeline = FillMaskPipeline(model=model, tokenizer=tokenizer, device=device_number)
+        self._trainer = WPTrainer(model, model_type, tokenizer, self._device, self.logger)
 
-    def predict_mask(self):
-        raise NotImplementedError()
+    def predict_mask(self, text, targets=None, top_k=1):
+        """
+        :param text: A string that contains the model's mask token
+        :param targets: Optional. A list of strings of potential answers.
+        All other answers will be ignored
+        :param top_k: number of results. Default is 1
+        :return: A named WordPredictionResult Named Tuple with the following keys: token_str and score
+        """
+        if not isinstance(text, str):
+            raise ValueError("the \"text\" argument must be a single string")
+
+        result = self._pipeline(text, targets=targets, top_k=top_k)
+
+        if self.model_type == "ALBERT":
+            for answer in result:
+                if answer["token_str"][0] == "▁":
+                    answer["token_str"] = answer["token_str"][1:]
+
+        results = [WordPredictionResult(token_str=answer["token_str"], score=answer["score"]) for answer in result]
+
+        return results
 
     def train(self, input_filepath, args):
-        self._trainer.train(input_filepath=input_filepath, args=args)
+        raise NotImplementedError("train() is currently not available")
 
     def eval(self, input_filepath):
-        return self._trainer.eval(input_filepath=input_filepath)
+        raise NotImplementedError("eval() is currently not available")
 
     def test(self, input_filepath):
-        return self._trainer.test(input_filepath=input_filepath,)
+        raise NotImplementedError("test() is currently not available")
