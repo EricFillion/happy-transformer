@@ -28,3 +28,20 @@ def test_mwp_targets():
     )
     answer = [WordPredictionResult(token_str='water', score=0.014856964349746704), WordPredictionResult(token_str='spices', score=0.009040987119078636)]
     assert result == answer
+
+
+def test_mwp_basic_albert():
+    happy_mwp = HappyWordPrediction("ALBERT", "albert-base-v2")
+    result = happy_mwp.predict_mask(
+        "Please pass the salt and [MASK]",
+    )
+    answer = [WordPredictionResult(token_str='garlic', score=0.036625903099775314)]
+    assert result == answer
+
+def test_mwp_basic_bert():
+    happy_mwp = HappyWordPrediction("BERT", "bert-base-uncased")
+    result = happy_mwp.predict_mask(
+        "Please pass the salt and [MASK]",
+    )
+    answer = [WordPredictionResult(token_str='.', score=0.8466101884841919)]
+    assert result == answer
