@@ -7,9 +7,11 @@ from transformers import (
 
 )
 import torch
-
+import collections
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.mwp.trainer import  MWPTrainer
+from happytransformer.mwp.trainer import MWPTrainer
+
+WPOutput = collections.namedtuple("WPOutput", ["token_str", "score"])
 
 
 class HappyWordPrediction(HappyTransformer):
@@ -43,19 +45,16 @@ class HappyWordPrediction(HappyTransformer):
         :return: If top_k ==1: a dictionary with the keys "score" and "token_str"
                 if  top_k >1: a list of dictionaries described above in order by score
         """
-        if isinstance(text, list):
+        if not isinstance(text, str):
             raise ValueError("the \"text\" argument must be a single string")
 
         result = self._pipeline(text, targets=targets, top_k=top_k)
-        if top_k == 1:
-            result = result[0]
-            del result['sequence']
-            del result['token']
-        else:
-            for answer in result:
-                del answer['sequence']
-                del answer['token']
-        return result
+        results = list()
+        for answer in result:
+            result = WPOutput(token_str=answer["token_str"], score=answer["score"])
+            results.append(result)
+
+        return results
 
     def train(self, input_filepath, args):
         raise NotImplementedError("train() is currently not available")
@@ -64,5 +63,4 @@ class HappyWordPrediction(HappyTransformer):
         raise NotImplementedError("eval() is currently not available")
 
     def test(self, input_filepath):
-        # self.logger.error("test() is currently not available")
         raise NotImplementedError("test() is currently not available")
