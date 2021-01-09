@@ -44,7 +44,7 @@ class HappyQuestionAnswering(HappyTransformer):
             model = AlbertForQuestionAnswering.from_pretrained(model_name)
             tokenizer = AlbertTokenizerFast.from_pretrained(model_name)
         else:
-            raise ValueError("model_type must be BERT or DISTILBERT")
+            raise ValueError("model_type must be BERT, DISTILBERT or ALBERT")
 
         super().__init__(model_type, model_name, model, tokenizer)
         device_number = 1 if torch.cuda.is_available() else -1
