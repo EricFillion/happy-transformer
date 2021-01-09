@@ -14,6 +14,7 @@
 * [Masked Word Prediction Fine-Tuning](#Masked-Word-Prediction-Fine-Tuning)
 * [Tech](#Tech)
 * [Call For Contributors](#Call-For-Contributors)
+* [Maintainers](#Maintainers)
 
 ## News: 
 
@@ -704,3 +705,7 @@ print(results) # prints: [{'word': 'mathematics', 'softmax': 0.16551}, {'word': 
  
 ### Call for contributors 
  Happy Transformer is a new and growing API. We're seeking more contributors to help accomplish our mission of making state-of-the-art AI easier to use.  
+
+### Maintainers
+- [Eric Fillion](https://github.com/ericfillion)  Lead Maintainer
+- [Ted Brownlow](https://github.com/ted537) Maintainer
