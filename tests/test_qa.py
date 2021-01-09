@@ -49,3 +49,22 @@ def test_qa_train_effectiveness():
 
     assert after_loss < before_loss
 
+def test_qa_train_effectiveness_albert():
+    """
+    Ensures that HappyQuestionAnswering.train() results in
+    lowering the loss as determined by HappyQuestionAnswering.eval()
+    """
+
+    happy_qa = HappyQuestionAnswering("ALBERT", "twmkn9/albert-base-v2-squad2")
+    before_loss = happy_qa.eval("../data/qa/train-eval.csv")["eval_loss"]
+    happy_qa.train("../data/qa/train-eval.csv")
+    after_loss = happy_qa.eval("../data/qa/train-eval.csv")["eval_loss"]
+
+    assert after_loss < before_loss
+
+def test_qa_test_albert():
+    happy_qa = HappyQuestionAnswering("ALBERT", "twmkn9/albert-base-v2-squad2")
+    result = happy_qa.test("../data/qa/test.csv")
+    print(result)
+    answer = [{'score': 0.988578736782074, 'start': 0, 'end': 12, 'answer': 'October 31st'}, {'score': 0.9833534359931946, 'start': 12, 'end': 25, 'answer': 'November 23rd'}]
+    assert result == answer

@@ -13,6 +13,8 @@ from transformers import (
     BertTokenizerFast,
     DistilBertForQuestionAnswering,
     DistilBertTokenizerFast,
+    AlbertForQuestionAnswering,
+    AlbertTokenizerFast,
     QuestionAnsweringPipeline,
 )
 
@@ -38,6 +40,9 @@ class HappyQuestionAnswering(HappyTransformer):
         elif model_type == "DISTILBERT":
             model = DistilBertForQuestionAnswering.from_pretrained(model_name)
             tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
+        elif model_type == "ALBERT":
+            model = AlbertForQuestionAnswering.from_pretrained(model_name)
+            tokenizer = AlbertTokenizerFast.from_pretrained(model_name)
         else:
             raise ValueError("model_type must be BERT or DISTILBERT")
 
