@@ -10,7 +10,7 @@ https://huggingface.co/transformers/custom_datasets.html#question-answering-with
 import csv
 from tqdm import tqdm
 import torch
-from happytransformer.happy_trainer import HappyTrainer
+from happytransformer.happy_trainer import HappyTrainer, EvalResult
 
 class QATrainer(HappyTrainer):
     """
@@ -42,8 +42,9 @@ class QATrainer(HappyTrainer):
         self.__add_end_idx(contexts, answers)
         encodings = self.tokenizer(contexts, questions, truncation=True, padding=True)
         self.__add_token_positions(encodings, answers)
-        dataset = QuestionAnsweringDataset(encodings)
-        return self._run_eval(dataset)
+        eval_dataset = QuestionAnsweringDataset(encodings)
+        result = self._run_eval(eval_dataset)
+        return EvalResult(eval_loss=result["eval_loss"])
 
 
     def test(self, input_filepath, solve):

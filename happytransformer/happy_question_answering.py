@@ -110,7 +110,7 @@ class HappyQuestionAnswering(HappyTransformer):
         return: A dictionary that contains a key called "eval_loss"
 
         """
-        return self._trainer.eval(input_filepath=input_filepath,)
+        return self._trainer.eval(input_filepath=input_filepath)
 
     def test(self, input_filepath):
         """
