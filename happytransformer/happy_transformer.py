@@ -14,6 +14,8 @@ class HappyTransformer():
 
     """
 
+    model_type_error = "model_type must be ALBERT, BERT or DISTILBERT"
+
     def __init__(self, model_type, model_name, model, tokenizer):
         self.model_type = model_type  # BERT, #DISTILBERT, ROBERTA, ALBERT etc
         self.model_name = model_name

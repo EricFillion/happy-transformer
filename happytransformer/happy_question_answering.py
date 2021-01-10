@@ -13,6 +13,8 @@ from transformers import (
     BertTokenizerFast,
     DistilBertForQuestionAnswering,
     DistilBertTokenizerFast,
+    AlbertForQuestionAnswering,
+    AlbertTokenizerFast,
     QuestionAnsweringPipeline,
 )
 
@@ -32,14 +34,19 @@ class HappyQuestionAnswering(HappyTransformer):
                  model_name="distilbert-base-cased-distilled-squad"):
         model = None
         tokenizer = None
-        if model_type == "BERT":
+
+        if model_type == "ALBERT":
+            model = AlbertForQuestionAnswering.from_pretrained(model_name)
+            tokenizer = AlbertTokenizerFast.from_pretrained(model_name)
+        elif model_type == "BERT":
             model = BertForQuestionAnswering.from_pretrained(model_name)
             tokenizer = BertTokenizerFast.from_pretrained(model_name)
         elif model_type == "DISTILBERT":
             model = DistilBertForQuestionAnswering.from_pretrained(model_name)
             tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
+
         else:
-            raise ValueError("model_type must be BERT or DISTILBERT")
+            raise ValueError(self.model_type_error)
 
         super().__init__(model_type, model_name, model, tokenizer)
         device_number = 1 if torch.cuda.is_available() else -1

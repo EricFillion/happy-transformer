@@ -1,6 +1,8 @@
 from transformers import (
     BertForMaskedLM,
     BertTokenizerFast,
+    AlbertForMaskedLM,
+    AlbertTokenizerFast,
     DistilBertForMaskedLM,
     DistilBertTokenizerFast,
     FillMaskPipeline,
@@ -23,14 +25,19 @@ class HappyWordPrediction(HappyTransformer):
         model = None
         tokenizer = None
 
-        if model_type == "BERT":
+        if model_type == "ALBERT":
+            model = AlbertForMaskedLM.from_pretrained(model_name)
+            tokenizer = AlbertTokenizerFast.from_pretrained(model_name)
+
+        elif model_type == "BERT":
             model = BertForMaskedLM.from_pretrained(model_name)
             tokenizer = BertTokenizerFast.from_pretrained(model_name)
 
         elif model_type == "DISTILBERT":
             model = DistilBertForMaskedLM.from_pretrained(model_name)
             tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
-
+        else:
+            raise ValueError(self.model_type_error)
         super().__init__(model_type, model_name, model, tokenizer)
         device_number = 1 if torch.cuda.is_available() else -1
         self._pipeline = FillMaskPipeline(model=model, tokenizer=tokenizer, device=device_number)
@@ -48,6 +55,11 @@ class HappyWordPrediction(HappyTransformer):
             raise ValueError("the \"text\" argument must be a single string")
 
         result = self._pipeline(text, targets=targets, top_k=top_k)
+
+        if self.model_type == "ALBERT":
+            for answer in result:
+                if answer["token_str"][0] == "▁":
+                    answer["token_str"] = answer["token_str"][1:]
         results = [
             WordPredictionResult(
                 token_str=answer["token_str"], 
@@ -55,7 +67,7 @@ class HappyWordPrediction(HappyTransformer):
             )
             for answer in result
         ]
-
+        
         return results
 
     def train(self, input_filepath, args):
