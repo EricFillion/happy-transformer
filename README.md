@@ -4,7 +4,7 @@
 
 ## Table of Contents
 * [News](#News)
-* [Key Features](#Key-Features)
+* [Features](#Features)
 * [Installation](#Installation)
 * [Word Prediction](#Word-Prediction)
 * [Text Classification](#Binary-Sequence-Classification)
@@ -32,7 +32,7 @@ We're happy to announce that we won a Best Paper Award at the Canadian Undergrad
 
 Happy Transformer is an package built on top of [Hugging Face's transformer library](https://huggingface.co/transformers/) that makes it easy to utilize state-of-the-art NLP models. 
 
-  
+## Features 
   
 | Public Methods                     | Basic Usage  | Training   |
 |------------------------------------|--------------|------------|
