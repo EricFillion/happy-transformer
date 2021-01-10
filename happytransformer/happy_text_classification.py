@@ -67,11 +67,11 @@ class HappyTextClassification(HappyTransformer):
         # Blocking allowing a for a list of strings
         if not isinstance(text, str):
             raise ValueError("the \"text\" argument must be a single string")
-        result = self._pipeline(text)
+        results = self._pipeline(text)
         # we do not support predicting a list of  texts, so only first prediction is relevant
-        result = result[0]
+        first_result = results[0]
 
-        return TextClassificationResult(label=result["label"], score=result["score"])
+        return TextClassificationResult(label=first_result["label"], score=first_result["score"])
 
 
     def train(self, input_filepath, args=ARGS_TC_TRAIN):
