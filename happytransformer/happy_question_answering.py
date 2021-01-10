@@ -2,11 +2,10 @@
 Contains the HappyQuestionAnswering class.
 
 """
-
+from collections import namedtuple
 import torch
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.qa.trainer import QATrainer
-from collections import namedtuple
 from happytransformer.qa.default_args \
     import ARGS_QA_TRAIN
 from transformers import (
@@ -19,7 +18,7 @@ from transformers import (
     QuestionAnsweringPipeline,
 )
 
-QuestionAnsweringResult = namedtuple("QuestionAnsweringResult", [ "answer", "score", "start", "end"])
+QuestionAnsweringResult = namedtuple("QuestionAnsweringResult", ["answer", "score", "start", "end"])
 
 class HappyQuestionAnswering(HappyTransformer):
     """
