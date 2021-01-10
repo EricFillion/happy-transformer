@@ -14,7 +14,7 @@ def test_qa_answer_question():
 
 def test_qa_answer_question_top_k():
     happy_qa = HappyQuestionAnswering()
-    result = happy_qa.answer_question("Today's date is January 8th 2021", "What is the date?", topk=3)
+    result = happy_qa.answer_question("Today's date is January 8th 2021", "What is the date?", top_k=3)
     answer = [QuestionAnsweringResult(answer='January 8th 2021', score=0.9696964621543884, start=16, end=32),
               QuestionAnsweringResult(answer='January 8th', score=0.02050216868519783, start=16, end=27),
               QuestionAnsweringResult(answer='January', score=0.005092293489724398, start=16, end=23)]
