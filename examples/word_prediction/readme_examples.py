@@ -17,12 +17,14 @@ def example_1_1():
     print(result[0].token_str)  # am
     print(result[0].score)  # 0.10172799974679947
 
+
 def example_1_2():
     happy_wp = HappyWordPrediction("ALBERT", "albert-xxlarge-v2")
     result = happy_wp.predict_mask("To better the world I would invest in [MASK] and education.", top_k=10)
     print(result)  # [WordPredictionResult(token_str='infrastructure', score=0.09270179271697998), WordPredictionResult(token_str='healthcare', score=0.07219093292951584)]
     print(result[1]) # WordPredictionResult(token_str='healthcare', score=0.07219093292951584)
     print(result[1].token_str) # healthcare
+
 
 def example_1_3():
     happy_wp = HappyWordPrediction("ALBERT", "albert-xxlarge-v2")
@@ -33,11 +35,8 @@ def example_1_3():
     print(result[1].token_str)  # technology
 
 
-
-
 def main():
     example_1_3()
-
 
 
 if __name__ == "__main__":
