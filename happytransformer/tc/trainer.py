@@ -9,7 +9,7 @@ https://huggingface.co/transformers/custom_datasets.html#sequence-classification
 
 import csv
 import torch
-from happytransformer.happy_trainer import HappyTrainer
+from happytransformer.happy_trainer import HappyTrainer, EvalResult
 from tqdm import tqdm
 
 
@@ -30,7 +30,9 @@ class TCTrainer(HappyTrainer):
         eval_encodings = self.tokenizer(contexts, truncation=True, padding=True)
         eval_dataset = TextClassificationDataset(eval_encodings, labels)
 
-        return self._run_eval(eval_dataset)
+        result = self._run_eval(eval_dataset)
+        print(result)
+        return EvalResult(eval_loss=result["eval_loss"])
 
     def test(self, input_filepath, solve):
         """

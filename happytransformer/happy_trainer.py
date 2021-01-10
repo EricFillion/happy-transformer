@@ -1,10 +1,12 @@
 """
 Parent class for training classes, such as TCTrainer and QATrainer
 """
-
+from collections import  namedtuple
 import tempfile
 from transformers import TrainingArguments, Trainer
 
+# may eventually add more metrics like accuracy
+EvalResult = namedtuple("EvalResult", ["eval_loss"])
 
 class HappyTrainer:
     def __init__(self, model, model_type, tokenizer, device, logger):
