@@ -32,7 +32,7 @@ class TCTrainer(HappyTrainer):
 
         return self._run_eval(eval_dataset)
 
-    def test(self, input_filepath, pipeline):
+    def test(self, input_filepath, solve):
         """
         See docstring in HappyQuestionAnswering.test()
         solve: HappyQuestionAnswering.answers_to_question()
@@ -42,7 +42,7 @@ class TCTrainer(HappyTrainer):
         results = list()
 
         for context in tqdm(contexts):
-            result = pipeline(context)
+            result = solve(context)
             results.append(result)
 
         return results

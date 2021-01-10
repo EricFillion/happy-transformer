@@ -1,7 +1,7 @@
 """
 Contains a class called HappyTextClassification that performs text classification
 """
-
+from collections import namedtuple
 import torch
 
 from transformers import (
@@ -20,6 +20,8 @@ from happytransformer.tc.trainer import TCTrainer
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.tc.default_args import ARGS_TC_TRAIN
 
+
+TextClassificationResult = namedtuple("TextClassificationResult", ["label", "score"])
 
 class HappyTextClassification(HappyTransformer):
     """
@@ -59,11 +61,17 @@ class HappyTextClassification(HappyTransformer):
 
     def classify_text(self, text):
         """
-        :param text: A text string to be classified, or a list of strings
-        :return: either a single dictionary with keys: label and score,
-        or a list of these dictionaries with the same keys
+        :param text: A text string to be classified
+        :return: A dictionary with keys: label and score,
         """
-        return self._pipeline(text)
+        # Blocking allowing a for a list of strings
+        if not isinstance(text, str):
+            raise ValueError("the \"text\" argument must be a single string")
+        result = self._pipeline(text)
+        # we do not support predicting a list of  texts, so only first prediction is relevant
+        result = result[0]
+
+        return TextClassificationResult(label=result["label"], score=result["score"])
 
 
     def train(self, input_filepath, args=ARGS_TC_TRAIN):
@@ -102,4 +110,4 @@ class HappyTextClassification(HappyTransformer):
          text
         return: #todo
         """
-        return self._trainer.test(input_filepath=input_filepath, pipeline=self._pipeline)
+        return self._trainer.test(input_filepath=input_filepath, solve=self.classify_text)
