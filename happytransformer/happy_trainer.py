@@ -23,11 +23,11 @@ class HappyTrainer:
         """
         raise NotImplementedError()
 
-    def test(self, input_filepath, pipeline):
+    def test(self, input_filepath, solve):
         """
 
         :param input_filepath: A string to file location
-        :param pipeline: an initialized transformer pipeline for the given task
+        :param solve: a method for using the model for the given task
         :return: test results
         """
         raise NotImplementedError()

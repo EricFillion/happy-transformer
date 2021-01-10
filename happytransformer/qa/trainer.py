@@ -46,7 +46,7 @@ class QATrainer(HappyTrainer):
         return self._run_eval(dataset)
 
 
-    def test(self, input_filepath, pipeline):
+    def test(self, input_filepath, solve):
         """
         See docstring in HappyQuestionAnswering.test()
 
@@ -58,7 +58,7 @@ class QATrainer(HappyTrainer):
         for case in tqdm(zip(contexts, questions)):
             context = case[0]
             question = case[1]
-            result = pipeline(question, context)
+            result = solve(context, question)[0]  # only care about first result
 
             results.append(result)
 
