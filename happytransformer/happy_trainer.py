@@ -1,10 +1,12 @@
 """
 Parent class for training classes, such as TCTrainer and QATrainer
 """
-
+from collections import  namedtuple
 import tempfile
 from transformers import TrainingArguments, Trainer
 
+# may eventually add more metrics like accuracy
+EvalResult = namedtuple("EvalResult", ["eval_loss"])
 
 class HappyTrainer:
     def __init__(self, model, model_type, tokenizer, device, logger):
@@ -23,11 +25,11 @@ class HappyTrainer:
         """
         raise NotImplementedError()
 
-    def test(self, input_filepath, pipeline):
+    def test(self, input_filepath, solve):
         """
 
         :param input_filepath: A string to file location
-        :param pipeline: an initialized transformer pipeline for the given task
+        :param solve: a method for using the model for the given task
         :return: test results
         """
         raise NotImplementedError()

@@ -2,7 +2,7 @@
 Contains the HappyQuestionAnswering class.
 
 """
-
+from collections import namedtuple
 import torch
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.qa.trainer import QATrainer
@@ -18,7 +18,7 @@ from transformers import (
     QuestionAnsweringPipeline,
 )
 
-
+QuestionAnsweringResult = namedtuple("QuestionAnsweringResult", ["answer", "score", "start", "end"])
 
 class HappyQuestionAnswering(HappyTransformer):
     """
@@ -61,14 +61,28 @@ class HappyQuestionAnswering(HappyTransformer):
 
     def answer_question(self, context, question, topk=1):
         """
-
         :param context: background information to answer the question (string)
         :param question: A question that can be answered with the given context (string)
         :param topk: how many results
-        :return: if topk =1, a dictionary that contains the keys: score, start, end and answer
-        if topk >1, a list of dictionaries described above
+        :return: A list of a named tuples that contains the keys: answer, score, start and end
+
         """
-        return self._pipeline(context=context, question=question, topk=topk)
+
+        result = self._pipeline(context=context, question=question, topk=topk)
+        # transformers returns a single dictionary when topk ==1.
+        # Our convention however is to have constant output format
+        if topk == 1:
+            result = [result]
+
+        results = [
+            QuestionAnsweringResult(
+                answer=answer["answer"],
+                score=answer["score"],
+                start=answer["start"],
+                end=answer["end"],)
+            for answer in result
+        ]
+        return results
 
     def train(self, input_filepath, args=ARGS_QA_TRAIN):
         """
@@ -96,7 +110,7 @@ class HappyQuestionAnswering(HappyTransformer):
         return: A dictionary that contains a key called "eval_loss"
 
         """
-        return self._trainer.eval(input_filepath=input_filepath,)
+        return self._trainer.eval(input_filepath=input_filepath)
 
     def test(self, input_filepath):
         """
@@ -109,4 +123,4 @@ class HappyQuestionAnswering(HappyTransformer):
         return: A list of dictionaries. Each dictionary
         contains the keys: "score", "start", "end" and "answer"
         """
-        return self._trainer.test(input_filepath=input_filepath, pipeline=self._pipeline)
+        return self._trainer.test(input_filepath=input_filepath, solve=self.answer_question)

@@ -2,22 +2,22 @@
 Tests for the question answering training, evaluating and testing functionality
 """
 
-from happytransformer.happy_question_answering import HappyQuestionAnswering
+from happytransformer.happy_question_answering import HappyQuestionAnswering, QuestionAnsweringResult
 
 
 def test_qa_answer_question():
     happy_qa = HappyQuestionAnswering()
     result = happy_qa.answer_question("Today's date is January 8th 2021", "What is the date?")
-    answer = {'score': 0.9696964621543884, 'start': 16, 'end': 32, 'answer': 'January 8th 2021'}
+    answer = [QuestionAnsweringResult(answer='January 8th 2021', score=0.9696964621543884, start=16, end=32)]
     assert result == answer
 
 
 def test_qa_answer_question_top_k():
     happy_qa = HappyQuestionAnswering()
     result = happy_qa.answer_question("Today's date is January 8th 2021", "What is the date?", topk=3)
-    answer = [{'score': 0.9696964621543884, 'start': 16, 'end': 32, 'answer': 'January 8th 2021'},
-              {'score': 0.02050216868519783, 'start': 16, 'end': 27, 'answer': 'January 8th'},
-              {'score': 0.005092293489724398, 'start': 16, 'end': 23, 'answer': 'January'}]
+    answer = [QuestionAnsweringResult(answer='January 8th 2021', score=0.9696964621543884, start=16, end=32),
+              QuestionAnsweringResult(answer='January 8th', score=0.02050216868519783, start=16, end=27),
+              QuestionAnsweringResult(answer='January', score=0.005092293489724398, start=16, end=23)]
     assert result == answer
 
 def test_qa_train():
@@ -28,14 +28,14 @@ def test_qa_train():
 def test_qa_eval():
     happy_qa = HappyQuestionAnswering()
     result = happy_qa.eval("../data/qa/train-eval.csv")
-    assert result["eval_loss"] == 0.11738169193267822
+    assert result.eval_loss == 0.11738169193267822
 
 
 def test_qa_test():
     happy_qa = HappyQuestionAnswering()
     result = happy_qa.test("../data/qa/test.csv")
-    answer = [{'score': 0.9939756989479065, 'start': 0, 'end': 12, 'answer': 'October 31st'},
-              {'score': 0.967872679233551, 'start': 12, 'end': 25, 'answer': 'November 23rd'}]
+    answer = [QuestionAnsweringResult(answer='October 31st', score=0.9939756989479065, start=0, end=12),
+              QuestionAnsweringResult(answer='November 23rd', score=0.967872679233551, start=12, end=25)]
     assert result == answer
 
 
@@ -46,9 +46,9 @@ def test_qa_train_effectiveness():
     """
 
     happy_qa = HappyQuestionAnswering()
-    before_loss = happy_qa.eval("../data/qa/train-eval.csv")["eval_loss"]
+    before_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
     happy_qa.train("../data/qa/train-eval.csv")
-    after_loss = happy_qa.eval("../data/qa/train-eval.csv")["eval_loss"]
+    after_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
 
     assert after_loss < before_loss
 
@@ -59,17 +59,17 @@ def test_qa_train_effectiveness_albert():
     """
 
     happy_qa = HappyQuestionAnswering("ALBERT", "twmkn9/albert-base-v2-squad2")
-    before_loss = happy_qa.eval("../data/qa/train-eval.csv")["eval_loss"]
+    before_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
     happy_qa.train("../data/qa/train-eval.csv")
-    after_loss = happy_qa.eval("../data/qa/train-eval.csv")["eval_loss"]
+    after_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
 
     assert after_loss < before_loss
 
 def test_qa_test_albert():
     happy_qa = HappyQuestionAnswering("ALBERT", "twmkn9/albert-base-v2-squad2")
     result = happy_qa.test("../data/qa/test.csv")
-    answer = [{'score': 0.988578736782074, 'start': 0, 'end': 12, 'answer': 'October 31st'},
-              {'score': 0.9833534359931946, 'start': 12, 'end': 25, 'answer': 'November 23rd'}]
+    answer = [QuestionAnsweringResult(answer='October 31st', score=0.988578736782074, start=0, end=12),
+              QuestionAnsweringResult(answer='November 23rd', score=0.9833534359931946, start=12, end=25)]
     assert result == answer
 
 
@@ -80,15 +80,15 @@ def test_qa_train_effectiveness_bert():
     """
 
     happy_qa = HappyQuestionAnswering("BERT", "mrm8488/bert-tiny-5-finetuned-squadv2")
-    before_loss = happy_qa.eval("../data/qa/train-eval.csv")["eval_loss"]
+    before_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
     happy_qa.train("../data/qa/train-eval.csv")
-    after_loss = happy_qa.eval("../data/qa/train-eval.csv")["eval_loss"]
+    after_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
 
     assert after_loss < before_loss
 
 def test_qa_test_bert():
     happy_qa = HappyQuestionAnswering("BERT", "mrm8488/bert-tiny-5-finetuned-squadv2")
     result = happy_qa.test("../data/qa/test.csv")
-    answer = [{'score': 0.9352769255638123, 'start': 0, 'end': 12, 'answer': 'October 31st'},
-              {'score': 0.9180678129196167, 'start': 12, 'end': 25, 'answer': 'November 23rd'}]
+    answer = [QuestionAnsweringResult(answer='October 31st', score=0.9352769255638123, start=0, end=12),
+              QuestionAnsweringResult(answer='November 23rd', score=0.9180678129196167, start=12, end=25)]
     assert result == answer
