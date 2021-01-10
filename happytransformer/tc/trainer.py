@@ -31,7 +31,6 @@ class TCTrainer(HappyTrainer):
         eval_dataset = TextClassificationDataset(eval_encodings, labels)
 
         result = self._run_eval(eval_dataset)
-        print(result)
         return EvalResult(eval_loss=result["eval_loss"])
 
     def test(self, input_filepath, solve):
