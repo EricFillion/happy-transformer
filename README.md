@@ -6,12 +6,10 @@
 * [News](#News)
 * [Key Features](#Key-Features)
 * [Installation](#Installation)
-* [Initialization](#Initialization)
 * [Word Prediction](#Word-Prediction)
-* [Binary Sequence Classification](#Binary-Sequence-Classification)
+* [Text Classification](#Binary-Sequence-Classification)
 * [Next Sentence Prediction](#Next-Sentence-Prediction)
 * [Question Answering](#Question-Answering)
-* [Masked Word Prediction Fine-Tuning](#Masked-Word-Prediction-Fine-Tuning)
 * [Tech](#Tech)
 * [Call For Contributors](#Call-For-Contributors)
 * [Maintainers](#Maintainers)
@@ -32,229 +30,112 @@ Last month, Happy Transformer was presented at a conference called C-Search, and
 We're happy to announce that we won a Best Paper Award at the Canadian Undergraduate Conference for AI. We also received the highest score overall. The paper can be found [here](https://qmind.ca/wp-content/uploads/2020/05/Proceedings-of-CUCAI-2020.pdf) on page 67. 
 
 
-Happy Transformer is an API built on top of [Hugging Face's transformer library](https://huggingface.co/transformers/) that makes it easy to utilize state-of-the-art NLP models. 
+Happy Transformer is an package built on top of [Hugging Face's transformer library](https://huggingface.co/transformers/) that makes it easy to utilize state-of-the-art NLP models. 
 
-## Key Features
-  - **New: Finetuning Masked Language Models**
-  - Available language models: XLNET, BERT and ROBERTA.
-  - Predict a masked word within a sentence.
-  - Fine tune binary sequence classification models to solve problems like sentiment analysis.
-  - Predict the likelihood that sentence B follows sentence A within a paragraph. 
   
   
-| Public Methods                     | HappyROBERTA | HappyXLNET | HappyBERT |
+| Public Methods                     | Basic Usage  | Training   |
+|------------------------------------|--------------|------------|
+| Text Classification                | ✔            | ✔          | 
+| Question Answering                 | ✔            | ✔          | 
+| Word Prediction                    | ✔            |            |
+| Next Sentence Prediction           | ✔            |            | 
+
+| Public Methods                     | ALBERT       | BERT       |DISTILBERT |
 |------------------------------------|--------------|------------|-----------|
-| Masked Word Prediction             | ✔            | ✔          | ✔         |
-| Sequence Classification            | ✔            | ✔          | ✔         |
-| Next Sentence Prediction           |              |            | ✔         |
-| Question Answering                 |              |            | ✔         |
-| Masked Word Prediction Finetuning  | ✔            |            | ✔         |
+| Text Classification                | ✔            | ✔          | ✔         |
+| Question Answering                 | ✔            | ✔          | ✔         |
+| Word Prediction                    | ✔            | ✔          | ✔         |
+| Next Sentence Prediction           | ✔            | ✔          | ✔         |
   
 ## Installation
 
 ```sh
 pip install happytransformer
 ```
-## Initialization 
 
-By default base models are used. They are smaller, faster and require significantly less training time
-to obtain decent results.
 
-Large models are recommended for tasks that do not require fine tuning such as some word prediction tasks. 
 
-Base models are recommended for tasks that require fine tuning with limited available training data. 
-
-Uncased models do not differentiate between cased and uncased words. For example, the words
-"empire" and "Empire" would be reduced to the same token. In comparison, cased models do differentiate between cased and uncased words. 
-
-#### HappyXLNET:
-
-```sh
-from happytransformer import HappyXLNET
-#--------------------------------------#
-xl_base_cased = HappyXLNET("xlnet-base-cased")
-xl_large_cased = HappyXLNET("xlnet-large-cased")
-```
-#### HappyROBERTA:
-```sh
-from happytransformer import HappyROBERTA
-#--------------------------------------#
-happy_roberta_base = HappyROBERTA("roberta-base")
-happy_roberta_large = HappyROBERTA("roberta-large")
-
-```
-#### HappyBERT :
-```sh
-from happytransformer import HappyBERT
-#--------------------------------------#
-bert_base_uncased = HappyBERT("bert-base-uncased")
-bert_base_cased = HappyBERT("bert-base-cased")
-bert_large_uncased = HappyBERT("bert-large-uncased")
-bert_large_cased = HappyBERT("bert-large-cased")
-```
 ## Word Prediction
 
-It is recommended that you use HappyROBERTA("roberta-large") for masked word prediction.
-Avoid using HappyBERT for masked word prediction. 
-If you do decide to use HappyXLNET or HappyBERT, then also use their corresponding "large cased model'. 
+Initialize a HappyWordPrediction() object to perform word prediction. 
+
+Initialization Arguments: 
+    1. model_type (string): either "ALBERT", "BERT" or "DISTILBERT." The default is "DISTILBERT"
+    2. model_name(string): below is a URL that contains potential models. 
+       [MODELS](https://huggingface.co/models?filter=masked-lm)
  
-For all Happy Transformers, the masked token is **"[MASK]"**
 
-### Single Mask
+For all Transformers, the masked token is **"[MASK]"**
 
-Each Happy Transformer has a public  method called "predict_mask(text, options, num_results)" with the following input arguments.
-1. Text: the text you wish to predict including a single masked token.
-2. options (default = every word): A limited set of words the model can return.
-3. num_results (default = 1): The number of returned predictions.
+### Initialization  
 
-returns: a list of dictionaries, where each dictionary contains a "word" and "softmax" key
+We recommend using "HappyWordPrediction("ALBERT", "albert-xxlarge-v2")" for the best performance 
 
 
-
-
-#### Example 1 :
-```sh
-from happytransformer import HappyROBERTA
-#--------------------------------------#
-happy_roberta = HappyROBERTA("roberta-large")
-text = "I think therefore I [MASK]"
-results = happy_roberta.predict_mask(text)
-
-print(type(results)) # prints: <class 'list'>
-print(results) # prints: [{'word': 'am', 'softmax': 0.24738965928554535}]
-
-print(type(results[0])) # prints: <class 'dict'>
-print(results[0]) # prints: {'word': 'am', 'softmax': 0.24738965928554535}
-
-
-```
-
-#### Example 2 :
-```sh
-from happytransformer import HappyROBERTA
-#--------------------------------------#
-happy_roberta = HappyROBERTA("roberta-large")
-text = "To solve world poverty we must invest in [MASK]"
-results = happy_roberta.predict_mask(text, num_results = 2)
-
-print(type(results)) # prints: <class 'list'>
-print(results) # prints: [{'word': 'education', 'softmax': 0.34365904331207275}, {'word': 'children', 'softmax': 0.03996562585234642}]
-
-print(type(results[0])) # prints: <class 'dict'>
-print(results[0]) # prints: {'word': 'education', 'softmax': 0.34365904331207275}
-
-
-```
-
-#### Example 3 :
-```sh
-from happytransformer import HappyXLNET
-#--------------------------------------#
-happy_xlnet = HappyXLNET("xlnet-large-cased")
-text = "Can you please pass the [MASK] "
-options = ["pizza", "rice", "tofu", 'eggs', 'milk']
-results = happy_xlnet.predict_mask(text, options=options, num_results=3)
-
-print(type(results)) # prints: <class 'list'>
-print(results) # prints: [{'word': 'tofu', 'softmax': 0.007073382}, {'word': 'pizza', 'softmax': 0.00017212195}, {'word': 'rice', 'softmax': 2.843065e-07}]
-
-
-print(type(results[1])) # prints: <class 'dict'>
-print(results[1]) # prints: {'word': 'pizza', 'softmax': 0.00017212195}
+#### Example 1.0:
+```python
+    from happytransformer import HappyWordPrediction
+    # --------------------------------------#
+    happy_wp_distilbert = HappyWordPrediction()  # default
+    happy_wp_albert = HappyWordPrediction("ALBERT", "albert-base-v2")
+    happy_wp_bert = HappyWordPrediction("BERT", "bert-base-uncased")
 
 ```
 
 
-### Multiple Mask
+### predict_mask()
+The method predict_masks() contains 3 arguments: 
+1. text (string): a body of text that contains a single masked token 
+2. targets (list of strings): a list of potential answers. All other answers will be ignored 
+3. top_k (int): the number of results that will be returned 
 
-The "predict_masks(text, options, num_results)" method predicts multiple masks within a string. 
-1. Text: the text you wish to predict that includes "[MASK]" at least once
-2. options: a list of lists, where each inner lists contains strings. The outer list is for each mask. The inner list is for the options for the nth mask.  
-3. num_results (default = 1): The number of returned predictions for each mask. 
+Returns: 
+A list of named tuples with arguments: "token_str" and "top_k"
 
-returns: a list of lists, where each inner list contains dictionaries.  Each dictionary has a "word" and "softmax" key
+Note: if targets are provided, then top_k will be ignored and a score for each target will be returned. 
 
-The outer list is for the nth mask token. the inner list contains the the prediction(s) for the mask. 
+#### Example 1.1:
+```python
 
-
-
-#### Example 1 :
-```sh
-from happytransformer import HappyROBERTA
+from happytransformer import HappyWordPrediction
 #--------------------------------------#
-happy_roberta = HappyROBERTA("roberta-large")
-text = "[MASK] have a [MASK] dog and I love [MASK] so much"
-results = happy_roberta.predict_masks(text)
-
-print(type(results))  # prints: <class 'list'>
-print(results)  # prints: [[{'word': 'i', 'softmax': 0.5861835479736328}], [{'word': 'little', 'softmax': 0.16358524560928345}], [{'word': 'him', 'softmax': 0.6039994359016418}]]
-
-first_mask_result = results[0]
-print(type(first_mask_result))  # prints: <class 'list'>
-print(first_mask_result)  # prints: [{'word': 'i', 'softmax': 0.5861835479736328}]
-
-first_prediction_result = first_mask_result[0]
-print(type(first_prediction_result))  # prints: <class 'dict'>
-print(first_prediction_result)  # prints: {'word': 'i', 'softmax': 0.5861835479736328}
-
-
-print(type(first_prediction_result["word"])) # <class 'str'>
-print(first_prediction_result["word"]) # i
-
+    happy_wp = HappyWordPrediction()  # default uses distilbert-base-uncased
+    result = happy_wp.predict_mask("I think therefore I [MASK]")
+    print(type(result))  # <class 'list'>
+    print(result)  # [WordPredictionResult(token_str='am', score=0.10172799974679947)]
+    print(type(result[0]))  # <class 'list'>
+    print(result[0])  # [WordPredictionResult(token_str='am', score=0.10172799974679947)]
+    print(result[0].token_str)  # am
+    print(result[0].score)  # 0.10172799974679947
+    
 
 ```
 
-#### Example 2 :
-```sh
+#### Example 1.2:
+```python
 
-from happytransformer import HappyROBERTA
+from happytransformer import HappyWordPrediction
 #--------------------------------------#
-happy_roberta = HappyROBERTA("roberta-large")
-text = "[MASK] have a [MASK] dog and I love [MASK] so much"
-results = happy_roberta.predict_masks(text, num_results=2)
-
-print(type(results))  # prints: <class 'list'>
-print(results)  # prints: [[{'word': 'i', 'softmax': 0.5861835479736328}, {'word': 'I', 'softmax': 0.3941880762577057}], [{'word': 'little', 'softmax': 0.16358524560928345}, {'word': 'beautiful', 'softmax': 0.10422931611537933}] ...
-
-second_mask_result = results[1]
-print(type(second_mask_result))  # prints: <class 'list'>
-print(second_mask_result)  # prints: [{'word': 'little', 'softmax': 0.16358524560928345}, {'word': 'beautiful', 'softmax': 0.10422931611537933}]
-
-second_prediction_result = second_mask_result[1]
-print(type(second_prediction_result))  # prints: <class 'dict'>
-print(second_prediction_result)  # prints: {'word': 'beautiful', 'softmax': 0.10422931611537933}
-
-
-print(type(second_prediction_result["word"])) # prints: <class 'str'>
-print(second_prediction_result["word"]) # prints: beautiful
-
+happy_wp = HappyWordPrediction("ALBERT", "albert-xxlarge-v2")
+result = happy_wp.predict_mask("To better the world I would invest in [MASK] and education.", top_k=2)
+print(result)  # [WordPredictionResult(token_str='infrastructure', score=0.09270179271697998), WordPredictionResult(token_str='healthcare', score=0.07219093292951584)]
+print(result[1]) # WordPredictionResult(token_str='healthcare', score=0.07219093292951584)
+print(result[1].token_str) # healthcare
 
 ```
 
-#### Example 3 :
-```sh
-from happytransformer import HappyROBERTA
+#### Example 1.3:
+```python
+from happytransformer import HappyWordPrediction
 #--------------------------------------#
-happy_roberta = HappyROBERTA("roberta-large")
-text = "[MASK] have a [MASK] dog and I love [MASK] so much"
+happy_wp = HappyWordPrediction("ALBERT", "albert-xxlarge-v2")
+targets = ["technology", "healthcare"]
+result = happy_wp.predict_mask("To better the world I would invest in [MASK] and education.", targets=targets)
+print(result)  # [WordPredictionResult(token_str='healthcare', score=0.07219093292951584), WordPredictionResult(token_str='technology', score=0.032044216990470886)]
+print(result[1])  # WordPredictionResult(token_str='technology', score=0.032044216990470886)
+print(result[1].token_str)  # technology
 
-options = [["We", "You"], ["smart", "massive"], ["him", "myself"]]
-results = happy_roberta.predict_masks(text, options=options)
-
-print(type(results))  # prints: <class 'list'>
-print(results)  # prints: [[{'word': 'We', 'softmax': 0.007347162}, {'word': 'You', 'softmax': 0.0007238558}], [{'word': 'smart', 'softmax': 1.1157575e-06}, {'word': 'massive', 'softmax': 1.0597887e-06}], [{'word': 'him', 'softmax': 0.00021874729}, {'word': 'myself', 'softmax': 3.0992996e-06}]]
-
-
-first_mask_result = results[0]
-print(type(first_mask_result))  # prints: <class 'list'>
-print(first_mask_result)  # prints: [{'word': 'We', 'softmax': 0.007347162}, {'word': 'You', 'softmax': 0.0007238558}]
-
-first_prediction_result = first_mask_result[0]
-print(type(first_prediction_result))  # prints: <class 'dict'>
-print(first_prediction_result)  # prints: {'word': 'We', 'softmax': 0.007347162}
-
-print(type(first_prediction_result["word"])) # <class 'str'>
-print(first_prediction_result["word"]) # We
 
 ```
 
@@ -526,166 +407,6 @@ print(best_answer["softmax"]) # prints: 0.9916905164718628
 
 ```
 
-
-## Masked Word Prediction Fine-Tuning
-
-*Fine-tune a state-of-the-art masked word prediction model with just a text file*
-
-Each HappyBERT and HappyROBERTA both have 4 methods that are associated with masked word prediction fine-tuning
-They are:
-
-```
-1. init_mwp(args)
-2. train_mwp(training_path)
-3. eval_mwp(testing_path,batch_size)
-4. predict_mask(text, options, num_results)
-```
-
-### init_mwp(args)
-
-*Initialize the model for masked word prediction training.*
-
-#### Example 1 
-```python
-from happytransformer import HappyROBERTA
-#----------------------------------------#
-
-Roberta = HappyROBERTA()
-
-Roberta.init_train_mwp() # Initialize the training model with default settings
-
-```
-
-You can also customize the training parameters by inputting a dictionary with specific training parameters.  The dictionary must have the same keys as the dictionary shown below. 
-```python
-word_prediction_args = {
-
-"batch_size": 1,
-
-"epochs": 1,
-
-"lr": 5e-5,
-
-"adam_epsilon": 1e-8
-
-} 
-```
-The args are:
-
-- batch_size: How many sequences the model processes on one iteration.
-
-- epochs: This refers to how many times the model will train on the same dataset.
-
--  lr (learning rate): How quickly the model learns.
-
--  adam_epsilon: This is used to avoid diving by zero when gradient is almost zero.
-
-
-The recommended for the parameters are:
-
-- lr: 1e-4 used in BERT and ROBERTA [1]
-
-- Adam Epsilon: 1e-6 used by Huggingface team [2]
-
-- batch_size: Depend on the user's vram, Typically 2 to 3
-
-
-#### Example 2 
-
-```python
-from happytransformer import HappyROBERTA
-#----------------------------------------#
-
-happy_roberta = HappyROBERTA()
-
-word_prediction_args = {
-"batch_size": 4,
-
-"epochs": 2,
-
-"lr": 3e-5,
-
-"adam_epsilon": 1e-8
-
-} 
-
-happy_roberta.init_train_mwp(word_prediction_args)
-
-```
-
-
-### train_mwp(training_path)
-*Trains the model on Masked Language Modelling Loss.*
-
-Argument:
-1. testing_path: A string directory path to the .txt that contains the testing data.
-
-Example training.txt :
-```
-I want to get healthy in 2011 .
-I want to boost my immune system , cut that nasty dairy out , and start exercising on a regular basis .
-That doesn 't seem to hard to follow does it ?
-```
-
-### eval_mwp(testing_path,batch_size) <br />
-*Evaluates the model on Masked Language Modelling loss and return both perplexity and masked language modelling loss.*
-
-
-Perplexity: Mathematicall it is ![equation](https://latex.codecogs.com/gif.latex?2^{Entropy}) where Entropy is the disorder in the system. Lower the perplexity the better the model is performing.
-
-Masked language modelling loss:	see [BERT Explained: State of the art language model for NLP](https://towardsdatascience.com/perplexity-intuition-and-derivation-105dd481c8f3) for the explanation.
-
-Arguments:
-```
-1. testing_path: A string directory path to the .txt that contains the testing data.
-2. batch_size: An integer. Will default to 2.
-```
-
-Example testing.txt :
-```
-In the few short months since Dan 's mother had moved to town , Saturday had gone from being my favourite day of the week to the one I looked forward to the least.
-Although she came when Dan was at work , she invariably stayed all day .
-It was like living in a goldfish bowl and Dan was on edge the minute he came through the door.
-```
-
-
-Note 2: Evaluating on Cpu is not recommended as it will take considerably longer.
-
-#### Example 3:
-
-```python
-from happytransformer import HappyROBERTA
-#----------------------------------------#
-
-happy_roberta = HappyROBERTA()
-happy_roberta.init_train_mwp(word_prediction_args)
-
-train_path = "data/train.txt"
-happy_roberta.train_mwp(train_path)
-
-eval_path = "data/eval.txt"
-eval_results = happy_roberta.eval_mwp(eval_path)
-
-print(type(eval_results)) # prints: <class 'dict'>
-print(eval_results) # prints: {'perplexity': 7.863316059112549, 'eval_loss': 2.0622084404198864}
-
-```
-
-
-### Predicting masked word with fine-tuned model
-
-```python
-text = "Linear algebra is a branch of [MASK]"
-
-options = ["music", "mathematics", "geography"]
-
-results = happy_roberta.predict_mask(text, options=options, num_results=3)
-
-print(type(results)) # prints: <class 'list'>
-
-print(results) # prints: [{'word': 'mathematics', 'softmax': 0.16551}, {'word': 'music', 'softmax': 3.91739e-05}, {'word': 'geography', 'softmax': 2.9731e-05}]
-
-```
 
 ## Tech
 
