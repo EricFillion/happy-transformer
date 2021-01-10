@@ -12,7 +12,7 @@ def example_1_1():
     result = happy_wp.predict_mask("I think therefore I [MASK]")
     print(type(result))  # <class 'list'>
     print(result)  # [WordPredictionResult(token_str='am', score=0.10172799974679947)]
-    print(type(result[0]))  # <class 'list'>
+    print(type(result[0]))  # <class 'happytransformer.happy_word_prediction.WordPredictionResult'>
     print(result[0])  # [WordPredictionResult(token_str='am', score=0.10172799974679947)]
     print(result[0].token_str)  # am
     print(result[0].score)  # 0.10172799974679947
@@ -36,7 +36,7 @@ def example_1_3():
 
 
 def main():
-    example_1_3()
+    example_1_1()
 
 
 if __name__ == "__main__":

@@ -104,7 +104,7 @@ from happytransformer import HappyWordPrediction
     result = happy_wp.predict_mask("I think therefore I [MASK]")
     print(type(result))  # <class 'list'>
     print(result)  # [WordPredictionResult(token_str='am', score=0.10172799974679947)]
-    print(type(result[0]))  # <class 'list'>
+    print(type(result[0]))  # <class 'happytransformer.happy_word_prediction.WordPredictionResult'>
     print(result[0])  # [WordPredictionResult(token_str='am', score=0.10172799974679947)]
     print(result[0].token_str)  # am
     print(result[0].score)  # 0.10172799974679947
