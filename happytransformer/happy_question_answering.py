@@ -59,19 +59,19 @@ class HappyQuestionAnswering(HappyTransformer):
         self._trainer = QATrainer(model, model_type, tokenizer, self._device,
                                   self.logger)
 
-    def answer_question(self, context, question, topk=1):
+    def answer_question(self, context, question, top_k=1):
         """
         :param context: background information to answer the question (string)
         :param question: A question that can be answered with the given context (string)
-        :param topk: how many results
+        :param top_k: how many results
         :return: A list of a named tuples that contains the keys: answer, score, start and end
 
         """
 
-        result = self._pipeline(context=context, question=question, topk=topk)
-        # transformers returns a single dictionary when topk ==1.
+        result = self._pipeline(context=context, question=question, topk=top_k)
+        # transformers returns a single dictionary when top_k ==1.
         # Our convention however is to have constant output format
-        if topk == 1:
+        if top_k == 1:
             result = [result]
 
         results = [
