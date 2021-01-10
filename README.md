@@ -11,6 +11,7 @@ Happy Transformer is an package built on top of [Hugging Face's transformer libr
 * [Word Prediction](#Word-Prediction)
 * [Text Classification](#Text-Classification)
 * [Question Answering](#Question-Answering)
+* [Question Answering Training](#Question-Answering-Training)
 * [Next Sentence Prediction](#Next-Sentence-Prediction)
 * [Tech](#Tech)
 * [Call For Contributors](#Call-For-Contributors)
@@ -142,21 +143,6 @@ print(result[1].token_str)  # technology
 ## Text Classification 
 
 
-
-## Question Answering
-
-
-##### Single Answer
-**HappyBERT** has a method called "answer_question" which is used for question answering tasks.
-The method takes the following arguments:
-
-    1. question: The question to be answered
-    2. text: The text containing the answer to the question
-
-The output from the method is the answer to the question, returned as a string.
-
-
-
 ## Question Answering
 
 Initialize a HappyQuestionAnswering() object to perform question answering. 
@@ -224,7 +210,7 @@ The list is in descending order by score
 ```
 
 
-## Training Question Answering
+## Question Answering Training
 
 HappyQuestionAnswering contains three methods for training 
 - train(): fine-tune a question answering model  to become better at a certain task
