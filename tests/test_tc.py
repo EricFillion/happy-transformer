@@ -10,7 +10,7 @@ def test_classify_text():
     HappyQuestionAnswering.classify_text()
 
     """
-    happy_tc = HappyTextClassification()
+    happy_tc = HappyTextClassification(model_type="DISTILBERT",  model_name="distilbert-base-uncased-finetuned-sst-2-english")
     result = happy_tc.classify_text("What a great movie")
     answer = TextClassificationResult(label='LABEL_1', score=0.9998726844787598)
     assert result == answer
