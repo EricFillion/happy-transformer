@@ -155,11 +155,11 @@ Initialization Arguments:
        [MODELS](https://huggingface.co/models?filter=text-classification)
     3. num_labels(int): The number of text categories. The default is 2
     
-# WARNING: If you try to load a pretrained model that has a different number of categories 
-# than num_labels, then you will get an error 
+WARNING: If you try to load a pretrained model that has a different number of categories 
+than num_labels, then you will get an error 
 
-# "albert-base-v2", "bert-base-uncased" and "distilbert-base-uncased" do not have a predefined 
-# number of labels, so if you use these models you can set num_labels freely 
+"albert-base-v2", "bert-base-uncased" and "distilbert-base-uncased" do not have a predefined 
+number of labels, so if you use these models you can set num_labels freely 
 
 ### Initialization  
 
