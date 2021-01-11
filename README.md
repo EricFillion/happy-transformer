@@ -59,6 +59,7 @@ pip install happytransformer
 
 
 ## Word Prediction
+### Initialization  
 
 Initialize a HappyWordPrediction object to perform word prediction. 
 
@@ -70,7 +71,6 @@ Initialize a HappyWordPrediction object to perform word prediction.
 
 Note: For all Transformers, the masked token is **"[MASK]"**
 
-### Initialization  
 
 We recommend using "HappyWordPrediction("ALBERT", "albert-xxlarge-v2")" for the best performance 
 
@@ -142,6 +142,7 @@ print(result[1].token_str)  # technology
 ```
 ## Text Classification 
 
+### Initialization  
 
 Initialize a HappyTextClassification object to perform text classification. 
 
@@ -160,8 +161,6 @@ than num_labels, then you will get an error
 
 NOTE: "albert-base-v2", "bert-base-uncased" and "distilbert-base-uncased" do not have a predefined 
 number of labels, so if you use these models you can set num_labels freely 
-
-### Initialization  
 
 
 #### Example 2.0:
@@ -330,6 +329,7 @@ The list is in order by ascending csv index.
 ```
 ## Question Answering
 
+### Initialization  
 Initialize a HappyQuestionAnswering object to perform question answering. 
 
 This model answers a question given a body of that's text relevant to the questions. 
@@ -341,7 +341,6 @@ The outputted answer is always a text-span with the provided information.
 2. model_name(string): below is a URL that contains potential models. 
    [MODELS](https://huggingface.co/models?filter=question-answering)
 
-### Initialization  
 
 We recommend using "HappyQuestionAnswering("ALBERT", "mfeb/albert-xxlarge-v2-squad2")" for the best performance 
 
