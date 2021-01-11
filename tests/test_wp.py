@@ -1,6 +1,7 @@
 from happytransformer import HappyWordPrediction
 from happytransformer.happy_word_prediction import WordPredictionResult
 
+
 def test_mwp_basic():
     happy_mwp = HappyWordPrediction()
     result = happy_mwp.predict_mask(
@@ -21,6 +22,7 @@ def test_mwp_top_k():
 
     assert result == answer
 
+
 def test_mwp_targets():
     happy_mwp = HappyWordPrediction()
     result = happy_mwp.predict_mask(
@@ -40,10 +42,20 @@ def test_mwp_basic_albert():
     answer = [WordPredictionResult(token_str='garlic', score=0.036625903099775314)]
     assert result == answer
 
+
 def test_mwp_basic_bert():
     happy_mwp = HappyWordPrediction("BERT", "bert-base-uncased")
     result = happy_mwp.predict_mask(
         "Please pass the salt and [MASK]",
     )
     answer = [WordPredictionResult(token_str='.', score=0.8466101884841919)]
+    assert result == answer
+
+
+def test_mwp_basic_roberta():
+    happy_mwp = HappyWordPrediction("ROBERTA", "roberta-base")
+    result = happy_mwp.predict_mask(
+        "Please pass the salt and <mask>",  # Roberta requires mask to be '<mask>' as opposed to '[MASK]'
+    )
+    answer = [WordPredictionResult(token_str='pepper', score=0.7325230240821838)]
     assert result == answer

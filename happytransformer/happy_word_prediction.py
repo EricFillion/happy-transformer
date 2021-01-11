@@ -5,8 +5,9 @@ from transformers import (
     AlbertTokenizerFast,
     DistilBertForMaskedLM,
     DistilBertTokenizerFast,
+    RobertaForMaskedLM,
+    RobertaTokenizerFast,
     FillMaskPipeline,
-
 )
 import torch
 from collections import namedtuple
@@ -28,19 +29,23 @@ class HappyWordPrediction(HappyTransformer):
         if model_type == "ALBERT":
             model = AlbertForMaskedLM.from_pretrained(model_name)
             tokenizer = AlbertTokenizerFast.from_pretrained(model_name)
-
         elif model_type == "BERT":
             model = BertForMaskedLM.from_pretrained(model_name)
             tokenizer = BertTokenizerFast.from_pretrained(model_name)
-
         elif model_type == "DISTILBERT":
             model = DistilBertForMaskedLM.from_pretrained(model_name)
             tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
+        elif model_type == "ROBERTA":
+            model = RobertaForMaskedLM.from_pretrained(model_name)
+            tokenizer = RobertaTokenizerFast.from_pretrained(model_name)
+
         else:
             raise ValueError(self.model_type_error)
         super().__init__(model_type, model_name, model, tokenizer)
         device_number = 1 if torch.cuda.is_available() else -1
+
         self._pipeline = FillMaskPipeline(model=model, tokenizer=tokenizer, device=device_number)
+
         self._trainer = WPTrainer(model, model_type, tokenizer, self._device, self.logger)
 
     def predict_mask(self, text, targets=None, top_k=1):
@@ -59,6 +64,10 @@ class HappyWordPrediction(HappyTransformer):
         if self.model_type == "ALBERT":
             for answer in result:
                 if answer["token_str"][0] == "▁":
+                    answer["token_str"] = answer["token_str"][1:]
+        elif self.model_type == "ROBERTA":
+            for answer in result:
+                if answer["token_str"][0] == "Ġ":
                     answer["token_str"] = answer["token_str"][1:]
         results = [
             WordPredictionResult(

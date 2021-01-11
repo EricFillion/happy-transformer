@@ -121,3 +121,32 @@ def test_qa_train_effectiveness_bert():
     happy_tc.train("../data/tc/train-eval.csv")
     after_loss = happy_tc.eval("../data/tc/train-eval.csv").eval_loss
     assert after_loss < before_loss
+
+
+def test_qa_test_roberta():
+    """
+    Tests
+    HappyQuestionAnswering.test()
+    """
+    happy_tc = HappyTextClassification(model_type="ROBERTA", model_name="textattack/roberta-base-imdb")
+
+    result = happy_tc.test("../data/tc/test.csv")
+    answer = [TextClassificationResult(label='LABEL_1', score=0.9883185029029846),
+              TextClassificationResult(label='LABEL_0', score=0.9893660545349121),
+              TextClassificationResult(label='LABEL_0', score=0.947014331817627),
+              TextClassificationResult(label='LABEL_1', score=0.9845685958862305)]
+    assert result == answer
+
+
+def test_qa_train_effectiveness_roberta():
+    """
+    Tests
+    Ensures that HappyQuestionAnswering.train() results in
+    lowering the loss as determined by HappyQuestionAnswering.eval()
+    """
+    happy_tc = HappyTextClassification(model_type="ROBERTA", model_name="textattack/roberta-base-imdb")
+    before_loss = happy_tc.eval("../data/tc/train-eval.csv").eval_loss
+    happy_tc.train("../data/tc/train-eval.csv")
+    after_loss = happy_tc.eval("../data/tc/train-eval.csv").eval_loss
+    assert after_loss < before_loss
+
