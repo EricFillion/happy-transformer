@@ -114,11 +114,6 @@ def test_qa_train_effectiveness_roberta():
 def test_qa_test_roberta():
     happy_qa = HappyQuestionAnswering("ROBERTA", "roberta-base")
     result = happy_qa.test("../data/qa/test.csv")
-    print(result)
     answer = [QuestionAnsweringResult(answer='is the', score=0.03888237848877907, start=13, end=19),
               QuestionAnsweringResult(answer='date is', score=0.02540113404393196, start=4, end=11)]
-
-
-if __name__ == '__main__':
-    test_qa_test_roberta()
-    test_qa_train_effectiveness_roberta()
+    assert result == answer
