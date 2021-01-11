@@ -59,7 +59,7 @@ def example_2_5():
 
 
 def main():
-    example_2_0()
+    example_2_5()
 
 
 if __name__ == "__main__":

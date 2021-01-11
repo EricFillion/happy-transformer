@@ -310,6 +310,26 @@ The list is in order by ascending csv index.
 
 
 ```
+
+
+#### Example 2.5:
+```python
+    from happytransformer import HappyTextClassification
+    # --------------------------------------#
+    happy_tc = HappyTextClassification(model_type="DISTILBERT",
+                                       model_name="distilbert-base-uncased-finetuned-sst-2-english",
+                                       num_labels=2)  # Don't forget to set num_labels!
+    before_loss = happy_tc.eval("../../data/tc/train-eval.csv").eval_loss
+    happy_tc.train("../../data/tc/train-eval.csv")
+    after_loss = happy_tc.eval("../../data/tc/train-eval.csv").eval_loss
+    print("Before loss: ", before_loss)  # 0.007262040860950947
+    print("After loss: ", after_loss)  # 0.000162081079906784
+    # Since after_loss < before_loss, the model learned!
+    # Note: typically you evaluate with a separate dataset
+    # but for simplicity we used the same one
+
+
+```
 ## Question Answering
 
 Initialize a HappyQuestionAnswering() object to perform question answering. 
