@@ -185,8 +185,6 @@ Input:
 
 Returns: 
 A label in the form of a string, typically "LABEL_x", where x is the label number.
-Some models use different labels 
-
 
 #### Example 2.1:
 ```python
