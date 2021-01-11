@@ -33,8 +33,6 @@ class HappyNextSentence(HappyTransformer):
         :param sentence_b (string): Second sentence to test if it comes after the first
         :return (float): The probability that sentence_b follows sentence_a
         """
-        if not self.__is_one_sentence(sentence_a) or not self.__is_one_sentence(sentence_b):
-            raise ValueError('Each inputted text variable for the "predict_next_sentence" method must contain a single sentence')
 
         encoded = self._tokenizer(sentence_a, sentence_b, return_tensors='pt')
         with torch.no_grad():
@@ -48,25 +46,6 @@ class HappyNextSentence(HappyTransformer):
             torch.cuda.empty_cache()
 
         return score
-
-    def __is_one_sentence(self, text):
-        """
-        Used to verify the proper input requirements for sentence_relation.
-        The text must contain no more than a single sentence.
-        Casual use of punctuation is accepted, such as using multiple exclamation marks.
-        :param text: A body of text
-        :return: True if the body of text contains a single sentence, else False
-        """
-        split_text = re.split('[?.!]', text)
-        sentence_found = False
-        for possible_sentence in split_text:
-            for char in possible_sentence:
-                if char.isalpha():
-                    if sentence_found:
-                        return False
-                    sentence_found = True
-                    break
-        return True
 
     def train(self, input_filepath, args):
         raise NotImplementedError("train() is currently not available")
