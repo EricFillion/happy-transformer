@@ -60,15 +60,15 @@ pip install happytransformer
 
 ## Word Prediction
 
-Initialize a HappyWordPrediction() object to perform word prediction. 
+Initialize a HappyWordPrediction object to perform word prediction. 
 
-Initialization Arguments: 
-    1. model_type (string): either "ALBERT", "BERT" or "DISTILBERT." The default is "DISTILBERT"
-    2. model_name(string): below is a URL that contains potential models. 
+**Initialization Arguments:**
+ 1. model_type (string): either "ALBERT", "BERT" or "DISTILBERT." The default is "DISTILBERT"
+ 2. model_name(string): below is a URL that contains potential models. 
        [MODELS](https://huggingface.co/models?filter=masked-lm)
  
 
-For all Transformers, the masked token is **"[MASK]"**
+Note: For all Transformers, the masked token is **"[MASK]"**
 
 ### Initialization  
 
@@ -143,28 +143,25 @@ print(result[1].token_str)  # technology
 ## Text Classification 
 
 
-Initialize a HappyTextClassification() object to perform text classification. 
+Initialize a HappyTextClassification object to perform text classification. 
 
 This model assigns a label to a given text string. For example, you can train a model to 
 detect if an email is spam based on its text. 
 
 
-Initialization Arguments: 
-    1. model_type (string): either "ALBERT", "BERT" or "DISTILBERT." The default is "DISTILBERT"
-    2. model_name(string): below is a URL that contains potential models. The default is "distilbert-base-uncased"
+**Initialization Arguments:** 
+1. model_type (string): either "ALBERT", "BERT" or "DISTILBERT." The default is "DISTILBERT"
+2. model_name(string): below is a URL that contains potential models. The default is "distilbert-base-uncased"
        [MODELS](https://huggingface.co/models?filter=text-classification)
-    3. num_labels(int): The number of text categories. The default is 2
+3. num_labels(int): The number of text categories. The default is 2
     
 WARNING: If you try to load a pretrained model that has a different number of categories 
 than num_labels, then you will get an error 
 
-"albert-base-v2", "bert-base-uncased" and "distilbert-base-uncased" do not have a predefined 
+NOTE: "albert-base-v2", "bert-base-uncased" and "distilbert-base-uncased" do not have a predefined 
 number of labels, so if you use these models you can set num_labels freely 
 
 ### Initialization  
-
-"HappyTextClassification("ALBERT", "textattack/albert-base-v2-SST-2")"  has many useful applications. 
-It's able to detect the sentiment of text.  
 
 
 #### Example 2.0:
@@ -215,6 +212,8 @@ inputs:
 The dictionary below shows the default values. 
 
 Information about what the keys mean can be accessed [here](https://huggingface.co/transformers/main_classes/trainer.html#transformers.TrainingArguments)
+```python
+
 ARGS_QA_TRAIN= {
     'learning_rate': 5e-5,
     'weight_decay': 0,
@@ -225,6 +224,7 @@ ARGS_QA_TRAIN= {
     'num_train_epochs': 3.0,
 
 }
+```
 
 Output: None
  
@@ -330,16 +330,16 @@ The list is in order by ascending csv index.
 ```
 ## Question Answering
 
-Initialize a HappyQuestionAnswering() object to perform question answering. 
+Initialize a HappyQuestionAnswering object to perform question answering. 
 
 This model answers a question given a body of that's text relevant to the questions. 
 
 The outputted answer is always a text-span with the provided information. 
 
-Initialization Arguments: 
-    1. model_type (string): either "ALBERT", "BERT" or "DISTILBERT." The default is "DISTILBERT"
-    2. model_name(string): below is a URL that contains potential models. 
-       [MODELS](https://huggingface.co/models?filter=question-answering)
+**Initialization Arguments:**
+1. model_type (string): either "ALBERT", "BERT" or "DISTILBERT." The default is "DISTILBERT"
+2. model_name(string): below is a URL that contains potential models. 
+   [MODELS](https://huggingface.co/models?filter=question-answering)
 
 ### Initialization  
 
@@ -410,6 +410,8 @@ inputs:
 The dictionary below shows the default values. 
 
 Information about what the keys mean can be accessed [here](https://huggingface.co/transformers/main_classes/trainer.html#transformers.TrainingArguments)
+```python
+
 ARGS_QA_TRAIN= {
     'learning_rate': 5e-5,
     'weight_decay': 0,
@@ -420,7 +422,7 @@ ARGS_QA_TRAIN= {
     'num_train_epochs': 3.0,
 
 }
-
+```
 Output: None
  
 #### Table 3.1
