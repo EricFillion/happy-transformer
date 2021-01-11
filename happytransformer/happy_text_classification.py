@@ -32,7 +32,6 @@ class HappyTextClassification(HappyTransformer):
         model = None
         tokenizer = None
         config = AutoConfig.from_pretrained(model_name, num_labels=num_labels)
-        # config = DistilBertConfig(num_labels=num_labels)
 
         if model_type == "ALBERT":
             model = AlbertForSequenceClassification.from_pretrained(model_name, config=config)
