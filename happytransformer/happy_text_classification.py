@@ -11,9 +11,8 @@ from transformers import (
     DistilBertTokenizerFast,
     AlbertForSequenceClassification,
     AlbertTokenizerFast,
-
-
-    TextClassificationPipeline
+AutoConfig,
+TextClassificationPipeline
 )
 from happytransformer.tc.trainer import TCTrainer
 
@@ -29,18 +28,20 @@ class HappyTextClassification(HappyTransformer):
     """
 
     def __init__(self, model_type="DISTILBERT",
-                 model_name="distilbert-base-uncased-finetuned-sst-2-english"):
+                 model_name="distilbert-base-uncased", num_labels=2):
         model = None
         tokenizer = None
+        config = AutoConfig.from_pretrained(model_name, num_labels=num_labels)
+        # config = DistilBertConfig(num_labels=num_labels)
 
         if model_type == "ALBERT":
-            model = AlbertForSequenceClassification.from_pretrained(model_name)
+            model = AlbertForSequenceClassification.from_pretrained(model_name, config=config)
             tokenizer = AlbertTokenizerFast.from_pretrained(model_name)
         elif model_type == "BERT":
-            model = BertForSequenceClassification.from_pretrained(model_name)
+            model = BertForSequenceClassification.from_pretrained(model_name, config=config)
             tokenizer = BertTokenizerFast.from_pretrained(model_name)
         elif model_type == "DISTILBERT":
-            model = DistilBertForSequenceClassification.from_pretrained(model_name)
+            model = DistilBertForSequenceClassification.from_pretrained(model_name, config=config)
             tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
 
         else:
