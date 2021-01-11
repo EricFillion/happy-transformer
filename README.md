@@ -143,6 +143,173 @@ print(result[1].token_str)  # technology
 ## Text Classification 
 
 
+Initialize a HappyTextClassification() object to perform text classification. 
+
+This model assigns a label to a given text string. For example, you can train a model to 
+detect if an email is spam based on its text. 
+
+
+Initialization Arguments: 
+    1. model_type (string): either "ALBERT", "BERT" or "DISTILBERT." The default is "DISTILBERT"
+    2. model_name(string): below is a URL that contains potential models. The default is "distilbert-base-uncased"
+       [MODELS](https://huggingface.co/models?filter=text-classification)
+    3. num_labels(int): The number of text categories. The default is 2
+    
+# WARNING: If you try to load a pretrained model that has a different number of categories 
+# than num_labels, then you will get an error 
+
+# "albert-base-v2", "bert-base-uncased" and "distilbert-base-uncased" do not have a predefined 
+# number of labels, so if you use these models you can set num_labels freely 
+
+### Initialization  
+
+"HappyTextClassification("ALBERT", "textattack/albert-base-v2-SST-2")"  has many useful applications. 
+It's able to detect the sentiment of text.  
+
+
+#### Example 2.0:
+```python
+    from happytransformer import HappyTextClassification
+    # --------------------------------------#
+    happy_qa_distilbert = HappyTextClassification()  # default with "distilbert-base-uncased" and num_labels=2
+    happy_tc_albert = HappyTextClassification(model_type="ALBERT", model_name="albert-base-v2")
+    happy_qa_bert = HappyTextClassification("BERT", "bert-base-uncased")
+
+```
+
+
+### classify_text()
+
+Input: 
+1. text (string): Text that will be classified 
+
+Returns: 
+A label in the form of a string, typically "LABEL_x", where x is the label number.
+Some models use different labels 
+
+
+#### Example 2.1:
+```python
+    from happytransformer import HappyTextClassification
+    # --------------------------------------#
+    happy_tc = HappyTextClassification(model_type="DISTILBERT",  model_name="distilbert-base-uncased-finetuned-sst-2-english")
+    result = happy_tc.classify_text("Great movie! 5/5")
+    print(type(result))  # <class 'happytransformer.happy_text_classification.TextClassificationResult'>
+    print(result)  # TextClassificationResult(label='LABEL_1', score=0.9998761415481567)
+    print(result.label)  # LABEL_1
+
+```
+
+
+
+## Text Classification Training
+
+HappyTextClassification contains three methods for training 
+- train(): fine-tune the model to become better at a certain task
+- eval(): determine how well the model performs on a labeled dataset
+- test(): run the model on an unlabeled dataset to produce predictions  
+
+### train()
+
+inputs: 
+1. input_filepath (string): a path file to a csv file as described in table 2.1
+2. args (dictionary): a dictionary with the same keys and value types as shown below. 
+The dictionary below shows the default values. 
+
+Information about what the keys mean can be accessed [here](https://huggingface.co/transformers/main_classes/trainer.html#transformers.TrainingArguments)
+ARGS_QA_TRAIN= {
+    'learning_rate': 5e-5,
+    'weight_decay': 0,
+    'adam_beta1': 0.9,
+    'adam_beta2': 0.999,
+    'adam_epsilon': 1e-8,
+    'max_grad_norm':  1.0,
+    'num_train_epochs': 3.0,
+
+}
+
+Output: None
+ 
+#### Table 2.1
+
+1. text (string): text to be classified 
+2. label (int): the corresponding label
+
+| Text                          | label |
+|-------------------------------|-------|
+| Wow what a great place to eat | 1     |
+| Horrible food                 | 0     |
+| Terrible service              | 0     |
+| I'm coming here again         | 1     |
+
+#### Example 2.3:
+```python
+    from happytransformer import HappyTextClassification
+    # --------------------------------------#
+     happy_tc = HappyTextClassification(model_type="DISTILBERT",
+                                       model_name="distilbert-base-uncased-finetuned-sst-2-english",
+                                       num_labels=2)  # Don't forget to set num_labels! 
+    happy_tc.train("../../data/tc/train-eval.csv")
+
+```
+
+### eval()
+Input:
+1. input_filepath (string): a path file to a csv file as described in table 2.1
+
+output:
+
+A named tuple with a key called "eval_loss"
+
+#### Example 2.3:
+```python
+    from happytransformer import HappyTextClassification
+    # --------------------------------------#
+    happy_tc = HappyTextClassification(model_type="DISTILBERT",
+                                       model_name="distilbert-base-uncased-finetuned-sst-2-english",
+                                       num_labels=2)  # Don't forget to set num_labels!
+    result = happy_tc.eval("../../data/tc/train-eval.csv")
+    print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
+    print(result)  # EvalResult(eval_loss=0.007262040860950947)
+    print(result.eval_loss)  # 0.007262040860950947
+
+```
+
+### test()
+Input:
+1. input_filepath (string): a path file to a csv file as described in table 2.2
+
+Output: A list of named tuples with keys: "label" and "score"
+
+The list is in order by ascending csv index. 
+
+#### Table 2.2
+
+1. text (string): text that will be classified  
+
+| Text                          |
+|-------------------------------|
+| Wow what a great place to eat |
+| Horrible food                 |
+| Terrible service              |
+| I'm coming here again         |
+
+#### Example 2.4:
+```python
+    from happytransformer import HappyTextClassification
+    # --------------------------------------#
+    happy_tc = HappyTextClassification(model_type="DISTILBERT",
+                                       model_name="distilbert-base-uncased-finetuned-sst-2-english",
+                                       num_labels=2)  # Don't forget to set num_labels!
+    result = happy_tc.test("../../data/tc/test.csv")
+    print(type(result))  # <class 'list'>
+    print(result)  # [TextClassificationResult(label='LABEL_1', score=0.9998401999473572), TextClassificationResult(label='LABEL_0', score=0.9772131443023682)...
+    print(type(result[0]))  # <class 'happytransformer.happy_text_classification.TextClassificationResult'>
+    print(result[0])  # TextClassificationResult(label='LABEL_1', score=0.9998401999473572)
+    print(result[0].label)  # LABEL_1
+
+
+```
 ## Question Answering
 
 Initialize a HappyQuestionAnswering() object to perform question answering. 
