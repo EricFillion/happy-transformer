@@ -29,9 +29,9 @@ class HappyNextSentence(HappyTransformer):
         """
         Determines if sentence B is likely to be a continuation after sentence
         A.
-        :param sentence_a: First sentence
-        :param sentence_b: Second sentence to test if it comes after the first
-        :return Result of whether sente_devicence B follows sentence A as  a probability
+        :param sentence_a (string): First sentence
+        :param sentence_b (string): Second sentence to test if it comes after the first
+        :return (float): The probability that sentence_b follows sentence_a
         """
         if not self.__is_one_sentence(sentence_a) or not self.__is_one_sentence(sentence_b):
             raise ValueError('Each inputted text variable for the "predict_next_sentence" method must contain a single sentence')
