@@ -1,54 +1,72 @@
 import torch
-
-from collections import namedtuple
-from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.mwp.trainer import WPTrainer
-
+import re
 from transformers import (
-    BertForMaskedLM,
     BertTokenizerFast,
-    AlbertForMaskedLM,
-    AlbertTokenizerFast,
-    DistilBertForMaskedLM,
-    DistilBertTokenizerFast,
-    FillMaskPipeline,
+    BertForNextSentencePrediction,
+
 )
 
 from happytransformer.happy_transformer import HappyTransformer
-
-NextSentenceResult = namedtuple("NextSentenceResult", ("next_sentence", "score"))
 
 
 class HappyNextSentence(HappyTransformer):
     """
     A user facing class for next sentence prediction
     """
-    def __init__(self, model_type="DISTILBERT",
-                 model_name="distilbert-base-uncased"):
+    def __init__(self, model_type="BERT",
+                 model_name="bert-base-uncased"):
 
-        if model_type == "ALBERT":
-            model = AlbertForMaskedLM.from_pretrained(model_name)
-            tokenizer = AlbertTokenizerFast.from_pretrained(model_name)
-
-        elif model_type == "BERT":
-            model = BertForMaskedLM.from_pretrained(model_name)
+        if model_type == "BERT":
+            model = BertForNextSentencePrediction.from_pretrained(model_name)
             tokenizer = BertTokenizerFast.from_pretrained(model_name)
-
-        elif model_type == "DISTILBERT":
-            model = DistilBertForMaskedLM.from_pretrained(model_name)
-            tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
         else:
             raise ValueError(self.model_type_error)
         super().__init__(model_type, model_name, model, tokenizer)
-        device_number = 1 if torch.cuda.is_available() else -1
-        self._pipeline = FillMaskPipeline(model=model, tokenizer=tokenizer, device=device_number)
-        self._trainer = WPTrainer(model, model_type, tokenizer, self._device, self.logger)
+        self._pipeline = None
+        self._trainer = None
 
-    def predict_next_sentence(self):
+    def predict_next_sentence(self, sentence_a, sentence_b):
         """
-        TODO: Create DocString
+        Determines if sentence B is likely to be a continuation after sentence
+        A.
+        :param sentence_a: First sentence
+        :param sentence_b: Second sentence to test if it comes after the first
+        :return Result of whether sente_devicence B follows sentence A as  a probability
         """
-        raise NotImplementedError()
+        if not self.__is_one_sentence(sentence_a) or not self.__is_one_sentence(sentence_b):
+            raise ValueError('Each inputted text variable for the "predict_next_sentence" method must contain a single sentence')
+
+        encoded = self._tokenizer(sentence_a, sentence_b, return_tensors='pt')
+        with torch.no_grad():
+            scores = self._model(encoded['input_ids'], token_type_ids=encoded['token_type_ids']).logits[0]
+
+        probabilities = torch.softmax(scores, dim=0)
+        # probability that sentence B follows sentence A
+        score = probabilities[0].item()
+
+        if self._device == 'cuda':
+            torch.cuda.empty_cache()
+
+        return score
+
+    def __is_one_sentence(self, text):
+        """
+        Used to verify the proper input requirements for sentence_relation.
+        The text must contain no more than a single sentence.
+        Casual use of punctuation is accepted, such as using multiple exclamation marks.
+        :param text: A body of text
+        :return: True if the body of text contains a single sentence, else False
+        """
+        split_text = re.split('[?.!]', text)
+        sentence_found = False
+        for possible_sentence in split_text:
+            for char in possible_sentence:
+                if char.isalpha():
+                    if sentence_found:
+                        return False
+                    sentence_found = True
+                    break
+        return True
 
     def train(self, input_filepath, args):
         raise NotImplementedError("train() is currently not available")
