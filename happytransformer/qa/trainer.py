@@ -54,18 +54,11 @@ class QATrainer(HappyTrainer):
         """
         contexts, questions = self._get_data(input_filepath, test_data=True)
 
-        results = list()
-
-        for case in tqdm(zip(contexts, questions)):
-            context = case[0]
-            question = case[1]
-            result = solve(context, question)[0]  # only care about first result
-
-            results.append(result)
-
-        return results
-
-
+        return [
+            solve(context,question)[0]
+            for context,question in
+            tqdm(zip(contexts, questions))
+        ]
 
     @staticmethod
     def _get_data(filepath, test_data=False):
