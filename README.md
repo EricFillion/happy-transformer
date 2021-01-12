@@ -19,14 +19,31 @@ Happy Transformer is an package built on top of [Hugging Face's transformer libr
 
 ## News: 
 
-### January x, 2021
-Introducing Version 2.0.0! 
-...
+### January 12, 2021
+**Introducing Version 2.0.0!**
+
+We fully redesigned Happy Transformer from the ground up. 
+
+New Features: 
+- Question answering training 
+- Multi label text classification training
+- Single predictions for text classification 
+
+Deprecated Features: 
+- Masked word prediction training
+- Masked word prediction with multiple masks 
+
+Breaking changes: 
+- Everything
+
+Happy Transformer have been redesigned to promote scalability. 
+Now it's easier than ever to add new models and features, and we encourage you
+to create PRs to contribute to the project. 
+
 
 ### November 23rd, 2020
 
 Last month, Happy Transformer was presented at a conference called C-Search, and the presentation won the Best Presentation Award. C-Search is the Queen's University Student Research Conference and had Turing Award Winner Professor Bengio as the Keynote Speaker this year. The video for the presentation can be found [here](https://www.youtube.com/watch?v=nNdFkq-y8Ng&t=12s). 
-
 
 
 ### June 9th, 2020
