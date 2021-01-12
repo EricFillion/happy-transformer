@@ -25,13 +25,10 @@ class HappyNextSentence(HappyTransformer):
         self._pipeline = None
         self._trainer = None
 
-    def predict_next_sentence(self, sentence_a, sentence_b):
+    def predict_next_sentence(self, sentence_a:str, sentence_b:str)->float:
         """
-        Determines if sentence B is likely to be a continuation after sentence
-        A.
-        :param sentence_a (string): First sentence
-        :param sentence_b (string): Second sentence to test if it comes after the first
-        :return (float): The probability that sentence_b follows sentence_a
+        Predict the probability that sentence_b follows sentence_a.
+        Higher probabilities indicate more coherent sentence pairs.
         """
 
         encoded = self._tokenizer(sentence_a, sentence_b, return_tensors='pt')
