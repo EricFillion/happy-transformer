@@ -65,25 +65,23 @@ class HappyWordPrediction(HappyTransformer):
         if self.model_type == "ROBERTA":
             text = text.replace("[MASK]", "<mask>")
 
-        result = self._pipeline(text, targets=targets, top_k=top_k)
+        answers = self._pipeline(text, targets=targets, top_k=top_k)
 
         if self.model_type == "ALBERT":
-            for answer in result:
+            for answer in answers:
                 if answer["token_str"][0] == "▁":
                     answer["token_str"] = answer["token_str"][1:]
         elif self.model_type == "ROBERTA":
-            for answer in result:
+            for answer in answers:
                 if answer["token_str"][0] == "Ġ":
                     answer["token_str"] = answer["token_str"][1:]
-        results = [
+        return [
             WordPredictionResult(
                 token=answer["token_str"], 
                 score=answer["score"]
             )
-            for answer in result
+            for answer in answers
         ]
-        
-        return results
 
     def train(self, input_filepath, args):
         raise NotImplementedError("train() is currently not available")
