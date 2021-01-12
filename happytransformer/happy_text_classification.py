@@ -57,12 +57,15 @@ class HappyTextClassification(HappyTransformer):
         super().__init__(model_type, model_name, model, tokenizer)
 
         device_number = detect_cuda_device_number()
-        # from documentation " a positive will run the model on the associated CUDA device id."
-        # todo: get device ID if torch.cuda.is_available()
+        self._pipeline = TextClassificationPipeline(
+            model=model, tokenizer=tokenizer, 
+            device=device_number
+        )
 
-        self._pipeline = TextClassificationPipeline(model=model, tokenizer=tokenizer, device=device_number)
-
-        self._trainer = TCTrainer(self._model, self.model_type, self._tokenizer, self._device, self.logger)
+        self._trainer = TCTrainer(
+            self._model, self.model_type, 
+            self._tokenizer, self._device, self.logger
+        )
 
     def classify_text(self, text:str) -> TextClassificationResult:
         """
