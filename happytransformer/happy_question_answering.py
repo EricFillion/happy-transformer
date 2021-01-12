@@ -50,8 +50,6 @@ class HappyQuestionAnswering(HappyTransformer):
 
         super().__init__(model_type, model_name, model, tokenizer)
         device_number = detect_cuda_device_number()
-        # from documentation " a positive will run the model on the associated CUDA device id."
-        # todo: get device ID if torch.cuda.is_available()
 
         self._pipeline = QuestionAnsweringPipeline(model, tokenizer, device=device_number)
 
