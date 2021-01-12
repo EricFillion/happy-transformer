@@ -6,8 +6,7 @@ from collections import namedtuple
 import torch
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.qa.trainer import QATrainer
-from happytransformer.qa.default_args \
-    import ARGS_QA_TRAIN
+from happytransformer.qa.default_args import ARGS_QA_TRAIN
 from transformers import (
     BertForQuestionAnswering,
     BertTokenizerFast,
@@ -17,6 +16,7 @@ from transformers import (
     AlbertTokenizerFast,
     QuestionAnsweringPipeline,
 )
+from happytransformer.cuda_detect import detect_cuda_device_number
 
 QuestionAnsweringResult = namedtuple("QuestionAnsweringResult", ["answer", "score", "start", "end"])
 
@@ -49,9 +49,7 @@ class HappyQuestionAnswering(HappyTransformer):
             raise ValueError(self.model_type_error)
 
         super().__init__(model_type, model_name, model, tokenizer)
-        device_number = 1 if torch.cuda.is_available() else -1
-        # from documentation " a positive will run the model on the associated CUDA device id."
-        # todo: get device ID if torch.cuda.is_available()
+        device_number = detect_cuda_device_number()
 
         self._pipeline = QuestionAnsweringPipeline(model, tokenizer, device=device_number)
 
