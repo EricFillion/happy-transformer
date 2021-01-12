@@ -20,6 +20,8 @@ from transformers import (
 )
 from happytransformer.cuda_detect import detect_cuda_device_number
 
+from typing import List
+
 QuestionAnsweringResult = namedtuple("QuestionAnsweringResult", ["answer", "score", "start", "end"])
 
 
@@ -61,13 +63,14 @@ class HappyQuestionAnswering(HappyTransformer):
 
         self._trainer = QATrainer(model, model_type, tokenizer, self._device, self.logger)
 
-    def answer_question(self, context, question, top_k=1):
+    def answer_question(
+        self, 
+        context:str, question:str, top_k:int=1
+        )->List[QuestionAnsweringResult]:
         """
-        :param context: background information to answer the question (string)
-        :param question: A question that can be answered with the given context (string)
-        :param top_k: how many results
-        :return: A list of a named tuples that contains the keys: answer, score, start and end
-
+        Find the answers to a question.
+        The answer MUST be contained somewhere within the context for this to work.
+        top_k describes the number of answers to return.
         """
 
         result = self._pipeline(context=context, question=question, topk=top_k)
