@@ -30,16 +30,13 @@ def test_qa_train():
 def test_qa_eval():
     happy_qa = HappyQuestionAnswering()
     result = happy_qa.eval("../data/qa/train-eval.csv")
-    assert result.loss == 0.11738169193267822
-
+    assert result.loss == approx(0.11738169193267822,0.001)
 
 def test_qa_test():
     happy_qa = HappyQuestionAnswering()
-    result = happy_qa.test("../data/qa/test.csv")
-    answer = [QuestionAnsweringResult(answer='October 31st', score=0.9939756989479065, start=0, end=12),
-              QuestionAnsweringResult(answer='November 23rd', score=0.967872679233551, start=12, end=25)]
-    assert result == answer
-
+    results = happy_qa.test("../data/qa/test.csv")
+    assert results[0].answer == 'October 31st'
+    assert results[1].answer == 'November 23rd'
 
 def test_qa_train_effectiveness():
     """
@@ -53,68 +50,3 @@ def test_qa_train_effectiveness():
     after_loss = happy_qa.eval("../data/qa/train-eval.csv").loss
 
     assert after_loss < before_loss
-
-
-def test_qa_train_effectiveness_albert():
-    """
-    Ensures that HappyQuestionAnswering.train() results in
-    lowering the loss as determined by HappyQuestionAnswering.eval()
-    """
-
-    happy_qa = HappyQuestionAnswering("ALBERT", "twmkn9/albert-base-v2-squad2")
-    before_loss = happy_qa.eval("../data/qa/train-eval.csv").loss
-    happy_qa.train("../data/qa/train-eval.csv")
-    after_loss = happy_qa.eval("../data/qa/train-eval.csv").loss
-
-    assert after_loss < before_loss
-
-
-def test_qa_test_albert():
-    happy_qa = HappyQuestionAnswering("ALBERT", "twmkn9/albert-base-v2-squad2")
-    result = happy_qa.test("../data/qa/test.csv")
-    answer = [QuestionAnsweringResult(answer='October 31st', score=0.988578736782074, start=0, end=12),
-              QuestionAnsweringResult(answer='November 23rd', score=0.9833534359931946, start=12, end=25)]
-    assert result == answer
-
-
-def test_qa_train_effectiveness_bert():
-    """
-    Ensures that HappyQuestionAnswering.train() results in
-    lowering the loss as determined by HappyQuestionAnswering.eval()
-    """
-
-    happy_qa = HappyQuestionAnswering("BERT", "mrm8488/bert-tiny-5-finetuned-squadv2")
-    before_loss = happy_qa.eval("../data/qa/train-eval.csv").loss
-    happy_qa.train("../data/qa/train-eval.csv")
-    after_loss = happy_qa.eval("../data/qa/train-eval.csv").loss
-
-    assert after_loss < before_loss
-
-
-def test_qa_test_bert():
-    happy_qa = HappyQuestionAnswering("BERT", "mrm8488/bert-tiny-5-finetuned-squadv2")
-    result = happy_qa.test("../data/qa/test.csv")
-    answer = [QuestionAnsweringResult(answer='October 31st', score=0.9352769255638123, start=0, end=12),
-              QuestionAnsweringResult(answer='November 23rd', score=0.9180678129196167, start=12, end=25)]
-    assert result == answer
-
-
-def test_qa_train_effectiveness_roberta():
-    """
-    Ensures that HappyQuestionAnswering.train() results in
-    lowering the loss as determined by HappyQuestionAnswering.eval()
-    """
-
-    happy_qa = HappyQuestionAnswering("ROBERTA", "deepset/roberta-base-squad2")
-    before_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
-    happy_qa.train("../data/qa/train-eval.csv")
-    after_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
-    assert after_loss < before_loss
-
-
-def test_qa_test_roberta():
-    happy_qa = HappyQuestionAnswering("ROBERTA", "deepset/roberta-base-squad2")
-    result = happy_qa.test("../data/qa/test.csv")
-    answer = [QuestionAnsweringResult(answer='October 31st', score=0.9512737393379211, start=0, end=12),
-              QuestionAnsweringResult(answer='November 23rd', score=0.8634917736053467, start=12, end=25)]
-    assert result == answer
