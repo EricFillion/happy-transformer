@@ -2,10 +2,10 @@ from happytransformer import HappyTextClassification
 
 
 def example_2_0():
-    happy_qa_distilbert = HappyTextClassification()  # default with "distilbert-base-uncased"
+    happy_tc_distilbert = HappyTextClassification()  # default with "distilbert-base-uncased"
     happy_tc_albert = HappyTextClassification(model_type="ALBERT", model_name="albert-base-v2")
-    happy_qa_bert = HappyTextClassification("BERT", "bert-base-uncased")
-    happy_qa_roberta = HappyTextClassification("ROBERTA", "roberta-base")
+    happy_tc_bert = HappyTextClassification("BERT", "bert-base-uncased")
+    happy_tc_roberta = HappyTextClassification("ROBERTA", "deepset/roberta-base-squad2")
 
 
 def example_2_1():
