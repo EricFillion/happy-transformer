@@ -14,11 +14,14 @@ from transformers import (
     DistilBertTokenizerFast,
     AlbertForQuestionAnswering,
     AlbertTokenizerFast,
+    RobertaForQuestionAnswering,
+    RobertaTokenizerFast,
     QuestionAnsweringPipeline,
 )
 from happytransformer.cuda_detect import detect_cuda_device_number
 
 QuestionAnsweringResult = namedtuple("QuestionAnsweringResult", ["answer", "score", "start", "end"])
+
 
 class HappyQuestionAnswering(HappyTransformer):
     """
@@ -44,6 +47,9 @@ class HappyQuestionAnswering(HappyTransformer):
         elif model_type == "DISTILBERT":
             model = DistilBertForQuestionAnswering.from_pretrained(model_name)
             tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
+        elif model_type == "ROBERTA":
+            model = RobertaForQuestionAnswering.from_pretrained(model_name)
+            tokenizer = RobertaTokenizerFast.from_pretrained(model_name)
 
         else:
             raise ValueError(self.model_type_error)
@@ -51,11 +57,9 @@ class HappyQuestionAnswering(HappyTransformer):
         super().__init__(model_type, model_name, model, tokenizer)
         device_number = detect_cuda_device_number()
 
-        self._pipeline = QuestionAnsweringPipeline(model, tokenizer, device=device_number)
+        self._pipeline = QuestionAnsweringPipeline(model=model, tokenizer=tokenizer, device=device_number)
 
-
-        self._trainer = QATrainer(model, model_type, tokenizer, self._device,
-                                  self.logger)
+        self._trainer = QATrainer(model, model_type, tokenizer, self._device, self.logger)
 
     def answer_question(self, context, question, top_k=1):
         """

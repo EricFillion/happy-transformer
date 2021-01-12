@@ -43,11 +43,11 @@ We're happy to announce that we won a Best Paper Award at the Canadian Undergrad
 | Question Answering                 | ✔            | ✔          | 
 | Next Sentence Prediction           | ✔            |            | 
 
-| Public Methods                     | ALBERT       | BERT       |DISTILBERT |
-|------------------------------------|--------------|------------|-----------|
-| Word Prediction                    | ✔            | ✔          | ✔         |
-| Text Classification                | ✔            | ✔          | ✔         |
-| Question Answering                 | ✔            | ✔          | ✔         |
+| Public Methods                     | ALBERT       | BERT       |DISTILBERT |ROBERTA   |
+|------------------------------------|--------------|------------|-----------|----------|
+| Word Prediction                    | ✔            | ✔          | ✔         |✔
+| Text Classification                | ✔            | ✔          | ✔         |✔
+| Question Answering                 | ✔            | ✔          | ✔         |✔
 | Next Sentence Prediction           | ✔            | ✔          | ✔         |
   
 ## Installation
@@ -82,6 +82,7 @@ We recommend using "HappyWordPrediction("ALBERT", "albert-xxlarge-v2")" for the 
     happy_wp_distilbert = HappyWordPrediction()  # default
     happy_wp_albert = HappyWordPrediction("ALBERT", "albert-base-v2")
     happy_wp_bert = HappyWordPrediction("BERT", "bert-base-uncased")
+    happy_wp_roberta = HappyWordPrediction("ROBERTA", "roberta-base")
 
 ```
 
@@ -167,9 +168,10 @@ number of labels, so if you use these models you can set num_labels freely
 ```python
     from happytransformer import HappyTextClassification
     # --------------------------------------#
-    happy_qa_distilbert = HappyTextClassification()  # default with "distilbert-base-uncased" and num_labels=2
+    happy_tc_distilbert = HappyTextClassification()  # default with "distilbert-base-uncased" and num_labels=2
     happy_tc_albert = HappyTextClassification(model_type="ALBERT", model_name="albert-base-v2")
-    happy_qa_bert = HappyTextClassification("BERT", "bert-base-uncased")
+    happy_tc_bert = HappyTextClassification("BERT", "bert-base-uncased")
+    happy_tc_roberta = HappyTextClassification("ROBERTA", "roberta-base")
 
 ```
 
@@ -353,6 +355,7 @@ We recommend using "HappyQuestionAnswering("ALBERT", "mfeb/albert-xxlarge-v2-squ
     happy_qa_albert = HappyQuestionAnswering("ALBERT", "mfeb/albert-xxlarge-v2-squad2")
     # good model when using with limited hardware 
     happy_qa_bert = HappyQuestionAnswering("BERT", "mrm8488/bert-tiny-5-finetuned-squadv2")
+    happy_qa_roberta = HappyQuestionAnswering("ROBERTA", "deepset/roberta-base-squad2")
 
 ```
 

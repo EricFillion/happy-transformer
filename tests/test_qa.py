@@ -20,6 +20,7 @@ def test_qa_answer_question_top_k():
               QuestionAnsweringResult(answer='January', score=0.005092293489724398, start=16, end=23)]
     assert result == answer
 
+
 def test_qa_train():
     happy_qa = HappyQuestionAnswering()
     happy_qa.train("../data/qa/train-eval.csv")
@@ -52,6 +53,7 @@ def test_qa_train_effectiveness():
 
     assert after_loss < before_loss
 
+
 def test_qa_train_effectiveness_albert():
     """
     Ensures that HappyQuestionAnswering.train() results in
@@ -64,6 +66,7 @@ def test_qa_train_effectiveness_albert():
     after_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
 
     assert after_loss < before_loss
+
 
 def test_qa_test_albert():
     happy_qa = HappyQuestionAnswering("ALBERT", "twmkn9/albert-base-v2-squad2")
@@ -86,9 +89,31 @@ def test_qa_train_effectiveness_bert():
 
     assert after_loss < before_loss
 
+
 def test_qa_test_bert():
     happy_qa = HappyQuestionAnswering("BERT", "mrm8488/bert-tiny-5-finetuned-squadv2")
     result = happy_qa.test("../data/qa/test.csv")
     answer = [QuestionAnsweringResult(answer='October 31st', score=0.9352769255638123, start=0, end=12),
               QuestionAnsweringResult(answer='November 23rd', score=0.9180678129196167, start=12, end=25)]
+    assert result == answer
+
+
+def test_qa_train_effectiveness_roberta():
+    """
+    Ensures that HappyQuestionAnswering.train() results in
+    lowering the loss as determined by HappyQuestionAnswering.eval()
+    """
+
+    happy_qa = HappyQuestionAnswering("ROBERTA", "deepset/roberta-base-squad2")
+    before_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
+    happy_qa.train("../data/qa/train-eval.csv")
+    after_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
+    assert after_loss < before_loss
+
+
+def test_qa_test_roberta():
+    happy_qa = HappyQuestionAnswering("ROBERTA", "deepset/roberta-base-squad2")
+    result = happy_qa.test("../data/qa/test.csv")
+    answer = [QuestionAnsweringResult(answer='October 31st', score=0.9512737393379211, start=0, end=12),
+              QuestionAnsweringResult(answer='November 23rd', score=0.8634917736053467, start=12, end=25)]
     assert result == answer

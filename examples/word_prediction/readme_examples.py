@@ -5,6 +5,7 @@ def example_1_0():
     happy_wp_distilbert = HappyWordPrediction()  # default
     happy_wp_albert = HappyWordPrediction("ALBERT", "albert-base-v2")
     happy_wp_bert = HappyWordPrediction("BERT", "bert-base-uncased")
+    happy_wp_roberta = HappyWordPrediction("ROBERTA", "roberta-base")
 
 
 def example_1_1():
@@ -37,6 +38,9 @@ def example_1_3():
 
 def main():
     example_1_1()
+    # example_1_1()
+    # example_1_2()
+    # example_1_3()
 
 
 if __name__ == "__main__":

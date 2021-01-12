@@ -11,8 +11,10 @@ from transformers import (
     DistilBertTokenizerFast,
     AlbertForSequenceClassification,
     AlbertTokenizerFast,
-AutoConfig,
-TextClassificationPipeline
+    AutoConfig,
+    RobertaForSequenceClassification,
+    RobertaTokenizerFast,
+    TextClassificationPipeline
 )
 from happytransformer.tc.trainer import TCTrainer
 from happytransformer.cuda_detect import detect_cuda_device_number
@@ -20,8 +22,8 @@ from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.tc.default_args import ARGS_TC_TRAIN
 
-
 TextClassificationResult = namedtuple("TextClassificationResult", ["label", "score"])
+
 
 class HappyTextClassification(HappyTransformer):
     """
@@ -43,6 +45,9 @@ class HappyTextClassification(HappyTransformer):
         elif model_type == "DISTILBERT":
             model = DistilBertForSequenceClassification.from_pretrained(model_name, config=config)
             tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
+        elif model_type == "ROBERTA":
+            model = RobertaForSequenceClassification.from_pretrained(model_name)
+            tokenizer = RobertaTokenizerFast.from_pretrained(model_name)
 
         else:
             raise ValueError(self.model_type_error)
@@ -53,12 +58,9 @@ class HappyTextClassification(HappyTransformer):
         # from documentation " a positive will run the model on the associated CUDA device id."
         # todo: get device ID if torch.cuda.is_available()
 
-        self._pipeline = TextClassificationPipeline(model=model,
-                                                    tokenizer=tokenizer, device=device_number)
+        self._pipeline = TextClassificationPipeline(model=model, tokenizer=tokenizer, device=device_number)
 
-
-        self._trainer = TCTrainer(self._model,
-                                  self.model_type, self._tokenizer, self._device, self.logger)
+        self._trainer = TCTrainer(self._model, self.model_type, self._tokenizer, self._device, self.logger)
 
     def classify_text(self, text):
         """
@@ -73,7 +75,6 @@ class HappyTextClassification(HappyTransformer):
         first_result = results[0]
 
         return TextClassificationResult(label=first_result["label"], score=first_result["score"])
-
 
     def train(self, input_filepath, args=ARGS_TC_TRAIN):
         """
