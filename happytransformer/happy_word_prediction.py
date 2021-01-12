@@ -14,6 +14,7 @@ from collections import namedtuple
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.mwp.trainer import WPTrainer
 from happytransformer.cuda_detect import detect_cuda_device_number
+from typing import List
 
 WordPredictionResult = namedtuple("WordPredictionResult", ["token_str", "score"])
 
@@ -22,8 +23,8 @@ class HappyWordPrediction(HappyTransformer):
     """
     A user facing class for text classification
     """
-    def __init__(self, model_type="DISTILBERT",
-                 model_name="distilbert-base-uncased"):
+    def __init__(self, model_type:str="DISTILBERT",
+                 model_name:str="distilbert-base-uncased"):
         model = None
         tokenizer = None
 
@@ -49,13 +50,12 @@ class HappyWordPrediction(HappyTransformer):
 
         self._trainer = WPTrainer(model, model_type, tokenizer, self._device, self.logger)
 
-    def predict_mask(self, text, targets=None, top_k=1):
+    def predict_mask(self, text:str, targets:List[str]=None, top_k:int=1) -> List[WordPredictionResult]:
         """
-        :param text: A string that contains the model's mask token
-        :param targets: Optional. A list of strings of potential answers.
-        All other answers will be ignored
-        :param top_k: number of results. Default is 1
-        :return: A named WordPredictionResult Named Tuple with the following keys: token_str and score
+        Predict [MASK] tokens in a string.
+        targets limit possible guesses if supplied.
+        top_k describes number of targets to return*
+        *top_k does not apply if targets is supplied
         """
         if not isinstance(text, str):
             raise ValueError("the \"text\" argument must be a single string")
