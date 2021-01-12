@@ -6,10 +6,15 @@ from happytransformer.happy_text_classification import HappyTextClassification, 
 from pytest import approx
 
 def test_classify_text():
-    happy_tc = HappyTextClassification(model_type="DISTILBERT",  model_name="distilbert-base-uncased-finetuned-sst-2-english")
-    result = happy_tc.classify_text("What a great movie")
-    assert result.label == 'LABEL_1'
-    assert result.score > 0.9
+    MODELS = [
+        ('DISTILBERT','distilbert-base-uncased-finetuned-sst-2-english'),
+        ("ALBERT","textattack/albert-base-v2-SST-2")
+    ]
+    for model_type,model_name in MODELS:
+        happy_tc = HappyTextClassification(model_type=model_type, model_name=model_name)
+        result = happy_tc.classify_text("What a great movie")
+        assert result.label == 'LABEL_1'
+        assert result.score > 0.9
 
 
 def test_tc_train():
