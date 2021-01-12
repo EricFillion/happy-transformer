@@ -61,9 +61,9 @@ pip install happytransformer
 
 ```python
 from happytransformer import HappyWordPrediction
-predictor = HappyWordPrediction()
+happy_word_predictor = HappyWordPrediction()
 # NOTE: always use [MASK], even for RoBERTa, etc. . We'll make sure the transformer gets what it wants :)
-predictions = predictor.predict_mask(text='I think therefore I [MASK]')
+predictions = happy_word_predictor.predict_mask(text='I think therefore I [MASK]')
 print(predictions) # [WordPredictionResult(token_str='am', score=0.10172799974679947)]
 ```
 
