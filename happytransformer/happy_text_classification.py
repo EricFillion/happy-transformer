@@ -15,6 +15,7 @@ AutoConfig,
 TextClassificationPipeline
 )
 from happytransformer.tc.trainer import TCTrainer
+from happytransformer.cuda_detect import detect_cuda_device_number
 
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.tc.default_args import ARGS_TC_TRAIN
@@ -48,7 +49,7 @@ class HappyTextClassification(HappyTransformer):
 
         super().__init__(model_type, model_name, model, tokenizer)
 
-        device_number = 1 if torch.cuda.is_available() else -1
+        device_number = detect_cuda_device_number()
         # from documentation " a positive will run the model on the associated CUDA device id."
         # todo: get device ID if torch.cuda.is_available()
 
