@@ -1,5 +1,5 @@
 # from distutils.core import setup
-from setuptools import setup
+from setuptools import setup, find_packages
 
 import pathlib
 
@@ -8,8 +8,8 @@ readme = (current_location / "README.md").read_text()
 
 setup(
     name = 'happytransformer',
-    packages = ['happytransformer',],
-    version = '2.0.0',
+    packages = find_packages(),
+    version = '2.0.0a4',
     license='Apache 2.0',
     description = "Happy Transformer is an API built on top of Hugging Face's Transformer library that makes it easy to utilize state-of-the-art NLP models.",
     long_description= readme,
