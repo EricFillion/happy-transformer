@@ -1,4 +1,5 @@
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Downloads](https://pepy.tech/badge/happytransformer)](https://pepy.tech/project/happytransformer)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Downloads](https://pepy.tech/badge/happytransformer)](https://pepy.tech/project/happytransformer)
 
 # Happy Transformer 
 
@@ -59,87 +60,15 @@ pip install happytransformer
 
 
 ## Word Prediction
-### Initialization  
 
-Initialize a HappyWordPrediction object to perform word prediction. 
-
-**Initialization Arguments:**
- 1. model_type (string): either "ALBERT", "BERT" or "DISTILBERT." The default is "DISTILBERT"
- 2. model_name(string): below is a URL that contains potential models. 
-       [MODELS](https://huggingface.co/models?filter=masked-lm)
- 
-
-Note: For all Transformers, the masked token is **"[MASK]"**
-
-
-We recommend using "HappyWordPrediction("ALBERT", "albert-xxlarge-v2")" for the best performance 
-
-
-#### Example 1.0:
-```python
-    from happytransformer import HappyWordPrediction
-    # --------------------------------------#
-    happy_wp_distilbert = HappyWordPrediction()  # default
-    happy_wp_albert = HappyWordPrediction("ALBERT", "albert-base-v2")
-    happy_wp_bert = HappyWordPrediction("BERT", "bert-base-uncased")
-
-```
-
-
-### predict_mask()
-The method predict_masks() contains 3 arguments: 
-1. text (string): a body of text that contains a single masked token 
-2. targets (list of strings): a list of potential answers. All other answers will be ignored 
-3. top_k (int): the number of results that will be returned 
-
-Returns: 
-A list of named tuples with arguments: "token_str" and "top_k"
-
-Note: if targets are provided, then top_k will be ignored and a score for each target will be returned. 
-
-#### Example 1.1:
-```python
-
-from happytransformer import HappyWordPrediction
-#--------------------------------------#
-    happy_wp = HappyWordPrediction()  # default uses distilbert-base-uncased
-    result = happy_wp.predict_mask("I think therefore I [MASK]")
-    print(type(result))  # <class 'list'>
-    print(result)  # [WordPredictionResult(token_str='am', score=0.10172799974679947)]
-    print(type(result[0]))  # <class 'happytransformer.happy_word_prediction.WordPredictionResult'>
-    print(result[0])  # [WordPredictionResult(token_str='am', score=0.10172799974679947)]
-    print(result[0].token_str)  # am
-    print(result[0].score)  # 0.10172799974679947
-    
-
-```
-
-#### Example 1.2:
-```python
-
-from happytransformer import HappyWordPrediction
-#--------------------------------------#
-happy_wp = HappyWordPrediction("ALBERT", "albert-xxlarge-v2")
-result = happy_wp.predict_mask("To better the world I would invest in [MASK] and education.", top_k=2)
-print(result)  # [WordPredictionResult(token_str='infrastructure', score=0.09270179271697998), WordPredictionResult(token_str='healthcare', score=0.07219093292951584)]
-print(result[1]) # WordPredictionResult(token_str='healthcare', score=0.07219093292951584)
-print(result[1].token_str) # healthcare
-
-```
-
-#### Example 1.3:
 ```python
 from happytransformer import HappyWordPrediction
-#--------------------------------------#
-happy_wp = HappyWordPrediction("ALBERT", "albert-xxlarge-v2")
-targets = ["technology", "healthcare"]
-result = happy_wp.predict_mask("To better the world I would invest in [MASK] and education.", targets=targets)
-print(result)  # [WordPredictionResult(token_str='healthcare', score=0.07219093292951584), WordPredictionResult(token_str='technology', score=0.032044216990470886)]
-print(result[1])  # WordPredictionResult(token_str='technology', score=0.032044216990470886)
-print(result[1].token_str)  # technology
-
-
+predictor = HappyWordPrediction()
+# NOTE: always use [MASK], even for RoBERTa, etc. . We'll make sure the transformer gets what it wants :)
+predictions = predictor.predict_mask(text='I think therefore I [MASK]')
+print(predictions) # [WordPredictionResult(token_str='am', score=0.10172799974679947)]
 ```
+
 ## Text Classification 
 
 ### Initialization  
