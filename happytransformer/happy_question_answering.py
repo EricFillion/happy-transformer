@@ -2,7 +2,6 @@
 Contains the HappyQuestionAnswering class.
 
 """
-from collections import namedtuple
 import torch
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.qa.trainer import QATrainer

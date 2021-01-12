@@ -1,7 +1,7 @@
 """
 Contains a class called HappyTextClassification that performs text classification
 """
-from collections import namedtuple
+from dataclasses import dataclass
 import torch
 
 from transformers import (
@@ -22,8 +22,10 @@ from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.tc.default_args import ARGS_TC_TRAIN
 
-TextClassificationResult = namedtuple("TextClassificationResult", ["label", "score"])
-
+@dataclass
+class TextClassificationResult:
+    label:str
+    score:float
 
 class HappyTextClassification(HappyTransformer):
     """
@@ -62,10 +64,9 @@ class HappyTextClassification(HappyTransformer):
 
         self._trainer = TCTrainer(self._model, self.model_type, self._tokenizer, self._device, self.logger)
 
-    def classify_text(self, text):
+    def classify_text(self, text:str) -> TextClassificationResult:
         """
-        :param text: A text string to be classified
-        :return: A dictionary with keys: label and score,
+        Classify text to a label based on model's training
         """
         # Blocking allowing a for a list of strings
         if not isinstance(text, str):
