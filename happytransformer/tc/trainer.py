@@ -40,13 +40,10 @@ class TCTrainer(HappyTrainer):
         """
         contexts = self._get_data(input_filepath, test_data=True)
 
-        results = list()
-
-        for context in tqdm(contexts):
-            result = solve(context)
-            results.append(result)
-
-        return results
+        return [
+            solve(context)
+            for context in tqdm(contexts)
+        ]
 
     @staticmethod
     def _get_data(filepath, test_data=False):
