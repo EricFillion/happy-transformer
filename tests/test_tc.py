@@ -36,7 +36,7 @@ def test_qa_eval():
     happy_tc = HappyTextClassification(model_type="DISTILBERT",
                  model_name="distilbert-base-uncased-finetuned-sst-2-english")
     results = happy_tc.eval("../data/tc/train-eval.csv")
-    assert results.eval_loss == 0.007262040860950947
+    assert results.loss == 0.007262040860950947
 
 
 def test_qa_test():
@@ -64,9 +64,9 @@ def test_qa_train_effectiveness():
 
     happy_tc = HappyTextClassification(model_type="DISTILBERT",
                  model_name="distilbert-base-uncased-finetuned-sst-2-english")
-    before_loss = happy_tc.eval("../data/tc/train-eval.csv").eval_loss
+    before_loss = happy_tc.eval("../data/tc/train-eval.csv").loss
     happy_tc.train("../data/tc/train-eval.csv")
-    after_loss = happy_tc.eval("../data/tc/train-eval.csv").eval_loss
+    after_loss = happy_tc.eval("../data/tc/train-eval.csv").loss
     assert after_loss < before_loss
 
 
@@ -80,9 +80,9 @@ def test_qa_train_effectiveness_multi():
 
     happy_tc = HappyTextClassification(model_type="DISTILBERT",
                  model_name="distilbert-base-uncased", num_labels=3)
-    before_loss = happy_tc.eval("../data/tc/train-eval-multi.csv").eval_loss
+    before_loss = happy_tc.eval("../data/tc/train-eval-multi.csv").loss
     happy_tc.train("../data/tc/train-eval-multi.csv")
-    after_loss = happy_tc.eval("../data/tc/train-eval-multi.csv").eval_loss
+    after_loss = happy_tc.eval("../data/tc/train-eval-multi.csv").loss
     assert after_loss < before_loss
 
 
@@ -115,9 +115,9 @@ def test_qa_effectiveness_multi_albert():
 
     happy_tc = HappyTextClassification(model_type="ALBERT",
                  model_name="albert-base-v2", num_labels=3)
-    before_loss = happy_tc.eval("../data/tc/train-eval-multi.csv").eval_loss
+    before_loss = happy_tc.eval("../data/tc/train-eval-multi.csv").loss
     happy_tc.train("../data/tc/train-eval-multi.csv")
-    after_loss = happy_tc.eval("../data/tc/train-eval-multi.csv").eval_loss
+    after_loss = happy_tc.eval("../data/tc/train-eval-multi.csv").loss
     assert after_loss < before_loss
 
 def test_qa_effectiveness_multi_bert():
@@ -129,9 +129,9 @@ def test_qa_effectiveness_multi_bert():
 
     happy_tc = HappyTextClassification(model_type="BERT",
                  model_name="bert-base-uncased", num_labels=3)
-    before_loss = happy_tc.eval("../data/tc/train-eval-multi.csv").eval_loss
+    before_loss = happy_tc.eval("../data/tc/train-eval-multi.csv").loss
     happy_tc.train("../data/tc/train-eval-multi.csv")
-    after_loss = happy_tc.eval("../data/tc/train-eval-multi.csv").eval_loss
+    after_loss = happy_tc.eval("../data/tc/train-eval-multi.csv").loss
     assert after_loss < before_loss
 
 
@@ -158,9 +158,9 @@ def test_qa_train_effectiveness_albert():
     """
 
     happy_tc = HappyTextClassification(model_type="ALBERT", model_name="textattack/albert-base-v2-SST-2")
-    before_loss = happy_tc.eval("../data/tc/train-eval.csv").eval_loss
+    before_loss = happy_tc.eval("../data/tc/train-eval.csv").loss
     happy_tc.train("../data/tc/train-eval.csv")
-    after_loss = happy_tc.eval("../data/tc/train-eval.csv").eval_loss
+    after_loss = happy_tc.eval("../data/tc/train-eval.csv").loss
     assert after_loss < before_loss
 
 
@@ -187,9 +187,9 @@ def test_qa_train_effectiveness_bert():
     """
 
     happy_tc = HappyTextClassification(model_type="BERT", model_name="textattack/bert-base-uncased-SST-2")
-    before_loss = happy_tc.eval("../data/tc/train-eval.csv").eval_loss
+    before_loss = happy_tc.eval("../data/tc/train-eval.csv").loss
     happy_tc.train("../data/tc/train-eval.csv")
-    after_loss = happy_tc.eval("../data/tc/train-eval.csv").eval_loss
+    after_loss = happy_tc.eval("../data/tc/train-eval.csv").loss
     assert after_loss < before_loss
 
 

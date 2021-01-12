@@ -44,7 +44,7 @@ class QATrainer(HappyTrainer):
         self.__add_token_positions(encodings, answers)
         eval_dataset = QuestionAnsweringDataset(encodings)
         result = self._run_eval(eval_dataset)
-        return EvalResult(eval_loss=result["eval_loss"])
+        return EvalResult(loss=result["eval_loss"])
 
 
     def test(self, input_filepath, solve):
