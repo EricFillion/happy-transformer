@@ -542,7 +542,6 @@ We recommend keeping sentence_a and sentence_b to a single sentence. But longer 
 
 Returns: 
 A float between 0 and 1 that represents how likely sentence_a follows sentence_b. 
-the higher the value, the more likely sentence_b follows sentence_a 
 
 #### Example 4.1:
 ```python
