@@ -1,5 +1,6 @@
 from happytransformer.happy_question_answering import HappyQuestionAnswering
 from happytransformer.happy_word_prediction import HappyWordPrediction
 from happytransformer.happy_text_classification import HappyTextClassification
+from happytransformer.happy_next_sentence import HappyNextSentence
 
 name = "happytransformer"
