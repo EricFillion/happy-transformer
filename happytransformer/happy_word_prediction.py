@@ -39,7 +39,7 @@ class HappyWordPrediction(HappyTransformer):
         else:
             raise ValueError(self.model_type_error)
         super().__init__(model_type, model_name, model, tokenizer)
-        device_number = 0 if torch.cuda.is_available() else -1
+        device_number = torch.cuda.current_device() if torch.cuda.is_available() else -1
         self._pipeline = FillMaskPipeline(model=model, tokenizer=tokenizer, device=device_number)
         self._trainer = WPTrainer(model, model_type, tokenizer, self._device, self.logger)
 
