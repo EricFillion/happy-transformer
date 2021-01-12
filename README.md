@@ -517,7 +517,60 @@ The list is in order by ascending csv index.
 ```
 ## Next Sentence Prediction 
 
+### Initialization  
 
+Initialize a HappyNextSentence object to next sentence prediction  
+
+**Initialization Arguments:**
+ 1. model_type (string): The default is "BERT", which is currently the only available model 
+ 2. model_name(string): We recommend  none-finetuned BERT models like 
+ "bert-base-uncased" and "bert-large-uncased"
+ 
+
+#### Example 4.0:
+```python
+    from happytransformer import HappyNextSentence
+    # --------------------------------------#
+    happy_ns = HappyNextSentence()  # default is "bert-base-uncased"
+    happy_ns_large = HappyNextSentence("BERT", "bert-large-uncased") 
+
+```
+
+### predict_next_sentence()
+
+Inputs: 
+We recommend keeping sentence_a and sentence_b to a single sentence. But longer inputs still work. 
+1. sentence_a (string): A sentence 
+2. sentence_b (string): A sentence that may or may not follow sentence_a
+
+Returns: 
+A float between 0 and 1 that represents how likely sentence_a follows sentence_b. 
+
+#### Example 4.1:
+```python
+    from happytransformer import HappyNextSentence
+    # --------------------------------------#
+    happy_ns = HappyNextSentence()
+    result = happy_ns.predict_next_sentence(
+        "How old are you?",
+        "I am 21 years old."
+    )
+    print(type(result))  # <class 'float'>
+    print(result)  # 0.9999918937683105
+```
+
+#### Example 4.2:
+```python
+    from happytransformer import HappyNextSentence
+    # --------------------------------------#
+    happy_ns = HappyNextSentence()
+    result = happy_ns.predict_next_sentence(
+        "How old are you?",
+        "Queen's University is in Kingston Ontario Canada"
+    )
+    print(type(result))  # <class 'float'>
+    print(result)  # 0.00018497584096621722
+```
 ## Tech
 
  Happy Transformer uses a number of open source projects:

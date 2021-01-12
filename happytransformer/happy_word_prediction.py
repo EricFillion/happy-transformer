@@ -13,6 +13,7 @@ import torch
 from collections import namedtuple
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.mwp.trainer import WPTrainer
+from happytransformer.cuda_detect import detect_cuda_device_number
 
 WordPredictionResult = namedtuple("WordPredictionResult", ["token_str", "score"])
 
@@ -41,7 +42,8 @@ class HappyWordPrediction(HappyTransformer):
         else:
             raise ValueError(self.model_type_error)
         super().__init__(model_type, model_name, model, tokenizer)
-        device_number = 1 if torch.cuda.is_available() else -1
+
+        device_number = detect_cuda_device_number()
 
         self._pipeline = FillMaskPipeline(model=model, tokenizer=tokenizer, device=device_number)
 
