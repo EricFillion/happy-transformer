@@ -45,10 +45,10 @@ We're happy to announce that we won a Best Paper Award at the Canadian Undergrad
 
 | Public Methods                     | ALBERT       | BERT       |DISTILBERT |ROBERTA   |
 |------------------------------------|--------------|------------|-----------|----------|
-| Word Prediction                    | ✔            | ✔          | ✔         |✔
-| Text Classification                | ✔            | ✔          | ✔         |✔
-| Question Answering                 | ✔            | ✔          | ✔         |✔
-| Next Sentence Prediction           | ✔            | ✔          | ✔         |
+| Word Prediction                    | ✔            | ✔          | ✔         |✔         |
+| Text Classification                | ✔            | ✔          | ✔         |✔         |
+| Question Answering                 | ✔            | ✔          | ✔         |✔         |
+| Next Sentence Prediction           | ✔            |            |           |          |
   
 ## Installation
 
