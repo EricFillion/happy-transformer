@@ -3,22 +3,23 @@ Tests for the question answering training, evaluating and testing functionality
 """
 
 from happytransformer.happy_question_answering import HappyQuestionAnswering, QuestionAnsweringResult
-
+from pytest import approx
 
 def test_qa_answer_question():
     happy_qa = HappyQuestionAnswering()
-    result = happy_qa.answer_question("Today's date is January 8th 2021", "What is the date?")
-    answer = [QuestionAnsweringResult(answer='January 8th 2021', score=0.9696964621543884, start=16, end=32)]
-    assert result == answer
-
+    answers = happy_qa.answer_question("Today's date is January 8th 2021", "What is the date?")
+    top_answer = answers[0]
+    assert top_answer.answer == 'January 8th 2021'
+    assert top_answer.start == 16
+    assert top_answer.end == 32
 
 def test_qa_answer_question_top_k():
     happy_qa = HappyQuestionAnswering()
-    result = happy_qa.answer_question("Today's date is January 8th 2021", "What is the date?", top_k=3)
-    answer = [QuestionAnsweringResult(answer='January 8th 2021', score=0.9696964621543884, start=16, end=32),
-              QuestionAnsweringResult(answer='January 8th', score=0.02050216868519783, start=16, end=27),
-              QuestionAnsweringResult(answer='January', score=0.005092293489724398, start=16, end=23)]
-    assert result == answer
+    answers = happy_qa.answer_question("Today's date is January 8th 2021", "What is the date?", top_k=3)
+
+    assert sum(answer.score for answer in answers) == approx(1,0.01)
+    assert answers[0].start==16 and answers[0].end==32 and answers[0].answer=='January 8th 2021'
+    assert answers[1].start==16 and answers[1].end==27 and answers[1].answer=='January 8th'
 
 
 def test_qa_train():
