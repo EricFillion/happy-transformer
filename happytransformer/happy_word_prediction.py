@@ -10,14 +10,16 @@ from transformers import (
     FillMaskPipeline,
 )
 import torch
-from collections import namedtuple
+from dataclasses import dataclass
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.mwp.trainer import WPTrainer
 from happytransformer.cuda_detect import detect_cuda_device_number
 from typing import List
 
-WordPredictionResult = namedtuple("WordPredictionResult", ["token_str", "score"])
-
+@dataclass
+class WordPredictionResult:
+    token:str
+    score:float
 
 class HappyWordPrediction(HappyTransformer):
     """
@@ -75,7 +77,7 @@ class HappyWordPrediction(HappyTransformer):
                     answer["token_str"] = answer["token_str"][1:]
         results = [
             WordPredictionResult(
-                token_str=answer["token_str"], 
+                token=answer["token_str"], 
                 score=answer["score"]
             )
             for answer in result
