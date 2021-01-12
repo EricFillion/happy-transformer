@@ -59,11 +59,25 @@ pip install happytransformer
 
 ## Word Prediction
 
+### Simple Use Case
+
 ```python
 from happytransformer import HappyWordPrediction
 happy_word_predictor = HappyWordPrediction()
 # NOTE: always use [MASK], even for RoBERTa, etc. . We'll make sure the transformer gets what it wants :)
-predictions = happy_word_predictor.predict_mask(text='I think therefore I [MASK]')
+predictions = happy_word_predictor.predict_mask(text='I think therefore I [MASK]',top_k=2)
+print(predictions) # [WordPredictionResult(token_str='am', score=0.10172799974679947)]
+```
+
+### Targets
+
+```python
+from happytransformer import HappyWordPrediction
+happy_word_predictor = HappyWordPrediction()
+predictions = happy_word_predictor.predict_mask(
+    text='I think therefore I [MASK]',
+    targets=['am','box']
+)
 print(predictions) # [WordPredictionResult(token_str='am', score=0.10172799974679947)]
 ```
 
