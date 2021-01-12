@@ -57,8 +57,6 @@ We're happy to announce that we won a Best Paper Award at the Canadian Undergrad
 pip install happytransformer
 ```
 
-
-
 ## Word Prediction
 
 ```python
@@ -68,6 +66,11 @@ predictor = HappyWordPrediction()
 predictions = predictor.predict_mask(text='I think therefore I [MASK]')
 print(predictions) # [WordPredictionResult(token_str='am', score=0.10172799974679947)]
 ```
+
+Alternatively, you can be more specific with `HappyWordPrediction(model_type="ALBERT", model_name="albert-xxlarge-v2"`.
+This is the recommended setting for maximum accuracy.
+Currently, "ALBERT","BERT", and "DISTILBERT" are the supported model types.
+Model names dan be found [here](https://huggingface.co/models?filter=masked-lm)
 
 ## Text Classification 
 
