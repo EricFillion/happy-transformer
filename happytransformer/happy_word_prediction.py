@@ -38,7 +38,6 @@ class HappyWordPrediction(HappyTransformer):
         elif model_type == "ROBERTA":
             model = RobertaForMaskedLM.from_pretrained(model_name)
             tokenizer = RobertaTokenizerFast.from_pretrained(model_name)
-
         else:
             raise ValueError(self.model_type_error)
         super().__init__(model_type, model_name, model, tokenizer)
@@ -58,6 +57,9 @@ class HappyWordPrediction(HappyTransformer):
         """
         if not isinstance(text, str):
             raise ValueError("the \"text\" argument must be a single string")
+
+        if self.model_type == "ROBERTA":
+            text = text.replace("[MASK]", "<mask>")
 
         result = self._pipeline(text, targets=targets, top_k=top_k)
 

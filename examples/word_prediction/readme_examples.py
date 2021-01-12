@@ -36,20 +36,11 @@ def example_1_3():
     print(result[1].token_str)  # technology
 
 
-def example_1_4():
-    happy_wp = HappyWordPrediction("ROBERTA", "roberta-base")
-    result = happy_wp.predict_mask("To better the world I would invest in <mask> and education.", top_k=10)
-    print(result)   # [WordPredictionResult(token_str='science', score=0.308580607175827), WordPredictionResult(token_str='research', score=0.18018342554569244)]
-    print(result[1])    # WordPredictionResult(token_str='research', score=0.18018342554569244)
-    print(result[1].token_str)  # research
-
-
 def main():
-    # example_1_1()
+    example_1_1()
     # example_1_1()
     # example_1_2()
     # example_1_3()
-    example_1_4()
 
 
 if __name__ == "__main__":

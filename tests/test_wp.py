@@ -55,7 +55,7 @@ def test_mwp_basic_bert():
 def test_mwp_basic_roberta():
     happy_mwp = HappyWordPrediction("ROBERTA", "roberta-base")
     result = happy_mwp.predict_mask(
-        "Please pass the salt and <mask>",  # Roberta requires mask to be '<mask>' as opposed to '[MASK]'
+        "Please pass the salt and [MASK]",
     )
     answer = [WordPredictionResult(token_str='pepper', score=0.7325230240821838)]
     assert result == answer

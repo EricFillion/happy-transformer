@@ -104,7 +104,7 @@ def test_qa_train_effectiveness_roberta():
     lowering the loss as determined by HappyQuestionAnswering.eval()
     """
 
-    happy_qa = HappyQuestionAnswering("ROBERTA", "roberta-base")
+    happy_qa = HappyQuestionAnswering("ROBERTA", "deepset/roberta-base-squad2")
     before_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
     happy_qa.train("../data/qa/train-eval.csv")
     after_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
@@ -112,8 +112,8 @@ def test_qa_train_effectiveness_roberta():
 
 
 def test_qa_test_roberta():
-    happy_qa = HappyQuestionAnswering("ROBERTA", "roberta-base")
+    happy_qa = HappyQuestionAnswering("ROBERTA", "deepset/roberta-base-squad2")
     result = happy_qa.test("../data/qa/test.csv")
-    answer = [QuestionAnsweringResult(answer='is the', score=0.03888237848877907, start=13, end=19),
-              QuestionAnsweringResult(answer='date is', score=0.02540113404393196, start=4, end=11)]
+    answer = [QuestionAnsweringResult(answer='October 31st', score=0.9512737393379211, start=0, end=12),
+              QuestionAnsweringResult(answer='November 23rd', score=0.8634917736053467, start=12, end=25)]
     assert result == answer
