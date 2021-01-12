@@ -29,7 +29,7 @@ def test_qa_train():
 def test_qa_eval():
     happy_qa = HappyQuestionAnswering()
     result = happy_qa.eval("../data/qa/train-eval.csv")
-    assert result.eval_loss == 0.11738169193267822
+    assert result.loss == 0.11738169193267822
 
 
 def test_qa_test():
@@ -47,9 +47,9 @@ def test_qa_train_effectiveness():
     """
 
     happy_qa = HappyQuestionAnswering()
-    before_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
+    before_loss = happy_qa.eval("../data/qa/train-eval.csv").loss
     happy_qa.train("../data/qa/train-eval.csv")
-    after_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
+    after_loss = happy_qa.eval("../data/qa/train-eval.csv").loss
 
     assert after_loss < before_loss
 
@@ -61,9 +61,9 @@ def test_qa_train_effectiveness_albert():
     """
 
     happy_qa = HappyQuestionAnswering("ALBERT", "twmkn9/albert-base-v2-squad2")
-    before_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
+    before_loss = happy_qa.eval("../data/qa/train-eval.csv").loss
     happy_qa.train("../data/qa/train-eval.csv")
-    after_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
+    after_loss = happy_qa.eval("../data/qa/train-eval.csv").loss
 
     assert after_loss < before_loss
 
@@ -83,9 +83,9 @@ def test_qa_train_effectiveness_bert():
     """
 
     happy_qa = HappyQuestionAnswering("BERT", "mrm8488/bert-tiny-5-finetuned-squadv2")
-    before_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
+    before_loss = happy_qa.eval("../data/qa/train-eval.csv").loss
     happy_qa.train("../data/qa/train-eval.csv")
-    after_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
+    after_loss = happy_qa.eval("../data/qa/train-eval.csv").loss
 
     assert after_loss < before_loss
 
