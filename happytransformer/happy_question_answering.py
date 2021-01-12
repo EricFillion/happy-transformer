@@ -21,8 +21,14 @@ from transformers import (
 from happytransformer.cuda_detect import detect_cuda_device_number
 
 from typing import List
+from dataclasses import dataclass
 
-QuestionAnsweringResult = namedtuple("QuestionAnsweringResult", ["answer", "score", "start", "end"])
+@dataclass
+class QuestionAnsweringResult:
+    answer:str
+    score:float
+    start:int
+    end:int
 
 
 class HappyQuestionAnswering(HappyTransformer):
