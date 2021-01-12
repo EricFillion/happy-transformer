@@ -5,14 +5,6 @@ Tests for the question answering training, evaluating and testing functionality
 from happytransformer.happy_question_answering import HappyQuestionAnswering, QuestionAnsweringResult
 from pytest import approx
 
-def test_qa_answer_question():
-    happy_qa = HappyQuestionAnswering()
-    answers = happy_qa.answer_question("Today's date is January 8th 2021", "What is the date?")
-    top_answer = answers[0]
-    assert top_answer.answer == 'January 8th 2021'
-    assert top_answer.start == 16
-    assert top_answer.end == 32
-
 def test_qa_answer_question_top_k():
     happy_qa = HappyQuestionAnswering()
     answers = happy_qa.answer_question("Today's date is January 8th 2021", "What is the date?", top_k=3)
@@ -28,7 +20,10 @@ def test_qa_train():
 
 
 def test_qa_eval():
-    happy_qa = HappyQuestionAnswering()
+    happy_qa = HappyQuestionAnswering(
+        model_type='DISTILBERT',
+        model_name='distilbert-base-cased-distilled-squad'
+    )
     result = happy_qa.eval("../data/qa/train-eval.csv")
     assert result.loss == approx(0.11738169193267822,0.001)
 
