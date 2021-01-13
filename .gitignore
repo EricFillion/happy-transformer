@@ -1,3 +1,8 @@
+examples/question_answering/train.csv
+examples/question_answering/eval.csv
+runs/
+../.idea/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
