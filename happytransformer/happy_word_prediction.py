@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.mwp.trainer import WPTrainer
 from happytransformer.cuda_detect import detect_cuda_device_number
+from happytransformer.adaptors.adaptor import get_adaptor
 from typing import List
 
 @dataclass
@@ -27,23 +28,10 @@ class HappyWordPrediction(HappyTransformer):
     """
     def __init__(self, model_type:str="DISTILBERT",
                  model_name:str="distilbert-base-uncased"):
-        model = None
-        tokenizer = None
+        adaptor = get_adaptor(model_type)
+        model = adaptor.get_masked_language_model(model_name)
+        tokenizer = adaptor.get_tokenizer(model_name)
 
-        if model_type == "ALBERT":
-            model = AlbertForMaskedLM.from_pretrained(model_name)
-            tokenizer = AlbertTokenizerFast.from_pretrained(model_name)
-        elif model_type == "BERT":
-            model = BertForMaskedLM.from_pretrained(model_name)
-            tokenizer = BertTokenizerFast.from_pretrained(model_name)
-        elif model_type == "DISTILBERT":
-            model = DistilBertForMaskedLM.from_pretrained(model_name)
-            tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
-        elif model_type == "ROBERTA":
-            model = RobertaForMaskedLM.from_pretrained(model_name)
-            tokenizer = RobertaTokenizerFast.from_pretrained(model_name)
-        else:
-            raise ValueError(self.model_type_error)
         super().__init__(model_type, model_name, model, tokenizer)
 
         device_number = detect_cuda_device_number()
