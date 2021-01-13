@@ -1,49 +1,29 @@
-from transformers import (
-    BertForMaskedLM,
-    BertTokenizerFast,
-    AlbertForMaskedLM,
-    AlbertTokenizerFast,
-    DistilBertForMaskedLM,
-    DistilBertTokenizerFast,
-    RobertaForMaskedLM,
-    RobertaTokenizerFast,
-    FillMaskPipeline,
-)
-import torch
+from typing import List,Optional
 from dataclasses import dataclass
+
+from transformers import FillMaskPipeline
+
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.mwp.trainer import WPTrainer
 from happytransformer.cuda_detect import detect_cuda_device_number
-from typing import List
+from happytransformer.adaptors import get_adaptor
 
 @dataclass
 class WordPredictionResult:
-    token:str
-    score:float
+    token: str
+    score: float
 
 class HappyWordPrediction(HappyTransformer):
     """
     A user facing class for text classification
     """
-    def __init__(self, model_type:str="DISTILBERT",
-                 model_name:str="distilbert-base-uncased"):
-        model = None
-        tokenizer = None
+    def __init__(
+        self, model_type: str = "DISTILBERT", model_name: str = "distilbert-base-uncased"):
 
-        if model_type == "ALBERT":
-            model = AlbertForMaskedLM.from_pretrained(model_name)
-            tokenizer = AlbertTokenizerFast.from_pretrained(model_name)
-        elif model_type == "BERT":
-            model = BertForMaskedLM.from_pretrained(model_name)
-            tokenizer = BertTokenizerFast.from_pretrained(model_name)
-        elif model_type == "DISTILBERT":
-            model = DistilBertForMaskedLM.from_pretrained(model_name)
-            tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
-        elif model_type == "ROBERTA":
-            model = RobertaForMaskedLM.from_pretrained(model_name)
-            tokenizer = RobertaTokenizerFast.from_pretrained(model_name)
-        else:
-            raise ValueError(self.model_type_error)
+        self.adaptor = get_adaptor(model_type)
+        model = self.adaptor.MaskedLM.from_pretrained(model_name)
+        tokenizer = self.adaptor.Tokenizer.from_pretrained(model_name)
+
         super().__init__(model_type, model_name, model, tokenizer)
 
         device_number = detect_cuda_device_number()
@@ -52,9 +32,7 @@ class HappyWordPrediction(HappyTransformer):
 
         self._trainer = WPTrainer(model, model_type, tokenizer, self._device, self.logger)
 
-    def predict_mask(self, 
-        text:str, targets:List[str]=None, top_k:int=1
-    ) -> List[WordPredictionResult]:
+    def predict_mask(self, text: str, targets: Optional[List[str]] = None, top_k: int = 1) -> List[WordPredictionResult]:
         """
         Predict [MASK] tokens in a string.
         targets limit possible guesses if supplied.
@@ -62,24 +40,18 @@ class HappyWordPrediction(HappyTransformer):
         *top_k does not apply if targets is supplied
         """
         if not isinstance(text, str):
-            raise ValueError("the \"text\" argument must be a single string")
+            raise ValueError('the "text" argument must be a single string')
 
-        if self.model_type == "ROBERTA":
-            text = text.replace("[MASK]", "<mask>")
+        text_for_pipeline = self.adaptor.preprocess_mask_text(text)
+        answers = self._pipeline(
+            text_for_pipeline, 
+            targets=targets, top_k=top_k
+        )
 
-        answers = self._pipeline(text, targets=targets, top_k=top_k)
-
-        if self.model_type == "ALBERT":
-            for answer in answers:
-                if answer["token_str"][0] == "▁":
-                    answer["token_str"] = answer["token_str"][1:]
-        elif self.model_type == "ROBERTA":
-            for answer in answers:
-                if answer["token_str"][0] == "Ġ":
-                    answer["token_str"] = answer["token_str"][1:]
+        fix_token = self.adaptor.postprocess_mask_prediction_token
         return [
             WordPredictionResult(
-                token=answer["token_str"], 
+                token=fix_token(answer["token_str"]), 
                 score=answer["score"]
             )
             for answer in answers
