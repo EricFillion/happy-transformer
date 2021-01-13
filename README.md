@@ -68,7 +68,7 @@ We also received the highest score overall. The paper can be found [here](https:
 | Word Prediction                    | ✔            | ✔          | ✔         |✔         |
 | Text Classification                | ✔            | ✔          | ✔         |✔         |
 | Question Answering                 | ✔            | ✔          | ✔         |✔         |
-| Next Sentence Prediction           | ✔            |            |           |          |
+| Next Sentence Prediction           |              | ✔          |           |          |
   
 ## Installation
 
