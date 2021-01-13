@@ -15,7 +15,7 @@ def example_1_1():
     print(result)  # [WordPredictionResult(token_str='am', score=0.10172799974679947)]
     print(type(result[0]))  # <class 'happytransformer.happy_word_prediction.WordPredictionResult'>
     print(result[0])  # [WordPredictionResult(token_str='am', score=0.10172799974679947)]
-    print(result[0].token_str)  # am
+    print(result[0].token)  # am
     print(result[0].score)  # 0.10172799974679947
 
 
@@ -24,7 +24,7 @@ def example_1_2():
     result = happy_wp.predict_mask("To better the world I would invest in [MASK] and education.", top_k=10)
     print(result)  # [WordPredictionResult(token_str='infrastructure', score=0.09270179271697998), WordPredictionResult(token_str='healthcare', score=0.07219093292951584)]
     print(result[1]) # WordPredictionResult(token_str='healthcare', score=0.07219093292951584)
-    print(result[1].token_str) # healthcare
+    print(result[1].token) # healthcare
 
 
 def example_1_3():
@@ -33,12 +33,12 @@ def example_1_3():
     result = happy_wp.predict_mask("To better the world I would invest in [MASK] and education.", targets=targets)
     print(result)  # [WordPredictionResult(token_str='healthcare', score=0.07219093292951584), WordPredictionResult(token_str='technology', score=0.032044216990470886)]
     print(result[1])  # WordPredictionResult(token_str='technology', score=0.032044216990470886)
-    print(result[1].token_str)  # technology
+    print(result[1].token)  # technology
 
 
 def main():
-    example_1_1()
     # example_1_1()
+    example_1_1()
     # example_1_2()
     # example_1_3()
 

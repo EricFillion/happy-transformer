@@ -94,7 +94,7 @@ The method predict_masks() contains 3 arguments:
 3. top_k (int): the number of results that will be returned 
 
 Returns: 
-A list of named tuples with arguments: "token_str" and "top_k"
+A dataclass with variables "token_str" and "top_k"
 
 Note: if targets are provided, then top_k will be ignored and a score for each target will be returned. 
 
@@ -109,7 +109,7 @@ from happytransformer import HappyWordPrediction
     print(result)  # [WordPredictionResult(token_str='am', score=0.10172799974679947)]
     print(type(result[0]))  # <class 'happytransformer.happy_word_prediction.WordPredictionResult'>
     print(result[0])  # [WordPredictionResult(token_str='am', score=0.10172799974679947)]
-    print(result[0].token_str)  # am
+    print(result[0].token)  # am
     print(result[0].score)  # 0.10172799974679947
     
 
@@ -124,7 +124,7 @@ happy_wp = HappyWordPrediction("ALBERT", "albert-xxlarge-v2")
 result = happy_wp.predict_mask("To better the world I would invest in [MASK] and education.", top_k=2)
 print(result)  # [WordPredictionResult(token_str='infrastructure', score=0.09270179271697998), WordPredictionResult(token_str='healthcare', score=0.07219093292951584)]
 print(result[1]) # WordPredictionResult(token_str='healthcare', score=0.07219093292951584)
-print(result[1].token_str) # healthcare
+print(result[1].token) # healthcare
 
 ```
 
@@ -137,7 +137,7 @@ targets = ["technology", "healthcare"]
 result = happy_wp.predict_mask("To better the world I would invest in [MASK] and education.", targets=targets)
 print(result)  # [WordPredictionResult(token_str='healthcare', score=0.07219093292951584), WordPredictionResult(token_str='technology', score=0.032044216990470886)]
 print(result[1])  # WordPredictionResult(token_str='technology', score=0.032044216990470886)
-print(result[1].token_str)  # technology
+print(result[1].token)  # technology
 
 
 ```
@@ -182,7 +182,7 @@ Input:
 1. text (string): Text that will be classified 
 
 Returns: 
-A label in the form of a string, typically "LABEL_x", where x is the label number.
+A dataclass with variables "label" and "score"
 
 #### Example 2.1:
 ```python
@@ -258,7 +258,7 @@ Input:
 
 output:
 
-A named tuple with a key called "eval_loss"
+A dataclass with a variable called "loss"
 
 #### Example 2.3:
 ```python
@@ -270,7 +270,7 @@ A named tuple with a key called "eval_loss"
     result = happy_tc.eval("../../data/tc/train-eval.csv")
     print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
     print(result)  # EvalResult(eval_loss=0.007262040860950947)
-    print(result.eval_loss)  # 0.007262040860950947
+    print(result.loss)  # 0.007262040860950947
 
 ```
 
@@ -318,9 +318,9 @@ The list is in order by ascending csv index.
     happy_tc = HappyTextClassification(model_type="DISTILBERT",
                                        model_name="distilbert-base-uncased-finetuned-sst-2-english",
                                        num_labels=2)  # Don't forget to set num_labels!
-    before_loss = happy_tc.eval("../../data/tc/train-eval.csv").eval_loss
+    before_loss = happy_tc.eval("../../data/tc/train-eval.csv").loss
     happy_tc.train("../../data/tc/train-eval.csv")
-    after_loss = happy_tc.eval("../../data/tc/train-eval.csv").eval_loss
+    after_loss = happy_tc.eval("../../data/tc/train-eval.csv").loss
     print("Before loss: ", before_loss)  # 0.007262040860950947
     print("After loss: ", after_loss)  # 0.000162081079906784
     # Since after_loss < before_loss, the model learned!
@@ -368,7 +368,7 @@ Inputs:
 3. top_k (int): the number of results that will be returned (default=1)
 
 Returns: 
- A list of a named tuples that contains the keys: "answer", "score", "start" and "end." 
+ A list of a dataclasses that contains the variables: "answer", "score", "start" and "end." 
 The list is in descending order by score
 
 #### Example 3.1:
@@ -454,7 +454,7 @@ Input:
 
 output:
 
-A named tuple with the key "eval_loss"
+A dataclass with the variable "loss"
 
 #### Example 3.4:
 ```python
@@ -464,7 +464,7 @@ A named tuple with the key "eval_loss"
     result = happy_qa.eval("../../data/qa/train-eval.csv")
     print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
     print(result)  # EvalResult(eval_loss=0.11738169193267822)
-    print(result.eval_loss)  # 0.1173816919326782
+    print(result.loss)  # 0.1173816919326782
 
 ```
 
@@ -505,9 +505,9 @@ The list is in order by ascending csv index.
     from happytransformer import HappyQuestionAnswering
     # --------------------------------------#
     happy_qa = HappyQuestionAnswering()
-    before_loss = happy_qa.eval("../../data/qa/train-eval.csv").eval_loss
+    before_loss = happy_qa.eval("../../data/qa/train-eval.csv").loss
     happy_qa.train("../../data/qa/train-eval.csv")
-    after_loss = happy_qa.eval("../../data/qa/train-eval.csv").eval_loss
+    after_loss = happy_qa.eval("../../data/qa/train-eval.csv").loss
     print("Before loss: ", before_loss)  # 0.11738169193267822
     print("After loss: ", after_loss)  # 0.00037909045931883156
     # Since after_loss < before_loss, the model learned!

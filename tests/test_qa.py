@@ -2,42 +2,37 @@
 Tests for the question answering training, evaluating and testing functionality
 """
 
-from happytransformer.happy_question_answering import HappyQuestionAnswering, QuestionAnsweringResult
-
+from happytransformer.happy_question_answering import HappyQuestionAnswering
+from pytest import approx
 
 def test_qa_answer_question():
-    happy_qa = HappyQuestionAnswering()
-    result = happy_qa.answer_question("Today's date is January 8th 2021", "What is the date?")
-    answer = [QuestionAnsweringResult(answer='January 8th 2021', score=0.9696964621543884, start=16, end=32)]
-    assert result == answer
+    MODELS = [
+        ('ALBERT', 'twmkn9/albert-base-v2-squad2'),
+        ('ROBERTA', 'deepset/roberta-base-squad2'),
+        ('BERT', 'mrm8488/bert-tiny-5-finetuned-squadv2')
+    ]
+    for model_type, model_name in MODELS:
+        happy_qa = HappyQuestionAnswering(model_name=model_name, model_type=model_type)
+        answers = happy_qa.answer_question("Today's date is January 8th 2021", "What is the date?", top_k=3)
 
-
-def test_qa_answer_question_top_k():
-    happy_qa = HappyQuestionAnswering()
-    result = happy_qa.answer_question("Today's date is January 8th 2021", "What is the date?", top_k=3)
-    answer = [QuestionAnsweringResult(answer='January 8th 2021', score=0.9696964621543884, start=16, end=32),
-              QuestionAnsweringResult(answer='January 8th', score=0.02050216868519783, start=16, end=27),
-              QuestionAnsweringResult(answer='January', score=0.005092293489724398, start=16, end=23)]
-    assert result == answer
-
-
-def test_qa_train():
-    happy_qa = HappyQuestionAnswering()
-    happy_qa.train("../data/qa/train-eval.csv")
+        assert sum(answer.score for answer in answers) == approx(1, 0.1)
+        assert all('January 8th' in answer.answer for answer in answers)
 
 
 def test_qa_eval():
-    happy_qa = HappyQuestionAnswering()
+    happy_qa = HappyQuestionAnswering(
+        model_type='DISTILBERT',
+        model_name='distilbert-base-cased-distilled-squad'
+    )
     result = happy_qa.eval("../data/qa/train-eval.csv")
-    assert result.eval_loss == 0.11738169193267822
+    assert result.loss == approx(0.11738169193267822, 0.001)
 
 
 def test_qa_test():
     happy_qa = HappyQuestionAnswering()
-    result = happy_qa.test("../data/qa/test.csv")
-    answer = [QuestionAnsweringResult(answer='October 31st', score=0.9939756989479065, start=0, end=12),
-              QuestionAnsweringResult(answer='November 23rd', score=0.967872679233551, start=12, end=25)]
-    assert result == answer
+    results = happy_qa.test("../data/qa/test.csv")
+    assert results[0].answer == 'October 31st'
+    assert results[1].answer == 'November 23rd'
 
 
 def test_qa_train_effectiveness():
@@ -46,74 +41,10 @@ def test_qa_train_effectiveness():
     lowering the loss as determined by HappyQuestionAnswering.eval()
     """
 
-    happy_qa = HappyQuestionAnswering()
-    before_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
+    # use a non-fine-tuned model so we DEFINITELY get an improvement
+    happy_qa = HappyQuestionAnswering('BERT', 'bert-base-cased')
+    before_loss = happy_qa.eval("../data/qa/train-eval.csv").loss
     happy_qa.train("../data/qa/train-eval.csv")
-    after_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
+    after_loss = happy_qa.eval("../data/qa/train-eval.csv").loss
 
     assert after_loss < before_loss
-
-
-def test_qa_train_effectiveness_albert():
-    """
-    Ensures that HappyQuestionAnswering.train() results in
-    lowering the loss as determined by HappyQuestionAnswering.eval()
-    """
-
-    happy_qa = HappyQuestionAnswering("ALBERT", "twmkn9/albert-base-v2-squad2")
-    before_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
-    happy_qa.train("../data/qa/train-eval.csv")
-    after_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
-
-    assert after_loss < before_loss
-
-
-def test_qa_test_albert():
-    happy_qa = HappyQuestionAnswering("ALBERT", "twmkn9/albert-base-v2-squad2")
-    result = happy_qa.test("../data/qa/test.csv")
-    answer = [QuestionAnsweringResult(answer='October 31st', score=0.988578736782074, start=0, end=12),
-              QuestionAnsweringResult(answer='November 23rd', score=0.9833534359931946, start=12, end=25)]
-    assert result == answer
-
-
-def test_qa_train_effectiveness_bert():
-    """
-    Ensures that HappyQuestionAnswering.train() results in
-    lowering the loss as determined by HappyQuestionAnswering.eval()
-    """
-
-    happy_qa = HappyQuestionAnswering("BERT", "mrm8488/bert-tiny-5-finetuned-squadv2")
-    before_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
-    happy_qa.train("../data/qa/train-eval.csv")
-    after_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
-
-    assert after_loss < before_loss
-
-
-def test_qa_test_bert():
-    happy_qa = HappyQuestionAnswering("BERT", "mrm8488/bert-tiny-5-finetuned-squadv2")
-    result = happy_qa.test("../data/qa/test.csv")
-    answer = [QuestionAnsweringResult(answer='October 31st', score=0.9352769255638123, start=0, end=12),
-              QuestionAnsweringResult(answer='November 23rd', score=0.9180678129196167, start=12, end=25)]
-    assert result == answer
-
-
-def test_qa_train_effectiveness_roberta():
-    """
-    Ensures that HappyQuestionAnswering.train() results in
-    lowering the loss as determined by HappyQuestionAnswering.eval()
-    """
-
-    happy_qa = HappyQuestionAnswering("ROBERTA", "deepset/roberta-base-squad2")
-    before_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
-    happy_qa.train("../data/qa/train-eval.csv")
-    after_loss = happy_qa.eval("../data/qa/train-eval.csv").eval_loss
-    assert after_loss < before_loss
-
-
-def test_qa_test_roberta():
-    happy_qa = HappyQuestionAnswering("ROBERTA", "deepset/roberta-base-squad2")
-    result = happy_qa.test("../data/qa/test.csv")
-    answer = [QuestionAnsweringResult(answer='October 31st', score=0.9512737393379211, start=0, end=12),
-              QuestionAnsweringResult(answer='November 23rd', score=0.8634917736053467, start=12, end=25)]
-    assert result == answer

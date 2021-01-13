@@ -44,7 +44,7 @@ class QATrainer(HappyTrainer):
         self.__add_token_positions(encodings, answers)
         eval_dataset = QuestionAnsweringDataset(encodings)
         result = self._run_eval(eval_dataset)
-        return EvalResult(eval_loss=result["eval_loss"])
+        return EvalResult(loss=result["eval_loss"])
 
 
     def test(self, input_filepath, solve):
@@ -54,18 +54,11 @@ class QATrainer(HappyTrainer):
         """
         contexts, questions = self._get_data(input_filepath, test_data=True)
 
-        results = list()
-
-        for case in tqdm(zip(contexts, questions)):
-            context = case[0]
-            question = case[1]
-            result = solve(context, question)[0]  # only care about first result
-
-            results.append(result)
-
-        return results
-
-
+        return [
+            solve(context, question)[0]
+            for context, question in
+            tqdm(zip(contexts, questions))
+        ]
 
     @staticmethod
     def _get_data(filepath, test_data=False):

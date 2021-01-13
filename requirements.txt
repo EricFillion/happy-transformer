@@ -3,3 +3,4 @@ tqdm>=4.27
 transformers>=4.0.0
 pytest
 datasets
+dataclasses; python_version<"3.7"

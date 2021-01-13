@@ -31,7 +31,7 @@ class TCTrainer(HappyTrainer):
         eval_dataset = TextClassificationDataset(eval_encodings, labels)
 
         result = self._run_eval(eval_dataset)
-        return EvalResult(eval_loss=result["eval_loss"])
+        return EvalResult(loss=result["eval_loss"])
 
     def test(self, input_filepath, solve):
         """
@@ -40,13 +40,10 @@ class TCTrainer(HappyTrainer):
         """
         contexts = self._get_data(input_filepath, test_data=True)
 
-        results = list()
-
-        for context in tqdm(contexts):
-            result = solve(context)
-            results.append(result)
-
-        return results
+        return [
+            solve(context)
+            for context in tqdm(contexts)
+        ]
 
     @staticmethod
     def _get_data(filepath, test_data=False):

@@ -30,7 +30,7 @@ def example_2_3():
     result = happy_tc.eval("../../data/tc/train-eval.csv")
     print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
     print(result)  # EvalResult(eval_loss=0.007262040860950947)
-    print(result.eval_loss)  # 0.007262040860950947
+    print(result.loss)  # 0.007262040860950947
 
 
 def example_2_4():
@@ -49,9 +49,9 @@ def example_2_5():
     happy_tc = HappyTextClassification(model_type="DISTILBERT",
                                        model_name="distilbert-base-uncased-finetuned-sst-2-english",
                                        num_labels=2)  # Don't forget to set num_labels!
-    before_loss = happy_tc.eval("../../data/tc/train-eval.csv").eval_loss
+    before_loss = happy_tc.eval("../../data/tc/train-eval.csv").loss
     happy_tc.train("../../data/tc/train-eval.csv")
-    after_loss = happy_tc.eval("../../data/tc/train-eval.csv").eval_loss
+    after_loss = happy_tc.eval("../../data/tc/train-eval.csv").loss
     print("Before loss: ", before_loss)  # 0.007262040860950947
     print("After loss: ", after_loss)  # 0.000162081079906784
     # Since after_loss < before_loss, the model learned!
@@ -60,7 +60,7 @@ def example_2_5():
 
 
 def main():
-    example_2_5()
+    example_2_1()
 
 
 if __name__ == "__main__":
