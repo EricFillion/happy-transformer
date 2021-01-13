@@ -114,7 +114,7 @@ The method predict_masks() contains 3 arguments:
 3. top_k (int): the number of results that will be returned 
 
 Returns: 
-A dataclass with variables "token_str" and "top_k"
+A list of objects with fields "token_str" and "top_k"
 
 Note: if targets are provided, then top_k will be ignored and a score for each target will be returned. 
 
@@ -202,7 +202,7 @@ Input:
 1. text (string): Text that will be classified 
 
 Returns: 
-A dataclass with variables "label" and "score"
+An object with fields "label" and "score"
 
 #### Example 2.1:
 ```python
@@ -278,7 +278,7 @@ Input:
 
 output:
 
-A dataclass with a variable called "loss"
+An object with the field "loss"
 
 #### Example 2.3:
 ```python
@@ -388,7 +388,7 @@ Inputs:
 3. top_k (int): the number of results that will be returned (default=1)
 
 Returns: 
- A list of a dataclasses that contains the variables: "answer", "score", "start" and "end." 
+ A list of a objects with fields: "answer", "score", "start" and "end." 
 The list is in descending order by score
 
 #### Example 3.1:
