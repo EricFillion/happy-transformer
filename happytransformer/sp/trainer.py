@@ -1,5 +1,5 @@
 from happytransformer.happy_trainer import HappyTrainer
-from happytransformer.sp.defauly_args import ARGS_SP_TRAIN
+from happytransformer.sp.default_args import ARGS_SP_TRAIN
 
 
 class SPTrainer(HappyTrainer):
