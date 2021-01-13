@@ -6,7 +6,7 @@ from transformers import (
 )
 
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.adaptors.adaptor import get_adaptor
+from happytransformer.adaptors import get_adaptor
 
 class HappyNextSentence(HappyTransformer):
     """

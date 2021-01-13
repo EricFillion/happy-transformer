@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.mwp.trainer import WPTrainer
 from happytransformer.cuda_detect import detect_cuda_device_number
-from happytransformer.adaptors.adaptor import get_adaptor
+from happytransformer.adaptors import get_adaptor
 from typing import List,Optional
 
 @dataclass
