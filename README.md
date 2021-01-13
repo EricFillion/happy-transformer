@@ -114,7 +114,7 @@ The method predict_masks() contains 3 arguments:
 3. top_k (int): the number of results that will be returned 
 
 Returns: 
-A list of objects with fields "token_str" and "top_k"
+A list of objects with fields "token" and "top_k"
 
 Note: if targets are provided, then top_k will be ignored and a score for each target will be returned. 
 
