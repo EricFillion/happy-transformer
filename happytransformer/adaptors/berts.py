@@ -12,7 +12,7 @@ from transformers import (
 )
 
 class BertAdaptor(Adaptor):
-    Tokenizer =  BertTokenizerFast
+    Tokenizer = BertTokenizerFast
     MaskedLM = BertForMaskedLM
     NextSentencePrediction = BertForNextSentencePrediction
     QuestionAnswering = BertForQuestionAnswering
@@ -32,7 +32,7 @@ class RobertaAdaptor(Adaptor):
 
     @staticmethod
     def preprocess_mask_text(text):
-        return text.replace('[MASK]','<mask>')
+        return text.replace('[MASK]', '<mask>')
 
     @staticmethod
     def postprocess_mask_prediction_token(text):

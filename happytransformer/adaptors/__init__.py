@@ -1,12 +1,12 @@
 from .adaptor import Adaptor
 from .albert import AlbertAdaptor
-from .berts import BertAdaptor,DistilBertAdaptor,RobertaAdaptor
+from .berts import BertAdaptor, DistilBertAdaptor, RobertaAdaptor
 
 ADAPTORS = {
-    'BERT':BertAdaptor(),
-    'DISTILBERT':DistilBertAdaptor(),
-    'ROBERTA':RobertaAdaptor(),
-    'ALBERT':AlbertAdaptor()
+    'BERT': BertAdaptor(),
+    'DISTILBERT': DistilBertAdaptor(),
+    'ROBERTA': RobertaAdaptor(),
+    'ALBERT': AlbertAdaptor()
 }
 
 def get_adaptor(model_type:str)->Adaptor:

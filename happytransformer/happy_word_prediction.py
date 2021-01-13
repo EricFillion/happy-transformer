@@ -1,7 +1,6 @@
 from typing import List,Optional
 from dataclasses import dataclass
 
-import torch
 from transformers import FillMaskPipeline
 
 from happytransformer.happy_transformer import HappyTransformer
@@ -11,16 +10,15 @@ from happytransformer.adaptors import get_adaptor
 
 @dataclass
 class WordPredictionResult:
-    token:str
-    score:float
+    token: str
+    score: float
 
 class HappyWordPrediction(HappyTransformer):
     """
     A user facing class for text classification
     """
     def __init__(
-        self, model_type:str="DISTILBERT",
-        model_name:str="distilbert-base-uncased"):
+        self, model_type: str = "DISTILBERT", model_name: str = "distilbert-base-uncased"):
 
         self.adaptor = get_adaptor(model_type)
         model = self.adaptor.MaskedLM.from_pretrained(model_name)
@@ -34,9 +32,7 @@ class HappyWordPrediction(HappyTransformer):
 
         self._trainer = WPTrainer(model, model_type, tokenizer, self._device, self.logger)
 
-    def predict_mask(self, 
-        text:str, targets:Optional[List[str]]=None, top_k:int=1
-    ) -> List[WordPredictionResult]:
+    def predict_mask(self, text: str, targets: Optional[List[str]] = None, top_k: int = 1) -> List[WordPredictionResult]:
         """
         Predict [MASK] tokens in a string.
         targets limit possible guesses if supplied.
