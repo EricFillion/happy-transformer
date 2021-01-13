@@ -4,14 +4,16 @@ from transformers import (
 
     BertForMaskedLM, BertTokenizerFast,
     BertForNextSentencePrediction, BertForQuestionAnswering,
+    BertForSequenceClassification,
 
     RobertaForMaskedLM, RobertaTokenizerFast,
-    RobertaForQuestionAnswering,
+    RobertaForQuestionAnswering, RobertaForSequenceClassification,
 
     AlbertForMaskedLM, AlbertTokenizerFast, AlbertForQuestionAnswering,
+    AlbertForSequenceClassification,
 
     DistilBertForMaskedLM, DistilBertTokenizerFast,
-    DistilBertForQuestionAnswering
+    DistilBertForQuestionAnswering, DistilBertForSequenceClassification
 )
 from transformers.tokenization_utils import PreTrainedTokenizerBase
 
@@ -36,6 +38,10 @@ class Adaptor:
     def QuestionAnswering(self)->Type[PreTrainedModel]:
         raise NotImplementedError()
 
+    @property
+    def SequenceClassification(self)->Type[PreTrainedModel]:
+        raise NotImplementedError()
+
     def preprocess_text(self, text:str)->str:
         return text
 
@@ -55,6 +61,9 @@ class BertAdaptor(Adaptor):
     @property
     def QuestionAnswering(self):
         return BertForQuestionAnswering
+    @property
+    def SequenceClassification(self):
+        return BertForSequenceClassification
 
 class DistilBertAdaptor(Adaptor):
     @property
@@ -66,6 +75,9 @@ class DistilBertAdaptor(Adaptor):
     @property
     def QuestionAnswering(self):
         return DistilBertForQuestionAnswering
+    @property
+    def SequenceClassification(self):
+        return DistilBertForSequenceClassification
 
 class RobertaAdaptor(Adaptor):
     @property
@@ -77,6 +89,9 @@ class RobertaAdaptor(Adaptor):
     @property
     def QuestionAnswering(self):
         return RobertaForQuestionAnswering
+    @property
+    def SequenceClassification(self):
+        return RobertaForSequenceClassification
 
     def preprocess_text(self, text:str)->str:
         print(text)
@@ -95,6 +110,9 @@ class AlbertAdaptor(Adaptor):
     @property
     def QuestionAnswering(self):
         return AlbertForQuestionAnswering
+    @property
+    def SequenceClassification(self):
+        return AlbertForSequenceClassification
     
     def postprocess_token(self, text):
         return text[1:] if text[0] == "▁" else text

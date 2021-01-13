@@ -20,6 +20,7 @@ from happytransformer.tc.trainer import TCTrainer
 from happytransformer.cuda_detect import detect_cuda_device_number
 
 from happytransformer.happy_transformer import HappyTransformer
+from happytransformer.adaptors.adaptor import get_adaptor
 from happytransformer.tc.default_args import ARGS_TC_TRAIN
 
 @dataclass
@@ -34,25 +35,11 @@ class HappyTextClassification(HappyTransformer):
 
     def __init__(self, model_type="DISTILBERT",
                  model_name="distilbert-base-uncased", num_labels=2):
-        model = None
-        tokenizer = None
+        self.adaptor = get_adaptor(model_type)
         config = AutoConfig.from_pretrained(model_name, num_labels=num_labels)
 
-        if model_type == "ALBERT":
-            model = AlbertForSequenceClassification.from_pretrained(model_name, config=config)
-            tokenizer = AlbertTokenizerFast.from_pretrained(model_name)
-        elif model_type == "BERT":
-            model = BertForSequenceClassification.from_pretrained(model_name, config=config)
-            tokenizer = BertTokenizerFast.from_pretrained(model_name)
-        elif model_type == "DISTILBERT":
-            model = DistilBertForSequenceClassification.from_pretrained(model_name, config=config)
-            tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
-        elif model_type == "ROBERTA":
-            model = RobertaForSequenceClassification.from_pretrained(model_name)
-            tokenizer = RobertaTokenizerFast.from_pretrained(model_name)
-
-        else:
-            raise ValueError(self.model_type_error)
+        model = self.adaptor.SequenceClassification.from_pretrained(model_name, config=config)
+        tokenizer = self.adaptor.Tokenizer.from_pretrained(model_name)
 
         super().__init__(model_type, model_name, model, tokenizer)
 
