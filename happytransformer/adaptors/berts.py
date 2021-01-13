@@ -12,49 +12,23 @@ from transformers import (
 )
 
 class BertAdaptor(Adaptor):
-    @property
-    def Tokenizer(self):
-        return BertTokenizerFast
-    @property
-    def MaskedLM(self):
-        return BertForMaskedLM
-    @property
-    def NextSentencePrediction(self):
-        return BertForNextSentencePrediction
-    @property
-    def QuestionAnswering(self):
-        return BertForQuestionAnswering
-    @property
-    def SequenceClassification(self):
-        return BertForSequenceClassification
+    Tokenizer =  BertTokenizerFast
+    MaskedLM = BertForMaskedLM
+    NextSentencePrediction = BertForNextSentencePrediction
+    QuestionAnswering = BertForQuestionAnswering
+    SequenceClassification = BertForSequenceClassification
 
 class DistilBertAdaptor(Adaptor):
-    @property
-    def Tokenizer(self):
-        return DistilBertTokenizerFast
-    @property
-    def MaskedLM(self):
-        return DistilBertForMaskedLM
-    @property
-    def QuestionAnswering(self):
-        return DistilBertForQuestionAnswering
-    @property
-    def SequenceClassification(self):
-        return DistilBertForSequenceClassification
+    Tokenizer = DistilBertTokenizerFast
+    MaskedLM = DistilBertForMaskedLM
+    QuestionAnswering = DistilBertForQuestionAnswering
+    SequenceClassification = DistilBertForSequenceClassification
 
 class RobertaAdaptor(Adaptor):
-    @property
-    def Tokenizer(self):
-        return RobertaTokenizerFast
-    @property
-    def MaskedLM(self):
-        return RobertaForMaskedLM
-    @property
-    def QuestionAnswering(self):
-        return RobertaForQuestionAnswering
-    @property
-    def SequenceClassification(self):
-        return RobertaForSequenceClassification
+    Tokenizer = RobertaTokenizerFast
+    MaskedLM = RobertaForMaskedLM
+    QuestionAnswering = RobertaForQuestionAnswering
+    SequenceClassification = RobertaForSequenceClassification
 
     def preprocess_mask_text(self, text:str)->str:
         print(text)
