@@ -30,9 +30,10 @@ class RobertaAdaptor(Adaptor):
     QuestionAnswering = RobertaForQuestionAnswering
     SequenceClassification = RobertaForSequenceClassification
 
-    def preprocess_mask_text(self, text:str)->str:
-        print(text)
+    @staticmethod
+    def preprocess_mask_text(text):
         return text.replace('[MASK]','<mask>')
 
-    def postprocess_mask_prediction_token(self, text):
+    @staticmethod
+    def postprocess_mask_prediction_token(text):
         return text[1:] if text[0] == "Ġ" else text

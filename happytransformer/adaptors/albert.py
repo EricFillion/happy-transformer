@@ -10,5 +10,6 @@ class AlbertAdaptor(Adaptor):
     QuestionAnswering = AlbertForQuestionAnswering
     SequenceClassification = AlbertForSequenceClassification
     
-    def postprocess_mask_prediction_token(self, text):
+    @staticmethod
+    def postprocess_mask_prediction_token(text):
         return text[1:] if text[0] == "▁" else text
