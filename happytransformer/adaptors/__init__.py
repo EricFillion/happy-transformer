@@ -1,6 +1,5 @@
 from .adaptor import Adaptor
-from .albert import AlbertAdaptor
-from .berts import BertAdaptor, DistilBertAdaptor, RobertaAdaptor
+from .berts import BertAdaptor, DistilBertAdaptor, RobertaAdaptor, AlbertAdaptor
 
 ADAPTORS = {
     'BERT': BertAdaptor(),

@@ -9,6 +9,9 @@ from transformers import (
 
     RobertaForMaskedLM, RobertaTokenizerFast,
     RobertaForQuestionAnswering, RobertaForSequenceClassification,
+
+    AlbertForMaskedLM, AlbertTokenizerFast, AlbertForQuestionAnswering,
+    AlbertForSequenceClassification
 )
 
 class BertAdaptor(Adaptor):
@@ -37,3 +40,13 @@ class RobertaAdaptor(Adaptor):
     @staticmethod
     def postprocess_mask_prediction_token(text):
         return text[1:] if text[0] == "Ġ" else text
+
+class AlbertAdaptor(Adaptor):
+    Tokenizer = AlbertTokenizerFast
+    MaskedLM = AlbertForMaskedLM
+    QuestionAnswering = AlbertForQuestionAnswering
+    SequenceClassification = AlbertForSequenceClassification
+    
+    @staticmethod
+    def postprocess_mask_prediction_token(text):
+        return text[1:] if text[0] == "▁" else text
