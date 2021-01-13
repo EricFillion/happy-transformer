@@ -6,7 +6,7 @@ from transformers import (
 )
 
 from happytransformer.happy_transformer import HappyTransformer
-
+from happytransformer.adaptors.adaptor import get_adaptor
 
 class HappyNextSentence(HappyTransformer):
     """
@@ -15,11 +15,9 @@ class HappyNextSentence(HappyTransformer):
     def __init__(self, model_type="BERT",
                  model_name="bert-base-uncased"):
 
-        if model_type == "BERT":
-            model = BertForNextSentencePrediction.from_pretrained(model_name)
-            tokenizer = BertTokenizerFast.from_pretrained(model_name)
-        else:
-            raise ValueError(self.model_type_error)
+        self.adaptor = get_adaptor(model_type)
+        model = self.adaptor.NextSentencePrediction.from_pretrained(model_name)
+        tokenizer = self.adaptor.Tokenizer.from_pretrained(model_name)
         super().__init__(model_type, model_name, model, tokenizer)
         self._pipeline = None
         self._trainer = None

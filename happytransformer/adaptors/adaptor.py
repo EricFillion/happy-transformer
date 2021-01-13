@@ -1,7 +1,7 @@
 from typing import Type
 from transformers import (
     PreTrainedModel,
-    BertForMaskedLM, BertTokenizerFast,
+    BertForMaskedLM, BertTokenizerFast, BertForNextSentencePrediction,
     RobertaForMaskedLM, RobertaTokenizerFast,
     AlbertForMaskedLM, AlbertTokenizerFast,
     DistilBertForMaskedLM, DistilBertTokenizerFast
@@ -21,6 +21,10 @@ class Adaptor:
     def MaskedLM(self)->Type[PreTrainedModel]:
         raise NotImplementedError()
 
+    @property
+    def NextSentencePrediction(self)->Type[PreTrainedModel]:
+        raise NotImplementedError()
+
     def preprocess_text(self, text:str)->str:
         return text
 
@@ -34,6 +38,9 @@ class BertAdaptor(Adaptor):
     @property
     def MaskedLM(self):
         return BertForMaskedLM
+    @property
+    def NextSentencePrediction(self):
+        return BertForNextSentencePrediction
 
 class DistilBertAdaptor(Adaptor):
     @property
