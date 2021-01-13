@@ -2,7 +2,7 @@
 Tests for the question answering training, evaluating and testing functionality
 """
 
-from happytransformer.happy_question_answering import HappyQuestionAnswering, QuestionAnsweringResult
+from happytransformer.happy_question_answering import HappyQuestionAnswering
 from pytest import approx
 
 def test_qa_answer_question():
