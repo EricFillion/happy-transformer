@@ -17,6 +17,7 @@ from transformers import (
     QuestionAnsweringPipeline,
 )
 from happytransformer.cuda_detect import detect_cuda_device_number
+from happytransformer.adaptors.adaptor import get_adaptor
 
 from typing import List
 from dataclasses import dataclass
@@ -41,24 +42,10 @@ class HappyQuestionAnswering(HappyTransformer):
     """
     def __init__(self, model_type="DISTILBERT",
                  model_name="distilbert-base-cased-distilled-squad"):
-        model = None
-        tokenizer = None
-
-        if model_type == "ALBERT":
-            model = AlbertForQuestionAnswering.from_pretrained(model_name)
-            tokenizer = AlbertTokenizerFast.from_pretrained(model_name)
-        elif model_type == "BERT":
-            model = BertForQuestionAnswering.from_pretrained(model_name)
-            tokenizer = BertTokenizerFast.from_pretrained(model_name)
-        elif model_type == "DISTILBERT":
-            model = DistilBertForQuestionAnswering.from_pretrained(model_name)
-            tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
-        elif model_type == "ROBERTA":
-            model = RobertaForQuestionAnswering.from_pretrained(model_name)
-            tokenizer = RobertaTokenizerFast.from_pretrained(model_name)
-
-        else:
-            raise ValueError(self.model_type_error)
+        
+        self.adaptor = get_adaptor(model_type)
+        model = self.adaptor.QuestionAnswering.from_pretrained(model_name)
+        tokenizer = self.adaptor.Tokenizer.from_pretrained(model_name)
 
         super().__init__(model_type, model_name, model, tokenizer)
         device_number = detect_cuda_device_number()
