@@ -9,23 +9,25 @@ class Adaptor:
     '''
     @property
     def Tokenizer(self) -> Type[PreTrainedTokenizerBase]:
+        # this should be NotImplementedError because
+        # all Adaptors should have a Tokenizer
         raise NotImplementedError()
 
     @property
     def MaskedLM(self) -> Type[PreTrainedModel]:
-        raise NotImplementedError()
+        raise ValueError('This model does not support word prediction')
 
     @property
     def NextSentencePrediction(self) -> Type[PreTrainedModel]:
-        raise NotImplementedError()
+        raise ValueError('This model does not support next sentence prediction')
 
     @property
     def QuestionAnswering(self) -> Type[PreTrainedModel]:
-        raise NotImplementedError()
+        raise ValueError('This model does not support question answering')
 
     @property
     def SequenceClassification(self) -> Type[PreTrainedModel]:
-        raise NotImplementedError()
+        raise ValueError('This model does not support sequence classification')
 
     def preprocess_mask_text(self, text: str)-> str:
         return text
