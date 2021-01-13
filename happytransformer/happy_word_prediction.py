@@ -15,7 +15,7 @@ from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.mwp.trainer import WPTrainer
 from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.adaptors.adaptor import get_adaptor
-from typing import List
+from typing import List,Optional
 
 @dataclass
 class WordPredictionResult:
@@ -26,11 +26,13 @@ class HappyWordPrediction(HappyTransformer):
     """
     A user facing class for text classification
     """
-    def __init__(self, model_type:str="DISTILBERT",
-                 model_name:str="distilbert-base-uncased"):
-        adaptor = get_adaptor(model_type)
-        model = adaptor.get_masked_language_model(model_name)
-        tokenizer = adaptor.get_tokenizer(model_name)
+    def __init__(
+        self, model_type:str="DISTILBERT",
+        model_name:str="distilbert-base-uncased"):
+
+        self.adaptor = get_adaptor(model_type)
+        model = self.adaptor.masked_language_model.from_pretrained(model_name)
+        tokenizer = self.adaptor.tokenizer.from_pretrained(model_name)
 
         super().__init__(model_type, model_name, model, tokenizer)
 
@@ -41,7 +43,7 @@ class HappyWordPrediction(HappyTransformer):
         self._trainer = WPTrainer(model, model_type, tokenizer, self._device, self.logger)
 
     def predict_mask(self, 
-        text:str, targets:List[str]=None, top_k:int=1
+        text:str, targets:Optional[List[str]]=None, top_k:int=1
     ) -> List[WordPredictionResult]:
         """
         Predict [MASK] tokens in a string.
@@ -52,22 +54,20 @@ class HappyWordPrediction(HappyTransformer):
         if not isinstance(text, str):
             raise ValueError("the \"text\" argument must be a single string")
 
-        if self.model_type == "ROBERTA":
-            text = text.replace("[MASK]", "<mask>")
-
-        answers = self._pipeline(text, targets=targets, top_k=top_k)
+        text_for_pipeline = self.adaptor.preprocess_text(text)
+        answers = self._pipeline(
+            text_for_pipeline, 
+            targets=targets, top_k=top_k
+        )
 
         if self.model_type == "ALBERT":
             for answer in answers:
                 if answer["token_str"][0] == "▁":
                     answer["token_str"] = answer["token_str"][1:]
-        elif self.model_type == "ROBERTA":
-            for answer in answers:
-                if answer["token_str"][0] == "Ġ":
-                    answer["token_str"] = answer["token_str"][1:]
+    
         return [
             WordPredictionResult(
-                token=answer["token_str"], 
+                token=self.adaptor.postprocess_token(answer["token_str"]), 
                 score=answer["score"]
             )
             for answer in answers

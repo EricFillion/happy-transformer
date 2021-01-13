@@ -1,28 +1,56 @@
+from typing import Type
 from transformers import (
     PreTrainedModel,
-    BertForMaskedLM, BertTokenizerFast
+    BertForMaskedLM, BertTokenizerFast,
+    RobertaForMaskedLM, RobertaTokenizerFast
 )
 from transformers.tokenization_utils import PreTrainedTokenizerBase
 
 class Adaptor:
-    def get_tokenizer(self, model_name:str)->PreTrainedTokenizerBase:
+    @property
+    def tokenizer(self)->Type[PreTrainedTokenizerBase]:
         raise NotImplementedError()
 
-    def get_masked_language_model(self, model_name:str)->PreTrainedModel:
+    @property
+    def masked_language_model(self)->Type[PreTrainedModel]:
         raise NotImplementedError()
 
     def preprocess_text(self, text:str)->str:
         return text
 
-class BERTAdaptor(Adaptor):
-    def get_tokenizer(self,  model_name:str):
-        return BertTokenizerFast.from_pretrained(model_name)
+    def postprocess_token(self, text:str)->str:
+        return text
 
-    def get_masked_language_model(self, model_name:str):
-        return BertForMaskedLM.from_pretrained(model_name)
+class BertAdaptor(Adaptor):
+    @property
+    def tokenizer(self):
+        return BertTokenizerFast
+    @property
+    def get_masked_language_model(self):
+        return BertForMaskedLM
+
+class RobertaAdaptor(Adaptor):
+    @property
+    def tokenizer(self):
+        return RobertaTokenizerFast
+    @property
+    def masked_language_model(self):
+        return RobertaForMaskedLM
+
+    def preprocess_text(self, text:str)->str:
+        print(text)
+        return text.replace('[MASK]','<mask>')
+
+    def postprocess_token(self, text):
+        return (
+            text[1:] 
+            if text[0] == "Ġ" 
+            else text
+        )
 
 ADAPTORS = {
-    'BERT':BERTAdaptor()
+    'BERT':BertAdaptor(),
+    'ROBERTA':RobertaAdaptor()
 }
 
 def get_adaptor(model_type:str)->Adaptor:
