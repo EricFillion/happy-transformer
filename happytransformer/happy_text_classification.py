@@ -24,8 +24,8 @@ from happytransformer.tc.default_args import ARGS_TC_TRAIN
 
 @dataclass
 class TextClassificationResult:
-    label:str
-    score:float
+    label: str
+    score: float
 
 class HappyTextClassification(HappyTransformer):
     """
@@ -67,7 +67,7 @@ class HappyTextClassification(HappyTransformer):
             self._tokenizer, self._device, self.logger
         )
 
-    def classify_text(self, text:str) -> TextClassificationResult:
+    def classify_text(self, text: str) -> TextClassificationResult:
         """
         Classify text to a label based on model's training
         """

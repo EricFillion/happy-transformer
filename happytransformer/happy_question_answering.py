@@ -2,7 +2,6 @@
 Contains the HappyQuestionAnswering class.
 
 """
-import torch
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.qa.trainer import QATrainer
 from happytransformer.qa.default_args import ARGS_QA_TRAIN
@@ -24,10 +23,10 @@ from dataclasses import dataclass
 
 @dataclass
 class QuestionAnsweringResult:
-    answer:str
-    score:float
-    start:int
-    end:int
+    answer: str
+    score: float
+    start: int
+    end: int
 
 
 class HappyQuestionAnswering(HappyTransformer):
@@ -68,10 +67,8 @@ class HappyQuestionAnswering(HappyTransformer):
 
         self._trainer = QATrainer(model, model_type, tokenizer, self._device, self.logger)
 
-    def answer_question(
-        self, 
-        context:str, question:str, top_k:int=1
-        )->List[QuestionAnsweringResult]:
+    def answer_question(self, context: str, question: str, top_k: int = 1) \
+            -> List[QuestionAnsweringResult]:
         """
         Find the answers to a question.
         The answer MUST be contained somewhere within the context for this to work.
@@ -81,7 +78,7 @@ class HappyQuestionAnswering(HappyTransformer):
         pipeline_output = self._pipeline(context=context, question=question, topk=top_k)
         # transformers returns a single dictionary when top_k ==1.
         # Our convention however is to have constant output format
-        answers = [pipeline_output] if top_k==1 else pipeline_output
+        answers = [pipeline_output] if top_k == 1 else pipeline_output
 
         return [
             QuestionAnsweringResult(

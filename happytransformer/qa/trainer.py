@@ -55,8 +55,8 @@ class QATrainer(HappyTrainer):
         contexts, questions = self._get_data(input_filepath, test_data=True)
 
         return [
-            solve(context,question)[0]
-            for context,question in
+            solve(context, question)[0]
+            for context, question in
             tqdm(zip(contexts, questions))
         ]
 

@@ -1,5 +1,4 @@
 import torch
-import re
 from transformers import (
     BertTokenizerFast,
     BertForNextSentencePrediction,
@@ -25,7 +24,7 @@ class HappyNextSentence(HappyTransformer):
         self._pipeline = None
         self._trainer = None
 
-    def predict_next_sentence(self, sentence_a:str, sentence_b:str)->float:
+    def predict_next_sentence(self, sentence_a: str, sentence_b: str) -> float:
         """
         Predict the probability that sentence_b follows sentence_a.
         Higher probabilities indicate more coherent sentence pairs.

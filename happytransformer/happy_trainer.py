@@ -7,7 +7,7 @@ from transformers import TrainingArguments, Trainer
 
 @dataclass
 class EvalResult:
-    loss:float
+    loss: float
 
 class HappyTrainer:
     def __init__(self, model, model_type, tokenizer, device, logger):
