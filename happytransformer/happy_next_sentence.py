@@ -1,9 +1,4 @@
 import torch
-from transformers import (
-    BertTokenizerFast,
-    BertForNextSentencePrediction,
-
-)
 
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.adaptors import get_adaptor

@@ -1,21 +1,13 @@
-from transformers import (
-    BertForMaskedLM,
-    BertTokenizerFast,
-    AlbertForMaskedLM,
-    AlbertTokenizerFast,
-    DistilBertForMaskedLM,
-    DistilBertTokenizerFast,
-    RobertaForMaskedLM,
-    RobertaTokenizerFast,
-    FillMaskPipeline,
-)
-import torch
+from typing import List,Optional
 from dataclasses import dataclass
+
+import torch
+from transformers import FillMaskPipeline
+
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.mwp.trainer import WPTrainer
 from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.adaptors import get_adaptor
-from typing import List,Optional
 
 @dataclass
 class WordPredictionResult:
