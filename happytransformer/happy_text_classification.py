@@ -4,7 +4,7 @@ Contains a class called HappyTextClassification that performs text classificatio
 from dataclasses import dataclass
 
 import torch
-from transformers import TextClassificationPipeline
+from transformers import TextClassificationPipeline, AutoConfig
 
 from happytransformer.tc.trainer import TCTrainer
 from happytransformer.cuda_detect import detect_cuda_device_number
