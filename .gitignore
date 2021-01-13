@@ -1,3 +1,9 @@
+examples/question_answering/train.csv
+examples/question_answering/eval.csv
+examples/text_classification/train.csv
+examples/text_classification/eval.csv
+runs/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -127,3 +133,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+.vscode/settings.json

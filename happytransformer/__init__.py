@@ -1,6 +1,6 @@
-from happytransformer.happy_roberta import HappyROBERTA
-from happytransformer.happy_xlnet import HappyXLNET
-from happytransformer.happy_bert import HappyBERT
-from happytransformer.classifier_args import classifier_args
+from happytransformer.happy_question_answering import HappyQuestionAnswering
+from happytransformer.happy_word_prediction import HappyWordPrediction
+from happytransformer.happy_text_classification import HappyTextClassification
+from happytransformer.happy_next_sentence import HappyNextSentence
 
 name = "happytransformer"
