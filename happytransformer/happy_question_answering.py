@@ -2,8 +2,6 @@
 Contains the HappyQuestionAnswering class.
 
 """
-from collections import namedtuple
-import torch
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.qa.trainer import QATrainer
 from happytransformer.qa.default_args import ARGS_QA_TRAIN
@@ -20,7 +18,15 @@ from transformers import (
 )
 from happytransformer.cuda_detect import detect_cuda_device_number
 
-QuestionAnsweringResult = namedtuple("QuestionAnsweringResult", ["answer", "score", "start", "end"])
+from typing import List
+from dataclasses import dataclass
+
+@dataclass
+class QuestionAnsweringResult:
+    answer: str
+    score: float
+    start: int
+    end: int
 
 
 class HappyQuestionAnswering(HappyTransformer):
@@ -61,30 +67,27 @@ class HappyQuestionAnswering(HappyTransformer):
 
         self._trainer = QATrainer(model, model_type, tokenizer, self._device, self.logger)
 
-    def answer_question(self, context, question, top_k=1):
+    def answer_question(self, context: str, question: str, top_k: int = 1) \
+            -> List[QuestionAnsweringResult]:
         """
-        :param context: background information to answer the question (string)
-        :param question: A question that can be answered with the given context (string)
-        :param top_k: how many results
-        :return: A list of a named tuples that contains the keys: answer, score, start and end
-
+        Find the answers to a question.
+        The answer MUST be contained somewhere within the context for this to work.
+        top_k describes the number of answers to return.
         """
 
-        result = self._pipeline(context=context, question=question, topk=top_k)
+        pipeline_output = self._pipeline(context=context, question=question, topk=top_k)
         # transformers returns a single dictionary when top_k ==1.
         # Our convention however is to have constant output format
-        if top_k == 1:
-            result = [result]
+        answers = [pipeline_output] if top_k == 1 else pipeline_output
 
-        results = [
+        return [
             QuestionAnsweringResult(
                 answer=answer["answer"],
                 score=answer["score"],
                 start=answer["start"],
                 end=answer["end"],)
-            for answer in result
+            for answer in answers
         ]
-        return results
 
     def train(self, input_filepath, args=ARGS_QA_TRAIN):
         """

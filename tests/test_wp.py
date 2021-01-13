@@ -1,61 +1,46 @@
+from pytest import approx
+
 from happytransformer import HappyWordPrediction
 from happytransformer.happy_word_prediction import WordPredictionResult
 
 
 def test_mwp_basic():
-    happy_mwp = HappyWordPrediction()
-    result = happy_mwp.predict_mask(
-        "Please pass the salt and [MASK]",
-    )
-    answer = [WordPredictionResult(token_str="pepper", score=0.2664579749107361)]
-    assert result == answer
+    MODELS = [
+        ('DISTILBERT', 'distilbert-base-uncased', 'pepper'),
+        ('BERT', 'bert-base-uncased', '.'),
+        ('ALBERT', 'albert-base-v2', 'garlic')
+    ]
+    for model_type, model_name, top_result in MODELS:
+        happy_mwp = HappyWordPrediction(model_type, model_name)
+        results = happy_mwp.predict_mask(
+            "Please pass the salt and [MASK]",
+        )
+        result = results[0]
+        assert result.token == top_result
 
 
 def test_mwp_top_k():
-    happy_mwp = HappyWordPrediction()
+    happy_mwp = HappyWordPrediction('DISTILBERT', 'distilbert-base-uncased')
     result = happy_mwp.predict_mask(
         "Please pass the salt and [MASK]",
         top_k=2
     )
-    answer = [WordPredictionResult(token_str='pepper', score=0.2664579749107361),
-              WordPredictionResult(token_str='vinegar', score=0.08760260790586472)]
+    answer = [
+        WordPredictionResult(token='pepper', score=approx(0.2664579749107361, 0.01)),
+        WordPredictionResult(token='vinegar', score=approx(0.08760260790586472, 0.01))
+    ]
 
     assert result == answer
 
 
 def test_mwp_targets():
-    happy_mwp = HappyWordPrediction()
+    happy_mwp = HappyWordPrediction('DISTILBERT', 'distilbert-base-uncased')
     result = happy_mwp.predict_mask(
         "Please pass the salt and [MASK]",
         targets=["water", "spices"]
     )
-    answer = [WordPredictionResult(token_str='water', score=0.014856964349746704),
-              WordPredictionResult(token_str='spices', score=0.009040987119078636)]
-    assert result == answer
-
-
-def test_mwp_basic_albert():
-    happy_mwp = HappyWordPrediction("ALBERT", "albert-base-v2")
-    result = happy_mwp.predict_mask(
-        "Please pass the salt and [MASK]",
-    )
-    answer = [WordPredictionResult(token_str='garlic', score=0.036625903099775314)]
-    assert result == answer
-
-
-def test_mwp_basic_bert():
-    happy_mwp = HappyWordPrediction("BERT", "bert-base-uncased")
-    result = happy_mwp.predict_mask(
-        "Please pass the salt and [MASK]",
-    )
-    answer = [WordPredictionResult(token_str='.', score=0.8466101884841919)]
-    assert result == answer
-
-
-def test_mwp_basic_roberta():
-    happy_mwp = HappyWordPrediction("ROBERTA", "roberta-base")
-    result = happy_mwp.predict_mask(
-        "Please pass the salt and [MASK]",
-    )
-    answer = [WordPredictionResult(token_str='pepper', score=0.7325230240821838)]
+    answer = [
+        WordPredictionResult(token='water', score=approx(0.014856964349746704, 0.01)),
+        WordPredictionResult(token='spices', score=approx(0.009040987119078636, 0.01))
+    ]
     assert result == answer

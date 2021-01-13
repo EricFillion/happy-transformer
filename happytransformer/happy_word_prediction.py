@@ -10,20 +10,23 @@ from transformers import (
     FillMaskPipeline,
 )
 import torch
-from collections import namedtuple
+from dataclasses import dataclass
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.mwp.trainer import WPTrainer
 from happytransformer.cuda_detect import detect_cuda_device_number
+from typing import List
 
-WordPredictionResult = namedtuple("WordPredictionResult", ["token_str", "score"])
-
+@dataclass
+class WordPredictionResult:
+    token:str
+    score:float
 
 class HappyWordPrediction(HappyTransformer):
     """
     A user facing class for text classification
     """
-    def __init__(self, model_type="DISTILBERT",
-                 model_name="distilbert-base-uncased"):
+    def __init__(self, model_type:str="DISTILBERT",
+                 model_name:str="distilbert-base-uncased"):
         model = None
         tokenizer = None
 
@@ -49,13 +52,14 @@ class HappyWordPrediction(HappyTransformer):
 
         self._trainer = WPTrainer(model, model_type, tokenizer, self._device, self.logger)
 
-    def predict_mask(self, text, targets=None, top_k=1):
+    def predict_mask(self, 
+        text:str, targets:List[str]=None, top_k:int=1
+    ) -> List[WordPredictionResult]:
         """
-        :param text: A string that contains the model's mask token
-        :param targets: Optional. A list of strings of potential answers.
-        All other answers will be ignored
-        :param top_k: number of results. Default is 1
-        :return: A named WordPredictionResult Named Tuple with the following keys: token_str and score
+        Predict [MASK] tokens in a string.
+        targets limit possible guesses if supplied.
+        top_k describes number of targets to return*
+        *top_k does not apply if targets is supplied
         """
         if not isinstance(text, str):
             raise ValueError("the \"text\" argument must be a single string")
@@ -63,25 +67,23 @@ class HappyWordPrediction(HappyTransformer):
         if self.model_type == "ROBERTA":
             text = text.replace("[MASK]", "<mask>")
 
-        result = self._pipeline(text, targets=targets, top_k=top_k)
+        answers = self._pipeline(text, targets=targets, top_k=top_k)
 
         if self.model_type == "ALBERT":
-            for answer in result:
+            for answer in answers:
                 if answer["token_str"][0] == "▁":
                     answer["token_str"] = answer["token_str"][1:]
         elif self.model_type == "ROBERTA":
-            for answer in result:
+            for answer in answers:
                 if answer["token_str"][0] == "Ġ":
                     answer["token_str"] = answer["token_str"][1:]
-        results = [
+        return [
             WordPredictionResult(
-                token_str=answer["token_str"], 
+                token=answer["token_str"], 
                 score=answer["score"]
             )
-            for answer in result
+            for answer in answers
         ]
-        
-        return results
 
     def train(self, input_filepath, args):
         raise NotImplementedError("train() is currently not available")

@@ -38,7 +38,7 @@ def example_3_4():
     result = happy_qa.eval("../../data/qa/train-eval.csv")
     print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
     print(result)  # EvalResult(eval_loss=0.11738169193267822)
-    print(result.eval_loss)  # 0.1173816919326782
+    print(result.loss)  # 0.1173816919326782
 
 
 def example_3_5():
@@ -52,9 +52,9 @@ def example_3_5():
 
 def example_3_6():
     happy_qa = HappyQuestionAnswering()
-    before_loss = happy_qa.eval("../../data/qa/train-eval.csv").eval_loss
+    before_loss = happy_qa.eval("../../data/qa/train-eval.csv").loss
     happy_qa.train("../../data/qa/train-eval.csv")
-    after_loss = happy_qa.eval("../../data/qa/train-eval.csv").eval_loss
+    after_loss = happy_qa.eval("../../data/qa/train-eval.csv").loss
     print("Before loss: ", before_loss)  # 0.11738169193267822
     print("After loss: ", after_loss)  # 0.00037909045931883156
     # Since after_loss < before_loss, the model learned!
@@ -63,7 +63,7 @@ def example_3_6():
 
 
 def main():
-    example_3_1()
+    example_3_6()
 
 
 if __name__ == "__main__":
