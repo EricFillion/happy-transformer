@@ -42,10 +42,10 @@ class Adaptor:
     def SequenceClassification(self)->Type[PreTrainedModel]:
         raise NotImplementedError()
 
-    def preprocess_text(self, text:str)->str:
+    def preprocess_mask_text(self, text:str)->str:
         return text
 
-    def postprocess_token(self, text:str)->str:
+    def postprocess_mask_prediction_token(self, text:str)->str:
         return text
 
 class BertAdaptor(Adaptor):
@@ -93,11 +93,11 @@ class RobertaAdaptor(Adaptor):
     def SequenceClassification(self):
         return RobertaForSequenceClassification
 
-    def preprocess_text(self, text:str)->str:
+    def preprocess_mask_text(self, text:str)->str:
         print(text)
         return text.replace('[MASK]','<mask>')
 
-    def postprocess_token(self, text):
+    def postprocess_mask_prediction_token(self, text):
         return text[1:] if text[0] == "Ġ" else text
 
 class AlbertAdaptor(Adaptor):
@@ -114,7 +114,7 @@ class AlbertAdaptor(Adaptor):
     def SequenceClassification(self):
         return AlbertForSequenceClassification
     
-    def postprocess_token(self, text):
+    def postprocess_mask_prediction_token(self, text):
         return text[1:] if text[0] == "▁" else text
 
 ADAPTORS = {

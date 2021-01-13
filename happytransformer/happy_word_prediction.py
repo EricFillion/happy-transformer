@@ -54,15 +54,16 @@ class HappyWordPrediction(HappyTransformer):
         if not isinstance(text, str):
             raise ValueError('the "text" argument must be a single string')
 
-        text_for_pipeline = self.adaptor.preprocess_text(text)
+        text_for_pipeline = self.adaptor.preprocess_mask_text(text)
         answers = self._pipeline(
             text_for_pipeline, 
             targets=targets, top_k=top_k
         )
-    
+
+        fix_token = self.adaptor.postprocess_mask_prediction_token
         return [
             WordPredictionResult(
-                token=self.adaptor.postprocess_token(answer["token_str"]), 
+                token=fix_token(answer["token_str"]), 
                 score=answer["score"]
             )
             for answer in answers
