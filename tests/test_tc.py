@@ -5,16 +5,18 @@ Tests for Text Classification Functionality
 from happytransformer.happy_text_classification import HappyTextClassification, TextClassificationResult
 from pytest import approx
 
+
 def test_classify_text():
     MODELS = [
-        ('DISTILBERT','distilbert-base-uncased-finetuned-sst-2-english'),
-        ("ALBERT","textattack/albert-base-v2-SST-2")
+        ('DISTILBERT', 'distilbert-base-uncased-finetuned-sst-2-english'),
+        ("ALBERT", "textattack/albert-base-v2-SST-2")
     ]
-    for model_type,model_name in MODELS:
+    for model_type, model_name in MODELS:
         happy_tc = HappyTextClassification(model_type=model_type, model_name=model_name)
         result = happy_tc.classify_text("What a great movie")
         assert result.label == 'LABEL_1'
         assert result.score > 0.9
+
 
 def test_tc_eval():
     happy_tc = HappyTextClassification(
@@ -22,7 +24,8 @@ def test_tc_eval():
         model_name="distilbert-base-uncased-finetuned-sst-2-english"
     )
     results = happy_tc.eval("../data/tc/train-eval.csv")
-    assert results.loss == approx(0.007262040860950947,0.01)
+    assert results.loss == approx(0.007262040860950947, 0.01)
+
 
 def test_tc_test():
     happy_tc = HappyTextClassification(
@@ -50,6 +53,7 @@ def test_tc_train_effectiveness():
     happy_tc.train("../data/tc/train-eval.csv")
     after_loss = happy_tc.eval("../data/tc/train-eval.csv").loss
     assert after_loss < before_loss
+
 
 def test_tc_train_effectiveness_multi():
     
