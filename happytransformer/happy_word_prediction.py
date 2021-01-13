@@ -31,8 +31,8 @@ class HappyWordPrediction(HappyTransformer):
         model_name:str="distilbert-base-uncased"):
 
         self.adaptor = get_adaptor(model_type)
-        model = self.adaptor.masked_language_model.from_pretrained(model_name)
-        tokenizer = self.adaptor.tokenizer.from_pretrained(model_name)
+        model = self.adaptor.MaskedLM.from_pretrained(model_name)
+        tokenizer = self.adaptor.Tokenizer.from_pretrained(model_name)
 
         super().__init__(model_type, model_name, model, tokenizer)
 
@@ -52,18 +52,13 @@ class HappyWordPrediction(HappyTransformer):
         *top_k does not apply if targets is supplied
         """
         if not isinstance(text, str):
-            raise ValueError("the \"text\" argument must be a single string")
+            raise ValueError('the "text" argument must be a single string')
 
         text_for_pipeline = self.adaptor.preprocess_text(text)
         answers = self._pipeline(
             text_for_pipeline, 
             targets=targets, top_k=top_k
         )
-
-        if self.model_type == "ALBERT":
-            for answer in answers:
-                if answer["token_str"][0] == "▁":
-                    answer["token_str"] = answer["token_str"][1:]
     
         return [
             WordPredictionResult(
