@@ -19,9 +19,8 @@ def main():
     happy_qa.train(train_csv_path)
     after_loss = happy_qa.eval(eval_csv_path)
 
-    print("Before loss: ", before_loss)
-    print("After loss: ", after_loss)
-    assert after_loss < before_loss
+    print("Before loss: ", before_loss.loss)
+    print("After loss: ", after_loss.loss)
 
 
 def generate_csv(csv_path, dataset):
