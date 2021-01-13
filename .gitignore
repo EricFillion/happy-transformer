@@ -1,3 +1,6 @@
+examples/text_classification/train.csv
+examples/text_classification/eval.csv
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
