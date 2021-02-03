@@ -81,6 +81,8 @@ pip install happytransformer
 ## Word Prediction
 ### Initialization  
 
+See [Medium article](https://medium.com/vennify-ai/masked-word-prediction-using-transformer-models-e7b0385f909) for a more in-depth explanation 
+
 Initialize a HappyWordPrediction object to perform word prediction. 
 
 **Initialization Arguments:**
@@ -114,7 +116,7 @@ The method predict_masks() contains 3 arguments:
 3. top_k (int): the number of results that will be returned 
 
 Returns: 
-A list of objects with fields "token" and "top_k"
+A list of objects with fields "token" and "score"
 
 Note: if targets are provided, then top_k will be ignored and a score for each target will be returned. 
 
