@@ -1,0 +1,13 @@
+from happytransformer import HappyTokenClassification
+
+
+
+def test_classify_text():
+    happy_toc = HappyTokenClassification(model_type="BERT", model_name="dslim/bert-base-NER")
+    expected_result = [{'word': 'Geoffrey', 'score': 0.9988969564437866, 'entity': 'B-PER', 'index': 4, 'start': 11, 'end': 19},
+     {'word': 'Toronto', 'score': 0.9993201494216919, 'entity': 'B-LOC', 'index': 9, 'start': 34, 'end': 41}]
+
+    result = happy_toc.classify_token("My name is Geoffrey and I live in Toronto")
+
+    assert result == expected_result
+
