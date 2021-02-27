@@ -6,6 +6,7 @@ Contains shared variables and methods for these classes.
 """
 import logging
 import torch
+from transformers import  AutoTokenizer
 
 class HappyTransformer():
     """
@@ -14,14 +15,12 @@ class HappyTransformer():
 
     """
 
-    model_type_error = "model_type must be ALBERT, BERT or DISTILBERT"
-
-    def __init__(self, model_type, model_name, model, tokenizer):
+    def __init__(self, model_type, model_name, model):
         self.model_type = model_type  # BERT, #DISTILBERT, ROBERTA, ALBERT etc
         self.model_name = model_name
-        self._model = model
-        self._tokenizer = tokenizer
-        self._model.eval()
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.model = model
+        self.model.eval()
         self._trainer = None  # initialized in child class
 
         # todo  change logging system
@@ -42,7 +41,7 @@ class HappyTransformer():
         )
 
         if self._device == 'cuda':
-            self._model.to(self._device)
+            self.model.to(self._device)
         self.logger.info("Using model: %s", self._device)
 
 

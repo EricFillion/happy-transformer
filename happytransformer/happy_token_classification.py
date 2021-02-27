@@ -22,15 +22,14 @@ class HappyTokenClassification(HappyTransformer):
         self.adaptor = get_adaptor(model_type)
 
         model = AutoModelForTokenClassification.from_pretrained(model_name)
-        tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
 
-        super().__init__(model_type, model_name, model, tokenizer)
+        super().__init__(model_type, model_name, model)
 
         device_number = detect_cuda_device_number()
 
-        self._pipeline = TokenClassificationPipeline(model=model, tokenizer=tokenizer, device=device_number)
+        self._pipeline = TokenClassificationPipeline(model=self.model, tokenizer=self.tokenizer, device=device_number)
 
-        self._trainer = TOCTrainer(model, model_type, tokenizer, self._device, self.logger)
+        self._trainer = TOCTrainer(self.model, model_type, self.tokenizer, self._device, self.logger)
 
 
     def classify_token(self, text: str) -> str:

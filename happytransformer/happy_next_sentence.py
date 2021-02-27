@@ -1,5 +1,5 @@
 import torch
-
+from transformers import AutoModelForNextSentencePrediction
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.adaptors import get_adaptor
 
@@ -11,9 +11,8 @@ class HappyNextSentence(HappyTransformer):
                  model_name="bert-base-uncased"):
 
         self.adaptor = get_adaptor(model_type)
-        model = self.adaptor.NextSentencePrediction.from_pretrained(model_name)
-        tokenizer = self.adaptor.Tokenizer.from_pretrained(model_name)
-        super().__init__(model_type, model_name, model, tokenizer)
+        model = AutoModelForNextSentencePrediction.from_pretrained(model_name)
+        super().__init__(model_type, model_name, model)
         self._pipeline = None
         self._trainer = None
 
@@ -23,9 +22,9 @@ class HappyNextSentence(HappyTransformer):
         Higher probabilities indicate more coherent sentence pairs.
         """
 
-        encoded = self._tokenizer(sentence_a, sentence_b, return_tensors='pt')
+        encoded = self.tokenizer(sentence_a, sentence_b, return_tensors='pt')
         with torch.no_grad():
-            scores = self._model(encoded['input_ids'], token_type_ids=encoded['token_type_ids']).logits[0]
+            scores = self.model(encoded['input_ids'], token_type_ids=encoded['token_type_ids']).logits[0]
 
         probabilities = torch.softmax(scores, dim=0)
         # probability that sentence B follows sentence A

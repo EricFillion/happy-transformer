@@ -4,7 +4,7 @@ Contains the HappyQuestionAnswering class.
 """
 from typing import List
 from dataclasses import dataclass
-from transformers import QuestionAnsweringPipeline
+from transformers import QuestionAnsweringPipeline, AutoModelForQuestionAnswering, AutoTokenizer
 
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.qa.trainer import QATrainer
@@ -35,15 +35,15 @@ class HappyQuestionAnswering(HappyTransformer):
                  model_name="distilbert-base-cased-distilled-squad"):
         
         self.adaptor = get_adaptor(model_type)
-        model = self.adaptor.QuestionAnswering.from_pretrained(model_name)
-        tokenizer = self.adaptor.Tokenizer.from_pretrained(model_name)
 
-        super().__init__(model_type, model_name, model, tokenizer)
+        model = AutoModelForQuestionAnswering.from_pretrained(model_name)
+
+        super().__init__(model_type, model_name, model)
         device_number = detect_cuda_device_number()
 
-        self._pipeline = QuestionAnsweringPipeline(model=model, tokenizer=tokenizer, device=device_number)
+        self._pipeline = QuestionAnsweringPipeline(model=self.model, tokenizer=self.tokenizer, device=device_number)
 
-        self._trainer = QATrainer(model, model_type, tokenizer, self._device, self.logger)
+        self._trainer = QATrainer(self.model, model_type, self.tokenizer, self._device, self.logger)
 
     def answer_question(self, context: str, question: str, top_k: int = 1) \
             -> List[QuestionAnsweringResult]:
