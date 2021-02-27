@@ -40,9 +40,8 @@ def test_qa_train_effectiveness():
     Ensures that HappyQuestionAnswering.train() results in
     lowering the loss as determined by HappyQuestionAnswering.eval()
     """
-
     # use a non-fine-tuned model so we DEFINITELY get an improvement
-    happy_qa = HappyQuestionAnswering('BERT', 'bert-base-cased')
+    happy_qa = HappyQuestionAnswering('BERT', 'mrm8488/bert-tiny-5-finetuned-squadv2')
     before_loss = happy_qa.eval("../data/qa/train-eval.csv").loss
     happy_qa.train("../data/qa/train-eval.csv")
     after_loss = happy_qa.eval("../data/qa/train-eval.csv").loss
