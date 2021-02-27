@@ -29,6 +29,10 @@ class Adaptor:
     def SequenceClassification(self) -> Type[PreTrainedModel]:
         raise ValueError('This model does not support sequence classification')
 
+    @property
+    def TokenClassification(self) -> Type[PreTrainedModel]:
+        raise ValueError('This model does not support sequence classification')
+
     def preprocess_mask_text(self, text: str)-> str:
         return text
 

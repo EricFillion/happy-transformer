@@ -5,7 +5,8 @@ ADAPTORS = {
     'BERT': BertAdaptor(),
     'DISTILBERT': DistilBertAdaptor(),
     'ROBERTA': RobertaAdaptor(),
-    'ALBERT': AlbertAdaptor()
+    'ALBERT': AlbertAdaptor(),
+
 }
 
 def get_adaptor(model_type:str)->Adaptor:
