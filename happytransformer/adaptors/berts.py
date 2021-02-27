@@ -13,7 +13,7 @@ from transformers import (
     RobertaForTokenClassification,
 
     AlbertForMaskedLM, AlbertTokenizerFast, AlbertForQuestionAnswering,
-    AlbertForSequenceClassification,     AlbertForTokenClassification,
+    AlbertForSequenceClassification, AlbertForTokenClassification,
 )
 
 class BertAdaptor(Adaptor):
