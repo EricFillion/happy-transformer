@@ -18,6 +18,11 @@ Happy Transformer is an package built on top of [Hugging Face's transformer libr
 * [Maintainers](#Maintainers)
 
 ## News: 
+### January x, 2021
+**Introducing Version 2.1.0!**
+You can now use any model type available on [Hugging Face's model distribution network](https://huggingface.co/models) for the implemented features. 
+This includes BERT, ROBERTA, ALBERT XLNET and more. 
+
 
 ### January 12, 2021
 **Introducing Version 2.0.0!**
@@ -40,17 +45,9 @@ Happy Transformer have been redesigned to promote scalability.
 Now it's easier than ever to add new models and features, and we encourage you
 to create PRs to contribute to the project. 
 
-
-### November 23rd, 2020
-
-Last month, Happy Transformer was presented at a conference called C-Search, and the presentation won the Best Presentation Award.
-C-Search is the Queen's University Student Research Conference and had Turing Award Winner Professor Bengio as the Keynote Speaker this year.
-The video for the presentation can be found [here](https://www.youtube.com/watch?v=nNdFkq-y8Ng&t=12s). 
-
-
-### June 9th, 2020
-We're happy to announce that we won a Best Paper Award at the Canadian Undergraduate Conference for AI. 
-We also received the highest score overall. The paper can be found [here](https://qmind.ca/wp-content/uploads/2020/05/Proceedings-of-CUCAI-2020.pdf) on page 67. 
+### Awards
+[Best Presentation](https://www.youtube.com/watch?v=nNdFkq-y8Ng&t=12s) at C-Search, Queen's University Student Research Conference. 
+[Best Paper](https://qmind.ca/wp-content/uploads/2020/05/Proceedings-of-CUCAI-2020.pdf) at the Canadian Undergraduate Conference for AI. The paper can be found on page 67. 
 
 
 
@@ -62,13 +59,9 @@ We also received the highest score overall. The paper can be found [here](https:
 | Text Classification                | ✔            | ✔          | 
 | Question Answering                 | ✔            | ✔          | 
 | Next Sentence Prediction           | ✔            |            | 
+| Token Classification               | ✔            |            | 
 
-| Public Methods                     | ALBERT       | BERT       |DISTILBERT |ROBERTA   |
-|------------------------------------|--------------|------------|-----------|----------|
-| Word Prediction                    | ✔            | ✔          | ✔         |✔         |
-| Text Classification                | ✔            | ✔          | ✔         |✔         |
-| Question Answering                 | ✔            | ✔          | ✔         |✔         |
-| Next Sentence Prediction           |              | ✔          |           |          |
+
   
 ## Installation
 
