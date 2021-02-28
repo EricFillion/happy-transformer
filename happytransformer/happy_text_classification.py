@@ -2,9 +2,9 @@
 Contains a class called HappyTextClassification that performs text classification
 """
 from dataclasses import dataclass
-
 import torch
-from transformers import TextClassificationPipeline, AutoConfig
+
+from transformers import TextClassificationPipeline, AutoConfig, AutoModelForSequenceClassification
 
 from happytransformer.tc.trainer import TCTrainer
 from happytransformer.cuda_detect import detect_cuda_device_number
@@ -27,20 +27,19 @@ class HappyTextClassification(HappyTransformer):
         self.adaptor = get_adaptor(model_type)
         config = AutoConfig.from_pretrained(model_name, num_labels=num_labels)
 
-        model = self.adaptor.SequenceClassification.from_pretrained(model_name, config=config)
-        tokenizer = self.adaptor.Tokenizer.from_pretrained(model_name)
+        model = AutoModelForSequenceClassification.from_pretrained(model_name, config=config)
 
-        super().__init__(model_type, model_name, model, tokenizer)
+        super().__init__(model_type, model_name, model)
 
         device_number = detect_cuda_device_number()
         self._pipeline = TextClassificationPipeline(
-            model=model, tokenizer=tokenizer, 
+            model=self.model, tokenizer=self.tokenizer,
             device=device_number
         )
 
         self._trainer = TCTrainer(
-            self._model, self.model_type, 
-            self._tokenizer, self._device, self.logger
+            self.model, self.model_type,
+            self.tokenizer, self._device, self.logger
         )
 
     def classify_text(self, text: str) -> TextClassificationResult:

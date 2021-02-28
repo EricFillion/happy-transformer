@@ -1,7 +1,7 @@
 from typing import List,Optional
 from dataclasses import dataclass
 
-from transformers import FillMaskPipeline
+from transformers import FillMaskPipeline, AutoModelForMaskedLM
 
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.mwp.trainer import WPTrainer
@@ -21,16 +21,14 @@ class HappyWordPrediction(HappyTransformer):
         self, model_type: str = "DISTILBERT", model_name: str = "distilbert-base-uncased"):
 
         self.adaptor = get_adaptor(model_type)
-        model = self.adaptor.MaskedLM.from_pretrained(model_name)
-        tokenizer = self.adaptor.Tokenizer.from_pretrained(model_name)
-
-        super().__init__(model_type, model_name, model, tokenizer)
+        model = AutoModelForMaskedLM.from_pretrained(model_name)
+        super().__init__(model_type, model_name, model)
 
         device_number = detect_cuda_device_number()
 
-        self._pipeline = FillMaskPipeline(model=model, tokenizer=tokenizer, device=device_number)
+        self._pipeline = FillMaskPipeline(model=self.model, tokenizer=self.tokenizer, device=device_number)
 
-        self._trainer = WPTrainer(model, model_type, tokenizer, self._device, self.logger)
+        self._trainer = WPTrainer(self.model, model_type, self.tokenizer, self._device, self.logger)
 
     def predict_mask(self, text: str, targets: Optional[List[str]] = None, top_k: int = 1) -> List[WordPredictionResult]:
         """

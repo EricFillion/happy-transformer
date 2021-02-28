@@ -8,7 +8,8 @@ def test_mwp_basic():
     MODELS = [
         ('DISTILBERT', 'distilbert-base-uncased', 'pepper'),
         ('BERT', 'bert-base-uncased', '.'),
-        ('ALBERT', 'albert-base-v2', 'garlic')
+        ('ALBERT', 'albert-base-v2', 'garlic'),
+        ('ROBERTA', "roberta-base", "pepper")
     ]
     for model_type, model_name, top_result in MODELS:
         happy_mwp = HappyWordPrediction(model_type, model_name)
