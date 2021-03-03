@@ -13,6 +13,7 @@ Happy Transformer is an package built on top of [Hugging Face's transformer libr
 * [Question Answering](#Question-Answering)
 * [Question Answering Training](#Question-Answering-Training)
 * [Next Sentence Prediction](#Next-Sentence-Prediction)
+* [Token Classification](#Token-Classification)
 * [Tech](#Tech)
 * [Call For Contributors](#Call-For-Contributors)
 * [Maintainers](#Maintainers)
@@ -79,8 +80,8 @@ See [Medium article](https://medium.com/vennify-ai/masked-word-prediction-using-
 Initialize a HappyWordPrediction object to perform word prediction. 
 
 **Initialization Arguments:**
- 1. model_type (string): either "ALBERT", "BERT" or "DISTILBERT." The default is "DISTILBERT"
- 2. model_name(string): below is a URL that contains potential models. 
+ 1. model_type (string): Specify the model name in all caps, such as "ROBERTA" or "ALBERT" 
+ 2. model_name(string): below is a URL that contains potential models: 
        [MODELS](https://huggingface.co/models?filter=masked-lm)
  
 
@@ -94,7 +95,7 @@ We recommend using "HappyWordPrediction("ALBERT", "albert-xxlarge-v2")" for the 
 ```python
     from happytransformer import HappyWordPrediction
     # --------------------------------------#
-    happy_wp_distilbert = HappyWordPrediction()  # default
+    happy_wp_distilbert = HappyWordPrediction("DISTILBERT", "distilbert-base-uncased")  # default
     happy_wp_albert = HappyWordPrediction("ALBERT", "albert-base-v2")
     happy_wp_bert = HappyWordPrediction("BERT", "bert-base-uncased")
     happy_wp_roberta = HappyWordPrediction("ROBERTA", "roberta-base")
@@ -167,7 +168,7 @@ detect if an email is spam based on its text.
 
 
 **Initialization Arguments:** 
-1. model_type (string): either "ALBERT", "BERT" or "DISTILBERT." The default is "DISTILBERT"
+1. model_type (string):  specify the model name in all caps, such as "ROBERTA" or "ALBERT"
 2. model_name(string): below is a URL that contains potential models. The default is "distilbert-base-uncased"
        [MODELS](https://huggingface.co/models?filter=text-classification)
 3. num_labels(int): The number of text categories. The default is 2
@@ -183,7 +184,7 @@ number of labels, so if you use these models you can set num_labels freely
 ```python
     from happytransformer import HappyTextClassification
     # --------------------------------------#
-    happy_tc_distilbert = HappyTextClassification()  # default with "distilbert-base-uncased" and num_labels=2
+    happy_tc_distilbert = HappyTextClassification("DISTILBERT", "distilbert-base-uncased", num_labels=2)  # default 
     happy_tc_albert = HappyTextClassification(model_type="ALBERT", model_name="albert-base-v2")
     happy_tc_bert = HappyTextClassification("BERT", "bert-base-uncased")
     happy_tc_roberta = HappyTextClassification("ROBERTA", "roberta-base")
@@ -354,7 +355,7 @@ This model answers a question given a body of that's text relevant to the questi
 The outputted answer is always a text-span with the provided information. 
 
 **Initialization Arguments:**
-1. model_type (string): either "ALBERT", "BERT" or "DISTILBERT." The default is "DISTILBERT"
+1. model_type (string): specify the model name in all caps, such as "ROBERTA" or "ALBERT"
 2. model_name(string): below is a URL that contains potential models. 
    [MODELS](https://huggingface.co/models?filter=question-answering)
 
@@ -366,7 +367,7 @@ We recommend using "HappyQuestionAnswering("ALBERT", "mfeb/albert-xxlarge-v2-squ
 ```python
     from happytransformer import HappyQuestionAnswering
     # --------------------------------------#
-    happy_qa_distilbert = HappyQuestionAnswering()  # default
+    happy_qa_distilbert = HappyQuestionAnswering("DISTILBERT", "distilbert-base-cased-distilled-squad")  # default
     happy_qa_albert = HappyQuestionAnswering("ALBERT", "mfeb/albert-xxlarge-v2-squad2")
     # good model when using with limited hardware 
     happy_qa_bert = HappyQuestionAnswering("BERT", "mrm8488/bert-tiny-5-finetuned-squadv2")
@@ -546,7 +547,7 @@ Initialize a HappyNextSentence object to next sentence prediction
 ```python
     from happytransformer import HappyNextSentence
     # --------------------------------------#
-    happy_ns = HappyNextSentence()  # default is "bert-base-uncased"
+    happy_ns = HappyNextSentence("BERT", "bert-base-uncased")  # default 
     happy_ns_large = HappyNextSentence("BERT", "bert-large-uncased") 
 
 ```
@@ -586,6 +587,66 @@ A float between 0 and 1 that represents how likely sentence_a follows sentence_b
     print(type(result))  # <class 'float'>
     print(result)  # 0.00018497584096621722
 ```
+
+
+## Token Classification 
+
+
+### Initialization  
+
+Initialize a HappyNextSentence object to next sentence prediction  
+
+**Initialization Arguments:**
+ 1. model_type (string): specify the model name in all caps, such as "ROBERTA" or "ALBERT"
+ 2. model_name(string): potential models can be found [here](https://huggingface.co/models?pipeline_tag=token-classification)
+ 
+
+#### Example 5.0:
+```python
+    from happytransformer import HappyNextSentence
+    # --------------------------------------#
+    happy_toc = HappyTokenClassification("BERT", "dslim/bert-base-NER")  # default 
+    happy_toc_large = HappyNextSentence("XLM-ROBERTA", "xlm-roberta-large-finetuned-conll03-english") 
+
+```
+
+### classify_token()
+
+Inputs: 
+1. sentence_a (string): Text you wish to classify. Be sure to provide full sentences rather than individual words so that the model has more context.  
+
+Returns: 
+A list of objects with the following fields: 
+    word: The classified word 
+    score: the probability of the entity 
+    entity: the predicted entity. Each model has it's own unique set of entities. 
+    index: The index of the token within the tokenized text 
+    start: The index of the string where the first letter of the predicted word occurs 
+    end: The index of the string where the last letter of the predicted word occurs 
+
+
+
+#### Example 5.1:
+```python
+    from happytransformer import HappyTokenClassification
+    # --------------------------------------#
+    happy_toc = HappyTokenClassification(model_type="BERT", model_name="dslim/bert-base-NER")
+    result = happy_toc.classify_token("My name is Geoffrey and I live in Toronto")
+    print(type(result))  # <class 'list'>
+    print(result[0].word)  # Geoffrey
+    print(result[0].entity)  # B-PER
+    print(result[0].score)  # 0.9988969564437866
+    print(result[0].index)  # 4
+    print(result[0].start) # 11
+    print(result[0].end)  # 19
+
+    print(result[1].word)  # Toronto
+    print(result[1].entity)  # B-LOC
+
+```
+
+
+
 ## Tech
 
  Happy Transformer uses a number of open source projects:
@@ -596,6 +657,8 @@ A float between 0 and 1 that represents how likely sentence_a follows sentence_b
 
  HappyTransformer is also an open source project with this [public repository](https://github.com/EricFillion/happy-transformer)
  on GitHub. 
+ 
+
  
 ### Call for contributors 
  Happy Transformer is a growing API. We're seeking more contributors to help accomplish our mission of making state-of-the-art AI easier to use.  
