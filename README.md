@@ -19,7 +19,7 @@ Happy Transformer is an package built on top of [Hugging Face's transformer libr
 * [Maintainers](#Maintainers)
 
 ## News: 
-### January x, 2021
+### March 1st, 2021
 **Introducing Version 2.1.0!**
 You can now use any model type available on [Hugging Face's model distribution network](https://huggingface.co/models) for the implemented features. 
 This includes BERT, ROBERTA, ALBERT XLNET and more. 
