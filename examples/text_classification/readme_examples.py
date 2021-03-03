@@ -1,4 +1,5 @@
 from happytransformer import HappyTextClassification
+from happytransformer import HappyTokenClassification
 
 
 def example_2_0():
@@ -58,9 +59,23 @@ def example_2_5():
     # Note: typically you evaluate with a separate dataset
     # but for simplicity we used the same one
 
+def example_5_1():
+    happy_toc = HappyTokenClassification(model_type="BERT", model_name="dslim/bert-base-NER")
+    result = happy_toc.classify_token("My name is Geoffrey and I live in Toronto")
+    print(type(result))  # <class 'list'>
+    print(result[0].word)  # Geoffrey
+    print(result[0].entity)  # B-PER
+    print(result[0].score)  # 0.9988969564437866
+    print(result[0].index)  # 4
+    print(result[0].start) # 11
+    print(result[0].end)  # 19
+
+    print(result[1].word)  # Toronto
+    print(result[1].entity)  # B-LOC
+
 
 def main():
-    example_2_1()
+    example_5_1()
 
 
 if __name__ == "__main__":
