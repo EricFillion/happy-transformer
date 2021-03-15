@@ -2,6 +2,9 @@
 
 # Happy Transformer 
 
+
+![HappyTransformer](logo.png)
+
 Happy Transformer is an package built on top of [Hugging Face's transformer library](https://huggingface.co/transformers/) that makes it easy to utilize state-of-the-art NLP models. 
 
 ## Table of Contents
