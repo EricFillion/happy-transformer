@@ -2,6 +2,9 @@
 
 # Happy Transformer 
 
+
+![HappyTransformer](logo.png)
+
 Happy Transformer is an package built on top of [Hugging Face's transformer library](https://huggingface.co/transformers/) that makes it easy to utilize state-of-the-art NLP models. 
 
 ## Table of Contents
@@ -23,6 +26,8 @@ Happy Transformer is an package built on top of [Hugging Face's transformer libr
 **Introducing Version 2.1.0!**
 You can now use any model type available on [Hugging Face's model distribution network](https://huggingface.co/models) for the implemented features. 
 This includes BERT, ROBERTA, ALBERT XLNET and more. 
+
+You can also now perform token classification 
 
 
 ### January 12, 2021
