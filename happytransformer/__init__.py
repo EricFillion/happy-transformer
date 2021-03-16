@@ -3,5 +3,7 @@ from happytransformer.happy_word_prediction import HappyWordPrediction
 from happytransformer.happy_text_classification import HappyTextClassification
 from happytransformer.happy_next_sentence import HappyNextSentence
 from happytransformer.happy_token_classification import HappyTokenClassification
+from happytransformer.happy_generation import HappyGeneration
+from happytransformer.happy_bg_gen import HappyBackgroundGeneration
 
 name = "happytransformer"
