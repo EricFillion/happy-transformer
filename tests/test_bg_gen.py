@@ -21,3 +21,19 @@ def test_bg_gen_custom_settings():
     happy_bg_gen = HappyBackgroundGeneration(happy_gen)
     output = happy_bg_gen.generate_background_info("library", settings=gen_beam_settings, context="I like to read books")
     print(output)
+
+def test_get_question():
+    nlp = spacy.load("en_core_web_sm")
+    happy_gen = HappyGeneration("GPT2", "gpt2")
+    happy_bg_gen = HappyBackgroundGeneration(happy_gen, nlp)
+
+    # Single thing
+    result = happy_bg_gen._get_question("apple")
+    assert result == "What is a apple?"
+    # Plural things
+    result = happy_bg_gen._get_question("apples")
+    assert result == "What are apples?"
+
+    # Person
+    result = happy_bg_gen._get_question("Eric Fillion")
+    assert result == "Who is Eric Fillion?"
