@@ -65,4 +65,8 @@ class HappyBackgroundGeneration:
             doc = self.nlp(target)
             if doc[0].tag_ == 'NNS':
                 return f"What are {target}?"
+            if doc.ents:
+                if doc.ents[0].label_ == "PERSON":
+                    return f"Who is {target}?"
+
         return f"What is a {target}?"
