@@ -3,6 +3,7 @@ contains HappyBackgroundGeneration class
 """
 
 from dataclasses import dataclass
+from happytransformer.happy_generation import gen_greedy_settings
 
 @dataclass
 class BackgroundGenerationResult:
@@ -19,7 +20,7 @@ class HappyBackgroundGeneration:
         self.happy_gen = happy_gen
         self.nlp = nlp
 
-    def generate_background_info(self, target, context="", method="greedy", custom_settings=None,
+    def generate_background_info(self, target, context="", settings = gen_greedy_settings,
                                  min_length=10, max_length=30) -> BackgroundGenerationResult:
         """
         Generates background information for a given noun
@@ -36,8 +37,7 @@ class HappyBackgroundGeneration:
         question = self._get_question(target)
         prompt = self._get_prompt(context, question)
 
-        output = self.happy_gen.generate_text(prompt, method=method,
-                                              custom_settings=custom_settings,
+        output = self.happy_gen.generate_text(prompt, settings=settings,
                                               min_length=min_length, max_length=max_length)
         return BackgroundGenerationResult(
             text=output.text,
