@@ -7,13 +7,22 @@ from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.toc.trainer import TOCTrainer
 from happytransformer.adaptors import get_adaptor
 
-default_greedy_settings = {
+DEFAULT_SETTINGS = {
     "do_sample": False,
     "early_stopping": False,
     "num_beams": 1,
     "temperature": 0.65,
     "top_k": 50,
     "top_p": 1.0,
+    "repetition_penalty": 1,
+    "length_penalty": 1,
+    "no_repeat_ngram_size": 2,
+    'bad_words_ids': None,
+}
+
+default_greedy_settings = {
+    "do_sample": False,
+    "early_stopping": False,
     "repetition_penalty": 1,
     "length_penalty": 1,
     "no_repeat_ngram_size": 2,
@@ -22,12 +31,10 @@ default_greedy_settings = {
 
 
 default_beam_settings = {
-    "do_sample": False,
-    "early_stopping": True,
     "num_beams": 5,
-    "temperature": 0.65,
-    "top_k": 50,
-    "top_p": 1.0,
+    "early_stopping": True,
+
+    "do_sample": False,
     "repetition_penalty": 1,
     "length_penalty": 1,
     "no_repeat_ngram_size": 2,
@@ -36,11 +43,9 @@ default_beam_settings = {
 
 default_generic_sampling_settings = {
     "do_sample": True,
-    "early_stopping": False,
-    "num_beams": 1,
     "temperature": 0.7,
     "top_k": 0,
-    "top_p": 1.0,
+    "early_stopping": False,
     "repetition_penalty": 1,
     "length_penalty": 1,
     "no_repeat_ngram_size": 2,
@@ -50,11 +55,8 @@ default_generic_sampling_settings = {
 
 default_top_k_sampling_settings = {
     "do_sample": True,
-    "early_stopping": False,
-    "num_beams": 1,
-    "temperature": 0.65,
     "top_k": 50,
-    "top_p": 1.0,
+    "early_stopping": False,
     "repetition_penalty": 1,
     "length_penalty": 1,
     "no_repeat_ngram_size": 2,
@@ -64,11 +66,9 @@ default_top_k_sampling_settings = {
 
 default_p_nucleus_sampling_settings = {
     "do_sample": True,
-    "early_stopping": False,
-    "num_beams": 1,
-    "temperature": 0.65,
     "top_k": 0,
     "top_p": 0.92,
+    "early_stopping": False,
     "repetition_penalty": 1,
     "length_penalty": 1,
     "no_repeat_ngram_size": 2,
@@ -85,9 +85,6 @@ class HappyGeneration(HappyTransformer):
     """
     A user facing class for text generation
     """
-
-    default_settings = default_greedy_settings
-
     def __init__(self, model_type: str = "GPT2", model_name: str = "gpt2"):
 
         self.adaptor = get_adaptor(model_type)
@@ -109,7 +106,7 @@ class HappyGeneration(HappyTransformer):
         return True
 
 
-    def generate_text(self, text, settings=default_settings,
+    def generate_text(self, text, settings=default_greedy_settings,
                       min_length=20, max_length=60) -> GenerationResult:
         """
         :param text: starting text that the model uses to generate text with.
@@ -153,18 +150,13 @@ class HappyGeneration(HappyTransformer):
 
     def get_settings(self, custom_settings):
 
-        possible_keys = list(self.default_settings.keys())
-        settings = self.default_settings.copy()
-        neglected_keys = possible_keys.copy()
+        possible_keys = list(DEFAULT_SETTINGS.keys())
+        settings = DEFAULT_SETTINGS.copy()
         for key, value in custom_settings.items():
-            if key in neglected_keys:
-                neglected_keys.remove(key)
-            if key in possible_keys:
-                settings[key] = value
-            else:
+            if key not in possible_keys:
                 self.logger.warning("\"%s\" is not a valid argument", key)
-        for key in neglected_keys:
-            self.logger.warning("\"%s\" was not included in the settings. Using default value", key)
+            else:
+                settings[key] = custom_settings[key]
         return settings
 
     def train(self, input_filepath, args):
