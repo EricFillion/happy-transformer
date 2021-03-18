@@ -1,14 +1,13 @@
 """
 Contains the HappyGeneration class
 """
-
 from dataclasses import dataclass
 from transformers import AutoModelForCausalLM
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.toc.trainer import TOCTrainer
 from happytransformer.adaptors import get_adaptor
 
-gen_greedy_settings = {
+default_greedy_settings = {
     "do_sample": False,
     "early_stopping": False,
     "num_beams": 1,
@@ -22,7 +21,7 @@ gen_greedy_settings = {
 }
 
 
-gen_beam_settings = {
+default_beam_settings = {
     "do_sample": False,
     "early_stopping": True,
     "num_beams": 5,
@@ -35,7 +34,7 @@ gen_beam_settings = {
     'bad_words_ids': None,
 }
 
-gen_generic_sampling_settings = {
+default_generic_sampling_settings = {
     "do_sample": True,
     "early_stopping": False,
     "num_beams": 1,
@@ -49,7 +48,7 @@ gen_generic_sampling_settings = {
 }
 
 
-gen_top_k_sampling_settings = {
+default_top_k_sampling_settings = {
     "do_sample": True,
     "early_stopping": False,
     "num_beams": 1,
@@ -63,7 +62,7 @@ gen_top_k_sampling_settings = {
 }
 
 
-gen_p_nucleus_sampling_settings = {
+default_p_nucleus_sampling_settings = {
     "do_sample": True,
     "early_stopping": False,
     "num_beams": 1,
@@ -87,7 +86,7 @@ class HappyGeneration(HappyTransformer):
     A user facing class for text generation
     """
 
-    DEFAULT_SETTINGS = gen_greedy_settings
+    default_settings = default_greedy_settings
 
     def __init__(self, model_type: str = "GPT2", model_name: str = "gpt2"):
 
@@ -99,7 +98,7 @@ class HappyGeneration(HappyTransformer):
 
         self._trainer = TOCTrainer(self.model, model_type, self.tokenizer, self._device, self.logger)
 
-    def __check_gen_text_is_val(self, text):
+    def __check_default_text_is_val(self, text):
 
         if not isinstance(text, str):
             self.logger.error("Please enter a int for the max_length parameter")
@@ -110,7 +109,7 @@ class HappyGeneration(HappyTransformer):
         return True
 
 
-    def generate_text(self, text, settings=gen_greedy_settings,
+    def generate_text(self, text, settings=default_settings,
                       min_length=20, max_length=60) -> GenerationResult:
         """
         :param text: starting text that the model uses to generate text with.
@@ -121,7 +120,7 @@ class HappyGeneration(HappyTransformer):
         :return: Text that the model generates.
         """
 
-        is_valid = self.__check_gen_text_is_val(text)
+        is_valid = self.__check_default_text_is_val(text)
 
         if is_valid:
             settings = self.get_settings(settings)
@@ -154,8 +153,8 @@ class HappyGeneration(HappyTransformer):
 
     def get_settings(self, custom_settings):
 
-        possible_keys = list(self.DEFAULT_SETTINGS.keys())
-        settings = self.DEFAULT_SETTINGS.copy()
+        possible_keys = list(self.default_settings.keys())
+        settings = self.default_settings.copy()
         neglected_keys = possible_keys.copy()
         for key, value in custom_settings.items():
             if key in neglected_keys:

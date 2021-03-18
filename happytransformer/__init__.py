@@ -5,6 +5,6 @@ from happytransformer.happy_next_sentence import HappyNextSentence
 from happytransformer.happy_token_classification import HappyTokenClassification
 from happytransformer.happy_generation import HappyGeneration
 
-from happytransformer.happy_generation import gen_greedy_settings, gen_p_nucleus_sampling_settings, gen_beam_settings, gen_top_k_sampling_settings, gen_generic_sampling_settings
+from happytransformer.happy_generation import default_greedy_settings, default_p_nucleus_sampling_settings, default_beam_settings, default_top_k_sampling_settings, default_generic_sampling_settings
 
 name = "happytransformer"
