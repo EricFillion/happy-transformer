@@ -98,12 +98,9 @@ class HappyGeneration(HappyTransformer):
     def __check_default_text_is_val(self, text):
 
         if not isinstance(text, str):
-            self.logger.error("Please enter a int for the max_length parameter")
-            return False
+            raise ValueError("The text input must be a string")
         elif not text:
-            self.logger.error("The text input must have at least one character")
-            return False
-        return True
+            raise ValueError("The text input must have at least one character")
 
 
     def generate_text(self, text, settings=default_greedy_settings,
@@ -117,25 +114,22 @@ class HappyGeneration(HappyTransformer):
         :return: Text that the model generates.
         """
 
-        is_valid = self.__check_default_text_is_val(text)
+        self.__check_default_text_is_val(text)
 
-        if is_valid:
-            settings = self.get_settings(settings)
-            input_ids = self.tokenizer.encode(text, return_tensors="pt")
-            adjusted_min_length = min_length + len(input_ids[0])
-            adjusted_max_length = max_length + len(input_ids[0])
-            output = self.model.generate(input_ids,
-                                         min_length=adjusted_min_length,
-                                         max_length=adjusted_max_length,
-                                         **settings
-                                         )
-            result = self.tokenizer.decode(output[0], skip_special_tokens=True)
-            final_result = self.__gt_post_processing(result, text)
+        settings = self.get_settings(settings)
+        input_ids = self.tokenizer.encode(text, return_tensors="pt")
+        adjusted_min_length = min_length + len(input_ids[0])
+        adjusted_max_length = max_length + len(input_ids[0])
+        output = self.model.generate(input_ids,
+                                     min_length=adjusted_min_length,
+                                     max_length=adjusted_max_length,
+                                     **settings
+                                     )
+        result = self.tokenizer.decode(output[0], skip_special_tokens=True)
+        final_result = self.__gt_post_processing(result, text)
 
-            return GenerationResult(text=final_result)
+        return GenerationResult(text=final_result)
 
-        else:
-            return GenerationResult(text="")
 
 
     def __gt_post_processing(self, result, text):
