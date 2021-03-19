@@ -8,7 +8,7 @@ def test_default_simple():
 
 def test_default_min_max_length():
     happy_gen = HappyGeneration()
-    output = happy_gen.generate_text("I went to the basement and then",  min_length=5, max_length=5)
+    output = happy_gen.generate_text("I went to the basement and then", min_length=5, max_length=5)
     tokens = happy_gen.tokenizer.encode(output.text, return_tensors="pt")
     length = len(tokens[0])
     assert length == 5
@@ -16,11 +16,25 @@ def test_default_min_max_length():
 
 def test_all_methods():
     happy_gen = HappyGeneration()
-    output_greedy = happy_gen.generate_text("I went to the basement and then", settings=default_greedy_settings, min_length=5, max_length=20)
-    output_beam_search = happy_gen.generate_text("I went to the basement and then", settings=default_p_nucleus_sampling_settings, min_length=5, max_length=20)
-    output_generic_sampling = happy_gen.generate_text("I went to the basement and then", settings=default_beam_settings, min_length=5, max_length=20)
-    output_top_k_sampling = happy_gen.generate_text("I went to the basement and then", settings=default_top_k_sampling_settings, min_length=5, max_length=20)
-    output_top_p_nucleus_sampling= happy_gen.generate_text("I went to the basement and then", settings=default_generic_sampling_settings, min_length=5, max_length=20)
+    output_greedy = happy_gen.\
+        generate_text("I went to the basement and then",
+                      settings=default_greedy_settings, min_length=5, max_length=20)
+
+    output_beam_search = happy_gen.\
+        generate_text("I went to the basement and then",
+                      settings=default_p_nucleus_sampling_settings, min_length=5, max_length=20)
+
+    output_generic_sampling = happy_gen.\
+        generate_text("I went to the basement and then",
+                      settings=default_beam_settings, min_length=5, max_length=20)
+
+    output_top_k_sampling = happy_gen.\
+        generate_text("I went to the basement and then",
+                      settings=default_top_k_sampling_settings, min_length=5, max_length=20)
+
+    output_top_p_nucleus_sampling = happy_gen.\
+        generate_text("I went to the basement and then",
+                      settings=default_generic_sampling_settings, min_length=5, max_length=20)
 
     print("greedy: ", output_greedy, end="\n\n")
     print("beam-search: ", output_beam_search, end="\n\n")
@@ -43,7 +57,8 @@ def test_incomplete_settings():
         # 'bad_words_ids': None,
     }
 
-    output = happy_gen.generate_text("I went to the basement and then", settings=settings, min_length=5, max_length=20)
+    output = happy_gen.generate_text("I went to the basement and then",
+                                     settings=settings, min_length=5, max_length=20)
 
     print("custom: ", output)
 
@@ -64,6 +79,7 @@ def test_extra_settings():
         "gender": "male"
     }
 
-    output = happy_gen.generate_text("I went to the basement and then", settings=settings, min_length=5, max_length=20)
+    output = happy_gen.generate_text("I went to the basement and then",
+                                     settings=settings, min_length=5, max_length=20)
 
     print("custom: ", output)
