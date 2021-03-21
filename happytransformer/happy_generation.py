@@ -95,11 +95,11 @@ class HappyGeneration(HappyTransformer):
 
         self._trainer = TOCTrainer(self.model, model_type, self.tokenizer, self._device, self.logger)
 
-    def __check_default_text_is_val(self, text):
+    def __assert_default_text_is_val(self, text):
 
         if not isinstance(text, str):
             raise ValueError("The text input must be a string")
-        elif not text:
+        if not text:
             raise ValueError("The text input must have at least one character")
 
 
@@ -114,7 +114,7 @@ class HappyGeneration(HappyTransformer):
         :return: Text that the model generates.
         """
 
-        self.__check_default_text_is_val(text)
+        self.__assert_default_text_is_val(text)
 
         settings = self.get_settings(settings)
         input_ids = self.tokenizer.encode(text, return_tensors="pt")
