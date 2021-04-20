@@ -85,6 +85,7 @@ class HappyTrainer:
                 model=self.model,
                 args=training_args,
                 train_dataset=dataset,
+                tokenizer=self.tokenizer
             )
             trainer.train()
 
