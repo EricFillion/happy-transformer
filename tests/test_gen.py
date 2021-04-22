@@ -1,5 +1,6 @@
 from happytransformer import HappyGeneration
-from happytransformer import full_settings, default_greedy_settings, default_beam_settings, default_top_k_sampling_settings, default_generic_sampling_settings
+from happytransformer import GEN_DEFAULT_SETTINGS, GEN_GREEDY_SETTINGS, \
+    GEN_BEAM_SETTINGS, GEN_TOP_K_SAMPLING_SETTINGS, GEN_GENERIC_SAMPLING_SETTINGS
 
 
 def test_default_simple():
@@ -21,19 +22,19 @@ def test_all_methods():
     happy_gen = HappyGeneration()
     output_greedy = happy_gen.generate_text(
         "Artificial intelligence is ",
-        settings=default_greedy_settings, min_length=5, max_length=5)
+        settings=GEN_GREEDY_SETTINGS, min_length=5, max_length=5)
 
     output_beam_search = happy_gen.generate_text(
         "Artificial intelligence is ",
-        settings=default_beam_settings, min_length=5, max_length=5)
+        settings=GEN_BEAM_SETTINGS, min_length=5, max_length=5)
 
     output_generic_sampling = happy_gen.generate_text(
         "Artificial intelligence is ",
-        settings=default_generic_sampling_settings, min_length=5, max_length=5)
+        settings=GEN_GENERIC_SAMPLING_SETTINGS, min_length=5, max_length=5)
 
     output_top_k_sampling = happy_gen.generate_text(
         "Artificial intelligence is ",
-        settings=default_top_k_sampling_settings, min_length=5, max_length=5)
+        settings=GEN_TOP_K_SAMPLING_SETTINGS, min_length=5, max_length=5)
 
     assert type(output_greedy.text) == str
     assert type(output_beam_search.text) == str
@@ -49,7 +50,7 @@ def test_full_settings():
     happy_gen = HappyGeneration()
     output = happy_gen.generate_text(
         "Artificial intelligence is ",
-        settings=full_settings, min_length=5, max_length=20)
+        settings=GEN_DEFAULT_SETTINGS, min_length=5, max_length=20)
 
     assert type(output.text) == str
     print("Full settings: ", output.text, end="\n\n")
