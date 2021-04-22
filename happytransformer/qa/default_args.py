@@ -9,19 +9,7 @@ ARGS_QA_TRAIN = {
 
 }
 
-# maybe implement later
-# 'max_steps': -1,
-# 'warmup_steps': 0,
-# # 'logging_dir':  #todo
-# 'logging_first_step': False,
-# 'logging_steps': 500,
-# 'save_steps': 500,
-#  #'save_total_limit':
-# 'no_cuda': False,
-# 'seed': 42,
-# 'fp16': False,
-# 'fp16_opt_level': "O1",
-# 'local_rank': -1,
-# #'tpu_num_cores':,
-# "debug": False,
-#
+
+ARGS_QA_EVAl = {}
+
+ARGS_QA_TEST = {}

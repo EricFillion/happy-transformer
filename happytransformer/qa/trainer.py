@@ -10,6 +10,9 @@ https://huggingface.co/transformers/custom_datasets.html#question-answering-with
 import csv
 from tqdm import tqdm
 import torch
+
+from transformers import DataCollatorWithPadding
+
 from happytransformer.happy_trainer import HappyTrainer, EvalResult
 
 class QATrainer(HappyTrainer):
@@ -21,17 +24,17 @@ class QATrainer(HappyTrainer):
         """
         See docstring in HappyQuestionAnswering.train()
         """
-        #todo: add time elapsed and test time remaining similar to what is within eval
-
         contexts, questions, answers = self._get_data(input_filepath)
         self.__add_end_idx(contexts, answers)
         encodings = self.tokenizer(contexts, questions, truncation=True, padding=True)
         self.__add_token_positions(encodings, answers)
         dataset = QuestionAnsweringDataset(encodings)
-        self._run_train(dataset, args)
+        data_collator = DataCollatorWithPadding(self.tokenizer)
+        self._run_train(dataset, args, data_collator)
 
 
-    def eval(self, input_filepath):
+
+    def eval(self, input_filepath, args):
         """
         See docstring in HappyQuestionAnswering.eval()
 
@@ -43,11 +46,13 @@ class QATrainer(HappyTrainer):
         encodings = self.tokenizer(contexts, questions, truncation=True, padding=True)
         self.__add_token_positions(encodings, answers)
         eval_dataset = QuestionAnsweringDataset(encodings)
-        result = self._run_eval(eval_dataset)
+        data_collator = DataCollatorWithPadding(self.tokenizer)
+
+        result = self._run_eval(eval_dataset, data_collator)
         return EvalResult(loss=result["eval_loss"])
 
 
-    def test(self, input_filepath, solve):
+    def test(self, input_filepath, solve, args):
         """
         See docstring in HappyQuestionAnswering.test()
 

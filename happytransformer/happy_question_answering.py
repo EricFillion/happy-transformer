@@ -8,7 +8,8 @@ from transformers import QuestionAnsweringPipeline, AutoModelForQuestionAnswerin
 
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.qa.trainer import QATrainer
-from happytransformer.qa.default_args import ARGS_QA_TRAIN
+from happytransformer.happy_trainer import  EvalResult
+from happytransformer.qa import ARGS_QA_TRAIN, ARGS_QA_EVAl, ARGS_QA_TEST
 
 from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.adaptors import get_adaptor
@@ -82,7 +83,7 @@ class HappyQuestionAnswering(HappyTransformer):
         """
         self._trainer.train(input_filepath=input_filepath, args=args)
 
-    def eval(self, input_filepath):
+    def eval(self, input_filepath, args=ARGS_QA_EVAl) -> EvalResult:
         """
         Trains the question answering model
 
@@ -93,9 +94,9 @@ class HappyQuestionAnswering(HappyTransformer):
         return: A dictionary that contains a key called "eval_loss"
 
         """
-        return self._trainer.eval(input_filepath=input_filepath)
+        return self._trainer.eval(input_filepath=input_filepath, args=args)
 
-    def test(self, input_filepath):
+    def test(self, input_filepath, args=ARGS_QA_TEST):
         """
         Tests the question answering model. Used to obtain results
 
@@ -106,4 +107,4 @@ class HappyQuestionAnswering(HappyTransformer):
         return: A list of dictionaries. Each dictionary
         contains the keys: "score", "start", "end" and "answer"
         """
-        return self._trainer.test(input_filepath=input_filepath, solve=self.answer_question)
+        return self._trainer.test(input_filepath=input_filepath, solve=self.answer_question, args=args)
