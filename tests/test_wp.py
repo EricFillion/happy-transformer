@@ -4,6 +4,7 @@ from happytransformer import HappyWordPrediction
 from happytransformer.happy_word_prediction import WordPredictionResult
 
 
+
 def test_mwp_basic():
     MODELS = [
         ('DISTILBERT', 'distilbert-base-uncased', 'pepper'),
@@ -45,3 +46,23 @@ def test_mwp_targets():
         WordPredictionResult(token='spices', score=approx(0.009040987119078636, 0.01))
     ]
     assert result == answer
+
+def test_mwp_train_basic():
+    happy_mwp = HappyWordPrediction('', 'distilroberta-base')
+    happy_mwp.train("../data/mwp/train.txt")
+
+def test_mwp_eval_basic():
+    happy_mwp = HappyWordPrediction('', 'distilroberta-base')
+    result = happy_mwp.eval("../data/mwp/train.txt")
+    assert type(result.loss) == float
+
+def test_mwp_train_effectiveness_multi():
+    happy_mwp = HappyWordPrediction('', 'distilroberta-base')
+
+    before_result = happy_mwp.eval("../data/mwp/train.txt")
+
+    happy_mwp.train("../data/mwp/train.txt")
+    after_result = happy_mwp.eval("../data/mwp/train.txt")
+
+    assert after_result.loss < before_result.loss
+
