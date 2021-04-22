@@ -26,7 +26,7 @@ class HappyTrainer:
         """
         raise NotImplementedError()
 
-    def test(self, input_filepath, solve):
+    def test(self, input_filepath, solve, args):
         """
 
         :param input_filepath: A string to file location
@@ -35,9 +35,10 @@ class HappyTrainer:
         """
         raise NotImplementedError()
 
-    def eval(self, input_filepath):
+    def eval(self, input_filepath, args):
         """
         :param input_filepath: A string to file location
+        :args a dictionary that contains settings
         :return: a dictionary that contains a key called "eval_loss" that holds the loss
          for the given eval dataset. May add more metrics later
         """
@@ -69,10 +70,13 @@ class HappyTrainer:
             adam_epsilon=args["adam_epsilon"],
             max_grad_norm=args["max_grad_norm"],
             num_train_epochs=args["num_train_epochs"],
+            report_to=["none"],
+            per_device_train_batch_size=8
 
         )
 
-    def _run_train(self, dataset, args):
+
+    def _run_train(self, dataset, args, data_collator):
         """
 
         :param dataset: a child of torch.utils.data.Dataset
@@ -85,11 +89,11 @@ class HappyTrainer:
                 model=self.model,
                 args=training_args,
                 train_dataset=dataset,
-                tokenizer=self.tokenizer
+                tokenizer=self.tokenizer,
+                data_collator=data_collator,
             )
             trainer.train()
-
-    def _run_eval(self, dataset):
+    def _run_eval(self, dataset, data_collator):
         """
         :param dataset: a child of torch.utils.data.Dataset
         :return: None
@@ -100,7 +104,7 @@ class HappyTrainer:
                 model=self.model,
                 args=eval_args,
                 eval_dataset=dataset,
-
+                data_collator=data_collator
             )
             return trainer.evaluate()
 
@@ -112,5 +116,7 @@ class HappyTrainer:
         """
         return TrainingArguments(
             output_dir=output_path,
-            seed=42
+            seed=42,
+            report_to=['none']
+
         )
