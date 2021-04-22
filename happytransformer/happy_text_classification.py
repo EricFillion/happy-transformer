@@ -10,7 +10,8 @@ from happytransformer.tc.trainer import TCTrainer
 from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.adaptors import get_adaptor
-from happytransformer.tc.default_args import ARGS_TC_TRAIN
+from happytransformer.tc import ARGS_TC_TRAIN, ARGS_TC_EVAL, ARGS_TC_TEST
+from happytransformer.happy_trainer import EvalResult
 
 @dataclass
 class TextClassificationResult:
@@ -70,7 +71,7 @@ class HappyTextClassification(HappyTransformer):
         """
         self._trainer.train(input_filepath=input_filepath, args=args)
 
-    def eval(self, input_filepath):
+    def eval(self, input_filepath, args=ARGS_TC_EVAL) -> EvalResult:
         """
         Evaluated the text classification answering model
 
@@ -80,9 +81,9 @@ class HappyTextClassification(HappyTransformer):
 
         return: #todo
         """
-        return self._trainer.eval(input_filepath=input_filepath)
+        return self._trainer.eval(input_filepath=input_filepath, args=ARGS_TC_EVAL)
 
-    def test(self, input_filepath):
+    def test(self, input_filepath, args=ARGS_TC_TEST):
         """
         Tests the text classification  model. Used to obtain results
 
@@ -91,4 +92,4 @@ class HappyTextClassification(HappyTransformer):
          text
         return: #todo
         """
-        return self._trainer.test(input_filepath=input_filepath, solve=self.classify_text)
+        return self._trainer.test(input_filepath=input_filepath, solve=self.classify_text, args=args)

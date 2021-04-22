@@ -10,6 +10,7 @@ https://huggingface.co/transformers/custom_datasets.html#sequence-classification
 import csv
 import torch
 from happytransformer.happy_trainer import HappyTrainer, EvalResult
+from transformers import DataCollatorWithPadding
 from tqdm import tqdm
 
 
@@ -22,18 +23,19 @@ class TCTrainer(HappyTrainer):
         contexts, labels = self._get_data(input_filepath)
         train_encodings = self.tokenizer(contexts, truncation=True, padding=True)
         train_dataset = TextClassificationDataset(train_encodings, labels)
+        data_collator = DataCollatorWithPadding(self.tokenizer)
+        self._run_train(train_dataset, args, data_collator)
 
-        self._run_train(train_dataset, args)
-
-    def eval(self, input_filepath):
+    def eval(self, input_filepath, args):
         contexts, labels = self._get_data(input_filepath)
         eval_encodings = self.tokenizer(contexts, truncation=True, padding=True)
         eval_dataset = TextClassificationDataset(eval_encodings, labels)
+        data_collator = DataCollatorWithPadding(self.tokenizer)
 
-        result = self._run_eval(eval_dataset)
+        result = self._run_eval(eval_dataset, data_collator)
         return EvalResult(loss=result["eval_loss"])
 
-    def test(self, input_filepath, solve):
+    def test(self, input_filepath, solve, args):
         """
         See docstring in HappyQuestionAnswering.test()
         solve: HappyQuestionAnswering.answers_to_question()
@@ -65,6 +67,8 @@ class TCTrainer(HappyTrainer):
         if not test_data:
             return contexts, labels
         return contexts
+
+
 
 
 class TextClassificationDataset(torch.utils.data.Dataset):
