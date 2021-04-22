@@ -55,19 +55,21 @@ class HappyTransformer():
         """
         raise NotImplementedError()
 
-    def eval(self, input_filepath):
+    def eval(self, input_filepath, args):
         """
         Evaluates the model. Determines how well the model performs on a given dataset
         :param input_filepath: a string that contains a path to a
          csv file that contains evaluating data
+        :param args: settings in the form of a dictionary
         :return: correct percentage
         """
         raise NotImplementedError()
 
-    def test(self, input_filepath):
+    def test(self, input_filepath, args):
         """
         Used to generate predictions for a given dataset.
         The dataset may not be labelled.
+        :param args: settings in the form of a dictionary
 
         :param input_filepath: a string that contains a path to
         a csv file that contains testing data

@@ -1,4 +1,4 @@
-from typing import List,Optional
+from typing import List, Optional
 from dataclasses import dataclass
 
 from transformers import FillMaskPipeline, AutoModelForMaskedLM
@@ -7,6 +7,8 @@ from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.mwp.trainer import WPTrainer
 from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.adaptors import get_adaptor
+from happytransformer.mwp import ARGS_MWP_TRAIN, ARGS_MWP_EVAl, ARGS_MWP_TEST
+from happytransformer.happy_trainer import EvalResult
 
 @dataclass
 class WordPredictionResult:
@@ -18,7 +20,7 @@ class HappyWordPrediction(HappyTransformer):
     A user facing class for text classification
     """
     def __init__(
-        self, model_type: str = "DISTILBERT", model_name: str = "distilbert-base-uncased"):
+            self, model_type: str = "DISTILBERT", model_name: str = "distilbert-base-uncased"):
 
         self.adaptor = get_adaptor(model_type)
         model = AutoModelForMaskedLM.from_pretrained(model_name)
@@ -55,11 +57,12 @@ class HappyWordPrediction(HappyTransformer):
             for answer in answers
         ]
 
-    def train(self, input_filepath, args):
-        raise NotImplementedError("train() is currently not available")
+    def train(self, input_filepath, args=ARGS_MWP_TRAIN):
+        self._trainer.train(input_filepath=input_filepath, args=args)
 
-    def eval(self, input_filepath):
-        raise NotImplementedError("eval() is currently not available")
+    def eval(self, input_filepath, args=ARGS_MWP_EVAl) -> EvalResult:
+        return self._trainer.eval(input_filepath=input_filepath, args=args)
 
-    def test(self, input_filepath):
+
+    def test(self, input_filepath, args=ARGS_MWP_TEST):
         raise NotImplementedError("test() is currently not available")
