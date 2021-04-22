@@ -38,5 +38,5 @@ class WPTrainer(HappyTrainer):
         return EvalResult(loss=result["eval_loss"])
 
 
-    def test(self, input_filepath, pipeline):
+    def test(self, input_filepath, solve, args):
         raise NotImplementedError()
