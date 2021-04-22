@@ -3,7 +3,7 @@ examples/question_answering/eval.csv
 examples/text_classification/train.csv
 examples/text_classification/eval.csv
 runs/
-
+.idea/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
