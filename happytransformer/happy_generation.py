@@ -5,16 +5,16 @@ from dataclasses import dataclass
 from transformers import AutoModelForCausalLM
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.adaptors import get_adaptor
+from happytransformer.gen import  ARGS_GEN_TRAIN, ARGS_GEN_EVAl, ARGS_GEN_TEST
 
 """
 The main settings that users will adjust when performing experiments
 
 They may still modify all of the settings found here:
     https://huggingface.co/transformers/main_classes/model.html#generation.
-    
 The values for full_settings are the same as the default values above except for min and max length. 
 """
-full_settings = {
+GEN_DEFAULT_SETTINGS = {
     "do_sample": False,
     "early_stopping": False,
     "num_beams": 1,
@@ -24,19 +24,19 @@ full_settings = {
 }
 
 # greedy is prone to repetition loops. So, we'll set no_repeat_ngram_size to 2.
-default_greedy_settings = {
+GEN_GREEDY_SETTINGS = {
     "do_sample": False,
     "early_stopping": False,
     "no_repeat_ngram_size": 2,
 }
 
-default_beam_settings = {
+GEN_BEAM_SETTINGS = {
     "do_sample": False,
     "early_stopping": True,
     "num_beams": 5,
 }
 
-default_generic_sampling_settings = {
+GEN_GENERIC_SAMPLING_SETTINGS = {
     "do_sample": True,
     "early_stopping": False,
     "top_k": 0,
@@ -44,7 +44,7 @@ default_generic_sampling_settings = {
 }
 
 
-default_top_k_sampling_settings = {
+GEN_TOP_K_SAMPLING_SETTINGS = {
     "do_sample": True,
     "early_stopping": False,
     "top_k": 50,
@@ -79,11 +79,12 @@ class HappyGeneration(HappyTransformer):
             raise ValueError("The text input must have at least one character")
 
 
-    def generate_text(self, text, settings=default_beam_settings,
+    def generate_text(self, text, settings=GEN_BEAM_SETTINGS,
                       min_length=20, max_length=60) -> GenerationResult:
         """
         :param text: starting text that the model uses to generate text with.
-        :param settings: A dictionary that contains settings that determine what algorithm is used to generate text
+        :param settings: A dictionary that contains settings that determine what
+         algorithm is used to generate text
         :param min_length: The minimum number of tokens for the output
         :param max_length: The maximum number of tokens for the output
         :return: Text that the model generates.
@@ -127,28 +128,31 @@ class HappyGeneration(HappyTransformer):
 
         So, we added custom min_length and max_length to the generate function.
 
-        We must ensure that the user does not include min_length/max_length within the input dictionary
+        We must ensure that the user does not include
+        min_length/max_length within the input dictionary
         """
         if "min_length" in settings:
             self.logger.warning("\"min_length\" is a parameter for the method \"generate_text\"."
-                                " Please use this parameter instead of adding it to the settings dictionary. "
-                                "%s, is being used. It represents the minimum number of tokens for the output",
+                                " Please use this parameter instead of adding "
+                                "it to the settings dictionary. %s, is being used."
+                                " It represents the minimum number of tokens for the output",
                                 str(min_length))
             del settings["min_length"]
 
         if "max_length" in settings:
             self.logger.warning("\"max_length\" is a parameter for the method \"generate_text\"."
-                                " Please use this parameter instead of adding it to the settings dictionary. "
-                                "%s is being used. It represents the  maximum number of tokens for the output",
+                                " Please use this parameter instead of adding it to "
+                                "the settings dictionary. %s is being used. "
+                                "It represents the  maximum number of tokens for the output",
                                 str(max_length))
             del settings["max_length"]
 
 
-    def train(self, input_filepath, args):
+    def train(self, input_filepath, args=ARGS_GEN_TRAIN):
         raise NotImplementedError("train() is currently not available")
 
-    def eval(self, input_filepath):
+    def eval(self, input_filepath, args=ARGS_GEN_EVAl):
         raise NotImplementedError("eval() is currently not available")
 
-    def test(self, input_filepath):
+    def test(self, input_filepath, args=ARGS_GEN_TEST):
         raise NotImplementedError("test() is currently not available")

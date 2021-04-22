@@ -8,3 +8,8 @@ ARGS_GEN_TRAIN = {
     'num_train_epochs': 3.0,
 
 }
+
+
+ARGS_GEN_EVAl = {}
+
+ARGS_GEN_TEST = {}
