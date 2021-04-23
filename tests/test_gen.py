@@ -118,3 +118,22 @@ def test_max_setting_included():
 
     assert type(output.text) == str
     print("Max settings included: ", output.text, end="\n\n")
+
+
+def test_gen_train_basic():
+    happy_gen = HappyGeneration()
+    happy_gen.train("../data/gen/train.txt")
+
+def test_gen_eval_basic():
+    happy_gen = HappyGeneration()
+    result = happy_gen.eval("../data/gen/train.txt")
+    assert type(result.loss) == float
+
+def test_gen_train_effectiveness_multi():
+    happy_gen = HappyGeneration()
+    before_result = happy_gen.eval("../data/gen/train.txt")
+    happy_gen.train("../data/gen/train.txt")
+    after_result = happy_gen.eval("../data/gen/train.txt")
+
+    assert after_result.loss < before_result.loss
+
