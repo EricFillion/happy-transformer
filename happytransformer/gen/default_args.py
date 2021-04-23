@@ -6,10 +6,15 @@ ARGS_GEN_TRAIN = {
     'adam_epsilon': 1e-8,
     'max_grad_norm':  1.0,
     'num_train_epochs': 3.0,
-
+    'preprocessing_processes': 1,
+    'mlm_probability': 0.15
 }
 
 
-ARGS_GEN_EVAl = {}
+ARGS_GEN_EVAl = {
+    'preprocessing_processes': 1,
+    'mlm_probability': 0.15
+
+}
 
 ARGS_GEN_TEST = {}

@@ -4,8 +4,10 @@ Contains the HappyGeneration class
 from dataclasses import dataclass
 from transformers import AutoModelForCausalLM
 from happytransformer.happy_transformer import HappyTransformer
+from happytransformer.gen.trainer import GENTrainer
 from happytransformer.adaptors import get_adaptor
-from happytransformer.gen import  ARGS_GEN_TRAIN, ARGS_GEN_EVAl, ARGS_GEN_TEST
+from happytransformer.gen import ARGS_GEN_TRAIN, ARGS_GEN_EVAl, ARGS_GEN_TEST
+from happytransformer.happy_trainer import EvalResult
 
 """
 The main settings that users will adjust when performing experiments
@@ -69,7 +71,7 @@ class HappyGeneration(HappyTransformer):
 
         super().__init__(model_type, model_name, model)
 
-        self._trainer = None
+        self._trainer = GENTrainer(self.model, model_type, self.tokenizer, self._device, self.logger)
 
     def __assert_default_text_is_val(self, text):
 
@@ -149,10 +151,10 @@ class HappyGeneration(HappyTransformer):
 
 
     def train(self, input_filepath, args=ARGS_GEN_TRAIN):
-        raise NotImplementedError("train() is currently not available")
+        self._trainer.train(input_filepath=input_filepath, args=args)
 
-    def eval(self, input_filepath, args=ARGS_GEN_EVAl):
-        raise NotImplementedError("eval() is currently not available")
+    def eval(self, input_filepath, args=ARGS_GEN_EVAl) -> EvalResult:
+        return self._trainer.eval(input_filepath=input_filepath, args=args)
 
     def test(self, input_filepath, args=ARGS_GEN_TEST):
         raise NotImplementedError("test() is currently not available")
