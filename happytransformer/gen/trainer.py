@@ -59,8 +59,6 @@ class GENTrainer(HappyTrainer):
             self._generate_json(args['save_data_path'], tokenized_datasets["eval"], "eval")
 
         self.logger.info("Evaluating...")
-        print("Here-------------------")
-        print(tokenized_datasets)
 
         result = self._run_eval(tokenized_datasets['eval'], default_data_collator)
 
