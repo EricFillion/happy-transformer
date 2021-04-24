@@ -49,20 +49,20 @@ def test_mwp_targets():
 
 def test_mwp_train_basic():
     happy_mwp = HappyWordPrediction('', 'distilroberta-base')
-    happy_mwp.train("../data/mwp/train.txt")
+    happy_mwp.train("../data/wp/train-eval.txt")
 
 def test_mwp_eval_basic():
     happy_mwp = HappyWordPrediction('', 'distilroberta-base')
-    result = happy_mwp.eval("../data/mwp/train.txt")
+    result = happy_mwp.eval("../data/wp/train-eval.txt")
     assert type(result.loss) == float
 
 def test_mwp_train_effectiveness_multi():
     happy_mwp = HappyWordPrediction('', 'distilroberta-base')
 
-    before_result = happy_mwp.eval("../data/mwp/train.txt")
+    before_result = happy_mwp.eval("../data/wp/train-eval.txt")
 
-    happy_mwp.train("../data/mwp/train.txt")
-    after_result = happy_mwp.eval("../data/mwp/train.txt")
+    happy_mwp.train("../data/mwp/train-eval.txt")
+    after_result = happy_mwp.eval("../data/wp/train-eval.txt")
 
     assert after_result.loss < before_result.loss
 
