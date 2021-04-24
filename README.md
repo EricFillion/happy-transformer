@@ -16,6 +16,7 @@ Happy Transformer is an package built on top of [Hugging Face's transformer libr
 * [Text Generation](#Text-Generation)
 * [Text Generation Training](#Text-Generation-Training)
 * [Text Classification](#Text-Classification)
+* [Text Classification Training](#Text-Classification-Training)
 * [Question Answering](#Question-Answering)
 * [Question Answering Training](#Question-Answering-Training)
 * [Next Sentence Prediction](#Next-Sentence-Prediction)
