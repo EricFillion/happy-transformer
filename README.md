@@ -12,6 +12,9 @@ Happy Transformer is an package built on top of [Hugging Face's transformer libr
 * [Features](#Features)
 * [Installation](#Installation)
 * [Word Prediction](#Word-Prediction)
+* [Word Prediction Training](#Word-Prediction-Training)
+* [Text Generation](#Text-Generation)
+* [Text Generation Training](#Text-Generation-Training)
 * [Text Classification](#Text-Classification)
 * [Question Answering](#Question-Answering)
 * [Question Answering Training](#Question-Answering-Training)
@@ -61,7 +64,8 @@ to create PRs to contribute to the project.
   
 | Public Methods                     | Basic Usage  | Training   |
 |------------------------------------|--------------|------------|
-| Word Prediction                    | ✔            |            |
+| Word Prediction                    | ✔            | ✔          |
+| Text Generation                    | ✔            | ✔          |
 | Text Classification                | ✔            | ✔          | 
 | Question Answering                 | ✔            | ✔          | 
 | Next Sentence Prediction           | ✔            |            | 
@@ -162,6 +166,100 @@ print(result[1].token)  # technology
 
 
 ```
+
+
+## Word Prediction Training
+
+HappyWordPrediction contains three methods for training 
+- train(): fine-tune the model to understand a body of text better
+- eval(): determine how well the model performs 
+
+### train()
+
+inputs: 
+1. input_filepath (string): a path file to a text file that contains nothing but text to train the model with
+2. args (dictionary): a dictionary with the same keys and value types as shown below. 
+
+```python
+
+ARGS_WP_TRAIN= {
+    #-------------------------------------------
+    # learning parameters: More information can be found on Hugging Face's website below 
+    'learning_rate': 5e-5,
+    'weight_decay': 0,
+    'adam_beta1': 0.9,
+    'adam_beta2': 0.999,
+    'adam_epsilon': 1e-8,
+    'max_grad_norm':  1.0,
+    'num_train_epochs': 3.0,
+    #-------------------------------------------
+    # Pre-processing parameters
+    # See below for descriptions of each
+    
+    'preprocessing_processes': 1, 
+    'mlm_probability': 0.15,
+    'line-by-line': False
+}
+```
+[Hugging Face Learning Parameters](https://huggingface.co/transformers/main_classes/trainer.html#transformers.TrainingArguments)
+
+preprocessing_processes: Number of processes to use for pre-processing. We recommend 1-4. 
+mlm_probability: The probability of masking a token.
+line-by-line: If False, training data is concatenated and then divided into sections that are the length of the model's input size, other than the last input which may be shorter. 
+              If True, each input contains the text from a single line within the training data. The text may be truncated if the line is too long (eg BERT's max input size is 512 tokens). 
+
+ 
+
+#### Example 2.1:
+```python
+    from happytransformer import HappyWordPrediction, ARGS_WP_TRAIN
+    # --------------------------------------#
+
+    
+    happy_wp = HappyWordPrediction()
+    
+    args = ARGS_WP_TRAIN # default values
+    args["num_train_epochs"] = 1 # change number of epochs from 3 to 1
+    happy_wp.train("../../data/wp/train-eval.txt", args=args)
+
+```
+
+### eval()
+Input:
+1. input_filepath (string): a path file to a csv file as described in table 2.1
+2. args (dictionary): a dictionary with the same keys and value types as shown below. 
+```python
+ARGS_WP_EVAL = {
+    # These keys are described under ARGS_WP_TRAIN
+    'preprocessing_processes': 1,
+    'mlm_probability': 0.15,
+    'line-by-line': False
+}
+```
+
+Output: An object with the field "loss"
+
+#### Example 2.2:
+```python
+    from happytransformer import HappyWordPrediction, ARGS_WP_EVAl
+    # --------------------------------------#
+    happy_wp = HappyWordPrediction()  
+    args = ARGS_WP_EVAl
+    args['preprocessing_processes'] = 2 # changed from 1 to 2
+    result = happy_wp.eval("../../data/wp/train-eval.txt")
+    print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
+    print(result)  # EvalResult(eval_loss=0.459536075592041)
+    print(result.loss)  # 0.459536075592041
+
+```
+## Text Generation 
+### Example 3.1 
+TODO
+
+## Text Generation Training
+### Example 4.1 
+TODO
+
 ## Text Classification 
 
 ### Initialization  
@@ -185,7 +283,7 @@ NOTE: "albert-base-v2", "bert-base-uncased" and "distilbert-base-uncased" do not
 number of labels, so if you use these models you can set num_labels freely 
 
 
-#### Example 2.0:
+#### Example 5.0:
 ```python
     from happytransformer import HappyTextClassification
     # --------------------------------------#
@@ -205,7 +303,7 @@ Input:
 Returns: 
 An object with fields "label" and "score"
 
-#### Example 2.1:
+#### Example 5.1:
 ```python
     from happytransformer import HappyTextClassification
     # --------------------------------------#
@@ -250,7 +348,7 @@ ARGS_QA_TRAIN= {
 
 Output: None
  
-#### Table 2.1
+#### Table 6.1
 
 1. text (string): text to be classified 
 2. label (int): the corresponding label
@@ -262,7 +360,7 @@ Output: None
 | Terrible service              | 0     |
 | I'm coming here again         | 1     |
 
-#### Example 2.3:
+#### Example 6.1:
 ```python
     from happytransformer import HappyTextClassification
     # --------------------------------------#
@@ -281,7 +379,7 @@ output:
 
 An object with the field "loss"
 
-#### Example 2.3:
+#### Example 6.2:
 ```python
     from happytransformer import HappyTextClassification
     # --------------------------------------#
@@ -303,7 +401,7 @@ Output: A list of named tuples with keys: "label" and "score"
 
 The list is in order by ascending csv index. 
 
-#### Table 2.2
+#### Table 6.2
 
 1. text (string): text that will be classified  
 
@@ -314,7 +412,7 @@ The list is in order by ascending csv index.
 | Terrible service              |
 | I'm coming here again         |
 
-#### Example 2.4:
+#### Example 6.3:
 ```python
     from happytransformer import HappyTextClassification
     # --------------------------------------#
@@ -332,7 +430,7 @@ The list is in order by ascending csv index.
 ```
 
 
-#### Example 2.5:
+#### Example 6.4:
 ```python
     from happytransformer import HappyTextClassification
     # --------------------------------------#
@@ -368,7 +466,7 @@ The outputted answer is always a text-span with the provided information.
 We recommend using "HappyQuestionAnswering("ALBERT", "mfeb/albert-xxlarge-v2-squad2")" for the best performance 
 
 
-#### Example 3.0:
+#### Example 7.0:
 ```python
     from happytransformer import HappyQuestionAnswering
     # --------------------------------------#
@@ -392,7 +490,7 @@ Returns:
  A list of a objects with fields: "answer", "score", "start" and "end." 
 The list is in descending order by score
 
-#### Example 3.1:
+#### Example 7.1:
 ```python
     from happytransformer import HappyQuestionAnswering
     # --------------------------------------#
@@ -405,7 +503,7 @@ The list is in descending order by score
     print(result[0].answer)  # January 10th, 2021
 ```
 
-#### Example 3.2:
+#### Example 7.2:
 ```python
     from happytransformer import HappyQuestionAnswering
     # --------------------------------------#
@@ -448,7 +546,7 @@ ARGS_QA_TRAIN= {
 ```
 Output: None
  
-#### Table 3.1
+#### Table 8.1
 
 1. context (string): background information for answer the question
 2. question (string): the question that will be asked 
@@ -460,7 +558,7 @@ Output: None
 | October 31st is the date  | what is the date? | October 31st  | 0            |
 | The date is November 23rd | what is the date? | November 23rd | 12           |
 
-#### Example 3.3:
+#### Example 8.1:
 ```python
     from happytransformer import HappyQuestionAnswering
     # --------------------------------------#
@@ -477,7 +575,7 @@ output:
 
 A dataclass with the variable "loss"
 
-#### Example 3.4:
+#### Example 8.2:
 ```python
     from happytransformer import HappyQuestionAnswering
     # --------------------------------------#
@@ -498,7 +596,7 @@ Output: A list of named tuples with keys: "answer", "score", "start" and "end"
 
 The list is in order by ascending csv index. 
 
-#### Table 3.2
+#### Table 8.2
 
 1. context (string): background information for answer the question
 2. question (string): the question that will be asked 
@@ -508,7 +606,7 @@ The list is in order by ascending csv index.
 | October 31st is the date  | what is the date? |
 | The date is November 23rd | what is the date? | 
 
-#### Example 3.5:
+#### Example 8.3:
 ```python
     from happytransformer import HappyQuestionAnswering
     # --------------------------------------#
@@ -521,7 +619,7 @@ The list is in order by ascending csv index.
 
 ```
 
-#### Example 3.6:
+#### Example 8.4:
 ```python
     from happytransformer import HappyQuestionAnswering
     # --------------------------------------#
@@ -548,7 +646,7 @@ Initialize a HappyNextSentence object to next sentence prediction
  "bert-base-uncased" and "bert-large-uncased"
  
 
-#### Example 4.0:
+#### Example 9.0:
 ```python
     from happytransformer import HappyNextSentence
     # --------------------------------------#
@@ -567,7 +665,7 @@ We recommend keeping sentence_a and sentence_b to a single sentence. But longer 
 Returns: 
 A float between 0 and 1 that represents how likely sentence_a follows sentence_b. 
 
-#### Example 4.1:
+#### Example 9.1:
 ```python
     from happytransformer import HappyNextSentence
     # --------------------------------------#
@@ -580,7 +678,7 @@ A float between 0 and 1 that represents how likely sentence_a follows sentence_b
     print(result)  # 0.9999918937683105
 ```
 
-#### Example 4.2:
+#### Example 9.2:
 ```python
     from happytransformer import HappyNextSentence
     # --------------------------------------#
@@ -606,7 +704,7 @@ Initialize a HappyNextSentence object to next sentence prediction
  2. model_name(string): potential models can be found [here](https://huggingface.co/models?pipeline_tag=token-classification)
  
 
-#### Example 5.0:
+#### Example 10.0:
 ```python
     from happytransformer import HappyNextSentence
     # --------------------------------------#
@@ -631,7 +729,7 @@ A list of objects with the following fields:
 
 
 
-#### Example 5.1:
+#### Example 10.1:
 ```python
     from happytransformer import HappyTokenClassification
     # --------------------------------------#
