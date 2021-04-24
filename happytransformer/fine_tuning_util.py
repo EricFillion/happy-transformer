@@ -8,10 +8,10 @@ https://github.com/huggingface/transformers/blob/master/examples/pytorch/languag
 """
 
 
-def preprocess_concatenate(tokenizer, datasets, args, mlm=True):
+def preprocess_concatenate(tokenizer, dataset, args, mlm=True):
     """
     :param tokenizer: tokenizer for a transformer model
-    :param datasets: a datasets.Dataset object
+    :param dataset: a datasets.Dataset object
     :param args: A dictionary that contains settings
     :return:
     """
@@ -23,7 +23,7 @@ def preprocess_concatenate(tokenizer, datasets, args, mlm=True):
         return tokenizer(example["text"],
                          add_special_tokens=True, truncation=True,)
 
-    tokenized_datasets = datasets.map(tokenize_function, batched=True,
+    tokenized_dataset = dataset.map(tokenize_function, batched=True,
                                       num_proc=args["preprocessing_processes"],
                                       remove_columns=["text"])
 
@@ -48,11 +48,11 @@ def preprocess_concatenate(tokenizer, datasets, args, mlm=True):
             result["labels"] = result["input_ids"].copy()
         return result
 
-    tokenized_datasets = tokenized_datasets.map(
+    tokenized_dataset = tokenized_dataset.map(
         group_texts,
         batched=True,
         num_proc=args["preprocessing_processes"],
     )
 
 
-    return tokenized_datasets
+    return tokenized_dataset

@@ -20,12 +20,12 @@ class GENTrainer(HappyTrainer):
 
         if not args["load_data"]:
             self.logger.info("Preprocessing dataset...")
-            datasets = load_dataset("text", data_files={"train": input_filepath})
-            tokenized_datasets = preprocess_concatenate(self.tokenizer, datasets, args, False)
+            dataset = load_dataset("text", data_files={"train": input_filepath})
+            tokenized_dataset = preprocess_concatenate(self.tokenizer, dataset, args, False)
 
         else:
             self.logger.info("Loading dataset from %s...", args["load_data_path"])
-            tokenized_datasets = load_dataset("json", data_files={"train": args["load_data_path"]}, field='train')
+            tokenized_dataset = load_dataset("json", data_files={"train": args["load_data_path"]}, field='train')
 
         if args['save_data']:
             if args['load_data']:
@@ -33,22 +33,22 @@ class GENTrainer(HappyTrainer):
 
             self.logger.info("Saving training dataset to %s...", args["save_data_path"])
 
-            self._generate_json(args['save_data_path'], tokenized_datasets["train"], "train")
+            self._generate_json(args['save_data_path'], tokenized_dataset["train"], "train")
 
         self.logger.info("Training...")
 
-        self._run_train(tokenized_datasets['train'], args, default_data_collator)
+        self._run_train(tokenized_dataset['train'], args, default_data_collator)
 
     def eval(self, input_filepath, args):
 
         if not args["load_data"]:
             self.logger.info("Preprocessing dataset...")
             datasets = load_dataset("text", data_files={"eval": input_filepath})
-            tokenized_datasets = preprocess_concatenate(self.tokenizer, datasets, args, False)
+            tokenized_dataset = preprocess_concatenate(self.tokenizer, datasets, args, False)
 
         else:
             self.logger.info("Loading dataset from %s...", args["load_data_path"])
-            tokenized_datasets = load_dataset("json", data_files={"eval": args["load_data_path"]}, field='eval')
+            tokenized_dataset = load_dataset("json", data_files={"eval": args["load_data_path"]}, field='eval')
 
         if args['save_data']:
             if args['load_data']:
@@ -56,11 +56,11 @@ class GENTrainer(HappyTrainer):
 
             self.logger.info("Saving evaluating dataset to %s...", args["save_data_path"])
 
-            self._generate_json(args['save_data_path'], tokenized_datasets["eval"], "eval")
+            self._generate_json(args['save_data_path'], tokenized_dataset["eval"], "eval")
 
         self.logger.info("Evaluating...")
 
-        result = self._run_eval(tokenized_datasets['eval'], default_data_collator)
+        result = self._run_eval(tokenized_dataset['eval'], default_data_collator)
 
         return EvalResult(loss=result["eval_loss"])
 
