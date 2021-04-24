@@ -7,13 +7,20 @@ ARGS_GEN_TRAIN = {
     'max_grad_norm':  1.0,
     'num_train_epochs': 3.0,
     'preprocessing_processes': 1,
-    'mlm_probability': 0.15
+    'mlm_probability': 0.15,
+
+    'save_data': False,
+    'save_data_location': "",
+
+    'load_data': False,
+    'load_data_location': "",
 }
 
 
 ARGS_GEN_EVAl = {
     'preprocessing_processes': 1,
-    'mlm_probability': 0.15
+    'mlm_probability': 0.15,
+
 
 }
 

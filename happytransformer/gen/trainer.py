@@ -10,7 +10,8 @@ from transformers import default_data_collator
 from happytransformer.happy_trainer import HappyTrainer, EvalResult
 from happytransformer.fine_tuning_util import preprocess_concatenate
 from datasets import load_dataset
-
+import csv
+import json
 
 class GENTrainer(HappyTrainer):
     """
@@ -18,12 +19,27 @@ class GENTrainer(HappyTrainer):
     """
 
     def train(self, input_filepath, args):
-        datasets = load_dataset("text", data_files={"train": input_filepath})
-        tokenized_datasets = preprocess_concatenate(self.tokenizer, datasets, args, False)
 
-        print("training...")
+        if not args["load_data"]:
+            self.logger.info("Preprocessing dataset...")
+            datasets = load_dataset("text", data_files={"train": input_filepath})
+            tokenized_datasets = preprocess_concatenate(self.tokenizer, datasets, args, False)
+
+        else:
+            self.logger.info("Loading dataset from %s...", args["load_data_location"])
+            tokenized_datasets = load_dataset("json", data_files=args["load_data_location"], field='train')
+
+        if args['save_data']:
+            if args['load_data']:
+                self.logger.warning("Saving data when loading is enabled.")
+
+            self.logger.info("Saving dataset to %s...", args["save_data_location"])
+
+            self._generate_json(args['save_data_location'], tokenized_datasets["train"])
+
+        self.logger.info("Training...")
+
         self._run_train(tokenized_datasets['train'], args, default_data_collator)
-
 
     def eval(self, input_filepath, args):
         datasets = load_dataset("text", data_files={"eval": input_filepath})
@@ -36,3 +52,16 @@ class GENTrainer(HappyTrainer):
 
     def test(self, input_filepath, solve, args):
         raise NotImplementedError()
+
+
+    def _generate_json(self, json_path, dataset):
+
+        data = {}
+        data["train"] = []
+        for case in dataset:
+            data["train"].append({'attention_mask': case["attention_mask"],
+                                  'input_ids': case["input_ids"],
+                                  'labels': case["labels"],
+                                  })
+        with open(json_path, 'w') as outfile:
+            json.dump(data, outfile)
