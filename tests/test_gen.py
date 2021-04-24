@@ -1,6 +1,11 @@
 from happytransformer import HappyGeneration, ARGS_GEN_TRAIN, ARGS_GEN_EVAl
-from happytransformer import GEN_DEFAULT_SETTINGS, GEN_GREEDY_SETTINGS, \
-    GEN_BEAM_SETTINGS, GEN_TOP_K_SAMPLING_SETTINGS, GEN_GENERIC_SAMPLING_SETTINGS
+from happytransformer import(
+    GEN_DEFAULT_SETTINGS,
+    GEN_GREEDY_SETTINGS,
+    GEN_BEAM_SETTINGS,
+    GEN_TOP_K_SAMPLING_SETTINGS,
+    GEN_GENERIC_SAMPLING_SETTINGS
+)
 
 
 def test_default_simple():
