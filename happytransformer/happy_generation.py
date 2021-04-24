@@ -105,13 +105,13 @@ class HappyGeneration(HappyTransformer):
                                      max_length=adjusted_max_length,
                                      )
         result = self.tokenizer.decode(output[0], skip_special_tokens=True)
-        final_result = self.__gt_post_processing(result, text)
+        final_result = self.__post_process_generated_text(result, text)
 
         return GenerationResult(text=final_result)
 
 
 
-    def __gt_post_processing(self, result, text):
+    def __post_process_generated_text(self, result, text):
         """
         A method for processing the output of the model. More features will be added later.
         :param result: result the output of the model after being decoded
