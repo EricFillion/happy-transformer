@@ -134,18 +134,18 @@ class HappyGeneration(HappyTransformer):
         min_length/max_length within the input dictionary
         """
         if "min_length" in settings:
-            self.logger.warning("\"min_length\" is a parameter for the method \"generate_text\"."
-                                " Please use this parameter instead of adding "
-                                "it to the settings dictionary. %s, is being used."
-                                " It represents the minimum number of tokens for the output",
+            self.logger.warning('"min_length" is a parameter for the method "generate_text".'
+                                ' Please use this parameter instead of adding '
+                                'it to the settings dictionary. %s, is being used.'
+                                ' It represents the minimum number of tokens for the output',
                                 str(min_length))
             del settings["min_length"]
 
         if "max_length" in settings:
-            self.logger.warning("\"max_length\" is a parameter for the method \"generate_text\"."
-                                " Please use this parameter instead of adding it to "
-                                "the settings dictionary. %s is being used. "
-                                "It represents the  maximum number of tokens for the output",
+            self.logger.warning('"max_length" is a parameter for the method "generate_text".'
+                                'Please use this parameter instead of adding it to '
+                                'the settings dictionary. %s is being used. '
+                                'It represents the  maximum number of tokens for the output',
                                 str(max_length))
             del settings["max_length"]
 
