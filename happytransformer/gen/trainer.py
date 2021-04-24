@@ -70,10 +70,16 @@ class GENTrainer(HappyTrainer):
     def _generate_json(self, json_path, dataset, name):
         data = {}
         data[name] = []
-        for case in dataset:
-            data[name].append({'attention_mask': case["attention_mask"],
-                               'input_ids': case["input_ids"],
-                               'labels': case["labels"],
-                               })
+        data = {
+            name: [
+                {
+                    'attention_mask': case['attention_mask'],
+                    'input_ids': case['input_ids'],
+                    'labels': case['labels']
+                }
+                for case in dataset
+            ]
+        }
+
         with open(json_path, 'w') as outfile:
             json.dump(data, outfile)
