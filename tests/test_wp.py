@@ -13,8 +13,8 @@ def test_mwp_basic():
         ('ROBERTA', "roberta-base", "pepper")
     ]
     for model_type, model_name, top_result in MODELS:
-        happy_mwp = HappyWordPrediction(model_type, model_name)
-        results = happy_mwp.predict_mask(
+        happy_wp = HappyWordPrediction(model_type, model_name)
+        results = happy_wp.predict_mask(
             "Please pass the salt and [MASK]",
         )
         result = results[0]
@@ -22,8 +22,8 @@ def test_mwp_basic():
 
 
 def test_mwp_top_k():
-    happy_mwp = HappyWordPrediction('DISTILBERT', 'distilbert-base-uncased')
-    result = happy_mwp.predict_mask(
+    happy_wp = HappyWordPrediction('DISTILBERT', 'distilbert-base-uncased')
+    result = happy_wp.predict_mask(
         "Please pass the salt and [MASK]",
         top_k=2
     )
@@ -36,8 +36,8 @@ def test_mwp_top_k():
 
 
 def test_mwp_targets():
-    happy_mwp = HappyWordPrediction('DISTILBERT', 'distilbert-base-uncased')
-    result = happy_mwp.predict_mask(
+    happy_wp = HappyWordPrediction('DISTILBERT', 'distilbert-base-uncased')
+    result = happy_wp.predict_mask(
         "Please pass the salt and [MASK]",
         targets=["water", "spices"]
     )
@@ -48,21 +48,21 @@ def test_mwp_targets():
     assert result == answer
 
 def test_mwp_train_basic():
-    happy_mwp = HappyWordPrediction('', 'distilroberta-base')
-    happy_mwp.train("../data/wp/train-eval.txt")
+    happy_wp = HappyWordPrediction('', 'distilroberta-base')
+    happy_wp.train("../data/wp/train-eval.txt")
 
 def test_mwp_eval_basic():
-    happy_mwp = HappyWordPrediction('', 'distilroberta-base')
-    result = happy_mwp.eval("../data/wp/train-eval.txt")
+    happy_wp = HappyWordPrediction('', 'distilroberta-base')
+    result = happy_wp.eval("../data/wp/train-eval.txt")
     assert type(result.loss) == float
 
 def test_mwp_train_effectiveness_multi():
-    happy_mwp = HappyWordPrediction('', 'distilroberta-base')
+    happy_wp = HappyWordPrediction('', 'distilroberta-base')
 
-    before_result = happy_mwp.eval("../data/wp/train-eval.txt")
+    before_result = happy_wp.eval("../data/wp/train-eval.txt")
 
-    happy_mwp.train("../data/mwp/train-eval.txt")
-    after_result = happy_mwp.eval("../data/wp/train-eval.txt")
+    happy_wp.train("../data/wp/train-eval.txt")
+    after_result = happy_wp.eval("../data/wp/train-eval.txt")
 
     assert after_result.loss < before_result.loss
 
