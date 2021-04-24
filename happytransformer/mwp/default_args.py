@@ -16,7 +16,7 @@ ARGS_MWP_TRAIN = {
 ARGS_MWP_EVAl = {
     'preprocessing_processes': 1,
     'mlm_probability': 0.15,
-    'line-by-line': True
+    'line-by-line': False
 
 }
 
