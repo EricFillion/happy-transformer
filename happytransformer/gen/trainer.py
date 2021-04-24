@@ -5,12 +5,11 @@ Fine-tuning for text generation odels.
 Based on the tutorial found here:
 https://github.com/huggingface/transformers/blob/master/examples/pytorch/language-modeling/run_clm.py
 """
-
+import json
 from transformers import default_data_collator
 from happytransformer.happy_trainer import HappyTrainer, EvalResult
 from happytransformer.fine_tuning_util import preprocess_concatenate
 from datasets import load_dataset
-import json
 
 class GENTrainer(HappyTrainer):
     """
@@ -25,16 +24,16 @@ class GENTrainer(HappyTrainer):
             tokenized_datasets = preprocess_concatenate(self.tokenizer, datasets, args, False)
 
         else:
-            self.logger.info("Loading dataset from %s...", args["load_data_location"])
-            tokenized_datasets = load_dataset("json", data_files={"train": args["load_data_location"]}, field='train')
+            self.logger.info("Loading dataset from %s...", args["load_data_path"])
+            tokenized_datasets = load_dataset("json", data_files={"train": args["load_data_path"]}, field='train')
 
         if args['save_data']:
             if args['load_data']:
                 self.logger.warning("Both save_data and load_data are enabled,")
 
-            self.logger.info("Saving training dataset to %s...", args["save_data_location"])
+            self.logger.info("Saving training dataset to %s...", args["save_data_path"])
 
-            self._generate_json(args['save_data_location'], tokenized_datasets["train"], "train")
+            self._generate_json(args['save_data_path'], tokenized_datasets["train"], "train")
 
         self.logger.info("Training...")
 
@@ -48,16 +47,16 @@ class GENTrainer(HappyTrainer):
             tokenized_datasets = preprocess_concatenate(self.tokenizer, datasets, args, False)
 
         else:
-            self.logger.info("Loading dataset from %s...", args["load_data_location"])
-            tokenized_datasets = load_dataset("json", data_files={"eval": args["load_data_location"]}, field='eval')
+            self.logger.info("Loading dataset from %s...", args["load_data_path"])
+            tokenized_datasets = load_dataset("json", data_files={"eval": args["load_data_path"]}, field='eval')
 
         if args['save_data']:
             if args['load_data']:
                 self.logger.warning("Both save_data and load_data are enabled.")
 
-            self.logger.info("Saving evaluating dataset to %s...", args["save_data_location"])
+            self.logger.info("Saving evaluating dataset to %s...", args["save_data_path"])
 
-            self._generate_json(args['save_data_location'], tokenized_datasets["eval"], "eval")
+            self._generate_json(args['save_data_path'], tokenized_datasets["eval"], "eval")
 
         self.logger.info("Evaluating...")
         print("Here-------------------")
@@ -75,8 +74,8 @@ class GENTrainer(HappyTrainer):
         data[name] = []
         for case in dataset:
             data[name].append({'attention_mask': case["attention_mask"],
-                                  'input_ids': case["input_ids"],
-                                  'labels': case["labels"],
-                                  })
+                               'input_ids': case["input_ids"],
+                               'labels': case["labels"],
+                               })
         with open(json_path, 'w') as outfile:
             json.dump(data, outfile)

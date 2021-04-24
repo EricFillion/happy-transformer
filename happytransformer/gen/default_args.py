@@ -10,10 +10,10 @@ ARGS_GEN_TRAIN = {
     'mlm_probability': 0.15,
 
     'save_data': False,
-    'save_data_location': "",
+    'save_data_path': "",
 
     'load_data': False,
-    'load_data_location': "",
+    'load_data_path': "",
 }
 
 
@@ -22,10 +22,10 @@ ARGS_GEN_EVAl = {
     'mlm_probability': 0.15,
 
     'save_data': False,
-    'save_data_location': "",
+    'save_data_path': "",
 
     'load_data': False,
-    'load_data_location': "",
+    'load_data_path': "",
 
 }
 
