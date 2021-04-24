@@ -19,6 +19,8 @@ examples/generation/eval.txt
 
 main.py
 
+tests/data/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
