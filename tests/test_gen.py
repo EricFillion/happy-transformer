@@ -1,4 +1,4 @@
-from happytransformer import HappyGeneration
+from happytransformer import HappyGeneration, ARGS_GEN_TRAIN, ARGS_GEN_EVAl
 from happytransformer import GEN_DEFAULT_SETTINGS, GEN_GREEDY_SETTINGS, \
     GEN_BEAM_SETTINGS, GEN_TOP_K_SAMPLING_SETTINGS, GEN_GENERIC_SAMPLING_SETTINGS
 
@@ -137,3 +137,34 @@ def test_gen_train_effectiveness_multi():
 
     assert after_result.loss < before_result.loss
 
+
+def test_gen_save_load():
+
+    happy_gen = HappyGeneration()
+
+    train_path = "data/gen-train.txt"
+    eval_path = "data/gen-eval.txt"
+
+    train_args = ARGS_GEN_TRAIN
+    eval_args = ARGS_GEN_EVAl
+    # Running and saving
+    train_args['save_data'] = True
+    train_args['save_data_path'] = train_path
+    happy_gen.train("../data/gen/train.txt", args=train_args)
+
+    eval_args['save_data'] = True
+    eval_args['save_data_path'] = eval_path
+    result = happy_gen.eval("../data/gen/train.txt", args=eval_args)
+
+    # Running and loading
+    train_args['load_data'] = True
+    train_args['save_data'] = False
+
+    train_args['load_data_path'] = train_path
+    happy_gen.train("../data/gen/train.txt", args=train_args)
+
+    eval_args['save_data'] = False
+    eval_args['load_data'] = True
+    eval_args['load_data_path'] = eval_path
+
+    result = happy_gen.eval("../data/gen/train.txt")
