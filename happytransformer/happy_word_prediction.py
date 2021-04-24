@@ -4,10 +4,10 @@ from dataclasses import dataclass
 from transformers import FillMaskPipeline, AutoModelForMaskedLM
 
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.mwp.trainer import WPTrainer
+from happytransformer.wp.trainer import WPTrainer
 from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.adaptors import get_adaptor
-from happytransformer.mwp import ARGS_MWP_TRAIN, ARGS_MWP_EVAl, ARGS_MWP_TEST
+from happytransformer.wp import ARGS_WP_TRAIN, ARGS_WP_EVAl, ARGS_WP_TEST
 from happytransformer.happy_trainer import EvalResult
 
 @dataclass
@@ -57,12 +57,12 @@ class HappyWordPrediction(HappyTransformer):
             for answer in answers
         ]
 
-    def train(self, input_filepath, args=ARGS_MWP_TRAIN):
+    def train(self, input_filepath, args=ARGS_WP_TRAIN):
         self._trainer.train(input_filepath=input_filepath, args=args)
 
-    def eval(self, input_filepath, args=ARGS_MWP_EVAl) -> EvalResult:
+    def eval(self, input_filepath, args=ARGS_WP_EVAl) -> EvalResult:
         return self._trainer.eval(input_filepath=input_filepath, args=args)
 
 
-    def test(self, input_filepath, args=ARGS_MWP_TEST):
+    def test(self, input_filepath, args=ARGS_WP_TEST):
         raise NotImplementedError("test() is currently not available")

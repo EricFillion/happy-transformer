@@ -1,4 +1,4 @@
-ARGS_MWP_TRAIN = {
+ARGS_WP_TRAIN = {
     # training args
     'learning_rate': 5e-5,
     'weight_decay': 0,
@@ -13,11 +13,11 @@ ARGS_MWP_TRAIN = {
 }
 
 
-ARGS_MWP_EVAl = {
+ARGS_WP_EVAl = {
     'preprocessing_processes': 1,
     'mlm_probability': 0.15,
     'line-by-line': False
 
 }
 
-ARGS_MWP_TEST = {}
+ARGS_WP_TEST = {}
