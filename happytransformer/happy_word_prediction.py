@@ -61,11 +61,11 @@ class HappyWordPrediction(HappyTransformer):
         self._trainer.train(input_filepath=input_filepath, args=args)
 
     def eval(self, input_filepath, args) -> EvalResult:
-        dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_WP_EVAl,
+        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_WP_EVAl,
                                                      input_dic_args=args,
-                                                     dataclass_args=WPEvalArgs)
+                                                     method_dataclass_args=WPEvalArgs)
 
-        return self._trainer.eval(input_filepath=input_filepath, dataclass_args=dataclass_args)
+        return self._trainer.eval(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 
 
     def test(self, input_filepath, args=ARGS_WP_TEST):
