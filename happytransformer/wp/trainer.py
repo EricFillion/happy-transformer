@@ -4,11 +4,20 @@ Fine-tuning for masked word prediction models.
 Based on the tutorial found here:
 https://github.com/huggingface/transformers/blob/master/examples/pytorch/language-modeling/run_mlm.py
 """
-
+from dataclasses import dataclass
 from transformers import DataCollatorForLanguageModeling
 from happytransformer.happy_trainer import HappyTrainer, EvalResult
 from datasets import load_dataset
 from happytransformer.fine_tuning_util import preprocess_concatenate
+
+
+@dataclass
+class WPEvalArgs:
+    preprocessing_processes: int
+    mlm_probability: float
+    line_by_line: bool
+
+
 
 class WPTrainer(HappyTrainer):
     """
@@ -18,10 +27,10 @@ class WPTrainer(HappyTrainer):
     def train(self, input_filepath, args):
         dataset = load_dataset("text", data_files={"train": input_filepath})
 
-        if args["line-by-line"]:
-            tokenized_dataset = self._preprocess_line_by_line(self.tokenizer, dataset, args)
+        if args["line_by_line"]:
+            tokenized_dataset = self._preprocess_line_by_line(self.tokenizer, dataset, args['preprocessing_processes'])
         else:
-            tokenized_dataset = preprocess_concatenate(self.tokenizer, dataset, args, True)
+            tokenized_dataset = preprocess_concatenate(self.tokenizer, dataset, args['preprocessing_processes'], True)
 
         data_collator = DataCollatorForLanguageModeling(tokenizer=self.tokenizer,
                                                         mlm_probability=args['mlm_probability'])
@@ -29,17 +38,17 @@ class WPTrainer(HappyTrainer):
         self._run_train(tokenized_dataset['train'], args, data_collator)
 
 
-    def eval(self, input_filepath, args):
+    def eval(self, input_filepath, dataclass_args: WPEvalArgs):
         dataset = load_dataset("text", data_files={"eval": input_filepath})
 
-        if args["line-by-line"]:
-            tokenized_dataset = self._preprocess_line_by_line(self.tokenizer, dataset, args)
+        if dataclass_args.line_by_line:
+            tokenized_dataset = self._preprocess_line_by_line(self.tokenizer, dataset, dataclass_args.preprocessing_processes)
         else:
-            tokenized_dataset = preprocess_concatenate(self.tokenizer, dataset, args, True)
+            tokenized_dataset = preprocess_concatenate(self.tokenizer, dataset, dataclass_args.preprocessing_processes, True)
 
 
         data_collator = DataCollatorForLanguageModeling(tokenizer=self.tokenizer,
-                                                        mlm_probability=args['mlm_probability'])
+                                                        mlm_probability=dataclass_args.mlm_probability)
         result = self._run_eval(tokenized_dataset['eval'], data_collator)
 
         return EvalResult(loss=result["eval_loss"])
@@ -49,11 +58,11 @@ class WPTrainer(HappyTrainer):
         raise NotImplementedError()
 
 
-    def _preprocess_line_by_line(self, tokenizer, dataset, args):
+    def _preprocess_line_by_line(self, tokenizer, dataset, preprocessing_processes):
         """
         :param tokenizer: tokenizer for a transformer model
         :param datasets: a datasets.Dataset object
-        :param args: A dictionary that contains settings
+        :param preprocessing_processes: number of processes to use for pre-processing
         :return:
         """
 
@@ -62,6 +71,6 @@ class WPTrainer(HappyTrainer):
                              add_special_tokens=True, truncation=True,)
 
         tokenized_dataset = dataset.map(tokenize_function, batched=True,
-                                          num_proc=args["preprocessing_processes"],
+                                          num_proc=preprocessing_processes,
                                           remove_columns=["text"])
         return tokenized_dataset

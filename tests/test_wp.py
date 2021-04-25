@@ -1,6 +1,6 @@
 from pytest import approx
 
-from happytransformer import HappyWordPrediction
+from happytransformer import HappyWordPrediction, ARGS_WP_EVAl
 from happytransformer.happy_word_prediction import WordPredictionResult
 
 
@@ -66,3 +66,13 @@ def test_mwp_train_effectiveness_multi():
 
     assert after_result.loss < before_result.loss
 
+def test_mwp_eval_some_settings():
+    """
+    Test to see what happens when only a subset of the potential settings are used
+    :return:
+    """
+    args = {'line_by_line': True,
+            }
+    happy_wp = HappyWordPrediction('', 'distilroberta-base')
+    result = happy_wp.eval("../data/wp/train-eval.txt", args)
+    assert type(result.loss) == float

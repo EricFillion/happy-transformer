@@ -9,14 +9,14 @@ ARGS_WP_TRAIN = {
     'num_train_epochs': 3.0,
     'preprocessing_processes': 1,
     'mlm_probability': 0.15,
-    'line-by-line': False
+    'line_by_line': False
 }
 
 
 ARGS_WP_EVAl = {
     'preprocessing_processes': 1,
     'mlm_probability': 0.15,
-    'line-by-line': False
+    'line_by_line': False
 
 }
 
