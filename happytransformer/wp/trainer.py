@@ -12,6 +12,20 @@ from happytransformer.fine_tuning_util import preprocess_concatenate
 
 
 @dataclass
+class WPTrainArgs:
+    learning_rate: float
+    weight_decay: float
+    adam_beta1: float
+    adam_beta2: float
+    adam_epsilon: float
+    max_grad_norm:  float
+    num_train_epochs: int
+    preprocessing_processes: int
+    mlm_probability: float
+    line_by_line: bool
+
+
+@dataclass
 class WPEvalArgs:
     preprocessing_processes: int
     mlm_probability: float
@@ -23,19 +37,18 @@ class WPTrainer(HappyTrainer):
     """
     Trainer class for HappyWordPrediction
     """
-
-    def train(self, input_filepath, args):
+    def train(self, input_filepath, dataclass_args: WPTrainArgs):
         dataset = load_dataset("text", data_files={"train": input_filepath})
 
-        if args["line_by_line"]:
-            tokenized_dataset = self._preprocess_line_by_line(self.tokenizer, dataset, args['preprocessing_processes'])
+        if dataclass_args.line_by_line:
+            tokenized_dataset = self._preprocess_line_by_line(self.tokenizer, dataset, dataclass_args.preprocessing_processes)
         else:
-            tokenized_dataset = preprocess_concatenate(self.tokenizer, dataset, args['preprocessing_processes'], True)
+            tokenized_dataset = preprocess_concatenate(self.tokenizer, dataset, dataclass_args.preprocessing_processes, True)
 
         data_collator = DataCollatorForLanguageModeling(tokenizer=self.tokenizer,
-                                                        mlm_probability=args['mlm_probability'])
+                                                        mlm_probability=dataclass_args.mlm_probability)
 
-        self._run_train(tokenized_dataset['train'], args, data_collator)
+        self._run_train(tokenized_dataset['train'], dataclass_args, data_collator)
 
 
     def eval(self, input_filepath, dataclass_args: WPEvalArgs):

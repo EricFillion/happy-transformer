@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from transformers import FillMaskPipeline, AutoModelForMaskedLM
 
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.wp.trainer import WPTrainer, WPEvalArgs
+from happytransformer.wp.trainer import WPTrainer, WPTrainArgs, WPEvalArgs
 from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.adaptors import get_adaptor
 from happytransformer.wp import ARGS_WP_TRAIN, ARGS_WP_EVAl, ARGS_WP_TEST
@@ -58,7 +58,10 @@ class HappyWordPrediction(HappyTransformer):
         ]
 
     def train(self, input_filepath, args=ARGS_WP_TRAIN):
-        self._trainer.train(input_filepath=input_filepath, args=args)
+        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_WP_TRAIN,
+                                                     input_dic_args=args,
+                                                     method_dataclass_args=WPTrainArgs)
+        self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 
     def eval(self, input_filepath, args) -> EvalResult:
         method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_WP_EVAl,

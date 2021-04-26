@@ -55,21 +55,21 @@ class HappyTrainer:
         raise NotImplementedError()
 
     @staticmethod
-    def _get_training_args(args, output_path):
+    def _get_training_args(dataclass_args, output_path):
         """
-        :param args: a dictionary of arguments for training
+        :param args: a dataclass of arguments for training
         :param output_path: A string to a temporary directory
         :return: A TrainingArguments object
         """
         return TrainingArguments(
             output_dir=output_path,
-            learning_rate=args["learning_rate"],
-            weight_decay=args["weight_decay"],
-            adam_beta1=args["adam_beta1"],
-            adam_beta2=args["adam_beta2"],
-            adam_epsilon=args["adam_epsilon"],
-            max_grad_norm=args["max_grad_norm"],
-            num_train_epochs=args["num_train_epochs"],
+            learning_rate=dataclass_args.learning_rate,
+            weight_decay=dataclass_args.weight_decay,
+            adam_beta1=dataclass_args.adam_beta1,
+            adam_beta2=dataclass_args.adam_beta2,
+            adam_epsilon=dataclass_args.adam_epsilon,
+            max_grad_norm=dataclass_args.max_grad_norm,
+            num_train_epochs=dataclass_args.num_train_epochs,
             report_to=["none"],
             per_device_train_batch_size=8
 
