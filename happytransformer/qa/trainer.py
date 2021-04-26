@@ -7,6 +7,8 @@ robust methods. And also, to improve maintainability as they update the document
 
 https://huggingface.co/transformers/custom_datasets.html#question-answering-with-squad-2-0
 """
+
+from dataclasses import dataclass
 import csv
 from tqdm import tqdm
 import torch
@@ -15,12 +17,42 @@ from transformers import DataCollatorWithPadding
 
 from happytransformer.happy_trainer import HappyTrainer, EvalResult
 
+@dataclass
+class QATrainArgs:
+    learning_rate: float
+    weight_decay: float
+    adam_beta1: float
+    adam_beta2: float
+    adam_epsilon: float
+    max_grad_norm: float
+    num_train_epochs: int
+
+    save_data: False
+    save_data_path: ""
+    load_data: False
+    load_data_path: ""
+
+
+@dataclass
+class QAEvalArgs:
+    save_data: False
+    save_data_path: ""
+    load_data: False
+    load_data_path: ""
+
+@dataclass
+class QATestArgs:
+    save_data: False
+    save_data_path: ""
+    load_data: False
+    load_data_path: ""
+
 class QATrainer(HappyTrainer):
     """
     Trainer class for HappyTextClassification
     """
 
-    def train(self, input_filepath, args):
+    def train(self, input_filepath, dataclass_args: QATrainArgs):
         """
         See docstring in HappyQuestionAnswering.train()
         """
@@ -30,11 +62,11 @@ class QATrainer(HappyTrainer):
         self.__add_token_positions(encodings, answers)
         dataset = QuestionAnsweringDataset(encodings)
         data_collator = DataCollatorWithPadding(self.tokenizer)
-        self._run_train(dataset, args, data_collator)
+        self._run_train(dataset, dataclass_args, data_collator)
 
 
 
-    def eval(self, input_filepath, args):
+    def eval(self, input_filepath, dataclass_args: QAEvalArgs):
         """
         See docstring in HappyQuestionAnswering.eval()
 
@@ -52,7 +84,7 @@ class QATrainer(HappyTrainer):
         return EvalResult(loss=result["eval_loss"])
 
 
-    def test(self, input_filepath, solve, args):
+    def test(self, input_filepath, solve, dataclass_args: QATestArgs):
         """
         See docstring in HappyQuestionAnswering.test()
 

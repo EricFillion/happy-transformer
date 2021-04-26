@@ -7,9 +7,30 @@ ARGS_QA_TRAIN = {
     'max_grad_norm':  1.0,
     'num_train_epochs': 3.0,
 
+    'save_data': False,
+    'save_data_path': "",
+
+    'load_data': False,
+    'load_data_path': "",
+
 }
 
 
-ARGS_QA_EVAl = {}
+ARGS_QA_EVAl = {
 
-ARGS_QA_TEST = {}
+    'save_data': False,
+    'save_data_path': "",
+
+    'load_data': False,
+    'load_data_path': "",
+
+}
+
+ARGS_QA_TEST = {
+    'save_data': False,
+    'save_data_path': "",
+
+    'load_data': False,
+    'load_data_path': "",
+
+}
