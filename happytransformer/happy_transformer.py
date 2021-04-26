@@ -6,7 +6,7 @@ Contains shared variables and methods for these classes.
 """
 import logging
 import torch
-from transformers import  AutoTokenizer
+from transformers import  AutoTokenizer, AutoConfig
 
 class HappyTransformer():
     """
@@ -15,10 +15,14 @@ class HappyTransformer():
 
     """
 
-    def __init__(self, model_type, model_name, model):
+    def __init__(self, model_type, model_name, model, load_path=""):
         self.model_type = model_type  # BERT, #DISTILBERT, ROBERTA, ALBERT etc
         self.model_name = model_name
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+        if load_path != "":
+            self.tokenizer = AutoTokenizer.from_pretrained(load_path)
+        else:
+            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = model
         self.model.eval()
         self._trainer = None  # initialized in child class
@@ -92,3 +96,15 @@ class HappyTransformer():
         """
         settings_dic = {**default_dic_args, **input_dic_args}
         return method_dataclass_args(**settings_dic)
+
+    def save(self, path):
+        """
+        Saves both the model, tokenizer and various configuration/settings files
+        to a given path
+
+        :param path: string:  a path to a directory
+        :return:
+        """
+        self.model.save_pretrained(path)
+        self.tokenizer.save_pretrained(path)
+

@@ -1,7 +1,7 @@
 from typing import List, Optional
 from dataclasses import dataclass
 
-from transformers import FillMaskPipeline, AutoModelForMaskedLM
+from transformers import FillMaskPipeline, AutoModelForMaskedLM, PretrainedConfig
 
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.wp.trainer import WPTrainer, WPTrainArgs, WPEvalArgs
@@ -20,11 +20,19 @@ class HappyWordPrediction(HappyTransformer):
     A user facing class for text classification
     """
     def __init__(
-            self, model_type: str = "DISTILBERT", model_name: str = "distilbert-base-uncased"):
+            self, model_type: str = "DISTILBERT", model_name: str = "distilbert-base-uncased",
+            load_path=""):
+
 
         self.adaptor = get_adaptor(model_type)
-        model = AutoModelForMaskedLM.from_pretrained(model_name)
-        super().__init__(model_type, model_name, model)
+        # config = PretrainedConfig.from_pretrained("distilbert-base-uncased")
+        if load_path != "":
+            model = AutoModelForMaskedLM.from_pretrained(load_path)
+        else:
+            model = AutoModelForMaskedLM.from_pretrained(model_name)
+        # print(type(model))
+
+        super().__init__(model_type, model_name, model, load_path=load_path)
 
         device_number = detect_cuda_device_number()
 
