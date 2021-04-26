@@ -76,15 +76,15 @@ class HappyTrainer:
         )
 
 
-    def _run_train(self, dataset, args, data_collator):
+    def _run_train(self, dataset, dataclass_args, data_collator):
         """
 
         :param dataset: a child of torch.utils.data.Dataset
-        :param args: a dictionary that contains settings
+        :param dataclass_args: a dataclass that contains settings
         :return: None
         """
         with tempfile.TemporaryDirectory() as tmp_dir_name:
-            training_args = self._get_training_args(args, tmp_dir_name)
+            training_args = self._get_training_args(dataclass_args, tmp_dir_name)
             trainer = Trainer(
                 model=self.model,
                 args=training_args,

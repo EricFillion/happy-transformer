@@ -5,58 +5,88 @@ Fine-tuning for text generation odels.
 Based on the tutorial found here:
 https://github.com/huggingface/transformers/blob/master/examples/pytorch/language-modeling/run_clm.py
 """
+from dataclasses import dataclass
 import json
 from transformers import default_data_collator
 from happytransformer.happy_trainer import HappyTrainer, EvalResult
 from happytransformer.fine_tuning_util import preprocess_concatenate
 from datasets import load_dataset
 
+
+@dataclass
+class GENTrainArgs:
+    learning_rate: float
+    weight_decay: float
+    adam_beta1: float
+    adam_beta2: float
+    adam_epsilon: float
+    max_grad_norm: float
+    num_train_epochs: int
+    preprocessing_processes: int
+    mlm_probability: float
+
+    save_data: False
+    save_data_path: ""
+    load_data: False
+    load_data_path: ""
+
+
+@dataclass
+class GENEvalArgs:
+    preprocessing_processes: int
+    mlm_probability: float
+
+    save_data: False
+    save_data_path: ""
+    load_data: False
+    load_data_path: ""
+
 class GENTrainer(HappyTrainer):
     """
     Trainer class for HappyWordPrediction
     """
 
-    def train(self, input_filepath, args):
+    def train(self, input_filepath, dataclass_args: GENTrainArgs):
 
-        if not args["load_data"]:
+        if not dataclass_args.load_data:
             self.logger.info("Preprocessing dataset...")
             dataset = load_dataset("text", data_files={"train": input_filepath})
-            tokenized_dataset = preprocess_concatenate(self.tokenizer, dataset, args, False)
+            tokenized_dataset = preprocess_concatenate(self.tokenizer, dataset, dataclass_args.preprocessing_processes, False)
 
         else:
-            self.logger.info("Loading dataset from %s...", args["load_data_path"])
-            tokenized_dataset = load_dataset("json", data_files={"train": args["load_data_path"]}, field='train')
+            self.logger.info("Loading dataset from %s...", dataclass_args.load_data_path)
+            tokenized_dataset = load_dataset("json", data_files={"train": dataclass_args.load_data_path}, field='train')
 
-        if args['save_data']:
-            if args['load_data']:
+        if dataclass_args.save_data:
+            if dataclass_args.load_data:
                 self.logger.warning("Both save_data and load_data are enabled,")
 
-            self.logger.info("Saving training dataset to %s...", args["save_data_path"])
+            self.logger.info("Saving training dataset to %s...", dataclass_args.save_data_path)
 
-            self._generate_json(args['save_data_path'], tokenized_dataset["train"], "train")
+            self._generate_json(dataclass_args.save_data_path, tokenized_dataset["train"], "train")
 
         self.logger.info("Training...")
 
-        self._run_train(tokenized_dataset['train'], args, default_data_collator)
+        self._run_train(tokenized_dataset['train'], dataclass_args, default_data_collator)
 
-    def eval(self, input_filepath, args):
+    def eval(self, input_filepath, dataclass_args: GENEvalArgs):
 
-        if not args["load_data"]:
+        if not dataclass_args.load_data:
             self.logger.info("Preprocessing dataset...")
             datasets = load_dataset("text", data_files={"eval": input_filepath})
-            tokenized_dataset = preprocess_concatenate(self.tokenizer, datasets, args, False)
+            tokenized_dataset = preprocess_concatenate(self.tokenizer, datasets, dataclass_args.preprocessing_processes, False)
 
         else:
-            self.logger.info("Loading dataset from %s...", args["load_data_path"])
-            tokenized_dataset = load_dataset("json", data_files={"eval": args["load_data_path"]}, field='eval')
+            self.logger.info("Loading dataset from %s...", dataclass_args.load_data_path)
+            tokenized_dataset = load_dataset("json", data_files={"eval": dataclass_args.load_data_path}, field='eval')
 
-        if args['save_data']:
-            if args['load_data']:
+        if dataclass_args.save_data:
+            if dataclass_args.load_data:
                 self.logger.warning("Both save_data and load_data are enabled.")
 
-            self.logger.info("Saving evaluating dataset to %s...", args["save_data_path"])
+            self.logger.info("Saving evaluating dataset to %s...", dataclass_args.save_data_path)
 
-            self._generate_json(args['save_data_path'], tokenized_dataset["eval"], "eval")
+            self._generate_json(dataclass_args.save_data_path, tokenized_dataset["eval"], "eval")
 
         self.logger.info("Evaluating...")
 

@@ -4,7 +4,7 @@ Contains the HappyGeneration class
 from dataclasses import dataclass
 from transformers import AutoModelForCausalLM
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.gen.trainer import GENTrainer
+from happytransformer.gen.trainer import GENTrainer, GENTrainArgs, GENEvalArgs
 from happytransformer.adaptors import get_adaptor
 from happytransformer.gen import ARGS_GEN_TRAIN, ARGS_GEN_EVAl, ARGS_GEN_TEST
 from happytransformer.happy_trainer import EvalResult
@@ -151,10 +151,16 @@ class HappyGeneration(HappyTransformer):
 
 
     def train(self, input_filepath, args=ARGS_GEN_TRAIN):
-        self._trainer.train(input_filepath=input_filepath, args=args)
+        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_GEN_TRAIN,
+                                                            input_dic_args=args,
+                                                            method_dataclass_args=GENTrainArgs)
+        self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 
     def eval(self, input_filepath, args=ARGS_GEN_EVAl) -> EvalResult:
-        return self._trainer.eval(input_filepath=input_filepath, args=args)
+        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_GEN_EVAl,
+                                                            input_dic_args=args,
+                                                            method_dataclass_args=GENEvalArgs)
+        return self._trainer.eval(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 
     def test(self, input_filepath, args=ARGS_GEN_TEST):
         raise NotImplementedError("test() is currently not available")
