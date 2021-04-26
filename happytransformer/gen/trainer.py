@@ -25,10 +25,10 @@ class GENTrainArgs:
     preprocessing_processes: int
     mlm_probability: float
 
-    save_data: False
-    save_data_path: ""
-    load_data: False
-    load_data_path: ""
+    save_preprocessed_data: False
+    save_preprocessed_data_path: ""
+    load_preprocessed_data: False
+    load_preprocessed_data_path: ""
 
 
 @dataclass
@@ -36,10 +36,10 @@ class GENEvalArgs:
     preprocessing_processes: int
     mlm_probability: float
 
-    save_data: False
-    save_data_path: ""
-    load_data: False
-    load_data_path: ""
+    save_preprocessed_data: False
+    save_preprocessed_data_path: ""
+    load_preprocessed_data: False
+    load_preprocessed_data_path: ""
 
 class GENTrainer(HappyTrainer):
     """
@@ -48,22 +48,22 @@ class GENTrainer(HappyTrainer):
 
     def train(self, input_filepath, dataclass_args: GENTrainArgs):
 
-        if not dataclass_args.load_data:
+        if not dataclass_args.load_preprocessed_data:
             self.logger.info("Preprocessing dataset...")
             dataset = load_dataset("text", data_files={"train": input_filepath})
             tokenized_dataset = preprocess_concatenate(self.tokenizer, dataset, dataclass_args.preprocessing_processes, False)
 
         else:
-            self.logger.info("Loading dataset from %s...", dataclass_args.load_data_path)
-            tokenized_dataset = load_dataset("json", data_files={"train": dataclass_args.load_data_path}, field='train')
+            self.logger.info("Loading dataset from %s...", dataclass_args.load_preprocessed_data_path)
+            tokenized_dataset = load_dataset("json", data_files={"train": dataclass_args.load_preprocessed_data_path}, field='train')
 
-        if dataclass_args.save_data:
-            if dataclass_args.load_data:
-                self.logger.warning("Both save_data and load_data are enabled,")
+        if dataclass_args.save_preprocessed_data:
+            if dataclass_args.load_preprocessed_data:
+                self.logger.warning("Both save_preprocessed_data and load_data are enabled,")
 
-            self.logger.info("Saving training dataset to %s...", dataclass_args.save_data_path)
+            self.logger.info("Saving training dataset to %s...", dataclass_args.save_preprocessed_data_path)
 
-            self._generate_json(dataclass_args.save_data_path, tokenized_dataset["train"], "train")
+            self._generate_json(dataclass_args.save_preprocessed_data_path, tokenized_dataset["train"], "train")
 
         self.logger.info("Training...")
 
@@ -71,22 +71,22 @@ class GENTrainer(HappyTrainer):
 
     def eval(self, input_filepath, dataclass_args: GENEvalArgs):
 
-        if not dataclass_args.load_data:
+        if not dataclass_args.load_preprocessed_data:
             self.logger.info("Preprocessing dataset...")
             datasets = load_dataset("text", data_files={"eval": input_filepath})
             tokenized_dataset = preprocess_concatenate(self.tokenizer, datasets, dataclass_args.preprocessing_processes, False)
 
         else:
-            self.logger.info("Loading dataset from %s...", dataclass_args.load_data_path)
-            tokenized_dataset = load_dataset("json", data_files={"eval": dataclass_args.load_data_path}, field='eval')
+            self.logger.info("Loading dataset from %s...", dataclass_args.load_preprocessed_data_path)
+            tokenized_dataset = load_dataset("json", data_files={"eval": dataclass_args.load_preprocessed_data_path}, field='eval')
 
-        if dataclass_args.save_data:
-            if dataclass_args.load_data:
-                self.logger.warning("Both save_data and load_data are enabled.")
+        if dataclass_args.save_preprocessed_data:
+            if dataclass_args. load_preprocessed_data:
+                self.logger.warning("Both save_preprocessed_data and load_data are enabled.")
 
-            self.logger.info("Saving evaluating dataset to %s...", dataclass_args.save_data_path)
+            self.logger.info("Saving evaluating dataset to %s...", dataclass_args.save_preprocessed_data_path)
 
-            self._generate_json(dataclass_args.save_data_path, tokenized_dataset["eval"], "eval")
+            self._generate_json(dataclass_args.save_preprocessed_data_path, tokenized_dataset["eval"], "eval")
 
         self.logger.info("Evaluating...")
 

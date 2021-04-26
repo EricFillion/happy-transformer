@@ -9,11 +9,11 @@ ARGS_GEN_TRAIN = {
     'preprocessing_processes': 1,
     'mlm_probability': 0.15,
 
-    'save_data': False,
-    'save_data_path': "",
+    'save_preprocessed_data': False,
+    'save_preprocessed_data_path': "",
 
-    'load_data': False,
-    'load_data_path': "",
+    'load_preprocessed_data': False,
+    'load_preprocessed_data_path': "",
 }
 
 
@@ -21,11 +21,11 @@ ARGS_GEN_EVAl = {
     'preprocessing_processes': 1,
     'mlm_probability': 0.15,
 
-    'save_data': False,
-    'save_data_path': "",
+    'save_preprocessed_data': False,
+    'save_preprocessed_data_path': "",
 
-    'load_data': False,
-    'load_data_path': "",
+    'load_preprocessed_data': False,
+    'load_preprocessed_data_path': "",
 
 }
 

@@ -24,25 +24,25 @@ class TCTrainArgs:
     max_grad_norm: float
     num_train_epochs: int
 
-    save_data: False
-    save_data_path: ""
-    load_data: False
-    load_data_path: ""
+    save_preprocessed_data: False
+    save_preprocessed_data_path: ""
+    load_preprocessed_data: False
+    load_preprocessed_data_path: ""
 
 
 @dataclass
 class TCEvalArgs:
-    save_data: False
-    save_data_path: ""
-    load_data: False
-    load_data_path: ""
+    save_preprocessed_data: False
+    save_preprocessed_data_path: ""
+    load_preprocessed_data: False
+    load_preprocessed_data_path: ""
 
 @dataclass
 class TCTestArgs:
-    save_data: False
-    save_data_path: ""
-    load_data: False
-    load_data_path: ""
+    save_preprocessed_data: False
+    save_preprocessed_data_path: ""
+    load_preprocessed_data: False
+    load_preprocessed_data_path: ""
 class TCTrainer(HappyTrainer):
     """
     A class for training text classification functionality

@@ -11,11 +11,11 @@ ARGS_WP_TRAIN = {
     'mlm_probability': 0.15,
     'line_by_line': False,
 
-    'save_data': False,
-    'save_data_path': "",
+    'save_preprocessed_data': False,
+    'save_preprocessed_data_path': "",
 
-    'load_data': False,
-    'load_data_path': "",
+    'load_preprocessed_data': False,
+    'load_preprocessed_data_path': "",
 }
 
 
@@ -24,19 +24,19 @@ ARGS_WP_EVAl = {
     'mlm_probability': 0.15,
     'line_by_line': False,
 
-    'save_data': False,
-    'save_data_path': "",
+    'save_preprocessed_data': False,
+    'save_preprocessed_data_path': "",
 
-    'load_data': False,
-    'load_data_path': "",
+    'load_preprocessed_data': False,
+    'load_preprocessed_data_path': "",
 
 }
 
 ARGS_WP_TEST = {
-    'save_data': False,
-    'save_data_path': "",
+    'save_preprocessed_data': False,
+    'save_preprocessed_data_path': "",
 
-    'load_data': False,
-    'load_data_path': "",
+    'load_preprocessed_data': False,
+    'load_preprocessed_data_path': "",
 
 }

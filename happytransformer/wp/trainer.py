@@ -23,10 +23,10 @@ class WPTrainArgs:
     preprocessing_processes: int
     mlm_probability: float
     line_by_line: bool
-    save_data: False
-    save_data_path: ""
-    load_data: False
-    load_data_path: ""
+    save_preprocessed_data: False
+    save_preprocessed_data_path: ""
+    load_preprocessed_data: False
+    load_preprocessed_data_path: ""
 
 
 @dataclass
@@ -34,10 +34,10 @@ class WPEvalArgs:
     preprocessing_processes: int
     mlm_probability: float
     line_by_line: bool
-    save_data: False
-    save_data_path: ""
-    load_data: False
-    load_data_path: ""
+    save_preprocessed_data: False
+    save_preprocessed_data_path: ""
+    load_preprocessed_data: False
+    load_preprocessed_data_path: ""
 
 
 
@@ -46,7 +46,7 @@ class WPTrainer(HappyTrainer):
     Trainer class for HappyWordPrediction
     """
     def train(self, input_filepath, dataclass_args: WPTrainArgs):
-        if not dataclass_args.load_data:
+        if not dataclass_args.load_preprocessed_data:
             self.logger.info("Preprocessing dataset...")
 
             dataset = load_dataset("text", data_files={"train": input_filepath})
@@ -55,16 +55,16 @@ class WPTrainer(HappyTrainer):
             else:
                 tokenized_dataset = preprocess_concatenate(self.tokenizer, dataset, dataclass_args.preprocessing_processes, True)
         else:
-            self.logger.info("Loading dataset from %s...", dataclass_args.load_data_path)
-            tokenized_dataset = load_dataset("json", data_files={"train": dataclass_args.load_data_path}, field='train')
+            self.logger.info("Loading dataset from %s...", dataclass_args.load_preprocessed_data_path)
+            tokenized_dataset = load_dataset("json", data_files={"train": dataclass_args.load_preprocessed_data_path}, field='train')
 
-        if dataclass_args.save_data:
-            if dataclass_args.load_data:
-                self.logger.warning("Both save_data and load_data are enabled,")
+        if dataclass_args.save_preprocessed_data:
+            if dataclass_args.load_preprocessed_data:
+                self.logger.warning("Both save_preprocessed_data and load_data are enabled,")
 
-            self.logger.info("Saving training dataset to %s...", dataclass_args.save_data_path)
+            self.logger.info("Saving training dataset to %s...", dataclass_args.save_preprocessed_data_path)
 
-            self._generate_json(dataclass_args.save_data_path, tokenized_dataset["train"], "train")
+            self._generate_json(dataclass_args.save_preprocessed_data_path, tokenized_dataset["train"], "train")
 
         data_collator = DataCollatorForLanguageModeling(tokenizer=self.tokenizer,
                                                         mlm_probability=dataclass_args.mlm_probability)
