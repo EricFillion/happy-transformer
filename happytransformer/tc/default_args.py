@@ -7,15 +7,30 @@ ARGS_TC_TRAIN = {
     'max_grad_norm':  1.0,
     'num_train_epochs': 3.0,
 
+    'save_data': False,
+    'save_data_path': "",
+
+    'load_data': False,
+    'load_data_path': "",
 }
 
 # as of right now we do not provide custom settings
 ARGS_TC_EVAL = {
+    'save_data': False,
+    'save_data_path': "",
+
+    'load_data': False,
+    'load_data_path': "",
 
 }
 
 # as of right now we do not provide custom settings
 ARGS_TC_TEST = {
+    'save_data': False,
+    'save_data_path': "",
+
+    'load_data': False,
+    'load_data_path': "",
 
 }
 

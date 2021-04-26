@@ -83,8 +83,9 @@ class HappyQuestionAnswering(HappyTransformer):
         """
 
         method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_QA_TRAIN,
-                                                     input_dic_args=args,
-                                                     method_dataclass_args=QATrainArgs)
+                                                            input_dic_args=args,
+                                                            method_dataclass_args=QATrainArgs)
+
         self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 
     def eval(self, input_filepath, args=ARGS_QA_EVAl) -> EvalResult:

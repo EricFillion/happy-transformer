@@ -2,11 +2,10 @@
 Contains a class called HappyTextClassification that performs text classification
 """
 from dataclasses import dataclass
-import torch
 
 from transformers import TextClassificationPipeline, AutoConfig, AutoModelForSequenceClassification
 
-from happytransformer.tc.trainer import TCTrainer
+from happytransformer.tc.trainer import TCTrainer, TCTrainArgs, TCEvalArgs, TCTestArgs
 from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.adaptors import get_adaptor
@@ -69,7 +68,12 @@ class HappyTextClassification(HappyTransformer):
         return: None
 
         """
-        self._trainer.train(input_filepath=input_filepath, args=args)
+
+        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_TC_TRAIN,
+                                                            input_dic_args=args,
+                                                            method_dataclass_args=TCTrainArgs)
+
+        self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 
     def eval(self, input_filepath, args=ARGS_TC_EVAL) -> EvalResult:
         """
@@ -81,8 +85,11 @@ class HappyTextClassification(HappyTransformer):
 
         return: #todo
         """
-        return self._trainer.eval(input_filepath=input_filepath, args=ARGS_TC_EVAL)
+        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_TC_EVAL,
+                                                            input_dic_args=args,
+                                                            method_dataclass_args=TCEvalArgs)
 
+        return self._trainer.eval(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
     def test(self, input_filepath, args=ARGS_TC_TEST):
         """
         Tests the text classification  model. Used to obtain results
@@ -92,4 +99,8 @@ class HappyTextClassification(HappyTransformer):
          text
         return: #todo
         """
-        return self._trainer.test(input_filepath=input_filepath, solve=self.classify_text, args=args)
+        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_TC_TEST,
+                                                            input_dic_args=args,
+                                                            method_dataclass_args=TCTestArgs)
+
+        return self._trainer.test(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
