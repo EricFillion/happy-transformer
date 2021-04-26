@@ -1,8 +1,8 @@
 from pytest import approx
 
-from happytransformer import HappyWordPrediction, ARGS_WP_EVAl
+from happytransformer import HappyWordPrediction, ARGS_WP_TRAIN, ARGS_WP_EVAl
 from happytransformer.happy_word_prediction import WordPredictionResult
-
+from tests.shared_tests import run_save_load_train
 
 
 def test_mwp_basic():
@@ -76,3 +76,16 @@ def test_mwp_eval_some_settings():
     happy_wp = HappyWordPrediction('', 'distilroberta-base')
     result = happy_wp.eval("../data/wp/train-eval.txt", args)
     assert type(result.loss) == float
+
+
+def test_gen_save_load_train():
+    happy_wp = HappyWordPrediction('', 'distilroberta-base')
+    output_path = "data/wp-train.txt"
+    data_path = "../data/wp/train-eval.txt"
+    run_save_load_train(happy_wp, output_path, ARGS_WP_TRAIN, data_path, "train")
+
+def test_gen_save_load_eval():
+    happy_wp = HappyWordPrediction('', 'distilroberta-base')
+    output_path = "data/wp-eval.txt"
+    data_path = "../data/wp/train-eval.txt"
+    run_save_load_train(happy_wp, output_path, ARGS_WP_EVAl, data_path, "eval")
