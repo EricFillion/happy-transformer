@@ -89,3 +89,17 @@ def test_gen_save_load_eval():
     output_path = "data/wp-eval.txt"
     data_path = "../data/wp/train-eval.txt"
     run_save_load_train(happy_wp, output_path, ARGS_WP_EVAl, data_path, "eval")
+
+def test_wp_save():
+    happy = HappyWordPrediction("BERT", "prajjwal1/bert-tiny")
+    happy.save("model/")
+    result_before = happy.predict_mask("I think therefore I [MASK]")
+
+    happy = HappyWordPrediction(load_path="model/")
+    result_after = happy.predict_mask("I think therefore I [MASK]")
+
+    assert result_before[0].token ==result_after[0].token
+
+
+
+

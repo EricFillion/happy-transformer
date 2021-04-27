@@ -66,3 +66,14 @@ def test_tc_train_effectiveness_multi():
     happy_tc.train("../data/tc/train-eval-multi.csv")
     after_loss = happy_tc.eval("../data/tc/train-eval-multi.csv").loss
     assert after_loss < before_loss
+
+
+def test_tc_save():
+    happy = HappyTextClassification()
+    happy.save("model/")
+    result_before = happy.classify_text("What a great movie")
+
+    happy = HappyTextClassification(load_path="model/")
+    result_after = happy.classify_text("What a great movie")
+
+    assert result_before.label==result_after.label
