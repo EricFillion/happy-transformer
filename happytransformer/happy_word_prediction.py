@@ -21,16 +21,15 @@ class HappyWordPrediction(HappyTransformer):
     """
     def __init__(
             self, model_type: str = "DISTILBERT", model_name: str = "distilbert-base-uncased",
-            load_path=""):
+            load_path: str =""):
 
 
         self.adaptor = get_adaptor(model_type)
-        # config = PretrainedConfig.from_pretrained("distilbert-base-uncased")
+
         if load_path != "":
             model = AutoModelForMaskedLM.from_pretrained(load_path)
         else:
             model = AutoModelForMaskedLM.from_pretrained(model_name)
-        # print(type(model))
 
         super().__init__(model_type, model_name, model, load_path=load_path)
 

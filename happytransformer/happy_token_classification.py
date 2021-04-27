@@ -25,11 +25,15 @@ class HappyTokenClassification(HappyTransformer):
     A user facing class for text classification
     """
     def __init__(
-        self, model_type: str = "BERT", model_name: str = "dslim/bert-base-NER"):
+        self, model_type: str = "BERT", model_name: str = "dslim/bert-base-NER", load_path: str = ""):
 
         self.adaptor = get_adaptor(model_type)
 
-        model = AutoModelForTokenClassification.from_pretrained(model_name)
+        if load_path != "":
+            model = AutoModelForTokenClassification.from_pretrained(load_path)
+        else:
+            model = AutoModelForTokenClassification.from_pretrained(model_name)
+
 
         super().__init__(model_type, model_name, model)
 

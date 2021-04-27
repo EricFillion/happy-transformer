@@ -33,11 +33,14 @@ class HappyQuestionAnswering(HappyTransformer):
     other classes.
     """
     def __init__(self, model_type="DISTILBERT",
-                 model_name="distilbert-base-cased-distilled-squad"):
+                 model_name="distilbert-base-cased-distilled-squad", load_path: str = ""):
         
         self.adaptor = get_adaptor(model_type)
 
-        model = AutoModelForQuestionAnswering.from_pretrained(model_name)
+        if load_path != "":
+            model = AutoModelForQuestionAnswering.from_pretrained(load_path)
+        else:
+            model = AutoModelForQuestionAnswering.from_pretrained(model_name)
 
         super().__init__(model_type, model_name, model)
         device_number = detect_cuda_device_number()

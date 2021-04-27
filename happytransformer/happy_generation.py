@@ -63,11 +63,14 @@ class HappyGeneration(HappyTransformer):
     """
     A user facing class for text generation
     """
-    def __init__(self, model_type: str = "GPT2", model_name: str = "gpt2"):
+    def __init__(self, model_type: str = "GPT2", model_name: str = "gpt2", load_path: str = ""):
 
         self.adaptor = get_adaptor(model_type)
 
-        model = AutoModelForCausalLM.from_pretrained(model_name)
+        if load_path != "":
+            model = AutoModelForCausalLM.from_pretrained(load_path)
+        else:
+            model = AutoModelForCausalLM.from_pretrained(model_name)
 
         super().__init__(model_type, model_name, model)
 
