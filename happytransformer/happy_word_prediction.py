@@ -9,6 +9,7 @@ from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.adaptors import get_adaptor
 from happytransformer.wp import ARGS_WP_TRAIN, ARGS_WP_EVAl, ARGS_WP_TEST
 from happytransformer.happy_trainer import EvalResult
+from happytransformer.fine_tuning_util import create_args_dataclass
 
 @dataclass
 class WordPredictionResult:
@@ -65,15 +66,27 @@ class HappyWordPrediction(HappyTransformer):
         ]
 
     def train(self, input_filepath, args=ARGS_WP_TRAIN):
-        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_WP_TRAIN,
-                                                     input_dic_args=args,
-                                                     method_dataclass_args=WPTrainArgs)
+        if type(args) == dict:
+            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_WP_TRAIN,
+                                                         input_dic_args=args,
+                                                         method_dataclass_args=WPTrainArgs)
+        elif type(args) == WPTrainArgs:
+            method_dataclass_args = args
+        else:
+            raise ValueError("Invalid args type. Use a WPTrainArgs object or a dictionary")
+
         self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 
     def eval(self, input_filepath, args=ARGS_WP_EVAl) -> EvalResult:
-        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_WP_EVAl,
-                                                     input_dic_args=args,
-                                                     method_dataclass_args=WPEvalArgs)
+        if type(args) == dict:
+
+            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_WP_EVAl,
+                                                         input_dic_args=args,
+                                                         method_dataclass_args=WPEvalArgs)
+        elif type(args) == WPEvalArgs:
+            method_dataclass_args = args
+        else:
+            raise ValueError("Invalid args type. Use a ARGS_WP_EVAl object or a dictionary")
 
         return self._trainer.eval(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 

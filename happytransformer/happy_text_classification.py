@@ -11,6 +11,7 @@ from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.adaptors import get_adaptor
 from happytransformer.tc import ARGS_TC_TRAIN, ARGS_TC_EVAL, ARGS_TC_TEST
 from happytransformer.happy_trainer import EvalResult
+from happytransformer.fine_tuning_util import create_args_dataclass
 
 @dataclass
 class TextClassificationResult:
@@ -74,7 +75,7 @@ class HappyTextClassification(HappyTransformer):
 
         """
 
-        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_TC_TRAIN,
+        method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_TC_TRAIN,
                                                             input_dic_args=args,
                                                             method_dataclass_args=TCTrainArgs)
 
@@ -90,7 +91,7 @@ class HappyTextClassification(HappyTransformer):
 
         return: #todo
         """
-        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_TC_EVAL,
+        method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_TC_EVAL,
                                                             input_dic_args=args,
                                                             method_dataclass_args=TCEvalArgs)
 
@@ -104,7 +105,7 @@ class HappyTextClassification(HappyTransformer):
          text
         return: #todo
         """
-        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_TC_TEST,
+        method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_TC_TEST,
                                                             input_dic_args=args,
                                                             method_dataclass_args=TCTestArgs)
 
