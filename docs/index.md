@@ -6,7 +6,7 @@ nav_order: 1
 
 ---
 # About
-Happy Transformer is an package built on top of [Hugging Face's transformer library](https://huggingface.co/transformers/) that makes it easy to utilize state-of-the-art NLP models. 
+Happy Transformer is a package built on top of [Hugging Face's transformer library](https://huggingface.co/transformers/) that makes it easy to utilize state-of-the-art NLP models. 
 
 ![Happy Transformer](assets/images/logo.jpg)
 
