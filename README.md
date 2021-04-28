@@ -4,7 +4,7 @@
 
 # Happy Transformer 
 **Documentation and news: 
-[happytransformer.com](https://happytransformer.com)**
+[happytransformer.com](http://happytransformer.com)**
 
 ![HappyTransformer](logo.png)
 
