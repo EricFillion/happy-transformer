@@ -3,6 +3,7 @@ Tests for the question answering training, evaluating and testing functionality
 """
 
 from happytransformer.happy_question_answering import HappyQuestionAnswering
+from happytransformer.qa.trainer import  QATrainArgs, QAEvalArgs, QATestArgs
 from pytest import approx
 
 def test_qa_answer_question():
@@ -58,3 +59,40 @@ def test_qa_save():
     result_after = happy.answer_question("Natural language processing is a subfield of artificial surrounding creating models that understand language","What is natural language processing?")
 
     assert result_before[0].answer == result_after[0].answer
+
+
+def test_qa_with_dic():
+
+    happy_qa = HappyQuestionAnswering()
+    train_args = {'learning_rate': 0.01,  "num_train_epochs": 1}
+
+
+    happy_qa.train("../data/qa/train-eval.csv" , args=train_args)
+
+    eval_args = {}
+
+    result_eval = happy_qa.eval("../data/qa/train-eval.csv", args=eval_args)
+    assert result_eval.loss == approx(2.544920206069, 0.001)
+
+    test_args = {}
+
+    result_test = happy_qa.test("../data/qa/test.csv", args=test_args)
+    assert result_test[0].answer == "October"
+
+def test_tc_with_dataclass():
+
+    happy_qa = HappyQuestionAnswering()
+    train_args = QATrainArgs(learning_rate=0.01, num_train_epochs=1)
+
+    happy_qa.train("../data/qa/train-eval.csv", args=train_args)
+
+    eval_args = QAEvalArgs()
+
+    result_eval = happy_qa.eval("../data/qa/train-eval.csv", args=eval_args)
+    assert result_eval.loss == approx(2.544920206069, 0.001)
+
+
+    test_args = QATestArgs()
+
+    result_test = happy_qa.test("../data/qa/test.csv", args=test_args)
+    assert result_test[0].answer == "October"

@@ -86,9 +86,16 @@ class HappyQuestionAnswering(HappyTransformer):
         return: None
         """
 
-        method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_QA_TRAIN,
-                                                            input_dic_args=args,
-                                                            method_dataclass_args=QATrainArgs)
+        if type(args) == dict:
+            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_QA_TRAIN,
+                                                                input_dic_args=args,
+                                                                method_dataclass_args=QATrainArgs)
+        elif type(args) == QATrainArgs:
+            method_dataclass_args = args
+        else:
+            raise ValueError("Invalid args type. Use a QATrainArgs object or a dictionary")
+
+
 
         self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 
@@ -103,9 +110,15 @@ class HappyQuestionAnswering(HappyTransformer):
         return: A dictionary that contains a key called "eval_loss"
 
         """
-        method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_QA_EVAl,
-                                                            input_dic_args=args,
-                                                            method_dataclass_args=QAEvalArgs)
+        if type(args) == dict:
+            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_QA_EVAl,
+                                                                input_dic_args=args,
+                                                                method_dataclass_args=QAEvalArgs)
+        elif type(args) == QAEvalArgs:
+            method_dataclass_args = args
+        else:
+            raise ValueError("Invalid args type. Use a QAEvalArgs object or a dictionary")
+
         return self._trainer.eval(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 
 
@@ -120,7 +133,14 @@ class HappyQuestionAnswering(HappyTransformer):
         return: A list of dictionaries. Each dictionary
         contains the keys: "score", "start", "end" and "answer"
         """
-        method_dataclass_args =  create_args_dataclass(default_dic_args=ARGS_QA_TEST,
-                                                            input_dic_args=args,
-                                                            method_dataclass_args=QATestArgs)
+        if type(args) == dict:
+            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_QA_TEST,
+                                                                input_dic_args=args,
+                                                                method_dataclass_args=QATestArgs)
+        elif type(args) == QATestArgs:
+            method_dataclass_args = args
+        else:
+            raise ValueError("Invalid args type. Use a QATestArgs object or a dictionary")
+
+
         return self._trainer.test(input_filepath=input_filepath, solve=self.answer_question, dataclass_args=method_dataclass_args)

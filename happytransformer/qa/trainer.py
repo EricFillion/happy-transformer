@@ -16,36 +16,36 @@ import torch
 from transformers import DataCollatorWithPadding
 
 from happytransformer.happy_trainer import HappyTrainer, EvalResult
+from happytransformer.qa.default_args import ARGS_QA_TRAIN, ARGS_QA_EVAl, ARGS_QA_TEST
 
 @dataclass
 class QATrainArgs:
-    learning_rate: float
-    weight_decay: float
-    adam_beta1: float
-    adam_beta2: float
-    adam_epsilon: float
-    max_grad_norm: float
-    num_train_epochs: int
-
-    save_preprocessed_data: False
-    save_preprocessed_data_path: ""
-    load_preprocessed_data: False
-    load_preprocessed_data_path: ""
+    learning_rate: float = ARGS_QA_TRAIN["learning_rate"]
+    num_train_epochs: int = ARGS_QA_TRAIN["num_train_epochs"]
+    weight_decay: float = ARGS_QA_TRAIN["weight_decay"]
+    adam_beta1: float = ARGS_QA_TRAIN["adam_beta1"]
+    adam_beta2: float = ARGS_QA_TRAIN["adam_beta2"]
+    adam_epsilon: float = ARGS_QA_TRAIN["adam_epsilon"]
+    max_grad_norm:  float = ARGS_QA_TRAIN["max_grad_norm"]
+    save_preprocessed_data: bool = ARGS_QA_TRAIN["save_preprocessed_data"]
+    save_preprocessed_data_path: str = ARGS_QA_TRAIN["save_preprocessed_data_path"]
+    load_preprocessed_data: bool = ARGS_QA_TRAIN["load_preprocessed_data"]
+    load_preprocessed_data_path: str = ARGS_QA_TRAIN["load_preprocessed_data_path"]
 
 
 @dataclass
 class QAEvalArgs:
-    save_preprocessed_data: False
-    save_preprocessed_data_path: ""
-    load_preprocessed_data: False
-    load_preprocessed_data_path: ""
+    save_preprocessed_data: bool = ARGS_QA_EVAl["save_preprocessed_data"]
+    save_preprocessed_data_path: str = ARGS_QA_EVAl["save_preprocessed_data_path"]
+    load_preprocessed_data: bool = ARGS_QA_EVAl["load_preprocessed_data"]
+    load_preprocessed_data_path: str = ARGS_QA_EVAl["load_preprocessed_data_path"]
 
 @dataclass
 class QATestArgs:
-    save_preprocessed_data: False
-    save_preprocessed_data_path: ""
-    load_preprocessed_data: False
-    load_preprocessed_data_path: ""
+    save_preprocessed_data: bool = ARGS_QA_TEST["save_preprocessed_data"]
+    save_preprocessed_data_path: str = ARGS_QA_TEST["save_preprocessed_data_path"]
+    load_preprocessed_data: bool = ARGS_QA_TEST["load_preprocessed_data"]
+    load_preprocessed_data_path: str = ARGS_QA_TEST["load_preprocessed_data_path"]
 
 class QATrainer(HappyTrainer):
     """
