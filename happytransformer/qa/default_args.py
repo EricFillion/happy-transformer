@@ -6,10 +6,8 @@ ARGS_QA_TRAIN = {
     'adam_epsilon': 1e-8,
     'max_grad_norm':  1.0,
     'num_train_epochs': 3.0,
-
     'save_preprocessed_data': False,
     'save_preprocessed_data_path': "",
-
     'load_preprocessed_data': False,
     'load_preprocessed_data_path': "",
 
@@ -17,10 +15,8 @@ ARGS_QA_TRAIN = {
 
 
 ARGS_QA_EVAl = {
-
     'save_preprocessed_data': False,
     'save_preprocessed_data_path': "",
-
     'load_preprocessed_data': False,
     'load_preprocessed_data_path': "",
 
@@ -29,7 +25,6 @@ ARGS_QA_EVAl = {
 ARGS_QA_TEST = {
     'save_preprocessed_data': False,
     'save_preprocessed_data_path': "",
-
     'load_preprocessed_data': False,
     'load_preprocessed_data_path': "",
 
