@@ -1,13 +1,13 @@
 ---
 title: Token Classification
-nav_order: 9
+nav_order: 10
 layout: page
 permalink: /token-classification/
 has_children: true
 ---
 
 
-### Token Classification Initialization  
+### Token Classification  
 
 Initialize a HappyTokenClassification object for token classification 
 

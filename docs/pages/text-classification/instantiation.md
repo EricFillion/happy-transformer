@@ -6,7 +6,7 @@ permalink: /text-classification/
 has_children: true
 ---
 
-## Text Classification Instantiation
+## Text Classification
 
 Initialize a HappyTextClassification object to perform text classification. 
 

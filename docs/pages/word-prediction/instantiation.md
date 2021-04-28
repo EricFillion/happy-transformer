@@ -7,7 +7,7 @@ has_children: true
 
 ---
 
-## Word Prediction Instantiation
+## Word Prediction
 
 See [Medium article](https://medium.com/vennify-ai/masked-word-prediction-using-transformer-models-e7b0385f909) for a more in-depth explanation 
 
