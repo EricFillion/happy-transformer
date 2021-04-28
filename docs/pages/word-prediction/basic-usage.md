@@ -6,7 +6,7 @@ layout: page
 permalink: /word-prediction/usage/
 ---
 
-## Basic Usage 
+## Word Prediction Basic Usage 
 ### predict_mask()
 The method predict_masks() contains 3 arguments: 
 1. text (string): a body of text that contains a single masked token 

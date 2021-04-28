@@ -1,12 +1,13 @@
 ---
-title: Initialization
-parent: Word Prediction
-nav_order: 1
+title: Word Prediction
+nav_order: 6
 layout: page
-permalink: /word-prediction/Initialization/
+permalink: /word-prediction/
+has_children: true
+
 ---
 
-## Initialization
+## Word Prediction Instantiation
 
 See [Medium article](https://medium.com/vennify-ai/masked-word-prediction-using-transformer-models-e7b0385f909) for a more in-depth explanation 
 
