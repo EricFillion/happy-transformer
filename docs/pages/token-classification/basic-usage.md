@@ -18,7 +18,7 @@ Initialize a HappyTokenClassification object for token classification
  2. model_name(string): potential models can be found [here](https://huggingface.co/models?pipeline_tag=token-classification)
  
 
-#### Example 5.0:
+#### Example 5.1:
 ```python
     from happytransformer import HappyTokenClassification
     # --------------------------------------#
@@ -43,7 +43,7 @@ A list of objects with the following fields:
 
 
 
-#### Example 5.1:
+#### Example 5.2:
 ```python
     from happytransformer import HappyTokenClassification
     # --------------------------------------#

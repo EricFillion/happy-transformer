@@ -37,7 +37,7 @@ ARGS_QA_TRAIN= {
 ```
 Output: None
  
-#### Table 3.1
+#### Table 3.0
 
 1. context (string): background information for answer the question
 2. question (string): the question that will be asked 
@@ -87,7 +87,7 @@ Output: A list of named tuples with keys: "answer", "score", "start" and "end"
 
 The list is in order by ascending csv index. 
 
-#### Table 3.2
+#### Table 3.1
 
 1. context (string): background information for answer the question
 2. question (string): the question that will be asked 

@@ -37,7 +37,7 @@ ARGS_QA_TRAIN= {
 
 Output: None
  
-#### Table 2.1
+#### Table 2.0
 
 1. text (string): text to be classified 
 2. label (int): the corresponding label
@@ -49,7 +49,7 @@ Output: None
 | Terrible service              | 0     |
 | I'm coming here again         | 1     |
 
-#### Example 2.3:
+#### Example 2.2:
 ```python
     from happytransformer import HappyTextClassification
     # --------------------------------------#
@@ -90,7 +90,7 @@ Output: A list of named tuples with keys: "label" and "score"
 
 The list is in order by ascending csv index. 
 
-#### Table 2.2
+#### Table 2.1
 
 1. text (string): text that will be classified  
 
