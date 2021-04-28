@@ -16,17 +16,17 @@ import json
 @dataclass
 class WPTrainArgs:
     learning_rate: float = ARGS_WP_TRAIN["learning_rate"]
+    num_train_epochs: int = ARGS_WP_TRAIN["num_train_epochs"]
     weight_decay: float = ARGS_WP_TRAIN["weight_decay"]
     adam_beta1: float = ARGS_WP_TRAIN["adam_beta1"]
     adam_beta2: float = ARGS_WP_TRAIN["adam_beta2"]
     adam_epsilon: float = ARGS_WP_TRAIN["adam_epsilon"]
     max_grad_norm:  float = ARGS_WP_TRAIN["max_grad_norm"]
-    num_train_epochs: int = ARGS_WP_TRAIN["num_train_epochs"]
-    preprocessing_processes: int = ARGS_WP_TRAIN["preprocessing_processes"]
     save_preprocessed_data: bool = ARGS_WP_TRAIN["save_preprocessed_data"]
     save_preprocessed_data_path: str = ARGS_WP_TRAIN["save_preprocessed_data_path"]
     load_preprocessed_data: bool = ARGS_WP_TRAIN["load_preprocessed_data"]
     load_preprocessed_data_path: str = ARGS_WP_TRAIN["load_preprocessed_data_path"]
+    preprocessing_processes: int = ARGS_WP_TRAIN["preprocessing_processes"]
     mlm_probability: float = ARGS_WP_TRAIN["mlm_probability"]
     line_by_line: bool = ARGS_WP_TRAIN["line_by_line"]
 
