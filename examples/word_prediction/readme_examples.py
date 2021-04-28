@@ -1,4 +1,4 @@
-from happytransformer import HappyWordPrediction
+from happytransformer import HappyWordPrediction, ARGS_WP_TRAIN, ARGS_WP_EVAl
 
 
 def example_1_0():
@@ -35,12 +35,31 @@ def example_1_3():
     print(result[1])  # WordPredictionResult(token='technology', score=0.032044216990470886)
     print(result[1].token)  # technology
 
+def example_2_1():
+    happy_wp = HappyWordPrediction()
+
+    args = ARGS_WP_TRAIN  # default values
+    args["num_train_epochs"] = 1  # change number of epochs from 3 to 1
+    happy_wp.train("../../data/wp/train-eval.txt", args=args)
+
+def example_2_2():
+    happy_wp = HappyWordPrediction()
+    args = ARGS_WP_EVAl
+    args['preprocessing_processes'] = 2 # changed from 1 to 2
+    result = happy_wp.eval("../../data/wp/train-eval.txt")
+    print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
+    print(result)  # EvalResult(eval_loss=0.459536075592041)
+    print(result.loss)  # 0.459536075592041
+
 
 def main():
     # example_1_1()
-    example_1_1()
+    # example_1_1()
     # example_1_2()
     # example_1_3()
+    # example_2_1()
+    example_2_2()
+
 
 
 if __name__ == "__main__":

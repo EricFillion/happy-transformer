@@ -2,14 +2,14 @@ from happytransformer import HappyTextClassification
 from happytransformer import HappyTokenClassification
 
 
-def example_2_0():
+def example_5_0():
     happy_tc_distilbert = HappyTextClassification()  # default with "distilbert-base-uncased"
     happy_tc_albert = HappyTextClassification(model_type="ALBERT", model_name="albert-base-v2")
     happy_tc_bert = HappyTextClassification("BERT", "bert-base-uncased")
     happy_tc_roberta = HappyTextClassification("ROBERTA", "deepset/roberta-base-squad2")
 
 
-def example_2_1():
+def example_5_1():
     happy_tc = HappyTextClassification(model_type="DISTILBERT",  model_name="distilbert-base-uncased-finetuned-sst-2-english")
     result = happy_tc.classify_text("Great movie! 5/5")
     print(type(result))  # <class 'happytransformer.happy_text_classification.TextClassificationResult'>
@@ -17,14 +17,14 @@ def example_2_1():
     print(result.label)  # LABEL_1
 
 
-def example_2_2():
+def example_6_1():
     happy_tc = HappyTextClassification(model_type="DISTILBERT",
                                        model_name="distilbert-base-uncased-finetuned-sst-2-english",
                                        num_labels=2)  # Don't forget to set num_labels!
     happy_tc.train("../../data/tc/train-eval.csv")
 
 
-def example_2_3():
+def example_6_2():
     happy_tc = HappyTextClassification(model_type="DISTILBERT",
                                        model_name="distilbert-base-uncased-finetuned-sst-2-english",
                                        num_labels=2)  # Don't forget to set num_labels!
@@ -34,7 +34,7 @@ def example_2_3():
     print(result.loss)  # 0.007262040860950947
 
 
-def example_2_4():
+def example_6_3():
     happy_tc = HappyTextClassification(model_type="DISTILBERT",
                                        model_name="distilbert-base-uncased-finetuned-sst-2-english",
                                        num_labels=2)  # Don't forget to set num_labels!
@@ -46,7 +46,7 @@ def example_2_4():
     print(result[0].label)  # LABEL_1
 
 
-def example_2_5():
+def example_6_4():
     happy_tc = HappyTextClassification(model_type="DISTILBERT",
                                        model_name="distilbert-base-uncased-finetuned-sst-2-english",
                                        num_labels=2)  # Don't forget to set num_labels!
@@ -59,23 +59,15 @@ def example_2_5():
     # Note: typically you evaluate with a separate dataset
     # but for simplicity we used the same one
 
-def example_5_1():
-    happy_toc = HappyTokenClassification(model_type="BERT", model_name="dslim/bert-base-NER")
-    result = happy_toc.classify_token("My name is Geoffrey and I live in Toronto")
-    print(type(result))  # <class 'list'>
-    print(result[0].word)  # Geoffrey
-    print(result[0].entity)  # B-PER
-    print(result[0].score)  # 0.9988969564437866
-    print(result[0].index)  # 4
-    print(result[0].start) # 11
-    print(result[0].end)  # 19
-
-    print(result[1].word)  # Toronto
-    print(result[1].entity)  # B-LOC
-
 
 def main():
-    example_5_1()
+    # example_5_0()
+    # example_5_1()
+    # example_6_0()
+    # example_6_1()
+    # example_6_2()
+    # example_6_3()
+    example_6_4()
 
 
 if __name__ == "__main__":

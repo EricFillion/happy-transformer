@@ -8,3 +8,7 @@ ARGS_TOC_TRAIN = {
     'num_train_epochs': 3.0,
 
 }
+
+ARGS_TOC_EVAl = {}
+
+ARGS_TOC_TEST = {}

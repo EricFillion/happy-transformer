@@ -7,31 +7,66 @@ robust methods. And also, to improve maintainability as they update the document
 
 https://huggingface.co/transformers/custom_datasets.html#question-answering-with-squad-2-0
 """
+
+from dataclasses import dataclass
 import csv
 from tqdm import tqdm
 import torch
+
+from transformers import DataCollatorWithPadding
+
 from happytransformer.happy_trainer import HappyTrainer, EvalResult
+
+@dataclass
+class QATrainArgs:
+    learning_rate: float
+    weight_decay: float
+    adam_beta1: float
+    adam_beta2: float
+    adam_epsilon: float
+    max_grad_norm: float
+    num_train_epochs: int
+
+    save_preprocessed_data: False
+    save_preprocessed_data_path: ""
+    load_preprocessed_data: False
+    load_preprocessed_data_path: ""
+
+
+@dataclass
+class QAEvalArgs:
+    save_preprocessed_data: False
+    save_preprocessed_data_path: ""
+    load_preprocessed_data: False
+    load_preprocessed_data_path: ""
+
+@dataclass
+class QATestArgs:
+    save_preprocessed_data: False
+    save_preprocessed_data_path: ""
+    load_preprocessed_data: False
+    load_preprocessed_data_path: ""
 
 class QATrainer(HappyTrainer):
     """
     Trainer class for HappyTextClassification
     """
 
-    def train(self, input_filepath, args):
+    def train(self, input_filepath, dataclass_args: QATrainArgs):
         """
         See docstring in HappyQuestionAnswering.train()
         """
-        #todo: add time elapsed and test time remaining similar to what is within eval
-
         contexts, questions, answers = self._get_data(input_filepath)
         self.__add_end_idx(contexts, answers)
         encodings = self.tokenizer(contexts, questions, truncation=True, padding=True)
         self.__add_token_positions(encodings, answers)
         dataset = QuestionAnsweringDataset(encodings)
-        self._run_train(dataset, args)
+        data_collator = DataCollatorWithPadding(self.tokenizer)
+        self._run_train(dataset, dataclass_args, data_collator)
 
 
-    def eval(self, input_filepath):
+
+    def eval(self, input_filepath, dataclass_args: QAEvalArgs):
         """
         See docstring in HappyQuestionAnswering.eval()
 
@@ -43,11 +78,13 @@ class QATrainer(HappyTrainer):
         encodings = self.tokenizer(contexts, questions, truncation=True, padding=True)
         self.__add_token_positions(encodings, answers)
         eval_dataset = QuestionAnsweringDataset(encodings)
-        result = self._run_eval(eval_dataset)
+        data_collator = DataCollatorWithPadding(self.tokenizer)
+
+        result = self._run_eval(eval_dataset, data_collator)
         return EvalResult(loss=result["eval_loss"])
 
 
-    def test(self, input_filepath, solve):
+    def test(self, input_filepath, solve, dataclass_args: QATestArgs):
         """
         See docstring in HappyQuestionAnswering.test()
 

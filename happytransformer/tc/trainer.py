@@ -7,33 +7,64 @@ robust methods. And also, to improve maintainability as they update the document
 
 https://huggingface.co/transformers/custom_datasets.html#sequence-classification-with-imdb-reviews"""
 
+from dataclasses import dataclass
 import csv
 import torch
 from happytransformer.happy_trainer import HappyTrainer, EvalResult
+from transformers import DataCollatorWithPadding
 from tqdm import tqdm
 
+@dataclass
+class TCTrainArgs:
+    learning_rate: float
+    weight_decay: float
+    adam_beta1: float
+    adam_beta2: float
+    adam_epsilon: float
+    max_grad_norm: float
+    num_train_epochs: int
 
+    save_preprocessed_data: False
+    save_preprocessed_data_path: ""
+    load_preprocessed_data: False
+    load_preprocessed_data_path: ""
+
+
+@dataclass
+class TCEvalArgs:
+    save_preprocessed_data: False
+    save_preprocessed_data_path: ""
+    load_preprocessed_data: False
+    load_preprocessed_data_path: ""
+
+@dataclass
+class TCTestArgs:
+    save_preprocessed_data: False
+    save_preprocessed_data_path: ""
+    load_preprocessed_data: False
+    load_preprocessed_data_path: ""
 class TCTrainer(HappyTrainer):
     """
     A class for training text classification functionality
     """
 
-    def train(self, input_filepath, args):
+    def train(self, input_filepath, dataclass_args: TCTrainArgs):
         contexts, labels = self._get_data(input_filepath)
         train_encodings = self.tokenizer(contexts, truncation=True, padding=True)
         train_dataset = TextClassificationDataset(train_encodings, labels)
+        data_collator = DataCollatorWithPadding(self.tokenizer)
+        self._run_train(train_dataset, dataclass_args, data_collator)
 
-        self._run_train(train_dataset, args)
-
-    def eval(self, input_filepath):
+    def eval(self, input_filepath, dataclass_args: TCEvalArgs ):
         contexts, labels = self._get_data(input_filepath)
         eval_encodings = self.tokenizer(contexts, truncation=True, padding=True)
         eval_dataset = TextClassificationDataset(eval_encodings, labels)
+        data_collator = DataCollatorWithPadding(self.tokenizer)
 
-        result = self._run_eval(eval_dataset)
+        result = self._run_eval(eval_dataset, data_collator)
         return EvalResult(loss=result["eval_loss"])
 
-    def test(self, input_filepath, solve):
+    def test(self, input_filepath, solve, dataclass_args: TCTestArgs):
         """
         See docstring in HappyQuestionAnswering.test()
         solve: HappyQuestionAnswering.answers_to_question()
@@ -65,6 +96,8 @@ class TCTrainer(HappyTrainer):
         if not test_data:
             return contexts, labels
         return contexts
+
+
 
 
 class TextClassificationDataset(torch.utils.data.Dataset):

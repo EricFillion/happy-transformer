@@ -6,7 +6,7 @@ Contains shared variables and methods for these classes.
 """
 import logging
 import torch
-from transformers import  AutoTokenizer
+from transformers import  AutoTokenizer, AutoConfig
 
 class HappyTransformer():
     """
@@ -15,10 +15,14 @@ class HappyTransformer():
 
     """
 
-    def __init__(self, model_type, model_name, model):
+    def __init__(self, model_type, model_name, model, load_path=""):
         self.model_type = model_type  # BERT, #DISTILBERT, ROBERTA, ALBERT etc
         self.model_name = model_name
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+        if load_path != "":
+            self.tokenizer = AutoTokenizer.from_pretrained(load_path)
+        else:
+            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = model
         self.model.eval()
         self._trainer = None  # initialized in child class
@@ -55,22 +59,52 @@ class HappyTransformer():
         """
         raise NotImplementedError()
 
-    def eval(self, input_filepath):
+    def eval(self, input_filepath, args):
         """
         Evaluates the model. Determines how well the model performs on a given dataset
         :param input_filepath: a string that contains a path to a
          csv file that contains evaluating data
+        :param args: settings in the form of a dictionary
         :return: correct percentage
         """
         raise NotImplementedError()
 
-    def test(self, input_filepath):
+    def test(self, input_filepath, args):
         """
         Used to generate predictions for a given dataset.
         The dataset may not be labelled.
+        :param args: settings in the form of a dictionary
 
         :param input_filepath: a string that contains a path to
         a csv file that contains testing data
 
         """
         raise NotImplementedError()
+
+    def _create_args_dataclass(self, default_dic_args, input_dic_args, method_dataclass_args):
+        """
+        Combines default_dic_args and input_dic_args and then outputs a dataclass.
+
+        The values of input_dic_args overwrite the values of default_dic_args.
+
+        default_dic_args and dataclass_args must have the same keys.
+
+        :param default_dic_args: A dictionary that contains default settings. Example: ARGS_WP_EVAl
+        :param input_dic_args: A dictionary a user inputs for **kwargs when using .train(), .eval() or .test()
+        :param method_dataclass_args: A dataclass object for target functionality. Example: WPEvalArgs
+        :return: A dataclass object that will then be passed to HappyTrainer.train()/eval/test
+        """
+        settings_dic = {**default_dic_args, **input_dic_args}
+        return method_dataclass_args(**settings_dic)
+
+    def save(self, path):
+        """
+        Saves both the model, tokenizer and various configuration/settings files
+        to a given path
+
+        :param path: string:  a path to a directory
+        :return:
+        """
+        self.model.save_pretrained(path)
+        self.tokenizer.save_pretrained(path)
+

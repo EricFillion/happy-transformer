@@ -7,8 +7,9 @@ from dataclasses import dataclass
 from transformers import QuestionAnsweringPipeline, AutoModelForQuestionAnswering, AutoTokenizer
 
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.qa.trainer import QATrainer
-from happytransformer.qa.default_args import ARGS_QA_TRAIN
+from happytransformer.qa.trainer import QATrainer, QATrainArgs, QAEvalArgs, QATestArgs
+from happytransformer.happy_trainer import EvalResult
+from happytransformer.qa import ARGS_QA_TRAIN, ARGS_QA_EVAl, ARGS_QA_TEST
 
 from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.adaptors import get_adaptor
@@ -32,11 +33,14 @@ class HappyQuestionAnswering(HappyTransformer):
     other classes.
     """
     def __init__(self, model_type="DISTILBERT",
-                 model_name="distilbert-base-cased-distilled-squad"):
+                 model_name="distilbert-base-cased-distilled-squad", load_path: str = ""):
         
         self.adaptor = get_adaptor(model_type)
 
-        model = AutoModelForQuestionAnswering.from_pretrained(model_name)
+        if load_path != "":
+            model = AutoModelForQuestionAnswering.from_pretrained(load_path)
+        else:
+            model = AutoModelForQuestionAnswering.from_pretrained(model_name)
 
         super().__init__(model_type, model_name, model)
         device_number = detect_cuda_device_number()
@@ -80,9 +84,14 @@ class HappyQuestionAnswering(HappyTransformer):
 
         return: None
         """
-        self._trainer.train(input_filepath=input_filepath, args=args)
 
-    def eval(self, input_filepath):
+        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_QA_TRAIN,
+                                                            input_dic_args=args,
+                                                            method_dataclass_args=QATrainArgs)
+
+        self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
+
+    def eval(self, input_filepath, args=ARGS_QA_EVAl) -> EvalResult:
         """
         Trains the question answering model
 
@@ -93,9 +102,13 @@ class HappyQuestionAnswering(HappyTransformer):
         return: A dictionary that contains a key called "eval_loss"
 
         """
-        return self._trainer.eval(input_filepath=input_filepath)
+        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_QA_EVAl,
+                                                            input_dic_args=args,
+                                                            method_dataclass_args=QAEvalArgs)
+        return self._trainer.eval(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 
-    def test(self, input_filepath):
+
+    def test(self, input_filepath, args=ARGS_QA_TEST):
         """
         Tests the question answering model. Used to obtain results
 
@@ -106,4 +119,7 @@ class HappyQuestionAnswering(HappyTransformer):
         return: A list of dictionaries. Each dictionary
         contains the keys: "score", "start", "end" and "answer"
         """
-        return self._trainer.test(input_filepath=input_filepath, solve=self.answer_question)
+        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_QA_TEST,
+                                                            input_dic_args=args,
+                                                            method_dataclass_args=QATestArgs)
+        return self._trainer.test(input_filepath=input_filepath, solve=self.answer_question, dataclass_args=method_dataclass_args)

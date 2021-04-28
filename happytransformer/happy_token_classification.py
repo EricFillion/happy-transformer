@@ -1,12 +1,13 @@
 from typing import List, Optional
 from dataclasses import dataclass
 
-from transformers import TokenClassificationPipeline, AutoModelForTokenClassification, AutoTokenizer, AutoModel
+from transformers import TokenClassificationPipeline, AutoModelForTokenClassification
 
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.toc.trainer import TOCTrainer
 from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.adaptors import get_adaptor
+from happytransformer.toc import  ARGS_TOC_TRAIN, ARGS_TOC_EVAl, ARGS_TOC_TEST
 
 
 @dataclass
@@ -24,11 +25,15 @@ class HappyTokenClassification(HappyTransformer):
     A user facing class for text classification
     """
     def __init__(
-        self, model_type: str = "BERT", model_name: str = "dslim/bert-base-NER"):
+        self, model_type: str = "BERT", model_name: str = "dslim/bert-base-NER", load_path: str = ""):
 
         self.adaptor = get_adaptor(model_type)
 
-        model = AutoModelForTokenClassification.from_pretrained(model_name)
+        if load_path != "":
+            model = AutoModelForTokenClassification.from_pretrained(load_path)
+        else:
+            model = AutoModelForTokenClassification.from_pretrained(model_name)
+
 
         super().__init__(model_type, model_name, model)
 
@@ -60,11 +65,11 @@ class HappyTokenClassification(HappyTransformer):
         ]
 
 
-    def train(self, input_filepath, args):
+    def train(self, input_filepath, args=ARGS_TOC_TRAIN):
         raise NotImplementedError("train() is currently not available")
 
-    def eval(self, input_filepath):
+    def eval(self, input_filepath, args=ARGS_TOC_EVAl):
         raise NotImplementedError("eval() is currently not available")
 
-    def test(self, input_filepath):
+    def test(self, input_filepath, args=ARGS_TOC_TEST):
         raise NotImplementedError("test() is currently not available")

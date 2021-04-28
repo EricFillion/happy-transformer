@@ -1,12 +1,14 @@
-from typing import List,Optional
+from typing import List, Optional
 from dataclasses import dataclass
 
-from transformers import FillMaskPipeline, AutoModelForMaskedLM
+from transformers import FillMaskPipeline, AutoModelForMaskedLM, PretrainedConfig
 
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.mwp.trainer import WPTrainer
+from happytransformer.wp.trainer import WPTrainer, WPTrainArgs, WPEvalArgs
 from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.adaptors import get_adaptor
+from happytransformer.wp import ARGS_WP_TRAIN, ARGS_WP_EVAl, ARGS_WP_TEST
+from happytransformer.happy_trainer import EvalResult
 
 @dataclass
 class WordPredictionResult:
@@ -18,11 +20,18 @@ class HappyWordPrediction(HappyTransformer):
     A user facing class for text classification
     """
     def __init__(
-        self, model_type: str = "DISTILBERT", model_name: str = "distilbert-base-uncased"):
+            self, model_type: str = "DISTILBERT", model_name: str = "distilbert-base-uncased",
+            load_path: str =""):
+
 
         self.adaptor = get_adaptor(model_type)
-        model = AutoModelForMaskedLM.from_pretrained(model_name)
-        super().__init__(model_type, model_name, model)
+
+        if load_path != "":
+            model = AutoModelForMaskedLM.from_pretrained(load_path)
+        else:
+            model = AutoModelForMaskedLM.from_pretrained(model_name)
+
+        super().__init__(model_type, model_name, model, load_path=load_path)
 
         device_number = detect_cuda_device_number()
 
@@ -55,11 +64,19 @@ class HappyWordPrediction(HappyTransformer):
             for answer in answers
         ]
 
-    def train(self, input_filepath, args):
-        raise NotImplementedError("train() is currently not available")
+    def train(self, input_filepath, args=ARGS_WP_TRAIN):
+        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_WP_TRAIN,
+                                                     input_dic_args=args,
+                                                     method_dataclass_args=WPTrainArgs)
+        self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 
-    def eval(self, input_filepath):
-        raise NotImplementedError("eval() is currently not available")
+    def eval(self, input_filepath, args=ARGS_WP_EVAl) -> EvalResult:
+        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_WP_EVAl,
+                                                     input_dic_args=args,
+                                                     method_dataclass_args=WPEvalArgs)
 
-    def test(self, input_filepath):
+        return self._trainer.eval(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
+
+
+    def test(self, input_filepath, args=ARGS_WP_TEST):
         raise NotImplementedError("test() is currently not available")

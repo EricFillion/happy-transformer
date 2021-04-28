@@ -22,4 +22,19 @@ def test_sp_false():
     )
     assert result < 0.5
 
+def test_sp_save():
+    happy = HappyNextSentence()
+    happy.save("model/")
+    result_before = happy.predict_next_sentence(
+        "How old are you?",
+        "The Eiffel Tower is in Paris."
+    )
+
+    happy = HappyNextSentence(load_path="model/")
+    result_after = happy.predict_next_sentence(
+        "How old are you?",
+        "The Eiffel Tower is in Paris."
+    )
+
+    assert result_before == result_after
 

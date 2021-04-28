@@ -1,7 +1,7 @@
 from happytransformer import HappyQuestionAnswering
 
 
-def example_3_0():
+def example_7_0():
 
     happy_qa_distilbert = HappyQuestionAnswering()  # default
     happy_qa_albert = HappyQuestionAnswering("ALBERT", "mfeb/albert-xxlarge-v2-squad2")
@@ -10,7 +10,7 @@ def example_3_0():
     happy_qa_roberta = HappyQuestionAnswering("ROBERTA", "deepset/roberta-base-squad2")
 
 
-def example_3_1():
+def example_7_1():
     happy_qa = HappyQuestionAnswering()
     result = happy_qa.answer_question("Today's date is January 10th, 2021", "What is the date?")
     print(type(result))  # <class 'list'>
@@ -20,7 +20,7 @@ def example_3_1():
     print(result[0].answer)  # January 10th, 2021
 
 
-def example_3_2():
+def example_7_2():
     happy_qa = HappyQuestionAnswering()
     result = happy_qa.answer_question("Today's date is January 10th, 2021", "What is the date?", top_k=2)
     print(type(result))  # <class 'list'>
@@ -28,12 +28,12 @@ def example_3_2():
     print(result[1].answer)  # January 10th
 
 
-def example_3_3():
+def example_8_0():
     happy_qa = HappyQuestionAnswering()
     happy_qa.train("../../data/qa/train-eval.csv")
 
 
-def example_3_4():
+def example_8_1():
     happy_qa = HappyQuestionAnswering()
     result = happy_qa.eval("../../data/qa/train-eval.csv")
     print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
@@ -41,7 +41,7 @@ def example_3_4():
     print(result.loss)  # 0.1173816919326782
 
 
-def example_3_5():
+def example_8_2():
     happy_qa = HappyQuestionAnswering()
     result = happy_qa.test("../../data/qa/test.csv")
     print(type(result))
@@ -50,7 +50,7 @@ def example_3_5():
     print(result[0].answer)  # October 31st
 
 
-def example_3_6():
+def example_8_3():
     happy_qa = HappyQuestionAnswering()
     before_loss = happy_qa.eval("../../data/qa/train-eval.csv").loss
     happy_qa.train("../../data/qa/train-eval.csv")
@@ -63,8 +63,13 @@ def example_3_6():
 
 
 def main():
-    example_3_6()
-
+    # example_7_0()
+    # example_7_1()
+    # example_7_2()
+    # example_8_0()
+    # example_8_1()
+    # example_8_2()
+    example_8_3()
 
 if __name__ == "__main__":
     main()

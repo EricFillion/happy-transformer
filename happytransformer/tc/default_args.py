@@ -7,21 +7,30 @@ ARGS_TC_TRAIN = {
     'max_grad_norm':  1.0,
     'num_train_epochs': 3.0,
 
+    'save_preprocessed_data': False,
+    'save_preprocessed_data_path': "",
+
+    'load_preprocessed_data': False,
+    'load_preprocessed_data_path': "",
 }
 
-# maybe implement later
-# 'max_steps': -1,
-# 'warmup_steps': 0,
-# # 'logging_dir':  #todo
-# 'logging_first_step': False,
-# 'logging_steps': 500,
-# 'save_steps': 500,
-#  #'save_total_limit':
-# 'no_cuda': False,
-# 'seed': 42,
-# 'fp16': False,
-# 'fp16_opt_level': "O1",
-# 'local_rank': -1,
-# #'tpu_num_cores':,
-# "debug": False,
-#
+# as of right now we do not provide custom settings
+ARGS_TC_EVAL = {
+    'save_preprocessed_data': False,
+    'save_preprocessed_data_path': "",
+
+    'load_preprocessed_data': False,
+    'load_preprocessed_data_path': "",
+
+}
+
+# as of right now we do not provide custom settings
+ARGS_TC_TEST = {
+    'save_preprocessed_data': False,
+    'save_preprocessed_data_path': "",
+
+    'load_preprocessed_data': False,
+    'load_preprocessed_data_path': "",
+
+}
+

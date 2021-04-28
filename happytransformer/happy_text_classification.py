@@ -2,15 +2,15 @@
 Contains a class called HappyTextClassification that performs text classification
 """
 from dataclasses import dataclass
-import torch
 
 from transformers import TextClassificationPipeline, AutoConfig, AutoModelForSequenceClassification
 
-from happytransformer.tc.trainer import TCTrainer
+from happytransformer.tc.trainer import TCTrainer, TCTrainArgs, TCEvalArgs, TCTestArgs
 from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.adaptors import get_adaptor
-from happytransformer.tc.default_args import ARGS_TC_TRAIN
+from happytransformer.tc import ARGS_TC_TRAIN, ARGS_TC_EVAL, ARGS_TC_TEST
+from happytransformer.happy_trainer import EvalResult
 
 @dataclass
 class TextClassificationResult:
@@ -23,11 +23,16 @@ class HappyTextClassification(HappyTransformer):
     """
 
     def __init__(self, model_type="DISTILBERT",
-                 model_name="distilbert-base-uncased", num_labels=2):
+                 model_name="distilbert-base-uncased", num_labels: int = 2, load_path: str = ""):
         self.adaptor = get_adaptor(model_type)
+
         config = AutoConfig.from_pretrained(model_name, num_labels=num_labels)
 
-        model = AutoModelForSequenceClassification.from_pretrained(model_name, config=config)
+        if load_path != "":
+            model = AutoModelForSequenceClassification.from_pretrained(load_path, config=config)
+        else:
+            model = AutoModelForSequenceClassification.from_pretrained(model_name, config=config)
+
 
         super().__init__(model_type, model_name, model)
 
@@ -68,9 +73,14 @@ class HappyTextClassification(HappyTransformer):
         return: None
 
         """
-        self._trainer.train(input_filepath=input_filepath, args=args)
 
-    def eval(self, input_filepath):
+        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_TC_TRAIN,
+                                                            input_dic_args=args,
+                                                            method_dataclass_args=TCTrainArgs)
+
+        self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
+
+    def eval(self, input_filepath, args=ARGS_TC_EVAL) -> EvalResult:
         """
         Evaluated the text classification answering model
 
@@ -80,9 +90,12 @@ class HappyTextClassification(HappyTransformer):
 
         return: #todo
         """
-        return self._trainer.eval(input_filepath=input_filepath)
+        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_TC_EVAL,
+                                                            input_dic_args=args,
+                                                            method_dataclass_args=TCEvalArgs)
 
-    def test(self, input_filepath):
+        return self._trainer.eval(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
+    def test(self, input_filepath, args=ARGS_TC_TEST):
         """
         Tests the text classification  model. Used to obtain results
 
@@ -91,4 +104,8 @@ class HappyTextClassification(HappyTransformer):
          text
         return: #todo
         """
-        return self._trainer.test(input_filepath=input_filepath, solve=self.classify_text)
+        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_TC_TEST,
+                                                            input_dic_args=args,
+                                                            method_dataclass_args=TCTestArgs)
+
+        return self._trainer.test(input_filepath=input_filepath, dataclass_args=method_dataclass_args)

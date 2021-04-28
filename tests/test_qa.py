@@ -47,3 +47,14 @@ def test_qa_train_effectiveness():
     after_loss = happy_qa.eval("../data/qa/train-eval.csv").loss
 
     assert after_loss < before_loss
+
+
+def test_qa_save():
+    happy = HappyQuestionAnswering()
+    happy.save("model/")
+    result_before = happy.answer_question("Natural language processing is a subfield of artificial surrounding creating models that understand language","What is natural language processing?")
+
+    happy = HappyQuestionAnswering(load_path="model/")
+    result_after = happy.answer_question("Natural language processing is a subfield of artificial surrounding creating models that understand language","What is natural language processing?")
+
+    assert result_before[0].answer == result_after[0].answer

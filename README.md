@@ -14,7 +14,8 @@ Happy Transformer is an package built on top of [Hugging Face's transformer libr
   
 | Public Methods                     | Basic Usage  | Training   |
 |------------------------------------|--------------|------------|
-| Word Prediction                    | ✔            |            |
+| Word Prediction                    | ✔            | ✔          |
+| Text Generation                    | ✔            | ✔          |
 | Text Classification                | ✔            | ✔          | 
 | Question Answering                 | ✔            | ✔          | 
 | Next Sentence Prediction           | ✔            |            | 
@@ -33,10 +34,7 @@ from happytransformer import HappyWordPrediction
     result = happy_wp.predict_mask("I think therefore I [MASK]")
     print(result)  # [WordPredictionResult(token='am', score=0.10172799974679947)]
     print(result[0].token)  # am
-    
 
-```
- 
 
 ## Maintainers
 - [Eric Fillion](https://github.com/ericfillion)  Lead Maintainer
