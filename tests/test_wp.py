@@ -104,7 +104,7 @@ def test_wp_save():
 def test_wp_train_eval_with_dic():
 
     happy_wp = HappyWordPrediction('', 'distilroberta-base')
-    train_args = {'learning_rate': 0.01, 'line_by_line': True}
+    train_args = {'learning_rate': 0.01, 'line_by_line': True, "num_train_epochs": 1}
 
 
     happy_wp.train("../data/wp/train-eval.txt" , args=train_args)
@@ -116,7 +116,7 @@ def test_wp_train_eval_with_dic():
 def test_wp_train_eval_with_dataclass():
 
     happy_wp = HappyWordPrediction('', 'distilroberta-base')
-    train_args = WPTrainArgs(learning_rate=0.01, line_by_line=True)
+    train_args = WPTrainArgs(learning_rate=0.01, line_by_line=True, num_train_epochs=1)
 
     happy_wp.train("../data/wp/train-eval.txt" , args=train_args)
 
