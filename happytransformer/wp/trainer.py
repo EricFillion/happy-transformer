@@ -23,23 +23,23 @@ class WPTrainArgs:
     max_grad_norm:  float = ARGS_WP_TRAIN["max_grad_norm"]
     num_train_epochs: int = ARGS_WP_TRAIN["num_train_epochs"]
     preprocessing_processes: int = ARGS_WP_TRAIN["preprocessing_processes"]
-    mlm_probability: float = ARGS_WP_TRAIN["mlm_probability"]
-    line_by_line: bool = ARGS_WP_TRAIN["line_by_line"]
     save_preprocessed_data: bool = ARGS_WP_TRAIN["save_preprocessed_data"]
     save_preprocessed_data_path: str = ARGS_WP_TRAIN["save_preprocessed_data_path"]
     load_preprocessed_data: bool = ARGS_WP_TRAIN["load_preprocessed_data"]
     load_preprocessed_data_path: str = ARGS_WP_TRAIN["load_preprocessed_data_path"]
+    mlm_probability: float = ARGS_WP_TRAIN["mlm_probability"]
+    line_by_line: bool = ARGS_WP_TRAIN["line_by_line"]
 
 
 @dataclass
 class WPEvalArgs:
     preprocessing_processes: int =ARGS_WP_EVAl["preprocessing_processes"]
-    mlm_probability: float = ARGS_WP_EVAl["mlm_probability"]
-    line_by_line: bool = ARGS_WP_EVAl["line_by_line"]
     save_preprocessed_data: bool = ARGS_WP_EVAl["save_preprocessed_data"]
     save_preprocessed_data_path: str = ARGS_WP_EVAl["save_preprocessed_data_path"]
     load_preprocessed_data: bool = ARGS_WP_EVAl["load_preprocessed_data"]
     load_preprocessed_data_path: str = ARGS_WP_EVAl["load_preprocessed_data_path"]
+    mlm_probability: float = ARGS_WP_EVAl["mlm_probability"]
+    line_by_line: bool = ARGS_WP_EVAl["line_by_line"]
 
 
 
