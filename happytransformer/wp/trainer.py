@@ -33,11 +33,11 @@ class WPTrainArgs:
 
 @dataclass
 class WPEvalArgs:
-    preprocessing_processes: int =ARGS_WP_EVAl["preprocessing_processes"]
     save_preprocessed_data: bool = ARGS_WP_EVAl["save_preprocessed_data"]
     save_preprocessed_data_path: str = ARGS_WP_EVAl["save_preprocessed_data_path"]
     load_preprocessed_data: bool = ARGS_WP_EVAl["load_preprocessed_data"]
     load_preprocessed_data_path: str = ARGS_WP_EVAl["load_preprocessed_data_path"]
+    preprocessing_processes: int =ARGS_WP_EVAl["preprocessing_processes"]
     mlm_probability: float = ARGS_WP_EVAl["mlm_probability"]
     line_by_line: bool = ARGS_WP_EVAl["line_by_line"]
 
