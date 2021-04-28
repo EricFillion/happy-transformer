@@ -6,8 +6,8 @@ from happytransformer.happy_token_classification import HappyTokenClassification
 from happytransformer.happy_generation import HappyGeneration
 
 from happytransformer.gen.default_args import ARGS_GEN_TRAIN, ARGS_GEN_EVAl
-from happytransformer.qa.default_args import ARGS_QA_TRAIN, ARGS_QA_EVAl
-from happytransformer.tc.default_args import ARGS_TC_TRAIN, ARGS_TC_EVAL
+from happytransformer.qa.default_args import ARGS_QA_TRAIN, ARGS_QA_EVAl, ARGS_QA_TEST
+from happytransformer.tc.default_args import ARGS_TC_TRAIN, ARGS_TC_EVAL, ARGS_TC_TEST
 from happytransformer.wp.default_args import ARGS_WP_TRAIN, ARGS_WP_EVAl
 
 from happytransformer.happy_generation import (
