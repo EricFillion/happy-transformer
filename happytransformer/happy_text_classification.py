@@ -98,7 +98,7 @@ class HappyTextClassification(HappyTransformer):
         elif type(args) == TCEvalArgs:
             method_dataclass_args = args
         else:
-            raise ValueError("Invalid args type. Use a ARGS_TC_EVAl object or a dictionary")
+            raise ValueError("Invalid args type. Use a TCEvalArgs object or a dictionary")
 
         return self._trainer.eval(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 
@@ -119,6 +119,6 @@ class HappyTextClassification(HappyTransformer):
         elif type(args) == TCTestArgs:
             method_dataclass_args = args
         else:
-            raise ValueError("Invalid args type. Use a ARGS_TC_TEST object or a dictionary")
+            raise ValueError("Invalid args type. Use a TCTestArgs object or a dictionary")
 
         return self._trainer.test(input_filepath=input_filepath, solve=self.classify_text, dataclass_args=method_dataclass_args)
