@@ -10,6 +10,12 @@ from happytransformer.qa.default_args import ARGS_QA_TRAIN, ARGS_QA_EVAl, ARGS_Q
 from happytransformer.tc.default_args import ARGS_TC_TRAIN, ARGS_TC_EVAL, ARGS_TC_TEST
 from happytransformer.wp.default_args import ARGS_WP_TRAIN, ARGS_WP_EVAl
 
+
+from happytransformer.gen.trainer import GENTrainArgs, GENEvalArgs
+from happytransformer.qa.trainer import QATestArgs, QAEvalArgs, QATrainArgs
+from happytransformer.tc.trainer import TCTrainArgs, TCEvalArgs, TCTestArgs
+from happytransformer.wp.trainer import WPTrainArgs, WPEvalArgs
+
 from happytransformer.happy_generation import (
     HappyGeneration,
     GEN_DEFAULT_SETTINGS,

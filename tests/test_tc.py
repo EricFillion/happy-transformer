@@ -3,6 +3,7 @@ Tests for Text Classification Functionality
 """
 
 from happytransformer.happy_text_classification import HappyTextClassification, TextClassificationResult
+from happytransformer.tc.trainer import TCTrainArgs, TCEvalArgs, TCTestArgs
 from pytest import approx
 
 
@@ -77,3 +78,38 @@ def test_tc_save():
     result_after = happy.classify_text("What a great movie")
 
     assert result_before.label==result_after.label
+    
+
+def test_tc_with_dic():
+
+    happy_tc = HappyTextClassification()
+    train_args = {'learning_rate': 0.01,  "num_train_epochs": 1}
+
+
+    happy_tc.train("../data/tc/train-eval.csv" , args=train_args)
+
+    eval_args = {}
+
+    result_eval = happy_tc.eval("../data/tc/train-eval.csv", args=eval_args)
+
+    test_args = {}
+
+    result_test = happy_tc.test("../data/tc/test.csv", args=test_args)
+
+
+def test_tc_with_dataclass():
+
+    happy_tc = HappyTextClassification()
+    train_args = TCTrainArgs(learning_rate=0.01, num_train_epochs=1)
+
+    happy_tc.train("../data/tc/train-eval.csv", args=train_args)
+
+    eval_args = TCEvalArgs()
+
+    result_eval= happy_tc.eval("../data/tc/train-eval.csv", args=eval_args)
+
+
+    test_args = TCTestArgs()
+
+    result_test = happy_tc.test("../data/tc/test.csv", args=test_args)
+

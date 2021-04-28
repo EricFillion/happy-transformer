@@ -13,6 +13,7 @@ from happytransformer.tc import ARGS_TC_TRAIN, ARGS_TC_EVAL, ARGS_TC_TEST
 from happytransformer.happy_trainer import EvalResult
 from happytransformer.fine_tuning_util import create_args_dataclass
 
+
 @dataclass
 class TextClassificationResult:
     label: str
@@ -60,53 +61,64 @@ class HappyTextClassification(HappyTransformer):
         first_result = results[0]
 
         return TextClassificationResult(label=first_result["label"], score=first_result["score"])
-
+    
     def train(self, input_filepath, args=ARGS_TC_TRAIN):
         """
         Trains the question answering model
-
         input_filepath: a string that contains the location of a csv file
         for training. Contains the following header values: text,
          label
-
         args: a dictionary that contains settings found under
-
         return: None
-
         """
-
-        method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_TC_TRAIN,
-                                                            input_dic_args=args,
-                                                            method_dataclass_args=TCTrainArgs)
+        if type(args) == dict:
+            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_TC_TRAIN,
+                                                         input_dic_args=args,
+                                                         method_dataclass_args=TCTrainArgs)
+        elif type(args) == TCTrainArgs:
+            method_dataclass_args = args
+        else:
+            raise ValueError("Invalid args type. Use a TCTrainArgs object or a dictionary")
 
         self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 
     def eval(self, input_filepath, args=ARGS_TC_EVAL) -> EvalResult:
         """
         Evaluated the text classification answering model
-
         input_filepath: a string that contains the location of a csv file
         for training. Contains the following header values:
-         text, label
+        text, label
 
         return: #todo
         """
-        method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_TC_EVAL,
-                                                            input_dic_args=args,
-                                                            method_dataclass_args=TCEvalArgs)
+        if type(args) == dict:
+            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_TC_EVAL,
+                                                         input_dic_args=args,
+                                                         method_dataclass_args=TCEvalArgs)
+        elif type(args) == TCEvalArgs:
+            method_dataclass_args = args
+        else:
+            raise ValueError("Invalid args type. Use a ARGS_TC_EVAl object or a dictionary")
 
         return self._trainer.eval(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
+
+
     def test(self, input_filepath, args=ARGS_TC_TEST):
         """
         Tests the text classification  model. Used to obtain results
-
         input_filepath: a string that contains the location of a csv file
         for training. Contains the following header value:
          text
         return: #todo
         """
-        method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_TC_TEST,
-                                                            input_dic_args=args,
-                                                            method_dataclass_args=TCTestArgs)
 
-        return self._trainer.test(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
+        if type(args) == dict:
+            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_TC_TEST,
+                                                                input_dic_args=args,
+                                                                method_dataclass_args=TCTestArgs)
+        elif type(args) == TCTestArgs:
+            method_dataclass_args = args
+        else:
+            raise ValueError("Invalid args type. Use a ARGS_TC_TEST object or a dictionary")
+
+        return self._trainer.test(input_filepath=input_filepath, solve=self.classify_text, dataclass_args=method_dataclass_args)

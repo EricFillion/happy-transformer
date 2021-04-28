@@ -13,36 +13,36 @@ import torch
 from happytransformer.happy_trainer import HappyTrainer, EvalResult
 from transformers import DataCollatorWithPadding
 from tqdm import tqdm
-
+from happytransformer.tc.default_args import ARGS_TC_TRAIN, ARGS_TC_EVAL, ARGS_TC_TEST
 @dataclass
 class TCTrainArgs:
-    learning_rate: float
-    weight_decay: float
-    adam_beta1: float
-    adam_beta2: float
-    adam_epsilon: float
-    max_grad_norm: float
-    num_train_epochs: int
-
-    save_preprocessed_data: False
-    save_preprocessed_data_path: ""
-    load_preprocessed_data: False
-    load_preprocessed_data_path: ""
+    learning_rate: float = ARGS_TC_TRAIN["learning_rate"]
+    num_train_epochs: int = ARGS_TC_TRAIN["num_train_epochs"]
+    weight_decay: float = ARGS_TC_TRAIN["weight_decay"]
+    adam_beta1: float = ARGS_TC_TRAIN["adam_beta1"]
+    adam_beta2: float = ARGS_TC_TRAIN["adam_beta2"]
+    adam_epsilon: float = ARGS_TC_TRAIN["adam_epsilon"]
+    max_grad_norm:  float = ARGS_TC_TRAIN["max_grad_norm"]
+    save_preprocessed_data: bool = ARGS_TC_TRAIN["save_preprocessed_data"]
+    save_preprocessed_data_path: str = ARGS_TC_TRAIN["save_preprocessed_data_path"]
+    load_preprocessed_data: bool = ARGS_TC_TRAIN["load_preprocessed_data"]
+    load_preprocessed_data_path: str = ARGS_TC_TRAIN["load_preprocessed_data_path"]
 
 
 @dataclass
 class TCEvalArgs:
-    save_preprocessed_data: False
-    save_preprocessed_data_path: ""
-    load_preprocessed_data: False
-    load_preprocessed_data_path: ""
+    save_preprocessed_data: bool = ARGS_TC_EVAL["save_preprocessed_data"]
+    save_preprocessed_data_path: str = ARGS_TC_EVAL["save_preprocessed_data_path"]
+    load_preprocessed_data: bool = ARGS_TC_EVAL["load_preprocessed_data"]
+    load_preprocessed_data_path: str = ARGS_TC_EVAL["load_preprocessed_data_path"]
 
 @dataclass
 class TCTestArgs:
-    save_preprocessed_data: False
-    save_preprocessed_data_path: ""
-    load_preprocessed_data: False
-    load_preprocessed_data_path: ""
+    save_preprocessed_data: bool = ARGS_TC_TEST["save_preprocessed_data"]
+    save_preprocessed_data_path: str = ARGS_TC_TEST["save_preprocessed_data_path"]
+    load_preprocessed_data: bool = ARGS_TC_TEST["load_preprocessed_data"]
+    load_preprocessed_data_path: str = ARGS_TC_TEST["load_preprocessed_data_path"]
+
 class TCTrainer(HappyTrainer):
     """
     A class for training text classification functionality
