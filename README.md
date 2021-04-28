@@ -20,7 +20,7 @@ Happy Transformer is an package built on top of [Hugging Face's transformer libr
 | Next Sentence Prediction           | ✔            |            | 
 | Token Classification               | ✔            |            | 
 
-##Quick Start
+## Quick Start
 ```sh
 pip install happytransformer
 ```
