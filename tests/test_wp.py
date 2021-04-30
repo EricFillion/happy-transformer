@@ -78,17 +78,21 @@ def test_wp_eval_some_settings():
     assert type(result.loss) == float
 
 
-def test_gen_save_load_train():
+def test_wp_save_load_train():
     happy_wp = HappyWordPrediction('', 'distilroberta-base')
     output_path = "data/wp-train.json"
     data_path = "../data/wp/train-eval.txt"
-    run_save_load_train(happy_wp, output_path, ARGS_WP_TRAIN, data_path, "train")
+    args = ARGS_WP_TRAIN
+    args["line_by_line"] = True
+    run_save_load_train(happy_wp, output_path, args, data_path, "train")
 
-def test_gen_save_load_eval():
+def test_wp_save_load_eval():
     happy_wp = HappyWordPrediction('', 'distilroberta-base')
     output_path = "data/wp-eval.json"
     data_path = "../data/wp/train-eval.txt"
-    run_save_load_train(happy_wp, output_path, ARGS_WP_EVAl, data_path, "eval")
+    args = ARGS_WP_EVAl
+    args["line_by_line"] = True
+    run_save_load_train(happy_wp, output_path, args, data_path, "eval")
 
 def test_wp_save():
     happy = HappyWordPrediction("BERT", "prajjwal1/bert-tiny")
