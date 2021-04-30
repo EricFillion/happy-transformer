@@ -80,13 +80,13 @@ def test_wp_eval_some_settings():
 
 def test_gen_save_load_train():
     happy_wp = HappyWordPrediction('', 'distilroberta-base')
-    output_path = "data/wp-train.txt"
+    output_path = "data/wp-train.json"
     data_path = "../data/wp/train-eval.txt"
     run_save_load_train(happy_wp, output_path, ARGS_WP_TRAIN, data_path, "train")
 
 def test_gen_save_load_eval():
     happy_wp = HappyWordPrediction('', 'distilroberta-base')
-    output_path = "data/wp-eval.txt"
+    output_path = "data/wp-eval.json"
     data_path = "../data/wp/train-eval.txt"
     run_save_load_train(happy_wp, output_path, ARGS_WP_EVAl, data_path, "eval")
 
