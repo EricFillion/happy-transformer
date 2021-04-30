@@ -14,6 +14,8 @@ from happytransformer.happy_trainer import HappyTrainer, EvalResult
 from transformers import DataCollatorWithPadding
 from tqdm import tqdm
 from happytransformer.tc.default_args import ARGS_TC_TRAIN, ARGS_TC_EVAL, ARGS_TC_TEST
+import json
+
 @dataclass
 class TCTrainArgs:
     learning_rate: float = ARGS_TC_TRAIN["learning_rate"]
@@ -49,15 +51,41 @@ class TCTrainer(HappyTrainer):
     """
 
     def train(self, input_filepath, dataclass_args: TCTrainArgs):
-        contexts, labels = self._get_data(input_filepath)
-        train_encodings = self.tokenizer(contexts, truncation=True, padding=True)
+
+        if not dataclass_args.load_preprocessed_data:
+            self.logger.info("Preprocessing dataset...")
+            contexts, labels = self._get_data(input_filepath)
+            train_encodings = self.tokenizer(contexts, truncation=True, padding=True)
+        else:
+            self.logger.info("Loading dataset from %s...", dataclass_args.load_preprocessed_data_path)
+            train_encodings, labels = self._get_preprocessed_data(dataclass_args.load_preprocessed_data_path)
+
+        if dataclass_args.save_preprocessed_data:
+            self.logger.info("Saving training dataset to %s...", dataclass_args.save_preprocessed_data_path)
+            input_ids = train_encodings["input_ids"]
+            attention_mask = train_encodings["attention_mask"]
+            self._generate_json(dataclass_args.save_preprocessed_data_path, input_ids, attention_mask, labels, "train")
+
         train_dataset = TextClassificationDataset(train_encodings, labels)
         data_collator = DataCollatorWithPadding(self.tokenizer)
         self._run_train(train_dataset, dataclass_args, data_collator)
 
-    def eval(self, input_filepath, dataclass_args: TCEvalArgs ):
-        contexts, labels = self._get_data(input_filepath)
-        eval_encodings = self.tokenizer(contexts, truncation=True, padding=True)
+    def eval(self, input_filepath, dataclass_args: TCEvalArgs):
+        if not dataclass_args.load_preprocessed_data:
+            self.logger.info("Preprocessing dataset...")
+            contexts, labels = self._get_data(input_filepath)
+            eval_encodings = self.tokenizer(contexts, truncation=True, padding=True)
+        else:
+            self.logger.info("Loading dataset from %s...", dataclass_args.load_preprocessed_data_path)
+            eval_encodings, labels = self._get_preprocessed_data(dataclass_args.load_preprocessed_data_path)
+
+        if dataclass_args.save_preprocessed_data:
+            self.logger.info("Saving training dataset to %s...", dataclass_args.save_preprocessed_data_path)
+            input_ids = eval_encodings["input_ids"]
+            attention_mask = eval_encodings["attention_mask"]
+            self._generate_json(dataclass_args.save_preprocessed_data_path, input_ids, attention_mask, labels, "train")
+
+
         eval_dataset = TextClassificationDataset(eval_encodings, labels)
         data_collator = DataCollatorWithPadding(self.tokenizer)
 
@@ -97,7 +125,57 @@ class TCTrainer(HappyTrainer):
             return contexts, labels
         return contexts
 
+    @staticmethod
+    def _generate_json(json_path, input_ids, attention_mask, labels, name):
+        data = {}
+        data[name] = []
+        data = {
+            name: [
+                {
+                    'attention_mask': input_id,
+                    'input_ids': attention_mask,
+                    'labels': label
+                }
+                for input_id, attention_mask, label in zip(input_ids, attention_mask, labels)
+            ]
+        }
 
+        with open(json_path, 'w') as outfile:
+            json.dump(data, outfile)
+
+    @staticmethod
+    def _get_preprocessed_data(filepath, test_data=False):
+        """
+        Used for Fetching preprocessed data)
+        :param filepath: a string that contains the location of the data
+        :return:
+
+        train_encodings {'input_ids': [[101, 10166, 2054, 1037, 2307, 2173, 2000, 4521, 102], [101, 9202, 2833, 102, 0, 0, 0, 0, 0], [101, 6659, 2326, 102, 0, 0, 0, 0, 0], [101, 1045, 1005, 1049, 2746, 2182, 2153, 102, 0]], 'attention_mask': [[1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 0, 0, 0, 0, 0], [1, 1, 1, 1, 0, 0, 0, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1, 0]]}
+        labels:  [1, 0, 0, 1]
+        """
+
+        # dataset = load_dataset("csv", data_files={"train": filepath})
+        input_ids = []
+        attention_mask = []
+        labels = []
+        with open(filepath) as json_file:
+            data = json.load(json_file)
+        json_file.close()
+
+        for case in data["train"]:
+            input_ids.append(case['input_ids'])
+            attention_mask.append(case['attention_mask'])
+            labels.append(case['labels'])
+
+
+        train_encodings = {
+            "input_ids": input_ids,
+            "attention_mask": attention_mask
+        }
+
+        if not test_data:
+            return train_encodings, labels
+        return train_encodings
 
 
 class TextClassificationDataset(torch.utils.data.Dataset):
