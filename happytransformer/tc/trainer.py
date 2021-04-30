@@ -144,14 +144,11 @@ class TCTrainer(HappyTrainer):
             json.dump(data, outfile)
 
     @staticmethod
-    def _get_preprocessed_data(filepath, test_data=False):
+    def _get_preprocessed_data(filepath):
         """
         Used for Fetching preprocessed data)
         :param filepath: a string that contains the location of the data
         :return:
-
-        train_encodings {'input_ids': [[101, 10166, 2054, 1037, 2307, 2173, 2000, 4521, 102], [101, 9202, 2833, 102, 0, 0, 0, 0, 0], [101, 6659, 2326, 102, 0, 0, 0, 0, 0], [101, 1045, 1005, 1049, 2746, 2182, 2153, 102, 0]], 'attention_mask': [[1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 0, 0, 0, 0, 0], [1, 1, 1, 1, 0, 0, 0, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1, 0]]}
-        labels:  [1, 0, 0, 1]
         """
 
         # dataset = load_dataset("csv", data_files={"train": filepath})
@@ -173,9 +170,7 @@ class TCTrainer(HappyTrainer):
             "attention_mask": attention_mask
         }
 
-        if not test_data:
-            return train_encodings, labels
-        return train_encodings
+        return train_encodings, labels
 
 
 class TextClassificationDataset(torch.utils.data.Dataset):
