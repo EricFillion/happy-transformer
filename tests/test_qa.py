@@ -3,6 +3,10 @@ Tests for the question answering training, evaluating and testing functionality
 """
 
 from happytransformer.happy_question_answering import HappyQuestionAnswering
+from happytransformer.qa.trainer import QATrainArgs, QAEvalArgs, QATestArgs
+from happytransformer.qa.default_args import ARGS_QA_TRAIN, ARGS_QA_EVAl
+from tests.shared_tests import run_save_load_train
+
 from pytest import approx
 
 def test_qa_answer_question():
@@ -17,6 +21,14 @@ def test_qa_answer_question():
 
         assert sum(answer.score for answer in answers) == approx(1, 0.1)
         assert all('January 8th' in answer.answer for answer in answers)
+
+
+def test_qa_train():
+    happy_qa = HappyQuestionAnswering(
+        model_type='DISTILBERT',
+        model_name='distilbert-base-cased-distilled-squad'
+    )
+    result = happy_qa.train("../data/qa/train-eval.csv")
 
 
 def test_qa_eval():
@@ -58,3 +70,54 @@ def test_qa_save():
     result_after = happy.answer_question("Natural language processing is a subfield of artificial surrounding creating models that understand language","What is natural language processing?")
 
     assert result_before[0].answer == result_after[0].answer
+
+
+def test_qa_with_dic():
+
+    happy_qa = HappyQuestionAnswering()
+    train_args = {'learning_rate': 0.01,  "num_train_epochs": 1}
+
+
+    happy_qa.train("../data/qa/train-eval.csv" , args=train_args)
+
+    eval_args = {}
+
+    result_eval = happy_qa.eval("../data/qa/train-eval.csv", args=eval_args)
+    assert result_eval.loss == approx(2.544920206069, 0.001)
+
+    test_args = {}
+
+    result_test = happy_qa.test("../data/qa/test.csv", args=test_args)
+    assert result_test[0].answer == "October"
+
+def test_tc_with_dataclass():
+
+    happy_qa = HappyQuestionAnswering()
+    train_args = QATrainArgs(learning_rate=0.01, num_train_epochs=1)
+
+    happy_qa.train("../data/qa/train-eval.csv", args=train_args)
+
+    eval_args = QAEvalArgs()
+
+    result_eval = happy_qa.eval("../data/qa/train-eval.csv", args=eval_args)
+    assert result_eval.loss == approx(2.544920206069, 0.001)
+
+
+    test_args = QATestArgs()
+
+    result_test = happy_qa.test("../data/qa/test.csv", args=test_args)
+    assert result_test[0].answer == "October"
+
+
+def test_tc_save_load_train():
+    happy_wp = HappyQuestionAnswering()
+    output_path = "data/qa-train.json"
+    data_path = "../data/qa/train-eval.csv"
+    run_save_load_train(happy_wp, output_path, ARGS_QA_TRAIN, data_path, "train")
+
+
+def test_tc_save_load_eval():
+    happy_wp = HappyQuestionAnswering()
+    output_path = "data/qa-train.json"
+    data_path = "../data/qa/train-eval.csv"
+    run_save_load_train(happy_wp, output_path, ARGS_QA_EVAl, data_path, "train")

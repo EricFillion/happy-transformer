@@ -6,7 +6,10 @@ from happytransformer import(
     GEN_TOP_K_SAMPLING_SETTINGS,
     GEN_GENERIC_SAMPLING_SETTINGS
 )
+from happytransformer.gen.trainer import GENTrainArgs, GENEvalArgs
 from tests.shared_tests import run_save_load_train
+from pytest import approx
+
 
 
 def test_default_simple():
@@ -128,31 +131,31 @@ def test_max_setting_included():
 
 def test_gen_train_basic():
     happy_gen = HappyGeneration()
-    happy_gen.train("../data/gen/train.txt")
+    happy_gen.train("../data/gen/train-eval.txt")
 
 def test_gen_eval_basic():
     happy_gen = HappyGeneration()
-    result = happy_gen.eval("../data/gen/train.txt")
+    result = happy_gen.eval("../data/gen/train-eval.txt")
     assert type(result.loss) == float
 
 def test_gen_train_effectiveness_multi():
     happy_gen = HappyGeneration()
-    before_result = happy_gen.eval("../data/gen/train.txt")
-    happy_gen.train("../data/gen/train.txt")
-    after_result = happy_gen.eval("../data/gen/train.txt")
+    before_result = happy_gen.eval("../data/gen/train-eval.txt")
+    happy_gen.train("../data/gen/train-eval.txt")
+    after_result = happy_gen.eval("../data/gen/train-eval.txt")
 
     assert after_result.loss < before_result.loss
 
 def test_gen_save_load_train():
     happy_gen = HappyGeneration()
     output_path = "data/gen-train.txt"
-    data_path = "../data/gen/train.txt"
+    data_path = "../data/gen/train-eval.txt"
     run_save_load_train(happy_gen, output_path, ARGS_GEN_TRAIN, data_path, "train")
 
 def test_gen_save_load_eval():
     happy_gen = HappyGeneration()
     output_path = "data/wp-eval.txt"
-    data_path = "../data/gen/train.txt"
+    data_path = "../data/gen/train-eval.txt"
     run_save_load_train(happy_gen, output_path, ARGS_GEN_EVAl, data_path, "eval")
 
 def test_gen_save():
@@ -164,3 +167,33 @@ def test_gen_save():
     result_after=happy.generate_text("Natural language processing is")
 
     assert result_before == result_after
+
+
+
+def test_wp_train_eval_with_dic():
+
+    happy_gen = HappyGeneration()
+    train_args = {'learning_rate': 0.01,  "num_train_epochs": 1}
+
+
+    happy_gen.train("../data/gen/train-eval.txt" , args=train_args)
+    eval_args = {}
+
+    after_result = happy_gen.eval("../data/gen/train-eval.txt", args=eval_args)
+
+    assert after_result.loss == approx(12.20901870727539, 0.001)
+
+
+def test_wp_train_eval_with_dataclass():
+
+    happy_gen = HappyGeneration()
+    train_args = GENTrainArgs(learning_rate=0.01, num_train_epochs=1)
+
+    happy_gen.train("../data/gen/train-eval.txt" , args=train_args)
+
+    eval_args = GENEvalArgs()
+
+    after_result = happy_gen.eval("../data/wp/train-eval.txt", args=eval_args)
+
+    assert after_result.loss == approx(14.784769058227539, 0.001)
+

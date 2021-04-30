@@ -3,7 +3,11 @@ Tests for Text Classification Functionality
 """
 
 from happytransformer.happy_text_classification import HappyTextClassification, TextClassificationResult
+from happytransformer.tc.trainer import TCTrainArgs, TCEvalArgs, TCTestArgs
+from happytransformer.tc.default_args import ARGS_TC_TRAIN
+from tests.shared_tests import run_save_load_train
 from pytest import approx
+
 
 
 def test_classify_text():
@@ -16,6 +20,14 @@ def test_classify_text():
         result = happy_tc.classify_text("What a great movie")
         assert result.label == 'LABEL_1'
         assert result.score > 0.9
+
+
+def test_tc_train():
+    happy_tc = HappyTextClassification(
+        model_type="DISTILBERT",
+        model_name="distilbert-base-uncased-finetuned-sst-2-english"
+    )
+    results = happy_tc.train("../data/tc/train-eval.csv")
 
 
 def test_tc_eval():
@@ -77,3 +89,50 @@ def test_tc_save():
     result_after = happy.classify_text("What a great movie")
 
     assert result_before.label==result_after.label
+    
+
+def test_tc_with_dic():
+
+    happy_tc = HappyTextClassification()
+    train_args = {'learning_rate': 0.01,  "num_train_epochs": 1}
+
+
+    happy_tc.train("../data/tc/train-eval.csv" , args=train_args)
+
+    eval_args = {}
+
+    result_eval = happy_tc.eval("../data/tc/train-eval.csv", args=eval_args)
+
+    test_args = {}
+
+    result_test = happy_tc.test("../data/tc/test.csv", args=test_args)
+
+
+def test_tc_with_dataclass():
+
+    happy_tc = HappyTextClassification()
+    train_args = TCTrainArgs(learning_rate=0.01, num_train_epochs=1)
+
+    happy_tc.train("../data/tc/train-eval.csv", args=train_args)
+
+    eval_args = TCEvalArgs()
+
+    result_eval= happy_tc.eval("../data/tc/train-eval.csv", args=eval_args)
+
+
+    test_args = TCTestArgs()
+
+    result_test = happy_tc.test("../data/tc/test.csv", args=test_args)
+
+def test_tc_save_load_train():
+    happy_wp = HappyTextClassification()
+    output_path = "data/tc-train.json"
+    data_path = "../data/tc/train-eval.csv"
+    run_save_load_train(happy_wp, output_path, ARGS_TC_TRAIN, data_path, "train")
+
+
+def test_tc_save_load_eval():
+    happy_wp = HappyTextClassification()
+    output_path = "data/tc-train.json"
+    data_path = "../data/tc/train-eval.csv"
+    run_save_load_train(happy_wp, output_path, ARGS_TC_TRAIN, data_path, "train")

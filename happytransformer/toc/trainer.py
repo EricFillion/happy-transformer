@@ -10,5 +10,5 @@ class TOCTrainer(HappyTrainer):
     def eval(self, input_filepath, args):
         raise NotImplementedError()
 
-    def test(self, input_filepath, pipeline):
+    def test(self, input_filepath, solve, args):
         raise NotImplemented

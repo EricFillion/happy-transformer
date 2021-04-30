@@ -8,6 +8,7 @@ from happytransformer.gen.trainer import GENTrainer, GENTrainArgs, GENEvalArgs
 from happytransformer.adaptors import get_adaptor
 from happytransformer.gen import ARGS_GEN_TRAIN, ARGS_GEN_EVAl, ARGS_GEN_TEST
 from happytransformer.happy_trainer import EvalResult
+from happytransformer.fine_tuning_util import create_args_dataclass
 
 """
 The main settings that users will adjust when performing experiments
@@ -154,15 +155,29 @@ class HappyGeneration(HappyTransformer):
 
 
     def train(self, input_filepath, args=ARGS_GEN_TRAIN):
-        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_GEN_TRAIN,
-                                                            input_dic_args=args,
-                                                            method_dataclass_args=GENTrainArgs)
+
+        if type(args) == dict:
+            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_GEN_TRAIN,
+                                                         input_dic_args=args,
+                                                         method_dataclass_args=GENTrainArgs)
+        elif type(args) == GENTrainArgs:
+            method_dataclass_args = args
+        else:
+            raise ValueError("Invalid args type. Use a GENTrainArgs object or a dictionary")
+
         self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 
     def eval(self, input_filepath, args=ARGS_GEN_EVAl) -> EvalResult:
-        method_dataclass_args = self._create_args_dataclass(default_dic_args=ARGS_GEN_EVAl,
-                                                            input_dic_args=args,
-                                                            method_dataclass_args=GENEvalArgs)
+
+        if type(args) == dict:
+            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_GEN_EVAl,
+                                                         input_dic_args=args,
+                                                         method_dataclass_args=GENEvalArgs)
+        elif type(args) == GENEvalArgs:
+            method_dataclass_args = args
+        else:
+            raise ValueError("Invalid args type. Use a GENEvalArgs object or a dictionary")
+
         return self._trainer.eval(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 
     def test(self, input_filepath, args=ARGS_GEN_TEST):
