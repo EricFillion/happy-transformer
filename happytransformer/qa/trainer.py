@@ -12,9 +12,8 @@ from dataclasses import dataclass
 import csv
 from tqdm import tqdm
 import torch
-
+import json
 from transformers import DataCollatorWithPadding
-
 from happytransformer.happy_trainer import HappyTrainer, EvalResult
 from happytransformer.qa.default_args import ARGS_QA_TRAIN, ARGS_QA_EVAl, ARGS_QA_TEST
 
@@ -56,13 +55,28 @@ class QATrainer(HappyTrainer):
         """
         See docstring in HappyQuestionAnswering.train()
         """
-        contexts, questions, answers = self._get_data(input_filepath)
-        self.__add_end_idx(contexts, answers)
-        encodings = self.tokenizer(contexts, questions, truncation=True, padding=True)
-        self.__add_token_positions(encodings, answers)
-        dataset = QuestionAnsweringDataset(encodings)
-        data_collator = DataCollatorWithPadding(self.tokenizer)
-        self._run_train(dataset, dataclass_args, data_collator)
+        if not dataclass_args.load_preprocessed_data:
+            self.logger.info("Preprocessing dataset...")
+            contexts, questions, answers = self._get_data(input_filepath)
+            self.__add_end_idx(contexts, answers)
+            encodings = self.tokenizer(contexts, questions, truncation=True, padding=True)
+            self.__add_token_positions(encodings, answers)
+            print("encodings", encodings)
+        else:
+            self.logger.info("Loading dataset from %s...", dataclass_args.load_preprocessed_data_path)
+            encodings = self._get_preprocessed_data(dataclass_args.load_preprocessed_data_path)
+
+        print("test, ", dataclass_args.save_preprocessed_data)
+        if dataclass_args.save_preprocessed_data:
+            input_ids = encodings["input_ids"]
+            attention_masks = encodings["attention_mask"]
+            start_positions = encodings["start_positions"]
+            end_positions = encodings["end_positions"]
+            self._generate_json(dataclass_args.save_preprocessed_data_path, input_ids, attention_masks, start_positions, end_positions, "train")
+
+        #dataset = QuestionAnsweringDataset(encodings)
+        # data_collator = DataCollatorWithPadding(self.tokenizer)
+        # self._run_train(dataset, dataclass_args, data_collator)
 
 
 
@@ -156,6 +170,60 @@ class QATrainer(HappyTrainer):
             if end_positions[-1] is None:
                 end_positions[-1] = self.tokenizer.model_max_length
         encodings.update({'start_positions': start_positions, 'end_positions': end_positions})
+
+
+    @staticmethod
+    def _generate_json(json_path, input_ids, attention_masks, start_positions, end_positions, name):
+        data = {}
+        data[name] = []
+        data = {
+            name: [
+                {
+                    'input_ids': input_id,
+                    'attention_mask': attention_mask,
+                    'start_positions': start_positions,
+                    'end_positions': end_positions
+
+                }
+                for input_id, attention_mask, start_position, end_position in zip(input_ids, attention_masks, start_positions, end_positions)
+            ]
+        }
+
+        with open(json_path, 'w') as outfile:
+            json.dump(data, outfile)
+
+
+    @staticmethod
+    def _get_preprocessed_data(filepath):
+        """
+        Used for Fetching preprocessed data)
+        :param filepath: a string that contains the location of the data
+        :return:
+        """
+
+        # dataset = load_dataset("csv", data_files={"train": filepath})
+        input_ids = []
+        attention_mask = []
+        start_positions = []
+        end_positions = []
+
+        with open(filepath) as json_file:
+            data = json.load(json_file)
+        json_file.close()
+
+        for case in data["train"]:
+            input_ids.append(case['input_ids'])
+            attention_mask.append(case['attention_mask'])
+            start_positions.append(case['start_positions'])
+            end_positions.append(case['end_positions'])
+
+        encodings = {
+            "input_ids": input_ids,
+            "attention_mask": attention_mask,
+            "start_positions": start_positions,
+            "end_positions": end_positions}
+
+        return encodings
 
 
 class QuestionAnsweringDataset(torch.utils.data.Dataset):
