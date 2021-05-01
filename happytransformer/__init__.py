@@ -17,12 +17,7 @@ from happytransformer.tc.trainer import TCTrainArgs, TCEvalArgs, TCTestArgs
 from happytransformer.wp.trainer import WPTrainArgs, WPEvalArgs
 
 from happytransformer.happy_generation import (
-    HappyGeneration,
-    GEN_DEFAULT_SETTINGS,
-    GEN_GREEDY_SETTINGS,
-    GEN_BEAM_SETTINGS,
-    GEN_TOP_K_SAMPLING_SETTINGS,
-    GEN_GENERIC_SAMPLING_SETTINGS,
+    HappyGeneration, GENSettings
 )
 
 name = "happytransformer"

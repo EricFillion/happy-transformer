@@ -17,43 +17,14 @@ They may still modify all of the settings found here:
     https://huggingface.co/transformers/main_classes/model.html#generation.
 The values for full_settings are the same as the default values above except for min and max length. 
 """
-GEN_DEFAULT_SETTINGS = {
-    "do_sample": False,
-    "early_stopping": False,
-    "num_beams": 1,
-    "temperature": 1,
-    "top_k": 50,
-    "no_repeat_ngram_size": 0,
-}
-
-# greedy is prone to repetition loops. So, we'll set no_repeat_ngram_size to 2.
-GEN_GREEDY_SETTINGS = {
-    "do_sample": False,
-    "early_stopping": False,
-    "no_repeat_ngram_size": 2,
-}
-
-GEN_BEAM_SETTINGS = {
-    "do_sample": False,
-    "early_stopping": True,
-    "num_beams": 5,
-}
-
-GEN_GENERIC_SAMPLING_SETTINGS = {
-    "do_sample": True,
-    "early_stopping": False,
-    "top_k": 0,
-    "temperature": 0.7,
-}
-
-
-GEN_TOP_K_SAMPLING_SETTINGS = {
-    "do_sample": True,
-    "early_stopping": False,
-    "top_k": 50,
-    "temperature": 0.7,
-}
-
+@dataclass
+class GENSettings:
+    do_sample: bool = False
+    early_stopping: bool = False
+    num_beams: int = 1
+    temperature: float = 1
+    top_k: int = 50
+    no_repeat_ngram_size: int = 0
 
 @dataclass
 class GenerationResult:
@@ -85,34 +56,35 @@ class HappyGeneration(HappyTransformer):
             raise ValueError("The text input must have at least one character")
 
 
-    def generate_text(self, text, settings=GEN_BEAM_SETTINGS,
-                      min_length=20, max_length=60) -> GenerationResult:
+    def generate_text(self, text, args: GENSettings=GENSettings(),
+                      min_length: int = 20, max_length: int = 60) -> GenerationResult:
         """
         :param text: starting text that the model uses to generate text with.
-        :param settings: A dictionary that contains settings that determine what
-         algorithm is used to generate text
+        :param settings: A GENSettings object
         :param min_length: The minimum number of tokens for the output
         :param max_length: The maximum number of tokens for the output
         :return: Text that the model generates.
         """
 
         self.__assert_default_text_is_val(text)
-        self.__validate_settings(settings, min_length, max_length)
-
         input_ids = self.tokenizer.encode(text, return_tensors="pt")
         adjusted_min_length = min_length + len(input_ids[0])
         adjusted_max_length = max_length + len(input_ids[0])
 
         output = self.model.generate(input_ids,
-                                     **settings,
                                      min_length=adjusted_min_length,
                                      max_length=adjusted_max_length,
+                                     do_sample=args.do_sample,
+                                     early_stopping=args.early_stopping,
+                                     num_beams=args.num_beams,
+                                     temperature=args.temperature,
+                                     top_k=args.top_k,
+                                     no_repeat_ngram_size=args.no_repeat_ngram_size
                                      )
         result = self.tokenizer.decode(output[0], skip_special_tokens=True)
         final_result = self.__post_process_generated_text(result, text)
 
         return GenerationResult(text=final_result)
-
 
 
     def __post_process_generated_text(self, result, text):
@@ -124,34 +96,6 @@ class HappyGeneration(HappyTransformer):
         """
 
         return result[len(text):]
-
-    def __validate_settings(self, settings, min_length, max_length):
-        """
-        The default function for min_length and max_length within Hugging Face is for the
-        min/max  number of tokens of the combined input/output .
-
-        We believe it makes more sense for them to be just for the output.
-
-        So, we added custom min_length and max_length to the generate function.
-
-        We must ensure that the user does not include
-        min_length/max_length within the input dictionary
-        """
-        if "min_length" in settings:
-            self.logger.warning('"min_length" is a parameter for the method "generate_text".'
-                                ' Please use this parameter instead of adding '
-                                'it to the settings dictionary. %s, is being used.'
-                                ' It represents the minimum number of tokens for the output',
-                                str(min_length))
-            del settings["min_length"]
-
-        if "max_length" in settings:
-            self.logger.warning('"max_length" is a parameter for the method "generate_text".'
-                                'Please use this parameter instead of adding it to '
-                                'the settings dictionary. %s is being used. '
-                                'It represents the  maximum number of tokens for the output',
-                                str(max_length))
-            del settings["max_length"]
 
 
     def train(self, input_filepath, args=ARGS_GEN_TRAIN):
