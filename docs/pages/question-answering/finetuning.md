@@ -20,20 +20,19 @@ inputs:
 2. args (QATrainArgs): a dataclass of type QATrainArgs which contains the fields shown in table 3.1
 
 
-
 #### Table 3.0
+
+1. context (string): background information for answer the question
+2. question (string): the question that will be asked 
+3. answer_text(string): the answer in string format 
+4. answer_start(int): the char index of the start of the answer
 
 | context                   | question          | answer_text   | answer_start |
 |---------------------------|-------------------|---------------|--------------|
 | October 31st is the date  | what is the date? | October 31st  | 0            |
 | The date is November 23rd | what is the date? | November 23rd | 12           |
 
-##### Explanation 
 
-1. context (string): background information for answer the question
-2. question (string): the question that will be asked 
-3. answer_text(string): the answer in string format 
-4. answer_start(int): the char index of the start of the answer
 
 Information about the learning parameters can be found [here](/learning-parameters/)
 
@@ -94,7 +93,7 @@ Output: A dataclass with the variable "loss"
     from happytransformer import HappyQuestionAnswering, QAEvalArgs
     # --------------------------------------#
     happy_qa = HappyQuestionAnswering()
-    args = QAEvalArgs() # just to show how to import it. Using default settings. 
+    args = QAEvalArgs() # Using the default settings as an example
     result = happy_qa.eval("../../data/qa/train-eval.csv")
     print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
     print(result)  # EvalResult(eval_loss=0.11738169193267822)
@@ -126,7 +125,7 @@ Output: A list of named tuples with keys: "answer", "score", "start" and "end"
     from happytransformer import HappyQuestionAnswering, QATestArgs
     # --------------------------------------#
     happy_qa = HappyQuestionAnswering()
-    args = QATestArgs() # just using default settings for show
+    args = QATestArgs() #  Using the default settings as an example
     result = happy_qa.test("../../data/qa/test.csv", args=args)
     print(type(result))
     print(result)  # [QuestionAnsweringResult(answer='October 31st', score=0.9939756989479065, start=0, end=12), QuestionAnsweringResult(answer='November 23rd', score=0.967872679233551, start=12, end=25)]
@@ -135,5 +134,3 @@ Output: A list of named tuples with keys: "answer", "score", "start" and "end"
 
 ```
 
-
-To reuse preprocessed data see this [page](/save-load-data/)
