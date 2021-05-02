@@ -16,27 +16,9 @@ HappyTextClassification contains three methods for training
 ### train()
 
 inputs: 
-1. input_filepath (string): a path file to a csv file as described in table 2.1
-2. args (dictionary): a dictionary with the same keys and value types as shown below. 
-The dictionary below shows the default values. 
+1. input_filepath (string): a path file to a csv file as described in table 2.0
+2. args (TCTrainArgs): a dataclass. It has the possible values show in table 2.1
 
-Information about what the keys mean can be accessed [here](https://huggingface.co/transformers/main_classes/trainer.html#transformers.TrainingArguments)
-```python
-
-ARGS_QA_TRAIN= {
-    'learning_rate': 5e-5,
-    'weight_decay': 0,
-    'adam_beta1': 0.9,
-    'adam_beta2': 0.999,
-    'adam_epsilon': 1e-8,
-    'max_grad_norm':  1.0,
-    'num_train_epochs': 3.0,
-
-}
-```
-
-Output: None
- 
 #### Table 2.0
 
 1. text (string): text to be classified 
@@ -49,14 +31,37 @@ Output: None
 | Terrible service              | 0     |
 | I'm coming here again         | 1     |
 
+
+#### Table 2.1
+Information about the learning parameters can be found [here](/learning-parameters/)
+Information about saving/loading preprocessed data can be found [here](/save-load/)
+
+
+| Parameter                     |Default|
+|-------------------------------|-------|
+| learning_rate                 | 5e-5  |
+| num_train_epochs              | 3.0   |
+| weight_decay                  | 0     |
+| adam_beta1                    | 0.9   |
+| adam_beta2                    | 0.999 |
+| adam_epsilon                  | 1e-8  |
+| max_grad_norm                 | 1.0   |
+| save_preprocessed_data        | False |
+| save_preprocessed_data_path   | ""    |
+| load_preprocessed_data        | False |
+| load_preprocessed_data_path   | ""    |
+ 
+Output: None
+
 #### Example 2.2:
 ```python
-    from happytransformer import HappyTextClassification
+    from happytransformer import HappyTextClassification, TCTrainArgs
     # --------------------------------------#
-     happy_tc = HappyTextClassification(model_type="DISTILBERT",
+    happy_tc = HappyTextClassification(model_type="DISTILBERT",
                                        model_name="distilbert-base-uncased-finetuned-sst-2-english",
                                        num_labels=2)  # Don't forget to set num_labels! 
-    happy_tc.train("../../data/tc/train-eval.csv")
+    args = TCTrainArgs(num_train_epochs=1)
+    happy_tc.train("../../data/tc/train-eval.csv", args=args)
 
 ```
 
@@ -70,12 +75,13 @@ An object with the field "loss"
 
 #### Example 2.3:
 ```python
-    from happytransformer import HappyTextClassification
+    from happytransformer import HappyTextClassification, TCEvalArgs
     # --------------------------------------#
     happy_tc = HappyTextClassification(model_type="DISTILBERT",
                                        model_name="distilbert-base-uncased-finetuned-sst-2-english",
                                        num_labels=2)  # Don't forget to set num_labels!
-    result = happy_tc.eval("../../data/tc/train-eval.csv")
+    args = TCEvalArgs(save_preprocessed_data=False) # for demonstration -- not needed 
+    result = happy_tc.eval("../../data/tc/train-eval.csv", args=args)
     print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
     print(result)  # EvalResult(eval_loss=0.007262040860950947)
     print(result.loss)  # 0.007262040860950947
@@ -90,7 +96,7 @@ Output: A list of named tuples with keys: "label" and "score"
 
 The list is in order by ascending csv index. 
 
-#### Table 2.1
+#### Table 2.2
 
 1. text (string): text that will be classified  
 
@@ -100,6 +106,7 @@ The list is in order by ascending csv index.
 | Horrible food                 |
 | Terrible service              |
 | I'm coming here again         |
+
 
 #### Example 2.4:
 ```python
@@ -134,6 +141,5 @@ The list is in order by ascending csv index.
     # Since after_loss < before_loss, the model learned!
     # Note: typically you evaluate with a separate dataset
     # but for simplicity we used the same one
-
 
 ```

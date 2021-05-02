@@ -9,18 +9,15 @@ from tests.shared_tests import run_save_load_train
 
 from pytest import approx
 
-def test_qa_answer_question():
-    MODELS = [
-        ('ALBERT', 'twmkn9/albert-base-v2-squad2'),
-        ('ROBERTA', 'deepset/roberta-base-squad2'),
-        ('BERT', 'mrm8488/bert-tiny-5-finetuned-squadv2')
-    ]
-    for model_type, model_name in MODELS:
-        happy_qa = HappyQuestionAnswering(model_name=model_name, model_type=model_type)
-        answers = happy_qa.answer_question("Today's date is January 8th 2021", "What is the date?", top_k=3)
+def test_qa_basic():
 
-        assert sum(answer.score for answer in answers) == approx(1, 0.1)
-        assert all('January 8th' in answer.answer for answer in answers)
+    happy_qa = HappyQuestionAnswering()
+    result = happy_qa.answer_question("Today's date is January 8th 2021", "What is the date?", top_k=10)
+    assert result[0].answer == 'January 8th 2021'
+    assert result[0].score == approx(0.9696964621543884, 1)
+
+    #assert sum(answer.score for answer in answers) == approx(1, 0.5)
+    #assert all('January 8th' in answer.answer for answer in answers)
 
 
 def test_qa_train():
