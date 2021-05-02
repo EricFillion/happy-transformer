@@ -47,7 +47,6 @@ class GENTrainer(HappyTrainer):
 
     def train(self, input_filepath, dataclass_args: GENTrainArgs):
         """
-
         :param input_filepath: A file path to a text file that contains nothing but training data
         :param dataclass_args: A GENTrainArgs() object
         :return: None
@@ -76,7 +75,7 @@ class GENTrainer(HappyTrainer):
 
     def eval(self, input_filepath, dataclass_args: GENEvalArgs):
         """
-        :param input_filepath: A file path to a text file that contains nothing but training data
+        :param input_filepath: A file path to a text file that contains nothing but evaluating data
         :param dataclass_args: A GENEvalArgs() object
         :return: An EvalResult() object
         """
@@ -109,7 +108,6 @@ class GENTrainer(HappyTrainer):
 
     def _generate_json(self, json_path, dataset, name):
         """
-
         :param json_path: A path to a json file that will be created/overwritten
         :param dataset: A list of dictionaries that contain the keys "attention_mask," "input_ids" and "labels"
         :param name: A string to specify if the written data is for "Train" or "Eval"
