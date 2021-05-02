@@ -8,7 +8,7 @@ has_children: true
 ---
 
 ## Question Answering 
-Initialize a HappyQuestionAnswering object to perform question answering. 
+Initialize a HappyQuestionAnswering() object to perform question answering. 
 
 This model answers a question given a body of that's text relevant to the questions. 
 

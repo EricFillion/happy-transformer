@@ -73,7 +73,7 @@ Input:
 2. args (QAEvalArgs): a dataclass of type QAEvalArgs which contains the fields shown in Table 3.3
 
 
-Information about saving/loading preprocessed data can be found [here](/save-load/)
+Information about saving/loading preprocessed data can be found [here](/save-load-data/)
 
 #### Table 3.2
 
@@ -93,7 +93,7 @@ Output: A dataclass with the variable "loss"
     from happytransformer import HappyQuestionAnswering, QAEvalArgs
     # --------------------------------------#
     happy_qa = HappyQuestionAnswering()
-    args = QAEvalArgs() # Using the default settings as an example
+    args = QAEvalArgs() #  The default settings as an example
     result = happy_qa.eval("../../data/qa/train-eval.csv")
     print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
     print(result)  # EvalResult(eval_loss=0.11738169193267822)
