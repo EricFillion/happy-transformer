@@ -21,6 +21,9 @@ main.py
 tests/model/
 tests/data/
 
+# just in case someone runs pytest from the top level directory
+model/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
