@@ -13,12 +13,12 @@ from happytransformer.fine_tuning_util import create_args_dataclass
 """
 The main settings that users will adjust when performing experiments
 
-They may still modify all of the settings found here:
-    https://huggingface.co/transformers/main_classes/model.html#generation.
 The values for full_settings are the same as the default values above except for min and max length. 
 """
 @dataclass
 class GENSettings:
+    min_length: int = 10
+    max_length: int = 50
     do_sample: bool = False
     early_stopping: bool = False
     num_beams: int = 1
@@ -56,20 +56,18 @@ class HappyGeneration(HappyTransformer):
             raise ValueError("The text input must have at least one character")
 
 
-    def generate_text(self, text, args: GENSettings=GENSettings(),
-                      min_length: int = 20, max_length: int = 60) -> GenerationResult:
+    def generate_text(self, text, args: GENSettings=GENSettings()) -> GenerationResult:
         """
         :param text: starting text that the model uses to generate text with.
         :param settings: A GENSettings object
-        :param min_length: The minimum number of tokens for the output
-        :param max_length: The maximum number of tokens for the output
+
         :return: Text that the model generates.
         """
 
         self.__assert_default_text_is_val(text)
         input_ids = self.tokenizer.encode(text, return_tensors="pt")
-        adjusted_min_length = min_length + len(input_ids[0])
-        adjusted_max_length = max_length + len(input_ids[0])
+        adjusted_min_length = args.min_length + len(input_ids[0])
+        adjusted_max_length = args.max_length + len(input_ids[0])
 
         output = self.model.generate(input_ids,
                                      min_length=adjusted_min_length,
