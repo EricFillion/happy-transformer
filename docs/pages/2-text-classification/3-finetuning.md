@@ -34,8 +34,7 @@ inputs:
 
 #### Table 2.1
 Information about the learning parameters can be found [here](/learning-parameters/)
-Information about saving/loading preprocessed data can be found [here](/save-load/)
-
+Information about saving/loading preprocessed data can be found [here](/save-load-data/)
 
 | Parameter                     |Default|
 |-------------------------------|-------|
@@ -117,10 +116,10 @@ The list is in order by ascending csv index.
                                        num_labels=2)  # Don't forget to set num_labels!
     result = happy_tc.test("../../data/tc/test.csv")
     print(type(result))  # <class 'list'>
-    print(result)  # [TextClassificationResult(label='LABEL_1', score=0.9998401999473572), TextClassificationResult(label='LABEL_0', score=0.9772131443023682)...
+    print(result)  # [TextClassificationResult(label='POSITIVE', score=0.9998401999473572), TextClassificationResult(label='LABEL_0', score=0.9772131443023682)...
     print(type(result[0]))  # <class 'happytransformer.happy_text_classification.TextClassificationResult'>
-    print(result[0])  # TextClassificationResult(label='LABEL_1', score=0.9998401999473572)
-    print(result[0].label)  # LABEL_1
+    print(result[0])  # TextClassificationResult(label='POSITIVE', score=0.9998401999473572)
+    print(result[0].label)  # POSITIVE
 
 
 ```

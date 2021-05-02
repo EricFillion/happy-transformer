@@ -23,7 +23,7 @@ An object with fields "label" and "score"
     happy_tc = HappyTextClassification(model_type="DISTILBERT",  model_name="distilbert-base-uncased-finetuned-sst-2-english")
     result = happy_tc.classify_text("Great movie! 5/5")
     print(type(result))  # <class 'happytransformer.happy_text_classification.TextClassificationResult'>
-    print(result)  # TextClassificationResult(label='LABEL_1', score=0.9998761415481567)
+    print(result)  # TextClassificationResult(label='POSITIVE', score=0.9998761415481567)
     print(result.label)  # LABEL_1
 
 ```

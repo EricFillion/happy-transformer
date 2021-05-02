@@ -1,6 +1,6 @@
 ---
 title: Text Classification
-nav_order: 8
+nav_order: 7
 layout: page
 permalink: /text-classification/
 has_children: true
@@ -8,7 +8,7 @@ has_children: true
 
 ## Text Classification
 
-Initialize a HappyTextClassification object to perform text classification. 
+Initialize a HappyTextClassification() object to perform text classification. 
 
 This model assigns a label to a given text string. For example, you can train a model to 
 detect if an email is spam based on its text. 

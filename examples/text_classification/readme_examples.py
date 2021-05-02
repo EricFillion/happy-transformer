@@ -1,40 +1,42 @@
-from happytransformer import HappyTextClassification
+from happytransformer import HappyTextClassification, TCTrainArgs, TCEvalArgs, TCTestArgs
 from happytransformer import HappyTokenClassification
 
 
-def example_5_0():
-    happy_tc_distilbert = HappyTextClassification()  # default with "distilbert-base-uncased"
+def example_2_0():
+    happy_tc_distilbert = HappyTextClassification("DISTILBERT", "distilbert-base-uncased", num_labels=2)  # default
     happy_tc_albert = HappyTextClassification(model_type="ALBERT", model_name="albert-base-v2")
     happy_tc_bert = HappyTextClassification("BERT", "bert-base-uncased")
-    happy_tc_roberta = HappyTextClassification("ROBERTA", "deepset/roberta-base-squad2")
+    happy_tc_roberta = HappyTextClassification("ROBERTA", "roberta-base")
 
 
-def example_5_1():
+def example_2_1():
     happy_tc = HappyTextClassification(model_type="DISTILBERT",  model_name="distilbert-base-uncased-finetuned-sst-2-english")
     result = happy_tc.classify_text("Great movie! 5/5")
     print(type(result))  # <class 'happytransformer.happy_text_classification.TextClassificationResult'>
-    print(result)  # TextClassificationResult(label='LABEL_1', score=0.9998761415481567)
-    print(result.label)  # LABEL_1
+    print(result)  # TextClassificationResult(label='POSITIVE', score=0.9998761415481567)
+    print(result.label)  # POSITIVE
 
-
-def example_6_1():
+def example_2_2():
     happy_tc = HappyTextClassification(model_type="DISTILBERT",
                                        model_name="distilbert-base-uncased-finetuned-sst-2-english",
                                        num_labels=2)  # Don't forget to set num_labels!
     happy_tc.train("../../data/tc/train-eval.csv")
 
 
-def example_6_2():
+def example_2_3():
     happy_tc = HappyTextClassification(model_type="DISTILBERT",
                                        model_name="distilbert-base-uncased-finetuned-sst-2-english",
                                        num_labels=2)  # Don't forget to set num_labels!
-    result = happy_tc.eval("../../data/tc/train-eval.csv")
+    args = TCEvalArgs(save_preprocessed_data=False)  # for demonstration -- not needed
+    result = happy_tc.eval("../../data/tc/train-eval.csv", args=args)
     print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
     print(result)  # EvalResult(eval_loss=0.007262040860950947)
     print(result.loss)  # 0.007262040860950947
 
 
-def example_6_3():
+def example_2_4():
+    from happytransformer import HappyTextClassification
+    # --------------------------------------#
     happy_tc = HappyTextClassification(model_type="DISTILBERT",
                                        model_name="distilbert-base-uncased-finetuned-sst-2-english",
                                        num_labels=2)  # Don't forget to set num_labels!
@@ -42,11 +44,13 @@ def example_6_3():
     print(type(result))  # <class 'list'>
     print(result)  # [TextClassificationResult(label='LABEL_1', score=0.9998401999473572), TextClassificationResult(label='LABEL_0', score=0.9772131443023682)...
     print(type(result[0]))  # <class 'happytransformer.happy_text_classification.TextClassificationResult'>
-    print(result[0])  # TextClassificationResult(label='LABEL_1', score=0.9998401999473572)
-    print(result[0].label)  # LABEL_1
+    print(result[0])  # TextClassificationResult(label='POSITIVE', score=0.9998401999473572)
+    print(result[0].label)  # POSITIVE
 
 
-def example_6_4():
+def example_2_5():
+    from happytransformer import HappyTextClassification
+    # --------------------------------------#
     happy_tc = HappyTextClassification(model_type="DISTILBERT",
                                        model_name="distilbert-base-uncased-finetuned-sst-2-english",
                                        num_labels=2)  # Don't forget to set num_labels!
@@ -61,13 +65,13 @@ def example_6_4():
 
 
 def main():
-    # example_5_0()
-    # example_5_1()
-    # example_6_0()
-    # example_6_1()
-    # example_6_2()
-    # example_6_3()
-    example_6_4()
+    # example_2_0()
+    # example_2_1()
+    # example_2_2()
+    #example_2_3()
+    # example_2_4()
+    example_2_5()
+
 
 
 if __name__ == "__main__":
