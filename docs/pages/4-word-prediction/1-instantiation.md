@@ -1,6 +1,6 @@
 ---
 title: Word Prediction
-nav_order: 7
+nav_order: 9
 layout: page
 permalink: /word-prediction/
 has_children: true
