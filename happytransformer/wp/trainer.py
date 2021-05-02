@@ -48,6 +48,11 @@ class WPTrainer(HappyTrainer):
     Trainer class for HappyWordPrediction
     """
     def train(self, input_filepath, dataclass_args: WPTrainArgs):
+        """
+        :param input_filepath: A file path to a text file that contains nothing but training data
+        :param dataclass_args: A WPTrainArgs() object
+        :return: None
+        """
         if not dataclass_args.load_preprocessed_data:
             self.logger.info("Preprocessing dataset...")
 
@@ -76,6 +81,11 @@ class WPTrainer(HappyTrainer):
 
 
     def eval(self, input_filepath, dataclass_args: WPEvalArgs):
+        """
+        :param input_filepath: A file path to a text file that contains nothing but evaluating data
+        :param dataclass_args: A WPEvalArgs() object
+        :return: An EvalResult() object
+        """
         dataset = load_dataset("text", data_files={"eval": input_filepath})
 
         if dataclass_args.line_by_line:
@@ -114,6 +124,12 @@ class WPTrainer(HappyTrainer):
 
 
     def _generate_json(self, json_path, dataset, name):
+        """
+        :param json_path: A path to a json file that will be created/overwritten
+        :param dataset: A list of dictionaries that contain the keys "attention_mask," "input_ids" and "labels"
+        :param name: A string to specify if the written data is for "Train" or "Eval"
+        :return: None
+        """
         data = {}
         data[name] = []
         data = {
