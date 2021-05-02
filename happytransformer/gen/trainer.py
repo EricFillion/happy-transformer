@@ -1,6 +1,6 @@
 """
 
-Fine-tuning for text generation odels.
+Fine-tuning for text generation models.
 
 Based on the tutorial found here:
 https://github.com/huggingface/transformers/blob/master/examples/pytorch/language-modeling/run_clm.py
@@ -12,8 +12,6 @@ from happytransformer.happy_trainer import HappyTrainer, EvalResult
 from happytransformer.fine_tuning_util import preprocess_concatenate
 from happytransformer.gen.default_args import ARGS_GEN_TRAIN, ARGS_GEN_EVAl
 from datasets import load_dataset
-
-
 
 @dataclass
 class GENTrainArgs:
@@ -48,6 +46,12 @@ class GENTrainer(HappyTrainer):
     """
 
     def train(self, input_filepath, dataclass_args: GENTrainArgs):
+        """
+
+        :param input_filepath: A file path to a text file that contains nothing but training data
+        :param dataclass_args: A GENTrainArgs() object
+        :return: None
+        """
 
         if not dataclass_args.load_preprocessed_data:
             self.logger.info("Preprocessing dataset...")
@@ -71,6 +75,11 @@ class GENTrainer(HappyTrainer):
         self._run_train(tokenized_dataset['train'], dataclass_args, default_data_collator)
 
     def eval(self, input_filepath, dataclass_args: GENEvalArgs):
+        """
+        :param input_filepath: A file path to a text file that contains nothing but training data
+        :param dataclass_args: A GENEvalArgs() object
+        :return: An EvalResult() object
+        """
 
         if not dataclass_args.load_preprocessed_data:
             self.logger.info("Preprocessing dataset...")
@@ -99,6 +108,13 @@ class GENTrainer(HappyTrainer):
         raise NotImplementedError()
 
     def _generate_json(self, json_path, dataset, name):
+        """
+
+        :param json_path: A path to a json file that will be created/overwritten
+        :param dataset: A list of dictionaries that contain the keys "attention_mask," "input_ids" and "labels"
+        :param name: A string to specify if the written data is for "Train" or "Eval"
+        :return: None
+        """
         data = {}
         data[name] = []
         data = {
