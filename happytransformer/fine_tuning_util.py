@@ -71,7 +71,7 @@ def create_args_dataclass(default_dic_args, input_dic_args, method_dataclass_arg
 
     :param default_dic_args: A dictionary that contains default settings. Example: ARGS_WP_EVAl
     :param input_dic_args: A dictionary a user inputs for **kwargs when using .train(), .eval() or .test()
-    :param method_dataclass_args: A dataclass object for target functionality. Example: WPEvalArgs
+    :param method_dataclass_args: A class for target functionality. Example: WPEvalArgs
     :return: A dataclass object that will then be passed to HappyTrainer.train()/eval/test
     """
     settings_dic = {**default_dic_args, **input_dic_args}
