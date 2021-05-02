@@ -1,7 +1,7 @@
 ---
 title: Usage
 parent: Word Prediction
-nav_order: 2
+nav_order: 1
 layout: page
 permalink: /word-prediction/usage/
 ---
@@ -58,6 +58,5 @@ result = happy_wp.predict_mask("To better the world I would invest in [MASK] and
 print(result)  # [WordPredictionResult(token='healthcare', score=0.07219093292951584), WordPredictionResult(token='technology', score=0.032044216990470886)]
 print(result[1])  # WordPredictionResult(token='technology', score=0.032044216990470886)
 print(result[1].token)  # technology
-
 
 ```
