@@ -114,7 +114,7 @@ def test_wp_train_eval_with_dic():
     assert after_result.loss == approx(12.20901870727539, 0.001)
 
 
-def test_wp_train_eval_with_dataclass():
+def test_gen_train_eval_with_dataclass():
 
     happy_gen = HappyGeneration()
     train_args = GENTrainArgs(learning_rate=0.01, num_train_epochs=1)
