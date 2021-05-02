@@ -20,7 +20,9 @@ It is passed to the "args" parameter for HappyGeneration.generate_text().
 from happytransformer import GENSettings
 ```
 
-It contains the following fields. 
+GENSettings() contains the  fields shown in Table 1.0 
+
+#### Table 1.0:  
 
 | Parameter            |Default| Definition                                                          |
 |----------------------|-------| --------------------------------------------------------------------|
@@ -31,7 +33,7 @@ It contains the following fields.
 | top_k                | 50    | How many potential answers are considered when performing sampling  |
 | no_repeat_ngram_size | 0     | The maximum length of an n-gram within the generated text.          |
    
- Examples: 
+#### Examples 1.2:  
  
  ```python
 from happytransformer import HappyGeneration, GENSettings
