@@ -7,32 +7,38 @@ def example_1_0():
 
 def example_1_1():
     happy_wp = HappyGeneration()  # default uses distilbert-base-uncased
-    result = happy_wp.generate_text("artificial intelligence is ", max_length=15)
+    args = GENSettings(max_length=15)
+    result = happy_wp.generate_text("artificial intelligence is ", args=args)
     print(result)  # GenerationResult(text='\xa0a new field of research that has been gaining momentum in recent years.')
     print(result.text)  #  a new field of research that has been gaining momentum in recent years.
 
 def example_1_2():
     happy_gen = HappyGeneration()
 
-    greedy_settings = GENSettings(no_repeat_ngram_size=2)
+    greedy_settings = GENSettings(no_repeat_ngram_size=2,  max_length=10)
     output_greedy = happy_gen.generate_text(
         "Artificial intelligence is ",
-        args=greedy_settings, min_length=5, max_length=5)
+        args=greedy_settings)
 
-    beam_settings = GENSettings(early_stopping=True, num_beams=5)
+    beam_settings = GENSettings(early_stopping=True, num_beams=5,  max_length=10)
     output_beam_search = happy_gen.generate_text(
         "Artificial intelligence is ",
-        args=beam_settings, min_length=5, max_length=5)
+        args=beam_settings)
 
-    generic_sampling_settings = GENSettings(do_sample=True, early_stopping=False, top_k=0, temperature=0.7)
+    generic_sampling_settings = GENSettings(do_sample=True, early_stopping=False, top_k=0, temperature=0.7,  max_length=10)
     output_generic_sampling = happy_gen.generate_text(
         "Artificial intelligence is ",
-        args=generic_sampling_settings, min_length=5, max_length=5)
+        args=generic_sampling_settings)
 
-    top_k_sampling_settings = GENSettings(do_sample=True, early_stopping=False, top_k=50, temperature=0.7)
+    top_k_sampling_settings = GENSettings(do_sample=True, early_stopping=False, top_k=50, temperature=0.7,  max_length=10)
     output_top_k_sampling = happy_gen.generate_text(
         "Artificial intelligence is ",
-        args=top_k_sampling_settings, min_length=5, max_length=5)
+        args=top_k_sampling_settings)
+
+    print("Greedy:", output_greedy.text)  # a new field of research that has been gaining
+    print("Beam:", output_beam_search.text) # one of the most promising areas of research in
+    print("Generic Sampling:", output_generic_sampling.text)  #  an area of highly promising research, and a
+    print("Top K Sampling:", output_top_k_sampling.text)  # a new form of social engineering. In this
 
 
 def example_1_3():
@@ -50,9 +56,9 @@ def example_1_4():
 
 
 if __name__ == "__main__":
-    example_1_0()
+    # example_1_0()
     # example_1_1()
-    # example_1_2()
+    example_1_2()
     # example_1_3()
     # example_1_4()
 
