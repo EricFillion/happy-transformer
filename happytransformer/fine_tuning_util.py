@@ -22,8 +22,7 @@ def preprocess_concatenate(tokenizer, dataset, preprocessing_processes, mlm=True
 
 
     def tokenize_function(example):
-        return tokenizer(example["text"],
-                         add_special_tokens=True, truncation=True,)
+        return tokenizer(example["text"])
 
     tokenized_dataset = dataset.map(tokenize_function, batched=True,
                                       num_proc=preprocessing_processes,
