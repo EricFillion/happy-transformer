@@ -21,7 +21,4 @@ def run_save_load_train(happy, output_path, args, data_path, run_type):
     elif run_type == "test":
         result = happy.test(data_path, args=args)
 
-    args['save_preprocessed_data'] = False
-
-
 
