@@ -1,6 +1,6 @@
 from pytest import approx
 
-from happytransformer import HappyWordPrediction
+from happytransformer import HappyWordPrediction, WPTrainArgs
 from happytransformer.happy_word_prediction import WordPredictionResult, ARGS_WP_TRAIN, ARGS_WP_EVAl, WPTrainArgs, WPEvalArgs
 from tests.shared_tests import run_save_load
 
@@ -47,9 +47,15 @@ def test_wp_targets():
     ]
     assert result == answer
 
-def test_wp_train_basic():
+def test_wp_train_default():
     happy_wp = HappyWordPrediction('', 'distilroberta-base')
     happy_wp.train("../data/wp/train-eval.txt")
+
+def test_wp_train_line_by_line():
+    happy_wp = HappyWordPrediction('', 'distilroberta-base')
+    happy_wp.train("../data/wp/train-eval.txt", args=WPTrainArgs(line_by_line=True))
+
+
 
 def test_wp_eval_basic():
     happy_wp = HappyWordPrediction('', 'distilroberta-base')
