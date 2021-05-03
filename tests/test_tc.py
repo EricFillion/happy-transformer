@@ -5,7 +5,7 @@ Tests for Text Classification Functionality
 from happytransformer.happy_text_classification import HappyTextClassification, TextClassificationResult
 from happytransformer.tc.trainer import TCTrainArgs, TCEvalArgs, TCTestArgs
 from happytransformer.tc.default_args import ARGS_TC_TRAIN
-from tests.shared_tests import run_save_load_train
+from tests.shared_tests import run_save_load
 from pytest import approx
 
 
@@ -123,11 +123,11 @@ def test_tc_save_load_train():
     happy_wp = HappyTextClassification()
     output_path = "data/tc-train.json"
     data_path = "../data/tc/train-eval.csv"
-    run_save_load_train(happy_wp, output_path, ARGS_TC_TRAIN, data_path, "train")
+    run_save_load(happy_wp, output_path, ARGS_TC_TRAIN, data_path, "train")
 
 
 def test_tc_save_load_eval():
     happy_wp = HappyTextClassification()
     output_path = "data/tc-train.json"
     data_path = "../data/tc/train-eval.csv"
-    run_save_load_train(happy_wp, output_path, ARGS_TC_TRAIN, data_path, "train")
+    run_save_load(happy_wp, output_path, ARGS_TC_TRAIN, data_path, "train")

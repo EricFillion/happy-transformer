@@ -5,7 +5,7 @@ from happytransformer import (
     GENSettings)
 
 from happytransformer.gen.trainer import GENTrainArgs, GENEvalArgs
-from tests.shared_tests import run_save_load_train
+from tests.shared_tests import run_save_load
 from pytest import approx
 
 def test_default_simple():
@@ -84,13 +84,13 @@ def test_gen_save_load_train():
     happy_gen = HappyGeneration()
     output_path = "data/gen-train.txt"
     data_path = "../data/gen/train-eval.txt"
-    run_save_load_train(happy_gen, output_path, ARGS_GEN_TRAIN, data_path, "train")
+    run_save_load(happy_gen, output_path, ARGS_GEN_TRAIN, data_path, "train")
 
 def test_gen_save_load_eval():
     happy_gen = HappyGeneration()
     output_path = "data/wp-eval.txt"
     data_path = "../data/gen/train-eval.txt"
-    run_save_load_train(happy_gen, output_path, ARGS_GEN_EVAl, data_path, "eval")
+    run_save_load(happy_gen, output_path, ARGS_GEN_EVAl, data_path, "eval")
 
 def test_gen_save():
     happy = HappyGeneration()

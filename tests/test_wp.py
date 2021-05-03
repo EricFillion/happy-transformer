@@ -2,7 +2,7 @@ from pytest import approx
 
 from happytransformer import HappyWordPrediction
 from happytransformer.happy_word_prediction import WordPredictionResult, ARGS_WP_TRAIN, ARGS_WP_EVAl, WPTrainArgs, WPEvalArgs
-from tests.shared_tests import run_save_load_train
+from tests.shared_tests import run_save_load
 
 
 def test_wp_basic():
@@ -84,7 +84,7 @@ def test_wp_save_load_train():
     data_path = "../data/wp/train-eval.txt"
     args = ARGS_WP_TRAIN
     args["line_by_line"] = True
-    run_save_load_train(happy_wp, output_path, args, data_path, "train")
+    run_save_load(happy_wp, output_path, args, data_path, "train")
 
 def test_wp_save_load_eval():
     happy_wp = HappyWordPrediction('', 'distilroberta-base')
@@ -92,7 +92,7 @@ def test_wp_save_load_eval():
     data_path = "../data/wp/train-eval.txt"
     args = ARGS_WP_EVAl
     args["line_by_line"] = True
-    run_save_load_train(happy_wp, output_path, args, data_path, "eval")
+    run_save_load(happy_wp, output_path, args, data_path, "eval")
 
 def test_wp_save():
     happy = HappyWordPrediction("BERT", "prajjwal1/bert-tiny")
