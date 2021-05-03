@@ -4,9 +4,6 @@ Tests for the question answering training, evaluating and testing functionality
 
 from happytransformer.happy_question_answering import HappyQuestionAnswering
 from happytransformer.qa.trainer import QATrainArgs, QAEvalArgs, QATestArgs
-from happytransformer.qa.default_args import ARGS_QA_TRAIN, ARGS_QA_EVAl
-from tests.shared_tests import run_save_load_train
-
 from pytest import approx
 
 def test_qa_basic():
@@ -50,7 +47,7 @@ def test_qa_train_effectiveness():
     lowering the loss as determined by HappyQuestionAnswering.eval()
     """
     # use a non-fine-tuned model so we DEFINITELY get an improvement
-    happy_qa = HappyQuestionAnswering('BERT', 'mrm8488/bert-tiny-5-finetuned-squadv2')
+    happy_qa = HappyQuestionAnswering()
     before_loss = happy_qa.eval("../data/qa/train-eval.csv").loss
     happy_qa.train("../data/qa/train-eval.csv")
     after_loss = happy_qa.eval("../data/qa/train-eval.csv").loss
@@ -104,17 +101,3 @@ def test_tc_with_dataclass():
 
     result_test = happy_qa.test("../data/qa/test.csv", args=test_args)
     assert result_test[0].answer == "October"
-
-
-def test_tc_save_load_train():
-    happy_wp = HappyQuestionAnswering()
-    output_path = "data/qa-train.json"
-    data_path = "../data/qa/train-eval.csv"
-    run_save_load_train(happy_wp, output_path, ARGS_QA_TRAIN, data_path, "train")
-
-
-def test_tc_save_load_eval():
-    happy_wp = HappyQuestionAnswering()
-    output_path = "data/qa-train.json"
-    data_path = "../data/qa/train-eval.csv"
-    run_save_load_train(happy_wp, output_path, ARGS_QA_EVAl, data_path, "train")
