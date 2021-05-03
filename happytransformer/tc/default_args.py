@@ -12,7 +12,6 @@ ARGS_TC_TRAIN = {
     'load_preprocessed_data_path': "",
 }
 
-# as of right now we do not provide custom settings
 ARGS_TC_EVAL = {
     'save_preprocessed_data': False,
     'save_preprocessed_data_path': "",
@@ -21,7 +20,6 @@ ARGS_TC_EVAL = {
 
 }
 
-# as of right now we do not provide custom settings
 ARGS_TC_TEST = {
     'save_preprocessed_data': False,
     'save_preprocessed_data_path': "",
