@@ -1,6 +1,6 @@
 ---
 title: Word Prediction
-nav_order: 6
+nav_order: 9
 layout: page
 permalink: /word-prediction/
 has_children: true
@@ -21,11 +21,10 @@ Initialize a HappyWordPrediction object to perform word prediction.
 
 Note: For all Transformers, the masked token is **"[MASK]"**
 
-
 We recommend using "HappyWordPrediction("ALBERT", "albert-xxlarge-v2")" for the best performance 
 
 
-#### Example 1.0:
+#### Example 4.0:
 ```python
     from happytransformer import HappyWordPrediction
     # --------------------------------------#

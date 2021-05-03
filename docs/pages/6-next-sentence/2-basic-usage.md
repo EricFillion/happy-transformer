@@ -19,7 +19,7 @@ We recommend keeping sentence_a and sentence_b to a single sentence. But longer 
 Returns: 
 A float between 0 and 1 that represents how likely sentence_a follows sentence_b. 
 
-#### Example 4.1:
+#### Example 6.1:
 ```python
     from happytransformer import HappyNextSentence
     # --------------------------------------#
@@ -32,7 +32,7 @@ A float between 0 and 1 that represents how likely sentence_a follows sentence_b
     print(result)  # 0.9999918937683105
 ```
 
-#### Example 4.2:
+#### Example 6.2:
 ```python
     from happytransformer import HappyNextSentence
     # --------------------------------------#

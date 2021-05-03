@@ -19,7 +19,7 @@ inputs:
 2. args (WPTrainArgs): a dataclass with the same fields types as shown in table 3.0. 
 
 
-#### Table 1.0
+#### Table 4.0
 
 | Parameter                     |Default|
 |-------------------------------|-------|
@@ -51,11 +51,10 @@ line-by-line: If False, training data is concatenated and then divided into sect
               If True, each input contains the text from a single line within the training data. The text may be truncated if the line is too long (eg BERT's max input size is 512 tokens). 
 
 
-#### Example 1.4:
+#### Example 4.4:
 ```python
     from happytransformer import HappyWordPrediction, WPTrainArgs
     # --------------------------------------#
-    
     happy_wp = HappyWordPrediction()
     args = WPTrainArgs(num_train_epochs=1) 
     happy_wp.train("../../data/wp/train-eval.txt", args=args)
@@ -64,7 +63,9 @@ line-by-line: If False, training data is concatenated and then divided into sect
 ### eval()
 Input:
 1. input_filepath (string): a path file to text file with just text to evaluate 
-2. args (WPEvalArgs): a dataclass with the fields shown below 
+2. args (WPEvalArgs): a dataclass with the fields shown in Table 4.1
+ 
+#### Table 4.1
 
 | Parameter                     |Default|
 |-------------------------------|-------|
@@ -75,11 +76,11 @@ Input:
 | preprocessing_processes       | 1     |
 | line-by-line                  | False |
 
-See the explanations under table 1.0.0 for more information 
+See the explanations under Table 4.0 for more information 
 
 Output: An object with the field "loss"
 
-#### Example 1.5
+#### Example 4.5
 ```python
     from happytransformer import HappyWordPrediction, WPEvalArgs
     # --------------------------------------#

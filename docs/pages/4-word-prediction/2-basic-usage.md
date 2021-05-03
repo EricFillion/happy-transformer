@@ -18,7 +18,7 @@ A list of objects with fields "token" and "score"
 
 Note: if targets are provided, then top_k will be ignored and a score for each target will be returned. 
 
-#### Example 1.1:
+#### Example 4.1:
 ```python
 
 from happytransformer import HappyWordPrediction
@@ -35,28 +35,29 @@ from happytransformer import HappyWordPrediction
 
 ```
 
-#### Example 1.2:
+#### Example 4.2:
 ```python
 
 from happytransformer import HappyWordPrediction
 #--------------------------------------#
-happy_wp = HappyWordPrediction("ALBERT", "albert-xxlarge-v2")
+happy_wp = HappyWordPrediction()
 result = happy_wp.predict_mask("To better the world I would invest in [MASK] and education.", top_k=2)
-print(result)  # [WordPredictionResult(token='infrastructure', score=0.09270179271697998), WordPredictionResult(token='healthcare', score=0.07219093292951584)]
-print(result[1]) # WordPredictionResult(token='healthcare', score=0.07219093292951584)
-print(result[1].token) # healthcare
+print(result)  # [WordPredictionResult(token='health', score=0.1280556619167328), WordPredictionResult(token='science', score=0.07976455241441727)]
+print(result[1]) # WordPredictionResult(token='science', score=0.07976455241441727)
+print(result[1].token) # science
 
 ```
 
-#### Example 1.3:
+#### Example 4.3:
 ```python
 from happytransformer import HappyWordPrediction
 #--------------------------------------#
-happy_wp = HappyWordPrediction("ALBERT", "albert-xxlarge-v2")
+happy_wp = HappyWordPrediction()
 targets = ["technology", "healthcare"]
 result = happy_wp.predict_mask("To better the world I would invest in [MASK] and education.", targets=targets)
-print(result)  # [WordPredictionResult(token='healthcare', score=0.07219093292951584), WordPredictionResult(token='technology', score=0.032044216990470886)]
-print(result[1])  # WordPredictionResult(token='technology', score=0.032044216990470886)
+print(result)  # [WordPredictionResult(token='healthcare', score=0.07380751520395279), WordPredictionResult(token='technology', score=0.009395276196300983)]
+print(result[1])  # WordPredictionResult(token='technology', score=0.009395276196300983)
 print(result[1].token)  # technology
+
 
 ```

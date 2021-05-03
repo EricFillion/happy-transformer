@@ -13,12 +13,12 @@ from happytransformer.fine_tuning_util import create_args_dataclass
 """
 The main settings that users will adjust when performing experiments
 
-They may still modify all of the settings found here:
-    https://huggingface.co/transformers/main_classes/model.html#generation.
 The values for full_settings are the same as the default values above except for min and max length. 
 """
 @dataclass
 class GENSettings:
+    min_length: int = 10
+    max_length: int = 50
     do_sample: bool = False
     early_stopping: bool = False
     num_beams: int = 1
@@ -33,7 +33,12 @@ class GenerationResult:
 
 class HappyGeneration(HappyTransformer):
     """
-    A user facing class for text generation
+    This class is a user facing class that allows users to generate text using
+    text generation Transformer models.
+
+    The purpose of this class is to be lightweight and easy
+    to understand and to offload complex tasks to
+    other classes.
     """
     def __init__(self, model_type: str = "GPT2", model_name: str = "gpt2", load_path: str = ""):
 
@@ -49,6 +54,11 @@ class HappyGeneration(HappyTransformer):
         self._trainer = GENTrainer(self.model, model_type, self.tokenizer, self._device, self.logger)
 
     def __assert_default_text_is_val(self, text):
+        """
+        Ensures the input's text input is valid.
+        Raises a Value Error if the text input is not valid.
+        :param text: The value the user inputs for the "text" parameter
+        """
 
         if not isinstance(text, str):
             raise ValueError("The text input must be a string")
@@ -56,20 +66,17 @@ class HappyGeneration(HappyTransformer):
             raise ValueError("The text input must have at least one character")
 
 
-    def generate_text(self, text, args: GENSettings=GENSettings(),
-                      min_length: int = 20, max_length: int = 60) -> GenerationResult:
+    def generate_text(self, text: str, args: GENSettings=GENSettings()) -> GenerationResult:
         """
-        :param text: starting text that the model uses to generate text with.
-        :param settings: A GENSettings object
-        :param min_length: The minimum number of tokens for the output
-        :param max_length: The maximum number of tokens for the output
-        :return: Text that the model generates.
+        :param text: starting text that the model uses as a prompt to continue it.
+        :param args: A GENSettings object
+        :return: A GenerationResult() object
         """
 
         self.__assert_default_text_is_val(text)
         input_ids = self.tokenizer.encode(text, return_tensors="pt")
-        adjusted_min_length = min_length + len(input_ids[0])
-        adjusted_max_length = max_length + len(input_ids[0])
+        adjusted_min_length = args.min_length + len(input_ids[0])
+        adjusted_max_length = args.max_length + len(input_ids[0])
 
         output = self.model.generate(input_ids,
                                      min_length=adjusted_min_length,
@@ -98,7 +105,12 @@ class HappyGeneration(HappyTransformer):
         return result[len(text):]
 
 
-    def train(self, input_filepath, args=ARGS_GEN_TRAIN):
+    def train(self, input_filepath: str, args=GENTrainArgs()):
+        """
+        :param input_filepath:a file path to a text file that contains nothing but training data
+        :param args: either a GENTrainArgs() object or a dictionary that contains all of the same keys as ARGS_GEN_TRAIN
+        :return: None
+        """
 
         if type(args) == dict:
             method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_GEN_TRAIN,
@@ -111,8 +123,12 @@ class HappyGeneration(HappyTransformer):
 
         self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 
-    def eval(self, input_filepath, args=ARGS_GEN_EVAl) -> EvalResult:
-
+    def eval(self, input_filepath: str, args=GENEvalArgs()) -> EvalResult:
+        """
+        :param input_filepath:a file path to a text file that contains nothing but evaluating data
+        :param args: either a GENEvalArgs() object or a dictionary that contains all of the same keys as ARGS_GEN_EVAl
+        :return: None
+        """
         if type(args) == dict:
             method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_GEN_EVAl,
                                                          input_dic_args=args,

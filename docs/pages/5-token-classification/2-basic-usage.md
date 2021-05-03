@@ -5,8 +5,6 @@ nav_order: 1
 layout: page
 permalink: /token-classification/usage/
 ---
-
-
 ## Token Classification Basic Usage
 
 ### Initialization  
@@ -17,15 +15,6 @@ Initialize a HappyTokenClassification object for token classification
  1. model_type (string): specify the model name in all caps, such as "ROBERTA" or "ALBERT"
  2. model_name(string): potential models can be found [here](https://huggingface.co/models?pipeline_tag=token-classification)
  
-
-#### Example 5.1:
-```python
-    from happytransformer import HappyTokenClassification
-    # --------------------------------------#
-    happy_toc = HappyTokenClassification("BERT", "dslim/bert-base-NER")  # default 
-    happy_toc_large = HappyTokenClassification("XLM-ROBERTA", "xlm-roberta-large-finetuned-conll03-english") 
-
-```
 
 ### classify_token()
 
@@ -43,7 +32,7 @@ A list of objects with the following fields:
 
 
 
-#### Example 5.2:
+#### Example 5.1:
 ```python
     from happytransformer import HappyTokenClassification
     # --------------------------------------#
@@ -56,7 +45,6 @@ A list of objects with the following fields:
     print(result[0].index)  # 4
     print(result[0].start) # 11
     print(result[0].end)  # 19
-
     print(result[1].word)  # Toronto
     print(result[1].entity)  # B-LOC
 

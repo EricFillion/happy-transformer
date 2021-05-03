@@ -39,12 +39,14 @@ class QAEvalArgs:
     load_preprocessed_data: bool = ARGS_QA_EVAl["load_preprocessed_data"]
     load_preprocessed_data_path: str = ARGS_QA_EVAl["load_preprocessed_data_path"]
 
+
 @dataclass
 class QATestArgs:
     save_preprocessed_data: bool = ARGS_QA_TEST["save_preprocessed_data"]
     save_preprocessed_data_path: str = ARGS_QA_TEST["save_preprocessed_data_path"]
     load_preprocessed_data: bool = ARGS_QA_TEST["load_preprocessed_data"]
     load_preprocessed_data_path: str = ARGS_QA_TEST["load_preprocessed_data_path"]
+
 
 class QATrainer(HappyTrainer):
     """
@@ -55,36 +57,37 @@ class QATrainer(HappyTrainer):
         """
         See docstring in HappyQuestionAnswering.train()
         """
-        if not dataclass_args.load_preprocessed_data:
-            self.logger.info("Preprocessing dataset...")
-            contexts, questions, answers = self._get_data(input_filepath)
-            self.__add_end_idx(contexts, answers)
-            encodings = self.tokenizer(contexts, questions, truncation=True, padding=True)
-            self.__add_token_positions(encodings, answers)
-            print("encodings", encodings)
-        else:
-            self.logger.info("Loading dataset from %s...", dataclass_args.load_preprocessed_data_path)
-            encodings = self._get_preprocessed_data(dataclass_args.load_preprocessed_data_path)
-
-        print("test, ", dataclass_args.save_preprocessed_data)
         if dataclass_args.save_preprocessed_data:
-            input_ids = encodings["input_ids"]
-            attention_masks = encodings["attention_mask"]
-            start_positions = encodings["start_positions"]
-            end_positions = encodings["end_positions"]
-            self._generate_json(dataclass_args.save_preprocessed_data_path, input_ids, attention_masks, start_positions, end_positions, "train")
+            self.logger.info("Saving preprocessed data is currently "
+                             "not available for question answering models. "
+                             "It will be added soon. ")
+        if dataclass_args.load_preprocessed_data:
+            self.logger.info("Loading preprocessed data is currently "
+                             "not available for question answering models. "
+                             "It will be added soon. ")
 
-        #dataset = QuestionAnsweringDataset(encodings)
-        # data_collator = DataCollatorWithPadding(self.tokenizer)
-        # self._run_train(dataset, dataclass_args, data_collator)
-
-
+        self.logger.info("Preprocessing dataset...")
+        contexts, questions, answers = self._get_data(input_filepath)
+        self.__add_end_idx(contexts, answers)
+        encodings = self.tokenizer(contexts, questions, truncation=True, padding=True)
+        self.__add_token_positions(encodings, answers)
+        dataset = QuestionAnsweringDataset(encodings)
+        data_collator = DataCollatorWithPadding(self.tokenizer)
+        self._run_train(dataset, dataclass_args, data_collator)
 
     def eval(self, input_filepath, dataclass_args: QAEvalArgs):
         """
         See docstring in HappyQuestionAnswering.eval()
 
         """
+        if dataclass_args.save_preprocessed_data:
+            self.logger.info("Saving preprocessed data is currently "
+                             "not available for question answering models. "
+                             "It will be added soon. ")
+        if dataclass_args.load_preprocessed_data:
+            self.logger.info("Loading preprocessed data is currently "
+                             "not available for question answering models. "
+                             "It will be added soon. ")
 
         contexts, questions, answers = self._get_data(input_filepath)
 
@@ -103,6 +106,16 @@ class QATrainer(HappyTrainer):
         See docstring in HappyQuestionAnswering.test()
 
         """
+
+        if dataclass_args.save_preprocessed_data:
+            self.logger.info("Saving preprocessed data is currently "
+                             "not available for question answering models. "
+                             "It will be added soon. ")
+        if dataclass_args.load_preprocessed_data:
+            self.logger.info("Loading preprocessed data is currently "
+                             "not available for question answering models. "
+                             "It will be added soon. ")
+
         contexts, questions = self._get_data(input_filepath, test_data=True)
 
         return [

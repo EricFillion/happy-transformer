@@ -15,11 +15,11 @@ TextGeneration contains two methods for training
 ### train()
 
 inputs: 
-1. input_filepath (string): a path file to a text file that contains nothing but text to train the model with
-2. args (GENTrainArgs): a dataclass with the same fields types as shown in table 1.0. 
+1. input_filepath (string): a path file to a text file that contains nothing but text to train the model.
+2. args (GENTrainArgs): a dataclass with the same fields types as shown in Table 1.1. 
 
 
-#### Table 1.0
+#### Table 1.1
 
 | Parameter                     |Default|
 |-------------------------------|-------|
@@ -40,7 +40,7 @@ inputs:
 
 Information about the learning parameters can be found [here](/learning-parameters/)
 
-Information about saving/loading preprocessed data can be found [here](/save-load/)
+Information about saving/loading preprocessed data can be found [here](/save-load-data/)
 
 preprocessing_processes: Number of processes used for preprocessing. We recommend 1-4. 
 
@@ -48,7 +48,7 @@ mlm_probability: The probability of masking a token.
 
 
 
-#### Example 1.4:
+#### Example 1.3:
 ```python
     from happytransformer import HappyGeneration, GENTrainArgs
     # --------------------------------------#
@@ -61,7 +61,9 @@ mlm_probability: The probability of masking a token.
 ### eval()
 Input:
 1. input_filepath (string): a path file to a text file with just text to evaluate  
-2. args (WPEvalArgs): a dataclass with the same fields shown below 
+2. args (WPEvalArgs): a dataclass with the same fields shown in Table  1.2
+
+#### Table 1.2
 
 | Parameter                     |Default|
 |-------------------------------|-------|
@@ -72,21 +74,22 @@ Input:
 | preprocessing_processes       | 1     |
 | mlm_probability               | 0.15  |
 
-See the explanations under table 1.0.0 for more information 
+See the explanations under Table 1.1 for more information 
 
 
 
 Output: An object with the field "loss"
 
-#### Example 1.5
+#### Example 1.4
 ```python
-    from happytransformer import HappyWordPrediction, WPEvalArgs
+    from happytransformer import HappyGeneration, GENEvalArgs
     # --------------------------------------#
-    happy_wp = HappyWordPrediction()  
-    args = WPEvalArgs(preprocessing_processes=2)
-    result = happy_wp.eval("../../data/wp/train-eval.txt", args=args)
+    happy_gen = HappyGeneration()  
+    args = GENEvalArgs(preprocessing_processes=2)
+    result = happy_gen.eval("../../data/gen/train-eval.txt", args=args)
     print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
-    print(result)  # EvalResult(eval_loss=0.459536075592041)
-    print(result.loss)  # 0.459536075592041
+    print(result)  # EvalResult(loss=3.3437771797180176)
+    print(result.loss)  # 3.3437771797180176
+
 ```
 

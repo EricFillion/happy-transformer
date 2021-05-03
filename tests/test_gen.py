@@ -10,14 +10,16 @@ from pytest import approx
 
 def test_default_simple():
     happy_gen = HappyGeneration()
-    output = happy_gen.generate_text("Artificial intelligence is ", min_length=5, max_length=5)
+    args = GENSettings(min_length=5, max_length=5)
+    output = happy_gen.generate_text("Artificial intelligence is ", args=args)
     assert type(output.text) == str
     print("default simple: ", output.text)
 
 
 def test_default_min_max_length():
     happy_gen = HappyGeneration()
-    output = happy_gen.generate_text("Artificial intelligence is ", min_length=5, max_length=5)
+    args = GENSettings(min_length=5, max_length=5)
+    output = happy_gen.generate_text("Artificial intelligence is ", args=args)
     tokens = happy_gen.tokenizer.encode(output.text, return_tensors="pt")
     length = len(tokens[0])
     assert length == 5
@@ -26,29 +28,29 @@ def test_default_min_max_length():
 def test_all_methods():
     happy_gen = HappyGeneration()
 
-    greedy_settings = GENSettings(no_repeat_ngram_size=2)
+    greedy_settings = GENSettings(min_length=5, max_length=5, no_repeat_ngram_size=2)
     output_greedy = happy_gen.generate_text(
         "Artificial intelligence is ",
-        args=greedy_settings, min_length=5, max_length=5)
+        args=greedy_settings)
 
 
-    beam_settings = GENSettings(early_stopping=True, num_beams=5)
+    beam_settings = GENSettings(min_length=5, max_length=5, early_stopping=True, num_beams=5)
 
     output_beam_search = happy_gen.generate_text(
         "Artificial intelligence is ",
-        args=beam_settings, min_length=5, max_length=5)
+        args=beam_settings)
 
-    generic_sampling_settings = GENSettings(do_sample=True, early_stopping=False, top_k=0, temperature=0.7)
+    generic_sampling_settings = GENSettings(min_length=5, max_length=5, do_sample=True, early_stopping=False, top_k=0, temperature=0.7)
 
     output_generic_sampling = happy_gen.generate_text(
         "Artificial intelligence is ",
-        args=generic_sampling_settings, min_length=5, max_length=5)
+        args=generic_sampling_settings)
 
-    top_k_sampling_settings = GENSettings(do_sample=True, early_stopping=False, top_k=50, temperature=0.7)
+    top_k_sampling_settings = GENSettings(min_length=5, max_length=5, do_sample=True, early_stopping=False, top_k=50, temperature=0.7)
 
     output_top_k_sampling = happy_gen.generate_text(
         "Artificial intelligence is ",
-        args=top_k_sampling_settings, min_length=5, max_length=5)
+        args=top_k_sampling_settings)
 
     assert type(output_greedy.text) == str
     assert type(output_beam_search.text) == str
