@@ -32,10 +32,10 @@ def main():
 
 
 def generate_txt(csv_path, dataset):
-    with open(csv_path, 'w', newline='') as text_fule:
+    with open(csv_path, 'w', newline='') as text_file:
         for case in dataset:
             text = case["summary"]
-            text_fule.write(text + "\n")
+            text_file.write(text + "\n")
 
 def produce_examples(starter_texts, happy_gen):
     for start in starter_texts:
