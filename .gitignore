@@ -19,7 +19,14 @@ examples/generation/eval.txt
 
 main.py
 tests/model/
-tests/data/
+
+tests/data/gen-train.txt
+tests/data/qa-train.json
+tests/data/tc-train.json
+tests/data/wp-eval.txt
+tests/data/wp-train.json
+tests/data/wp-train.txt
+
 
 # just in case someone runs pytest from the top level directory
 model/
