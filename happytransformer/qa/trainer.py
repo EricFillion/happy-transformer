@@ -61,12 +61,10 @@ class QATrainer(HappyTrainer):
             self.__add_end_idx(contexts, answers)
             encodings = self.tokenizer(contexts, questions, truncation=True, padding=True)
             self.__add_token_positions(encodings, answers)
-            print("encodings", encodings)
         else:
             self.logger.info("Loading dataset from %s...", dataclass_args.load_preprocessed_data_path)
             encodings = self._get_preprocessed_data(dataclass_args.load_preprocessed_data_path)
 
-        print("test, ", dataclass_args.save_preprocessed_data)
         if dataclass_args.save_preprocessed_data:
             input_ids = encodings["input_ids"]
             attention_masks = encodings["attention_mask"]
@@ -74,9 +72,9 @@ class QATrainer(HappyTrainer):
             end_positions = encodings["end_positions"]
             self._generate_json(dataclass_args.save_preprocessed_data_path, input_ids, attention_masks, start_positions, end_positions, "train")
 
-        #dataset = QuestionAnsweringDataset(encodings)
-        # data_collator = DataCollatorWithPadding(self.tokenizer)
-        # self._run_train(dataset, dataclass_args, data_collator)
+        dataset = QuestionAnsweringDataset(encodings)
+        data_collator = DataCollatorWithPadding(self.tokenizer)
+        self._run_train(dataset, dataclass_args, data_collator)
 
 
 
