@@ -72,7 +72,7 @@ class HappyQuestionAnswering(HappyTransformer):
             for answer in answers
         ]
 
-    def train(self, input_filepath, args=ARGS_QA_TRAIN):
+    def train(self, input_filepath, args=QATrainArgs()):
         """
         Trains the question answering model
 
@@ -80,8 +80,7 @@ class HappyQuestionAnswering(HappyTransformer):
         for training. Contains the following header values: context,
         question, answer_text, answer_start
 
-        args: a dictionary that contains settings found under
-        happytransformer.happytasks.happy_qa.default_args.py
+        args: Either a QATrainArgs() object or a dictionary that contains all of the same keys as ARGS_QA_TRAIN
 
         return: None
         """
@@ -96,16 +95,17 @@ class HappyQuestionAnswering(HappyTransformer):
             raise ValueError("Invalid args type. Use a QATrainArgs object or a dictionary")
 
 
-
         self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 
-    def eval(self, input_filepath, args=ARGS_QA_EVAl) -> EvalResult:
+    def eval(self, input_filepath, args=QAEvalArgs()) -> EvalResult:
         """
         Trains the question answering model
 
         input_filepath: a string that contains the location of a csv file
         for training. Contains the following header values:
         context, question, answer_text, answer_start
+
+        args: Either a QAEvalArgs() object or a dictionary that contains all of the same keys as ARGS_QA_EVAl
 
         return: A dictionary that contains a key called "eval_loss"
 
@@ -122,13 +122,15 @@ class HappyQuestionAnswering(HappyTransformer):
         return self._trainer.eval(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 
 
-    def test(self, input_filepath, args=ARGS_QA_TEST):
+    def test(self, input_filepath, args=QATestArgs()):
         """
         Tests the question answering model. Used to obtain results
 
         input_filepath: a string that contains the location of a csv file
         for training. Contains the following header values:
         context, question
+
+        args: Either a QATestArgs() object or a dictionary that contains all of the same keys as ARGS_QA_TEST
 
         return: A list of dictionaries. Each dictionary
         contains the keys: "score", "start", "end" and "answer"

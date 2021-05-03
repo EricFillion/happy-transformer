@@ -62,13 +62,12 @@ class HappyTextClassification(HappyTransformer):
 
         return TextClassificationResult(label=first_result["label"], score=first_result["score"])
     
-    def train(self, input_filepath, args=ARGS_TC_TRAIN):
+    def train(self, input_filepath, args=TCTrainArgs()):
         """
         Trains the question answering model
         input_filepath: a string that contains the location of a csv file
-        for training. Contains the following header values: text,
-         label
-        args: a dictionary that contains settings found under
+        for training. Contains the following header values: text, label
+        args: Either a TCTrainArgs() object or a dictionary that contains all of the same keys as ARGS_TC_TRAIN
         return: None
         """
         if type(args) == dict:
@@ -82,19 +81,19 @@ class HappyTextClassification(HappyTransformer):
 
         self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 
-    def eval(self, input_filepath, args=ARGS_TC_EVAL) -> EvalResult:
+    def eval(self, input_filepath, args=TCEvalArgs()) -> EvalResult:
         """
         Evaluated the text classification answering model
         input_filepath: a string that contains the location of a csv file
         for training. Contains the following header values:
         text, label
 
-        return: #todo
+        return: an EvalResult() object
         """
         if type(args) == dict:
             method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_TC_EVAL,
-                                                         input_dic_args=args,
-                                                         method_dataclass_args=TCEvalArgs)
+                                                          input_dic_args=args,
+                                                          method_dataclass_args=TCEvalArgs)
         elif type(args) == TCEvalArgs:
             method_dataclass_args = args
         else:
@@ -103,22 +102,22 @@ class HappyTextClassification(HappyTransformer):
         return self._trainer.eval(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 
 
-    def test(self, input_filepath, args=ARGS_TC_TEST):
+    def test(self, input_filepath, args=TCTestArgs()):
         """
         Tests the text classification  model. Used to obtain results
         input_filepath: a string that contains the location of a csv file
         for training. Contains the following header value:
          text
-        return: #todo
+        return: A list of TextClassificationResult() objects
         """
 
         if type(args) == dict:
             method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_TC_TEST,
-                                                                input_dic_args=args,
-                                                                method_dataclass_args=TCTestArgs)
+                                                          input_dic_args=args,
+                                                          method_dataclass_args=TCTestArgs)
         elif type(args) == TCTestArgs:
             method_dataclass_args = args
         else:
-            raise ValueError("Invalid args type. Use a TCTestArgs object or a dictionary")
+            raise ValueError("Invalid args type. Use a TCTestArgs() object or a dictionary")
 
         return self._trainer.test(input_filepath=input_filepath, solve=self.classify_text, dataclass_args=method_dataclass_args)
