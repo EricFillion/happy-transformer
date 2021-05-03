@@ -33,7 +33,12 @@ class GenerationResult:
 
 class HappyGeneration(HappyTransformer):
     """
-    A user facing class for text generation
+    This class is a user facing class that allows users to generate text using
+    text generation Transformer models.
+
+    The purpose of this class is to be lightweight and easy
+    to understand and to offload complex tasks to
+    other classes.
     """
     def __init__(self, model_type: str = "GPT2", model_name: str = "gpt2", load_path: str = ""):
 
@@ -49,6 +54,11 @@ class HappyGeneration(HappyTransformer):
         self._trainer = GENTrainer(self.model, model_type, self.tokenizer, self._device, self.logger)
 
     def __assert_default_text_is_val(self, text):
+        """
+        Ensures the input's text input is valid.
+        Raises a Value Error if the text input is not valid.
+        :param text: The value the user inputs for the "text" parameter
+        """
 
         if not isinstance(text, str):
             raise ValueError("The text input must be a string")
@@ -56,12 +66,11 @@ class HappyGeneration(HappyTransformer):
             raise ValueError("The text input must have at least one character")
 
 
-    def generate_text(self, text, args: GENSettings=GENSettings()) -> GenerationResult:
+    def generate_text(self, text: str, args: GENSettings=GENSettings()) -> GenerationResult:
         """
-        :param text: starting text that the model uses to generate text with.
-        :param settings: A GENSettings object
-
-        :return: Text that the model generates.
+        :param text: starting text that the model uses as a prompt to continue it.
+        :param args: A GENSettings object
+        :return: A GenerationResult() object
         """
 
         self.__assert_default_text_is_val(text)
@@ -96,7 +105,12 @@ class HappyGeneration(HappyTransformer):
         return result[len(text):]
 
 
-    def train(self, input_filepath, args=ARGS_GEN_TRAIN):
+    def train(self, input_filepath: str, args=GENTrainArgs()):
+        """
+        :param input_filepath:a file path to a text file that contains nothing but training data
+        :param args: either a GENTrainArgs() object or a dictionary that contains all of the same keys as ARGS_GEN_TRAIN
+        :return: None
+        """
 
         if type(args) == dict:
             method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_GEN_TRAIN,
@@ -109,8 +123,12 @@ class HappyGeneration(HappyTransformer):
 
         self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
 
-    def eval(self, input_filepath, args=ARGS_GEN_EVAl) -> EvalResult:
-
+    def eval(self, input_filepath: str, args=GENEvalArgs()) -> EvalResult:
+        """
+        :param input_filepath:a file path to a text file that contains nothing but evaluating data
+        :param args: either a GENEvalArgs() object or a dictionary that contains all of the same keys as ARGS_GEN_EVAl
+        :return: None
+        """
         if type(args) == dict:
             method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_GEN_EVAl,
                                                          input_dic_args=args,
