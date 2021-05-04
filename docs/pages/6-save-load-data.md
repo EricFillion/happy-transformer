@@ -24,14 +24,13 @@ skip the preprocessing step.
 All dataclasses for training and evaluating have the following parameters: 
 
 #### Table 7.1
-| Parameter                     |default| Meaning                               |
-|-------------------------------|-------|---------------------------------------|
-| save_preprocessed_data        | False |If the preprocessed data will be saved |
-| save_preprocessed_data_path   | ""    | Path to a json file to save the data  |
-| load_preprocessed_data        | False | If the saved data will be loaded      |
-| load_preprocessed_data_path   | ""    |Path to a json file to load the data   |
 
-
+| Parameter                   | Default | Meaning                                |
+|-----------------------------|---------|----------------------------------------|
+| save_preprocessed_data      | False   | If the preprocessed data will be saved |
+| save_preprocessed_data_path | ""      | Path to a json file to save the data   |
+| load_preprocessed_data      | False   | If the saved data will be loaded       |
+| load_preprocessed_data_path | ""      | Path to a json file to load the data   |
 
 Example 7.0 shows the process of saving and loading a dataset for word prediction training
 
