@@ -7,6 +7,17 @@ nav_order: 4
 ---
 
 ## News: 
+### May 4th, 2021
+**Introducing Version 2.2.0!**
+New Features: 
+- Text generation with training 
+- Word prediction training   
+- Saving/loading models 
+- Saving/loading preprocessed data  
+- You can now change the batch size when training and evaluating  
+- Dataclasses can now be used for all finetuning "arg" parameters 
+
+
 ### March 1st, 2021
 **Introducing Version 2.1.0!**
 You can now use any model type available on [Hugging Face's model distribution network](https://huggingface.co/models) for the implemented features. 
