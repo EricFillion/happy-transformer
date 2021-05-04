@@ -25,6 +25,7 @@ inputs:
 |-------------------------------|-------|
 | learning_rate                 | 5e-5  |
 | num_train_epochs              | 3.0   |
+| batch_size                    | 1     |
 | weight_decay                  | 0     |
 | adam_beta1                    | 0.9   |
 | adam_beta2                    | 0.999 |
