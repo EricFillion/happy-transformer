@@ -9,3 +9,12 @@ def test_classify_text():
     result = happy_toc.classify_token("My name is Geoffrey and I live in Toronto")
     assert result == expected_result
 
+def test_toc_save():
+    happy = HappyTokenClassification()
+    happy.save("model/")
+    result_before = happy.classify_token("My name is Geoffrey and I live in Toronto")
+
+    happy = HappyTokenClassification(load_path="model/")
+    result_after = happy.classify_token("My name is Geoffrey and I live in Toronto")
+
+    assert result_before[0].word==result_after[0].word

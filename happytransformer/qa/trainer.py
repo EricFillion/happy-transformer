@@ -7,35 +7,89 @@ robust methods. And also, to improve maintainability as they update the document
 
 https://huggingface.co/transformers/custom_datasets.html#question-answering-with-squad-2-0
 """
+
+from dataclasses import dataclass
 import csv
 from tqdm import tqdm
 import torch
+import json
+from transformers import DataCollatorWithPadding
 from happytransformer.happy_trainer import HappyTrainer, EvalResult
+from happytransformer.qa.default_args import ARGS_QA_TRAIN, ARGS_QA_EVAl, ARGS_QA_TEST
+
+@dataclass
+class QATrainArgs:
+    learning_rate: float = ARGS_QA_TRAIN["learning_rate"]
+    num_train_epochs: int = ARGS_QA_TRAIN["num_train_epochs"]
+    weight_decay: float = ARGS_QA_TRAIN["weight_decay"]
+    adam_beta1: float = ARGS_QA_TRAIN["adam_beta1"]
+    adam_beta2: float = ARGS_QA_TRAIN["adam_beta2"]
+    adam_epsilon: float = ARGS_QA_TRAIN["adam_epsilon"]
+    max_grad_norm:  float = ARGS_QA_TRAIN["max_grad_norm"]
+    save_preprocessed_data: bool = ARGS_QA_TRAIN["save_preprocessed_data"]
+    save_preprocessed_data_path: str = ARGS_QA_TRAIN["save_preprocessed_data_path"]
+    load_preprocessed_data: bool = ARGS_QA_TRAIN["load_preprocessed_data"]
+    load_preprocessed_data_path: str = ARGS_QA_TRAIN["load_preprocessed_data_path"]
+    batch_size: int = ARGS_QA_TRAIN["batch_size"]
+
+
+@dataclass
+class QAEvalArgs:
+    batch_size: int = ARGS_QA_EVAl["batch_size"]
+    save_preprocessed_data: bool = ARGS_QA_EVAl["save_preprocessed_data"]
+    save_preprocessed_data_path: str = ARGS_QA_EVAl["save_preprocessed_data_path"]
+    load_preprocessed_data: bool = ARGS_QA_EVAl["load_preprocessed_data"]
+    load_preprocessed_data_path: str = ARGS_QA_EVAl["load_preprocessed_data_path"]
+
+
+@dataclass
+class QATestArgs:
+    save_preprocessed_data: bool = ARGS_QA_TEST["save_preprocessed_data"]
+    save_preprocessed_data_path: str = ARGS_QA_TEST["save_preprocessed_data_path"]
+    load_preprocessed_data: bool = ARGS_QA_TEST["load_preprocessed_data"]
+    load_preprocessed_data_path: str = ARGS_QA_TEST["load_preprocessed_data_path"]
+
 
 class QATrainer(HappyTrainer):
     """
     Trainer class for HappyTextClassification
     """
 
-    def train(self, input_filepath, args):
+    def train(self, input_filepath, dataclass_args: QATrainArgs):
         """
         See docstring in HappyQuestionAnswering.train()
         """
-        #todo: add time elapsed and test time remaining similar to what is within eval
+        if dataclass_args.save_preprocessed_data:
+            self.logger.info("Saving preprocessed data is currently "
+                             "not available for question answering models. "
+                             "It will be added soon. ")
+        if dataclass_args.load_preprocessed_data:
+            self.logger.info("Loading preprocessed data is currently "
+                             "not available for question answering models. "
+                             "It will be added soon. ")
 
+        self.logger.info("Preprocessing dataset...")
         contexts, questions, answers = self._get_data(input_filepath)
         self.__add_end_idx(contexts, answers)
         encodings = self.tokenizer(contexts, questions, truncation=True, padding=True)
         self.__add_token_positions(encodings, answers)
         dataset = QuestionAnsweringDataset(encodings)
-        self._run_train(dataset, args)
+        data_collator = DataCollatorWithPadding(self.tokenizer)
+        self._run_train(dataset, dataclass_args, data_collator)
 
-
-    def eval(self, input_filepath):
+    def eval(self, input_filepath, dataclass_args: QAEvalArgs):
         """
         See docstring in HappyQuestionAnswering.eval()
 
         """
+        if dataclass_args.save_preprocessed_data:
+            self.logger.info("Saving preprocessed data is currently "
+                             "not available for question answering models. "
+                             "It will be added soon. ")
+        if dataclass_args.load_preprocessed_data:
+            self.logger.info("Loading preprocessed data is currently "
+                             "not available for question answering models. "
+                             "It will be added soon. ")
 
         contexts, questions, answers = self._get_data(input_filepath)
 
@@ -43,15 +97,27 @@ class QATrainer(HappyTrainer):
         encodings = self.tokenizer(contexts, questions, truncation=True, padding=True)
         self.__add_token_positions(encodings, answers)
         eval_dataset = QuestionAnsweringDataset(encodings)
-        result = self._run_eval(eval_dataset)
+        data_collator = DataCollatorWithPadding(self.tokenizer)
+
+        result = self._run_eval(eval_dataset, data_collator, dataclass_args)
         return EvalResult(loss=result["eval_loss"])
 
 
-    def test(self, input_filepath, solve):
+    def test(self, input_filepath, solve, dataclass_args: QATestArgs):
         """
         See docstring in HappyQuestionAnswering.test()
 
         """
+
+        if dataclass_args.save_preprocessed_data:
+            self.logger.info("Saving preprocessed data is currently "
+                             "not available for question answering models. "
+                             "It will be added soon. ")
+        if dataclass_args.load_preprocessed_data:
+            self.logger.info("Loading preprocessed data is currently "
+                             "not available for question answering models. "
+                             "It will be added soon. ")
+
         contexts, questions = self._get_data(input_filepath, test_data=True)
 
         return [
@@ -119,6 +185,60 @@ class QATrainer(HappyTrainer):
             if end_positions[-1] is None:
                 end_positions[-1] = self.tokenizer.model_max_length
         encodings.update({'start_positions': start_positions, 'end_positions': end_positions})
+
+
+    @staticmethod
+    def _generate_json(json_path, input_ids, attention_masks, start_positions, end_positions, name):
+        data = {}
+        data[name] = []
+        data = {
+            name: [
+                {
+                    'input_ids': input_id,
+                    'attention_mask': attention_mask,
+                    'start_positions': start_positions,
+                    'end_positions': end_positions
+
+                }
+                for input_id, attention_mask, start_position, end_position in zip(input_ids, attention_masks, start_positions, end_positions)
+            ]
+        }
+
+        with open(json_path, 'w') as outfile:
+            json.dump(data, outfile)
+
+
+    @staticmethod
+    def _get_preprocessed_data(filepath):
+        """
+        Used for Fetching preprocessed data)
+        :param filepath: a string that contains the location of the data
+        :return:
+        """
+
+        # dataset = load_dataset("csv", data_files={"train": filepath})
+        input_ids = []
+        attention_mask = []
+        start_positions = []
+        end_positions = []
+
+        with open(filepath) as json_file:
+            data = json.load(json_file)
+        json_file.close()
+
+        for case in data["train"]:
+            input_ids.append(case['input_ids'])
+            attention_mask.append(case['attention_mask'])
+            start_positions.append(case['start_positions'])
+            end_positions.append(case['end_positions'])
+
+        encodings = {
+            "input_ids": input_ids,
+            "attention_mask": attention_mask,
+            "start_positions": start_positions,
+            "end_positions": end_positions}
+
+        return encodings
 
 
 class QuestionAnsweringDataset(torch.utils.data.Dataset):

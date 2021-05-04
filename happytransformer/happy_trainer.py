@@ -26,7 +26,7 @@ class HappyTrainer:
         """
         raise NotImplementedError()
 
-    def test(self, input_filepath, solve):
+    def test(self, input_filepath, solve, args):
         """
 
         :param input_filepath: A string to file location
@@ -35,9 +35,10 @@ class HappyTrainer:
         """
         raise NotImplementedError()
 
-    def eval(self, input_filepath):
+    def eval(self, input_filepath, args):
         """
         :param input_filepath: A string to file location
+        :args a dictionary that contains settings
         :return: a dictionary that contains a key called "eval_loss" that holds the loss
          for the given eval dataset. May add more metrics later
         """
@@ -54,62 +55,69 @@ class HappyTrainer:
         raise NotImplementedError()
 
     @staticmethod
-    def _get_training_args(args, output_path):
+    def _get_training_args(dataclass_args, output_path):
         """
-        :param args: a dictionary of arguments for training
+        :param args: a dataclass of arguments for training
         :param output_path: A string to a temporary directory
         :return: A TrainingArguments object
         """
         return TrainingArguments(
             output_dir=output_path,
-            learning_rate=args["learning_rate"],
-            weight_decay=args["weight_decay"],
-            adam_beta1=args["adam_beta1"],
-            adam_beta2=args["adam_beta2"],
-            adam_epsilon=args["adam_epsilon"],
-            max_grad_norm=args["max_grad_norm"],
-            num_train_epochs=args["num_train_epochs"],
+            learning_rate=dataclass_args.learning_rate,
+            weight_decay=dataclass_args.weight_decay,
+            adam_beta1=dataclass_args.adam_beta1,
+            adam_beta2=dataclass_args.adam_beta2,
+            adam_epsilon=dataclass_args.adam_epsilon,
+            max_grad_norm=dataclass_args.max_grad_norm,
+            num_train_epochs=dataclass_args.num_train_epochs,
+            report_to=["none"],
+            per_device_train_batch_size=dataclass_args.batch_size
 
         )
 
-    def _run_train(self, dataset, args):
+
+    def _run_train(self, dataset, dataclass_args, data_collator):
         """
 
         :param dataset: a child of torch.utils.data.Dataset
-        :param args: a dictionary that contains settings
+        :param dataclass_args: a dataclass that contains settings
         :return: None
         """
         with tempfile.TemporaryDirectory() as tmp_dir_name:
-            training_args = self._get_training_args(args, tmp_dir_name)
+            training_args = self._get_training_args(dataclass_args, tmp_dir_name)
             trainer = Trainer(
                 model=self.model,
                 args=training_args,
                 train_dataset=dataset,
+                tokenizer=self.tokenizer,
+                data_collator=data_collator,
             )
             trainer.train()
-
-    def _run_eval(self, dataset):
+    def _run_eval(self, dataset, data_collator, dataclass_args):
         """
         :param dataset: a child of torch.utils.data.Dataset
         :return: None
         """
         with tempfile.TemporaryDirectory() as tmp_dir_name:
-            eval_args = self._get_eval_args(tmp_dir_name)
+            eval_args = self._get_eval_args(tmp_dir_name, dataclass_args)
             trainer = Trainer(
                 model=self.model,
                 args=eval_args,
                 eval_dataset=dataset,
-
+                data_collator=data_collator
             )
             return trainer.evaluate()
 
     @staticmethod
-    def _get_eval_args(output_path):
+    def _get_eval_args(output_path, dataclass_args):
         """
         :param output_path: A string to a temporary directory
         :return: A TrainingArguments object
         """
         return TrainingArguments(
             output_dir=output_path,
-            seed=42
+            seed=42,
+            report_to=['none'],
+            per_device_eval_batch_size=dataclass_args.batch_size,
+
         )

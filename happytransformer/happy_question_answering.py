@@ -4,14 +4,16 @@ Contains the HappyQuestionAnswering class.
 """
 from typing import List
 from dataclasses import dataclass
-from transformers import QuestionAnsweringPipeline, AutoModelForQuestionAnswering, AutoTokenizer
+from transformers import QuestionAnsweringPipeline, AutoModelForQuestionAnswering
 
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.qa.trainer import QATrainer
-from happytransformer.qa.default_args import ARGS_QA_TRAIN
+from happytransformer.qa.trainer import QATrainer, QATrainArgs, QAEvalArgs, QATestArgs
+from happytransformer.happy_trainer import EvalResult
+from happytransformer.qa import ARGS_QA_TRAIN, ARGS_QA_EVAl, ARGS_QA_TEST
 
 from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.adaptors import get_adaptor
+from happytransformer.fine_tuning_util import create_args_dataclass
 
 @dataclass
 class QuestionAnsweringResult:
@@ -32,11 +34,14 @@ class HappyQuestionAnswering(HappyTransformer):
     other classes.
     """
     def __init__(self, model_type="DISTILBERT",
-                 model_name="distilbert-base-cased-distilled-squad"):
+                 model_name="distilbert-base-cased-distilled-squad", load_path: str = ""):
         
         self.adaptor = get_adaptor(model_type)
 
-        model = AutoModelForQuestionAnswering.from_pretrained(model_name)
+        if load_path != "":
+            model = AutoModelForQuestionAnswering.from_pretrained(load_path)
+        else:
+            model = AutoModelForQuestionAnswering.from_pretrained(model_name)
 
         super().__init__(model_type, model_name, model)
         device_number = detect_cuda_device_number()
@@ -67,7 +72,7 @@ class HappyQuestionAnswering(HappyTransformer):
             for answer in answers
         ]
 
-    def train(self, input_filepath, args=ARGS_QA_TRAIN):
+    def train(self, input_filepath, args=QATrainArgs()):
         """
         Trains the question answering model
 
@@ -75,14 +80,24 @@ class HappyQuestionAnswering(HappyTransformer):
         for training. Contains the following header values: context,
         question, answer_text, answer_start
 
-        args: a dictionary that contains settings found under
-        happytransformer.happytasks.happy_qa.default_args.py
+        args: Either a QATrainArgs() object or a dictionary that contains all of the same keys as ARGS_QA_TRAIN
 
         return: None
         """
-        self._trainer.train(input_filepath=input_filepath, args=args)
 
-    def eval(self, input_filepath):
+        if type(args) == dict:
+            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_QA_TRAIN,
+                                                                input_dic_args=args,
+                                                                method_dataclass_args=QATrainArgs)
+        elif type(args) == QATrainArgs:
+            method_dataclass_args = args
+        else:
+            raise ValueError("Invalid args type. Use a QATrainArgs object or a dictionary")
+
+
+        self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
+
+    def eval(self, input_filepath, args=QAEvalArgs()) -> EvalResult:
         """
         Trains the question answering model
 
@@ -90,12 +105,24 @@ class HappyQuestionAnswering(HappyTransformer):
         for training. Contains the following header values:
         context, question, answer_text, answer_start
 
+        args: Either a QAEvalArgs() object or a dictionary that contains all of the same keys as ARGS_QA_EVAl
+
         return: A dictionary that contains a key called "eval_loss"
 
         """
-        return self._trainer.eval(input_filepath=input_filepath)
+        if type(args) == dict:
+            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_QA_EVAl,
+                                                                input_dic_args=args,
+                                                                method_dataclass_args=QAEvalArgs)
+        elif type(args) == QAEvalArgs:
+            method_dataclass_args = args
+        else:
+            raise ValueError("Invalid args type. Use a QAEvalArgs object or a dictionary")
 
-    def test(self, input_filepath):
+        return self._trainer.eval(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
+
+
+    def test(self, input_filepath, args=QATestArgs()):
         """
         Tests the question answering model. Used to obtain results
 
@@ -103,7 +130,19 @@ class HappyQuestionAnswering(HappyTransformer):
         for training. Contains the following header values:
         context, question
 
+        args: Either a QATestArgs() object or a dictionary that contains all of the same keys as ARGS_QA_TEST
+
         return: A list of dictionaries. Each dictionary
         contains the keys: "score", "start", "end" and "answer"
         """
-        return self._trainer.test(input_filepath=input_filepath, solve=self.answer_question)
+        if type(args) == dict:
+            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_QA_TEST,
+                                                                input_dic_args=args,
+                                                                method_dataclass_args=QATestArgs)
+        elif type(args) == QATestArgs:
+            method_dataclass_args = args
+        else:
+            raise ValueError("Invalid args type. Use a QATestArgs object or a dictionary")
+
+
+        return self._trainer.test(input_filepath=input_filepath, solve=self.answer_question, dataclass_args=method_dataclass_args)

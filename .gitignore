@@ -3,6 +3,33 @@ examples/question_answering/eval.csv
 examples/text_classification/train.csv
 examples/text_classification/eval.csv
 runs/
+.idea/
+
+examples/word_prediction/train.txt
+examples/word_prediction/eval.txt
+
+examples/text_classification/train.txt
+examples/text_classification/eval.txt
+
+examples/question_answering/train.txt
+examples/question_answering/eval.txt
+
+examples/generation/train.txt
+examples/generation/eval.txt
+
+main.py
+tests/model/
+
+tests/data/gen-train.txt
+tests/data/qa-train.json
+tests/data/tc-train.json
+tests/data/wp-eval.txt
+tests/data/wp-train.json
+tests/data/wp-train.txt
+
+
+# just in case someone runs pytest from the top level directory
+model/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

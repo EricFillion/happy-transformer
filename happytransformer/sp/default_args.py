@@ -8,3 +8,9 @@ ARGS_SP_TRAIN = {
     'num_train_epochs': 3.0,
 
 }
+
+
+
+ARGS_SP_EVAl = {}
+
+ARGS_SP_TEST = {}
