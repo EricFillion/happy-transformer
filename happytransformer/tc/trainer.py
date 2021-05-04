@@ -29,6 +29,7 @@ class TCTrainArgs:
     save_preprocessed_data_path: str = ARGS_TC_TRAIN["save_preprocessed_data_path"]
     load_preprocessed_data: bool = ARGS_TC_TRAIN["load_preprocessed_data"]
     load_preprocessed_data_path: str = ARGS_TC_TRAIN["load_preprocessed_data_path"]
+    batch_size: int = ARGS_TC_TRAIN["batch_size"]
 
 
 @dataclass
@@ -37,6 +38,8 @@ class TCEvalArgs:
     save_preprocessed_data_path: str = ARGS_TC_EVAL["save_preprocessed_data_path"]
     load_preprocessed_data: bool = ARGS_TC_EVAL["load_preprocessed_data"]
     load_preprocessed_data_path: str = ARGS_TC_EVAL["load_preprocessed_data_path"]
+    batch_size: int = ARGS_TC_EVAL["batch_size"]
+
 
 @dataclass
 class TCTestArgs:
@@ -89,7 +92,7 @@ class TCTrainer(HappyTrainer):
         eval_dataset = TextClassificationDataset(eval_encodings, labels)
         data_collator = DataCollatorWithPadding(self.tokenizer)
 
-        result = self._run_eval(eval_dataset, data_collator)
+        result = self._run_eval(eval_dataset, data_collator, dataclass_args)
         return EvalResult(loss=result["eval_loss"])
 
     def test(self, input_filepath, solve, dataclass_args: TCTestArgs):

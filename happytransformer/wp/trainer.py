@@ -29,6 +29,7 @@ class WPTrainArgs:
     preprocessing_processes: int = ARGS_WP_TRAIN["preprocessing_processes"]
     mlm_probability: float = ARGS_WP_TRAIN["mlm_probability"]
     line_by_line: bool = ARGS_WP_TRAIN["line_by_line"]
+    batch_size: int = ARGS_WP_TRAIN["batch_size"]
 
 
 @dataclass
@@ -40,6 +41,7 @@ class WPEvalArgs:
     preprocessing_processes: int =ARGS_WP_EVAl["preprocessing_processes"]
     mlm_probability: float = ARGS_WP_EVAl["mlm_probability"]
     line_by_line: bool = ARGS_WP_EVAl["line_by_line"]
+    batch_size: int = ARGS_WP_EVAl["batch_size"]
 
 
 
@@ -96,7 +98,7 @@ class WPTrainer(HappyTrainer):
 
         data_collator = DataCollatorForLanguageModeling(tokenizer=self.tokenizer,
                                                         mlm_probability=dataclass_args.mlm_probability)
-        result = self._run_eval(tokenized_dataset['eval'], data_collator)
+        result = self._run_eval(tokenized_dataset['eval'], data_collator, dataclass_args)
 
         return EvalResult(loss=result["eval_loss"])
 

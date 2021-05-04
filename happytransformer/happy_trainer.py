@@ -71,7 +71,7 @@ class HappyTrainer:
             max_grad_norm=dataclass_args.max_grad_norm,
             num_train_epochs=dataclass_args.num_train_epochs,
             report_to=["none"],
-            per_device_train_batch_size=8
+            per_device_train_batch_size=dataclass_args.batch_size
 
         )
 
@@ -93,13 +93,13 @@ class HappyTrainer:
                 data_collator=data_collator,
             )
             trainer.train()
-    def _run_eval(self, dataset, data_collator):
+    def _run_eval(self, dataset, data_collator, dataclass_args):
         """
         :param dataset: a child of torch.utils.data.Dataset
         :return: None
         """
         with tempfile.TemporaryDirectory() as tmp_dir_name:
-            eval_args = self._get_eval_args(tmp_dir_name)
+            eval_args = self._get_eval_args(tmp_dir_name, dataclass_args)
             trainer = Trainer(
                 model=self.model,
                 args=eval_args,
@@ -109,7 +109,7 @@ class HappyTrainer:
             return trainer.evaluate()
 
     @staticmethod
-    def _get_eval_args(output_path):
+    def _get_eval_args(output_path, dataclass_args):
         """
         :param output_path: A string to a temporary directory
         :return: A TrainingArguments object
@@ -117,6 +117,7 @@ class HappyTrainer:
         return TrainingArguments(
             output_dir=output_path,
             seed=42,
-            report_to=['none']
+            report_to=['none'],
+            per_device_eval_batch_size=dataclass_args.batch_size,
 
         )

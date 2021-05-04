@@ -10,7 +10,7 @@ ARGS_QA_TRAIN = {
     'save_preprocessed_data_path': "",
     'load_preprocessed_data': False,
     'load_preprocessed_data_path': "",
-
+    'batch_size': 1,
 }
 
 
@@ -19,6 +19,7 @@ ARGS_QA_EVAl = {
     'save_preprocessed_data_path': "",
     'load_preprocessed_data': False,
     'load_preprocessed_data_path': "",
+    'batch_size': 1,
 
 }
 
@@ -27,5 +28,4 @@ ARGS_QA_TEST = {
     'save_preprocessed_data_path': "",
     'load_preprocessed_data': False,
     'load_preprocessed_data_path': "",
-
 }

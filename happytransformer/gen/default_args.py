@@ -12,6 +12,7 @@ ARGS_GEN_TRAIN = {
     'load_preprocessed_data_path': "",
     'preprocessing_processes': 1,
     'mlm_probability': 0.15,
+    'batch_size': 1,
 }
 
 
@@ -22,6 +23,8 @@ ARGS_GEN_EVAl = {
     'load_preprocessed_data_path': "",
     'preprocessing_processes': 1,
     'mlm_probability': 0.15,
+    'batch_size': 1,
+
 }
 
 

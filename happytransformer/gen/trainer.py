@@ -28,6 +28,7 @@ class GENTrainArgs:
     load_preprocessed_data_path: str = ARGS_GEN_TRAIN["load_preprocessed_data_path"]
     preprocessing_processes: int = ARGS_GEN_TRAIN["preprocessing_processes"]
     mlm_probability: float = ARGS_GEN_TRAIN["mlm_probability"]
+    batch_size: int = ARGS_GEN_TRAIN["batch_size"]
 
 
 @dataclass
@@ -38,6 +39,7 @@ class GENEvalArgs:
     load_preprocessed_data_path: str = ARGS_GEN_EVAl["load_preprocessed_data_path"]
     preprocessing_processes: int =ARGS_GEN_EVAl["preprocessing_processes"]
     mlm_probability: float = ARGS_GEN_EVAl["mlm_probability"]
+    batch_size: int = ARGS_GEN_EVAl["batch_size"]
 
 
 class GENTrainer(HappyTrainer):
@@ -99,7 +101,7 @@ class GENTrainer(HappyTrainer):
 
         self.logger.info("Evaluating...")
 
-        result = self._run_eval(tokenized_dataset['eval'], default_data_collator)
+        result = self._run_eval(tokenized_dataset['eval'], default_data_collator, dataclass_args)
 
         return EvalResult(loss=result["eval_loss"])
 

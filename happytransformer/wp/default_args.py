@@ -13,6 +13,8 @@ ARGS_WP_TRAIN = {
     'preprocessing_processes': 1,
     'mlm_probability': 0.15,
     'line_by_line': False,
+    'batch_size': 1,
+
 }
 
 
@@ -24,6 +26,7 @@ ARGS_WP_EVAl = {
     'preprocessing_processes': 1,
     'mlm_probability': 0.15,
     'line_by_line': False,
+    'batch_size': 1,
 
 }
 
