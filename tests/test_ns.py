@@ -1,9 +1,5 @@
 from happytransformer import HappyNextSentence
 
-# Note, some of the model's weights are randomly initialized
-# So we can not rely on getting the same score each time
-# we run a unit test.
-
 
 def test_sp_true():
     happy_ns = HappyNextSentence()

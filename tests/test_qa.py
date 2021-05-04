@@ -2,8 +2,13 @@
 Tests for the question answering training, evaluating and testing functionality
 """
 
-from happytransformer.happy_question_answering import HappyQuestionAnswering
-from happytransformer.qa.trainer import QATrainArgs, QAEvalArgs, QATestArgs
+from happytransformer.happy_question_answering import (
+    HappyQuestionAnswering,
+    QATrainArgs,
+    QAEvalArgs,
+    QATestArgs
+)
+
 from pytest import approx
 
 def test_qa_basic():
