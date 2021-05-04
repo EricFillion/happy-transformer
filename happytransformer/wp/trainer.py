@@ -17,6 +17,7 @@ import json
 class WPTrainArgs:
     learning_rate: float = ARGS_WP_TRAIN["learning_rate"]
     num_train_epochs: int = ARGS_WP_TRAIN["num_train_epochs"]
+    batch_size: int = ARGS_WP_TRAIN["batch_size"]
     weight_decay: float = ARGS_WP_TRAIN["weight_decay"]
     adam_beta1: float = ARGS_WP_TRAIN["adam_beta1"]
     adam_beta2: float = ARGS_WP_TRAIN["adam_beta2"]
@@ -29,11 +30,11 @@ class WPTrainArgs:
     preprocessing_processes: int = ARGS_WP_TRAIN["preprocessing_processes"]
     mlm_probability: float = ARGS_WP_TRAIN["mlm_probability"]
     line_by_line: bool = ARGS_WP_TRAIN["line_by_line"]
-    batch_size: int = ARGS_WP_TRAIN["batch_size"]
 
 
 @dataclass
 class WPEvalArgs:
+    batch_size: int = ARGS_WP_EVAl["batch_size"]
     save_preprocessed_data: bool = ARGS_WP_EVAl["save_preprocessed_data"]
     save_preprocessed_data_path: str = ARGS_WP_EVAl["save_preprocessed_data_path"]
     load_preprocessed_data: bool = ARGS_WP_EVAl["load_preprocessed_data"]
@@ -41,7 +42,6 @@ class WPEvalArgs:
     preprocessing_processes: int =ARGS_WP_EVAl["preprocessing_processes"]
     mlm_probability: float = ARGS_WP_EVAl["mlm_probability"]
     line_by_line: bool = ARGS_WP_EVAl["line_by_line"]
-    batch_size: int = ARGS_WP_EVAl["batch_size"]
 
 
 

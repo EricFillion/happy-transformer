@@ -17,6 +17,7 @@ from datasets import load_dataset
 class GENTrainArgs:
     learning_rate: float = ARGS_GEN_TRAIN["learning_rate"]
     num_train_epochs: int = ARGS_GEN_TRAIN["num_train_epochs"]
+    batch_size: int = ARGS_GEN_TRAIN["batch_size"]
     weight_decay: float = ARGS_GEN_TRAIN["weight_decay"]
     adam_beta1: float = ARGS_GEN_TRAIN["adam_beta1"]
     adam_beta2: float = ARGS_GEN_TRAIN["adam_beta2"]
@@ -28,18 +29,17 @@ class GENTrainArgs:
     load_preprocessed_data_path: str = ARGS_GEN_TRAIN["load_preprocessed_data_path"]
     preprocessing_processes: int = ARGS_GEN_TRAIN["preprocessing_processes"]
     mlm_probability: float = ARGS_GEN_TRAIN["mlm_probability"]
-    batch_size: int = ARGS_GEN_TRAIN["batch_size"]
 
 
 @dataclass
 class GENEvalArgs:
+    batch_size: int = ARGS_GEN_EVAl["batch_size"]
     save_preprocessed_data: bool = ARGS_GEN_EVAl["save_preprocessed_data"]
     save_preprocessed_data_path: str = ARGS_GEN_EVAl["save_preprocessed_data_path"]
     load_preprocessed_data: bool = ARGS_GEN_EVAl["load_preprocessed_data"]
     load_preprocessed_data_path: str = ARGS_GEN_EVAl["load_preprocessed_data_path"]
     preprocessing_processes: int =ARGS_GEN_EVAl["preprocessing_processes"]
     mlm_probability: float = ARGS_GEN_EVAl["mlm_probability"]
-    batch_size: int = ARGS_GEN_EVAl["batch_size"]
 
 
 class GENTrainer(HappyTrainer):

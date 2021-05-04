@@ -20,6 +20,7 @@ import json
 class TCTrainArgs:
     learning_rate: float = ARGS_TC_TRAIN["learning_rate"]
     num_train_epochs: int = ARGS_TC_TRAIN["num_train_epochs"]
+    batch_size: int = ARGS_TC_TRAIN["batch_size"]
     weight_decay: float = ARGS_TC_TRAIN["weight_decay"]
     adam_beta1: float = ARGS_TC_TRAIN["adam_beta1"]
     adam_beta2: float = ARGS_TC_TRAIN["adam_beta2"]
@@ -29,7 +30,6 @@ class TCTrainArgs:
     save_preprocessed_data_path: str = ARGS_TC_TRAIN["save_preprocessed_data_path"]
     load_preprocessed_data: bool = ARGS_TC_TRAIN["load_preprocessed_data"]
     load_preprocessed_data_path: str = ARGS_TC_TRAIN["load_preprocessed_data_path"]
-    batch_size: int = ARGS_TC_TRAIN["batch_size"]
 
 
 @dataclass

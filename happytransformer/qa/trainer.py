@@ -35,11 +35,11 @@ class QATrainArgs:
 
 @dataclass
 class QAEvalArgs:
+    batch_size: int = ARGS_QA_EVAl["batch_size"]
     save_preprocessed_data: bool = ARGS_QA_EVAl["save_preprocessed_data"]
     save_preprocessed_data_path: str = ARGS_QA_EVAl["save_preprocessed_data_path"]
     load_preprocessed_data: bool = ARGS_QA_EVAl["load_preprocessed_data"]
     load_preprocessed_data_path: str = ARGS_QA_EVAl["load_preprocessed_data_path"]
-    batch_size: int = ARGS_QA_EVAl["batch_size"]
 
 
 @dataclass
