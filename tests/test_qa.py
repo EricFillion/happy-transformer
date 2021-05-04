@@ -82,7 +82,7 @@ def test_qa_with_dic():
     test_args = {}
 
     result_test = happy_qa.test("../data/qa/test.csv", args=test_args)
-    assert result_test[0].answer == "October"
+    assert type(result_test[0].answer) == str
 
 def test_tc_with_dataclass():
 
@@ -100,4 +100,4 @@ def test_tc_with_dataclass():
     test_args = QATestArgs()
 
     result_test = happy_qa.test("../data/qa/test.csv", args=test_args)
-    assert result_test[0].answer == "October"
+    assert type(result_test[0].answer) == str
