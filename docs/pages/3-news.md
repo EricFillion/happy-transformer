@@ -5,10 +5,10 @@ permalink: /news/
 nav_order: 4
 
 ---
-
 ## News: 
 ### May 4th, 2021
 **Introducing Version 2.2.0!**
+
 New Features: 
 - Text generation with training 
 - Word prediction training   
