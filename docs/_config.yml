@@ -32,6 +32,7 @@ github_username:  EricFillion
 # Build settings
 # theme: minima
 remote_theme: pmarsceill/just-the-docs
+search_enabled: false
 
 plugins:
   - jekyll-feed
