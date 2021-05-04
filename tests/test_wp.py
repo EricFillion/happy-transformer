@@ -1,7 +1,13 @@
 from pytest import approx
 
-from happytransformer import HappyWordPrediction, WPTrainArgs
-from happytransformer.happy_word_prediction import WordPredictionResult, ARGS_WP_TRAIN, ARGS_WP_EVAl, WPTrainArgs, WPEvalArgs
+from happytransformer import (
+    HappyWordPrediction,
+    ARGS_WP_TRAIN,
+    ARGS_WP_EVAl,
+    WPTrainArgs,
+    WPEvalArgs
+)
+from happytransformer.happy_word_prediction import WordPredictionResult
 from tests.shared_tests import run_save_load
 
 

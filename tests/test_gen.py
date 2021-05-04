@@ -2,11 +2,12 @@ from happytransformer import (
     HappyGeneration,
     ARGS_GEN_TRAIN,
     ARGS_GEN_EVAl,
-    GENSettings)
+    GENSettings,
+    GENTrainArgs,
+    GENEvalArgs
+)
 
-from happytransformer.gen.trainer import GENTrainArgs, GENEvalArgs
 from tests.shared_tests import run_save_load
-from pytest import approx
 
 def test_default_simple():
     happy_gen = HappyGeneration()
