@@ -17,8 +17,7 @@ setup(
     author = "The Happy Transformer Development Team",
     author_email = 'happytransformer@gmail.com',
     url = 'https://github.com/EricFillion/happy-transformer',
-    keywords = ['bert', 'roberta', 'xlnet', "word",'prediction' "masked", "transformer", "happy", "HappyTransformer", "binary", "sequence", "classification", "pytorch", "nlp", "nlu", "natural", "language", "processing", "understanding"],
-
+    keywords = ['bert', 'roberta', 'xlnet', "transformer", "happy", "HappyTransformer",  "classification",  "nlp", "nlu", "natural", "language", "processing", "understanding"],
 
     install_requires=[
             'torch>=1.0',
