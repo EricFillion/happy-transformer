@@ -4,10 +4,13 @@
 ![version](https://img.shields.io/badge/version-2.2.1-blue)
 [![](https://github.com/EricFillion/happy-transformer/workflows/build/badge.svg)](https://github.com/EricFillion/happy-transformer/actions)
 
-
 # Happy Transformer 
-**Documentation and news: 
-[happytransformer.com](http://happytransformer.com)**
+**Documentation and news: [happytransformer.com](http://happytransformer.com)**
+
+
+Join our brand new Discord server: [![Support Server](https://img.shields.io/discord/839263772312862740.svg?label=Discord&logo=Discord&colorB=7289da&style=?style=flat-square&logo=appveyor)](https://discord.gg/psVwe3wfTb)
+
+
 
 ![HappyTransformer](logo.png)
 
