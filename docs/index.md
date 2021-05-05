@@ -14,11 +14,12 @@ Happy Transformer is a package built on top of [Hugging Face's transformer libra
   
 | Public Methods                     | Basic Usage  | Training   |
 |------------------------------------|--------------|------------|
-| Word Prediction                    | ✔            |            |
+| Text Generation                    | ✔            | ✔          |
 | Text Classification                | ✔            | ✔          | 
 | Question Answering                 | ✔            | ✔          | 
-| Next Sentence Prediction           | ✔            |            | 
+| Word Prediction                    | ✔            | ✔          |
 | Token Classification               | ✔            |            | 
+| Next Sentence Prediction           | ✔            |            | 
 
 <span class="fs-8">
 [GitHub](https://github.com/EricFillion/happy-transformer){: .btn .mr-30 }
