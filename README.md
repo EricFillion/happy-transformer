@@ -2,6 +2,9 @@
 [![Downloads](https://pepy.tech/badge/happytransformer)](https://pepy.tech/project/happytransformer)
 [![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](http://happytransformer.com)
 ![version](https://img.shields.io/badge/version-2.2.1-blue)
+[![](https://github.com/EricFillion/happy-transformer/workflows/build/badge.svg)](https://github.com/EricFillion/happy-transformer/actions)
+
+
 # Happy Transformer 
 **Documentation and news: 
 [happytransformer.com](http://happytransformer.com)**
