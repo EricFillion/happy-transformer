@@ -24,5 +24,5 @@ Happy Transformer is a package built on top of [Hugging Face's transformer libra
 [GitHub](https://github.com/EricFillion/happy-transformer){: .btn .mr-30 }
 </span>
 <span class="fs-8">
-[PyPi](https://pypi.org/project/happytransformer/){: .btn }
+[PyPI](https://pypi.org/project/happytransformer/){: .btn }
 </span>
