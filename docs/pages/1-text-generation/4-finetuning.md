@@ -58,6 +58,13 @@ mlm_probability: The probability of masking a token.
     args = GENTrainArgs(num_train_epochs=1) 
     happy_gen.train("../../data/gen/train-eval.txt", args=args)
 ```
+Note: if you wish to use HappyGeneration.generate_text() after training then first run the following command: 
+
+```python
+happy_gen.model.to("cpu")
+
+```
+
 
 ### eval()
 Input:
@@ -93,4 +100,9 @@ Output: An object with the field "loss"
     print(result.loss)  # 3.3437771797180176
 
 ```
+Note: if you wish to use HappyGeneration.generate_text() after evaluating then first run the following command: 
 
+```python
+happy_gen.model.to("cpu")
+
+```
