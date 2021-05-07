@@ -14,7 +14,6 @@ def test_default_simple():
     args = GENSettings(min_length=5, max_length=5)
     output = happy_gen.generate_text("Artificial intelligence is ", args=args)
     assert type(output.text) == str
-    print("default simple: ", output.text)
 
 
 def test_default_min_max_length():
