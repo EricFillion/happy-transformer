@@ -128,3 +128,10 @@ def test_gen_train_eval_with_dataclass():
 
     assert type(after_result.loss) == float
 
+def test_generate_after_train_eval():
+    happy_gen = HappyGeneration()
+    happy_gen.train("../data/gen/train-eval.txt")
+    eval_result = happy_gen.eval("../data/gen/train-eval.txt")
+    output = happy_gen.generate_text("Artificial intelligence is ")
+    assert type(output.text) == str
+
