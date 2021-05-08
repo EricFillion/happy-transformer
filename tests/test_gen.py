@@ -14,7 +14,6 @@ def test_default_simple():
     args = GENSettings(min_length=5, max_length=5)
     output = happy_gen.generate_text("Artificial intelligence is ", args=args)
     assert type(output.text) == str
-    print("default simple: ", output.text)
 
 
 def test_default_min_max_length():
@@ -128,4 +127,11 @@ def test_gen_train_eval_with_dataclass():
     after_result = happy_gen.eval("../data/wp/train-eval.txt", args=eval_args)
 
     assert type(after_result.loss) == float
+
+def test_generate_after_train_eval():
+    happy_gen = HappyGeneration()
+    happy_gen.train("../data/gen/train-eval.txt")
+    eval_result = happy_gen.eval("../data/gen/train-eval.txt")
+    output = happy_gen.generate_text("Artificial intelligence is ")
+    assert type(output.text) == str
 

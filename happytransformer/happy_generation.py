@@ -2,13 +2,14 @@
 Contains the HappyGeneration class
 """
 from dataclasses import dataclass
-from transformers import AutoModelForCausalLM
+from transformers import AutoModelForCausalLM, TextGenerationPipeline
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.gen.trainer import GENTrainer, GENTrainArgs, GENEvalArgs
 from happytransformer.adaptors import get_adaptor
 from happytransformer.gen import ARGS_GEN_TRAIN, ARGS_GEN_EVAl, ARGS_GEN_TEST
 from happytransformer.happy_trainer import EvalResult
 from happytransformer.fine_tuning_util import create_args_dataclass
+from happytransformer.cuda_detect import detect_cuda_device_number
 
 """
 The main settings that users will adjust when performing experiments
@@ -50,6 +51,9 @@ class HappyGeneration(HappyTransformer):
             model = AutoModelForCausalLM.from_pretrained(model_name)
 
         super().__init__(model_type, model_name, model)
+        device_number = detect_cuda_device_number()
+
+        self._pipeline = TextGenerationPipeline(model=self.model, tokenizer=self.tokenizer, device=device_number)
 
         self._trainer = GENTrainer(self.model, model_type, self.tokenizer, self._device, self.logger)
 
@@ -78,20 +82,16 @@ class HappyGeneration(HappyTransformer):
         adjusted_min_length = args.min_length + len(input_ids[0])
         adjusted_max_length = args.max_length + len(input_ids[0])
 
-        output = self.model.generate(input_ids,
-                                     min_length=adjusted_min_length,
-                                     max_length=adjusted_max_length,
-                                     do_sample=args.do_sample,
-                                     early_stopping=args.early_stopping,
-                                     num_beams=args.num_beams,
-                                     temperature=args.temperature,
-                                     top_k=args.top_k,
-                                     no_repeat_ngram_size=args.no_repeat_ngram_size
-                                     )
-        result = self.tokenizer.decode(output[0], skip_special_tokens=True)
-        final_result = self.__post_process_generated_text(result, text)
-
-        return GenerationResult(text=final_result)
+        output = self._pipeline(text, min_length=adjusted_min_length,
+                                return_full_text=False,
+                                max_length=adjusted_max_length,
+                                do_sample=args.do_sample,
+                                early_stopping=args.early_stopping,
+                                num_beams=args.num_beams,
+                                temperature=args.temperature,
+                                top_k=args.top_k,
+                                no_repeat_ngram_size=args.no_repeat_ngram_size)
+        return GenerationResult(text=output[0]['generated_text'])
 
 
     def __post_process_generated_text(self, result, text):
