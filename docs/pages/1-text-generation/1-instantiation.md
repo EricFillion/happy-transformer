@@ -32,5 +32,5 @@ If you are using Google Colab on a free instance, then we recommended using  "gp
 ```
 ## Tutorials 
 
-Text generation with training (GPT-Neo): https://youtu.be/GzHJ3NUVtV4
+[Text generation with training (GPT-Neo)](https://youtu.be/GzHJ3NUVtV4)
 

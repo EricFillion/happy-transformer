@@ -40,6 +40,6 @@ number of labels, so if you use these models you can set num_labels freely
 
 ## Tutorials 
 
-Text classification (hate speech detection): https://youtu.be/jti2sPQYzeQ
+[Text classification (hate speech detection)](https://youtu.be/jti2sPQYzeQ) 
 
-Text classification (sentiment analysis): https://youtu.be/Ew72EAgM7FM
+[Text classification (sentiment analysis)](https://youtu.be/Ew72EAgM7FM)
