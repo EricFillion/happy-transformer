@@ -34,4 +34,5 @@ We recommend using "HappyWordPrediction("ALBERT", "albert-xxlarge-v2")" for the 
     happy_wp_roberta = HappyWordPrediction("ROBERTA", "roberta-base")
 
 ```
-
+## Tutorials 
+Word prediction with training (DistilBERT, RoBERTa): https://youtu.be/AWe0PHsPc_M
