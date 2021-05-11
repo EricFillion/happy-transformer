@@ -20,9 +20,9 @@ Happy Transformer is an package built on top of [Hugging Face's transformer libr
   
 | Public Methods                     | Basic Usage  | Training   |
 |------------------------------------|--------------|------------|
-| Word Prediction                    | ✔            | ✔          |
 | Text Generation                    | ✔            | ✔          |
 | Text Classification                | ✔            | ✔          | 
+| Word Prediction                    | ✔            | ✔          |
 | Question Answering                 | ✔            | ✔          | 
 | Next Sentence Prediction           | ✔            |            | 
 | Token Classification               | ✔            |            | 
@@ -40,8 +40,18 @@ from happytransformer import HappyWordPrediction
     result = happy_wp.predict_mask("I think therefore I [MASK]")
     print(result)  # [WordPredictionResult(token='am', score=0.10172799974679947)]
     print(result[0].token)  # am
-
+```
 
 ## Maintainers
 - [Eric Fillion](https://github.com/ericfillion)  Lead Maintainer
 - [Ted Brownlow](https://github.com/ted537) Maintainer
+
+## Tutorials 
+
+Text classification (hate speech detection): https://youtu.be/jti2sPQYzeQ
+
+Text classification (sentiment analysis): https://youtu.be/Ew72EAgM7FM
+
+Text Generation with training (GPT-Neo): https://youtu.be/GzHJ3NUVtV4
+
+Word Prediction with training (DistilBERT, RoBERTa): https://youtu.be/AWe0PHsPc_M
