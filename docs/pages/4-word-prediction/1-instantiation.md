@@ -35,4 +35,4 @@ We recommend using "HappyWordPrediction("ALBERT", "albert-xxlarge-v2")" for the 
 
 ```
 ## Tutorials 
-Word Prediction with training (DistilBERT, RoBERTa): https://youtu.be/AWe0PHsPc_M
+Word prediction with training (DistilBERT, RoBERTa): https://youtu.be/AWe0PHsPc_M

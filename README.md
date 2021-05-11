@@ -52,6 +52,6 @@ Text classification (hate speech detection): https://youtu.be/jti2sPQYzeQ
 
 Text classification (sentiment analysis): https://youtu.be/Ew72EAgM7FM
 
-Text Generation with training (GPT-Neo): https://youtu.be/GzHJ3NUVtV4
+Text generation with training (GPT-Neo): https://youtu.be/GzHJ3NUVtV4
 
-Word Prediction with training (DistilBERT, RoBERTa): https://youtu.be/AWe0PHsPc_M
+Word prediction with training (DistilBERT, RoBERTa): https://youtu.be/AWe0PHsPc_M
