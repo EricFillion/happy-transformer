@@ -30,10 +30,10 @@ Happy Transformer is a package built on top of [Hugging Face's transformer libra
 
 ## Tutorials 
 
-Text classification (hate speech detection): https://youtu.be/jti2sPQYzeQ
+[Text classification (hate speech detection)](https://youtu.be/jti2sPQYzeQ) 
 
-Text classification (sentiment analysis): https://youtu.be/Ew72EAgM7FM
+[Text classification (sentiment analysis)](https://youtu.be/Ew72EAgM7FM)
 
-Text generation with training (GPT-Neo): https://youtu.be/GzHJ3NUVtV4
+[Text generation with training (GPT-Neo)](https://youtu.be/GzHJ3NUVtV4)
 
-Word prediction with training (DistilBERT, RoBERTa): https://youtu.be/AWe0PHsPc_M
+[Word prediction with training (DistilBERT, RoBERTa)](https://youtu.be/AWe0PHsPc_M)
