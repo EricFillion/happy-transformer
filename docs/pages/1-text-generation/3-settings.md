@@ -53,12 +53,12 @@ from happytransformer import HappyGeneration, GENSettings
         "Artificial intelligence is ",
         args=beam_settings)
 
-    generic_sampling_settings = GENSettings(do_sample=True, early_stopping=False, top_k=0, temperature=0.7,  max_length=10)
+    generic_sampling_settings = GENSettings(do_sample=True, top_k=0, temperature=0.7,  max_length=10)
     output_generic_sampling = happy_gen.generate_text(
         "Artificial intelligence is ",
         args=generic_sampling_settings)
 
-    top_k_sampling_settings = GENSettings(do_sample=True, early_stopping=False, top_k=50, temperature=0.7,  max_length=10)
+    top_k_sampling_settings = GENSettings(do_sample=True, top_k=50, temperature=0.7,  max_length=10)
     output_top_k_sampling = happy_gen.generate_text(
         "Artificial intelligence is ",
         args=top_k_sampling_settings)
