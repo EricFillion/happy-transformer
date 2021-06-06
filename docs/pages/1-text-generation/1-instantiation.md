@@ -30,6 +30,11 @@ If you are using Google Colab on a free instance, then we recommended using  "gp
     # happy_gen = HappyGeneration("GPT2", "gpt2-xl")  # Best performance 
 
 ```
+
+## Courses 
+[Create a text generation web app. Also learn how to fine-tune GPT-Neo](https://www.udemy.com/course/nlp-text-generation-python-web-app/?couponCode=LAUNCH)
+ 
+
 ## Tutorials 
 
 [Text generation with training (GPT-Neo)](https://youtu.be/GzHJ3NUVtV4)
