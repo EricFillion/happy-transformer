@@ -28,7 +28,11 @@ Happy Transformer is a package built on top of [Hugging Face's transformer libra
 [PyPI](https://pypi.org/project/happytransformer/){: .btn }
 </span>
 
-## Tutorials 
+## Courses
+
+[Create a text generation web app. Also learn how to fine-tune GPT-Neo](https://www.udemy.com/course/nlp-text-generation-python-web-app/?couponCode=LAUNCH)
+
+## Free Tutorials 
 
 [Text classification (hate speech detection)](https://youtu.be/jti2sPQYzeQ) 
 
