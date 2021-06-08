@@ -48,7 +48,7 @@ from happytransformer import HappyGeneration, GENSettings
         "Artificial intelligence is ",
         args=greedy_settings)
 
-    beam_settings = GENSettings(early_stopping=True, num_beams=5,  max_length=10)
+    beam_settings = GENSettings(num_beams=5,  max_length=10)
     output_beam_search = happy_gen.generate_text(
         "Artificial intelligence is ",
         args=beam_settings)
