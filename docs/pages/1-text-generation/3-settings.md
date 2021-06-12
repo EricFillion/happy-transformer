@@ -24,17 +24,17 @@ GENSettings() contains the  fields shown in Table 1.0
 
 #### Table 1.0:  
 
-| Parameter            |Default| Definition                                                            |
-|----------------------|-------| ----------------------------------------------------------------------|
-| min_length           | 10    | Minimum number of generated tokens                                    |
-| max_length           | 50    | Maximum number of generated tokens                                    |
-| do_sample            | False | When True, picks words based on their conditional probability         |
-| early_stopping       | False | When True, generation finishes if the EOS token is reached            |
-| num_beams            | 1     | Number of steps for each search path                                  |
-| temperature          | 1.0   | How sensitive the algorithm is to selecting low probability options   |
-| top_k                | 50    | How many potential answers are considered when performing sampling    |
-| top_p                | 1.0   | The number minimum number of tokens are selected so that their cumulative probabilities add up to top_p  |
-| no_repeat_ngram_size | 0     | The size of an n-gram that cannot occur more than once. (0=infinity)  |
+| Parameter            |Default| Definition                                                                                             |
+|----------------------|-------| -------------------------------------------------------------------------------------------------------|
+| min_length           | 10    | Minimum number of generated tokens                                                                     |
+| max_length           | 50    | Maximum number of generated tokens                                                                     |
+| do_sample            | False | When True, picks words based on their conditional probability                                          |
+| early_stopping       | False | When True, generation finishes if the EOS token is reached                                             |
+| num_beams            | 1     | Number of steps for each search path                                                                   |
+| temperature          | 1.0   | How sensitive the algorithm is to selecting low probability options                                    |
+| top_k                | 50    | How many potential answers are considered when performing sampling                                     |
+| top_p                | 1.0   | The number minimum number of tokens are selected so that their cumulative probabilities add up to top_p|
+| no_repeat_ngram_size | 0     | The size of an n-gram that cannot occur more than once. (0=infinity)                                   |
 #### Examples 1.2:  
  
  ```python
