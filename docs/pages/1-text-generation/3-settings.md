@@ -31,10 +31,10 @@ GENSettings() contains the  fields shown in Table 1.0
 | do_sample            | False | When True, picks words based on their conditional probability         |
 | early_stopping       | False | When True, generation finishes if the EOS token is reached            |
 | num_beams            | 1     | Number of steps for each search path                                  |
-| temperature          | 1     | How sensitive the algorithm is to selecting low probability options   |
+| temperature          | 1.0   | How sensitive the algorithm is to selecting low probability options   |
 | top_k                | 50    | How many potential answers are considered when performing sampling    |
+| top_p                | 1.0   | The number minimum number of tokens are selected so that their cumulative probabilities add up to top_p  |
 | no_repeat_ngram_size | 0     | The size of an n-gram that cannot occur more than once. (0=infinity)  |
-   
 #### Examples 1.2:  
  
  ```python
@@ -62,11 +62,17 @@ from happytransformer import HappyGeneration, GENSettings
     output_top_k_sampling = happy_gen.generate_text(
         "Artificial intelligence is ",
         args=top_k_sampling_settings)
+    
+    top_p_sampling_settings = GENSettings(do_sample=True, top_k=0, top_p=0.8, temperature=0.7,  max_length=10)
+    output_top_p_sampling = happy_gen.generate_text(
+        "Artificial intelligence is ",
+        args=top_p_sampling_settings)
         
     print("Greedy:", output_greedy.text)  # a new field of research that has been gaining
     print("Beam:", output_beam_search.text) # one of the most promising areas of research in
     print("Generic Sampling:", output_generic_sampling.text)  #  an area of highly promising research, and a
-    print("Top K Sampling:", output_top_k_sampling.text)  # a new form of social engineering. In this
+    print("Top-k Sampling:", output_top_k_sampling.text)  # a new form of social engineering. In this
+    print("Top-p Sampling:", output_top_p_sampling.text)  # a new form of social engineering. In this
 
 ```
 
