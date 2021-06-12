@@ -25,6 +25,24 @@ def test_default_min_max_length():
     assert length == 5
 
 
+def test_2_2_3_settings():
+    happy_gen = HappyGeneration()
+    # Test small values
+    args_small = GENSettings(top_p=0.01,  max_length=5)
+    output_small = happy_gen.generate_text("Artificial intelligence is ", args=args_small)
+    tokens_small = happy_gen.tokenizer.encode(output_small.text, return_tensors="pt")
+    length_small = len(tokens_small[0])
+    assert length_small == 5
+
+    # Test large values
+    args_large = GENSettings(top_p=1, max_length=5)
+    output_large = happy_gen.generate_text("Artificial intelligence is ", args=args_large)
+    tokens_large = happy_gen.tokenizer.encode(output_large.text, return_tensors="pt")
+    length_large = len(tokens_large[0])
+    assert length_large == 5
+
+
+
 def test_all_methods():
     happy_gen = HappyGeneration()
 
