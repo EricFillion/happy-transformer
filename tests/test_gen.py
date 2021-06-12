@@ -25,7 +25,7 @@ def test_default_min_max_length():
     assert length == 5
 
 
-def test_2_2_3_settings():
+def test_top_p():
     happy_gen = HappyGeneration()
     # Test small values
     args_small = GENSettings(top_p=0.01,  max_length=5)
@@ -70,15 +70,23 @@ def test_all_methods():
         "Artificial intelligence is ",
         args=top_k_sampling_settings)
 
+    top_p_sampling_settings = GENSettings(min_length=5, max_length=5, do_sample=True, early_stopping=False, top_k=0, top_p=0.8, temperature=0.7)
+
+    output_top_p_sampling = happy_gen.generate_text(
+        "Artificial intelligence is ",
+        args=top_p_sampling_settings)
+
     assert type(output_greedy.text) == str
     assert type(output_beam_search.text) == str
     assert type(output_generic_sampling.text) == str
     assert type(output_top_k_sampling.text) == str
+    assert type(output_top_p_sampling.text) == str
 
     print("greedy: ", output_greedy.text, end="\n\n")
     print("beam-search: ", output_beam_search.text, end="\n\n")
     print("generic-sampling: ", output_generic_sampling.text, end="\n\n")
     print("top-k-sampling: ", output_top_k_sampling.text, end="\n\n")
+    print("top-p-sampling: ", output_top_p_sampling.text, end="\n\n")
 
 
 def test_gen_train_basic():
