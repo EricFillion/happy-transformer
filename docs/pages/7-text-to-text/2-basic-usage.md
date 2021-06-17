@@ -10,7 +10,7 @@ permalink: /text-to-text/usage/
 ### generate_text()
 The method generate_text() contains 2 arguments:
 1. text (string): The text prompt for the model. 
-2. settings (TextToTextSettings): See this [webpage](/text-to-text/settings/) for more information
+2. settings (TTSettings): See this [webpage](/text-to-text/settings/) for more information
 
 
 Returns: 
@@ -20,10 +20,10 @@ An object with a single field called "text"
 #### Example 7.1:
 ```python
 
-from happytransformer import HappyTextToText, TextToTextSettings
+from happytransformer import HappyTextToText, TTSettings
 #--------------------------------------#
     happy_tt = HappyTextToText()  # default uses t5-small
-    top_p_sampling_settings = TextToTextSettings(do_sample=True, top_k=0, top_p=0.8, temperature=0.7,  min_length=20, max_length=20, early_stopping=True)
+    top_p_sampling_settings = TTSettings(do_sample=True, top_k=0, top_p=0.8, temperature=0.7,  min_length=20, max_length=20, early_stopping=True)
     result = happy_tt.generate_text("translate English to French: nlp is a field of artificial intelligence", args=top_p_sampling_settings)
     print(result)  # TextToTextResult(text="nlp est un domaine de l'intelligence artificielle...")
     print(result.text)  # nlp est un domaine de l’intelligence artificielle. n

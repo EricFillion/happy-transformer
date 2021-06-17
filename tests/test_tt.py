@@ -1,4 +1,4 @@
-from happytransformer import HappyTextToText, TextToTextSettings
+from happytransformer import HappyTextToText, TTSettings
 
 
 
@@ -9,7 +9,7 @@ def test_default_simple():
 
 def test_default_min_max_length():
     happy_tt = HappyTextToText()
-    args = TextToTextSettings(min_length=5, max_length=5)
+    args = TTSettings(min_length=5, max_length=5)
     output = happy_tt.generate_text("translate English to French: Hello my name is Eric", args=args)
     tokens = happy_tt.tokenizer.encode(output.text, return_tensors="pt")
     length = len(tokens[0])
@@ -18,31 +18,31 @@ def test_default_min_max_length():
 def test_all_methods():
     happy_tt = HappyTextToText()
 
-    greedy_settings = TextToTextSettings(min_length=5, max_length=5, no_repeat_ngram_size=2)
+    greedy_settings = TTSettings(min_length=5, max_length=5, no_repeat_ngram_size=2)
     output_greedy = happy_tt.generate_text(
         "translate English to French: Hello my name is Eric",
         args=greedy_settings)
 
 
-    beam_settings = TextToTextSettings(min_length=5, max_length=5, early_stopping=True, num_beams=5)
+    beam_settings = TTSettings(min_length=5, max_length=5, early_stopping=True, num_beams=5)
 
     output_beam_search = happy_tt.generate_text(
         "translate English to French: Hello my name is Eric",
         args=beam_settings)
 
-    generic_sampling_settings = TextToTextSettings(min_length=5, max_length=5, do_sample=True, early_stopping=False, top_k=0, temperature=0.7)
+    generic_sampling_settings = TTSettings(min_length=5, max_length=5, do_sample=True, early_stopping=False, top_k=0, temperature=0.7)
 
     output_generic_sampling = happy_tt.generate_text(
         "translate English to French: Hello my name is Eric",
         args=generic_sampling_settings)
 
-    top_k_sampling_settings = TextToTextSettings(min_length=5, max_length=5, do_sample=True, early_stopping=False, top_k=50, temperature=0.7)
+    top_k_sampling_settings = TTSettings(min_length=5, max_length=5, do_sample=True, early_stopping=False, top_k=50, temperature=0.7)
 
     output_top_k_sampling = happy_tt.generate_text(
         "translate English to French: Hello my name is Eric",
         args=top_k_sampling_settings)
 
-    top_p_sampling_settings = TextToTextSettings(min_length=5, max_length=5, do_sample=True, early_stopping=False, top_k=0, top_p=0.8, temperature=0.7)
+    top_p_sampling_settings = TTSettings(min_length=5, max_length=5, do_sample=True, early_stopping=False, top_k=0, top_p=0.8, temperature=0.7)
 
     output_top_p_sampling = happy_tt.generate_text(
         "translate English to French: Hello my name is Eric",

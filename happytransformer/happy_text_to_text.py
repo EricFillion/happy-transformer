@@ -17,7 +17,7 @@ class TextToTextResult:
     text: str
 
 @dataclass
-class TextToTextSettings:
+class TTSettings:
     min_length: int = 10
     max_length: int = 50
     do_sample: bool = False
@@ -67,7 +67,7 @@ class HappyTextToText(HappyTransformer):
 
 
     def generate_text(self, text: str,
-                      args: TextToTextSettings = TextToTextSettings()) -> TextToTextResult:
+                      args: TTSettings = TTSettings()) -> TextToTextResult:
         """
         :param text: starting text that the model uses as a prompt to continue it.
         :param args: A GENSettings object

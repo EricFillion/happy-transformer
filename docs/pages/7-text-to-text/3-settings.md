@@ -12,14 +12,14 @@ By default a text generation algorithm called "greedy" is used.
 This algorithm simply picks the most likely next word. 
 
 
-A class called TextToTextSettings() is used to control which algorithm is used and its settings. 
+A class called TTSettings() is used to control which algorithm is used and its settings. 
 It is passed to the "args" parameter for HappyTextToText.generate_text(). 
 
 ```python
-from happytransformer import TextToTextSettings
+from happytransformer import TTSettings
 ```
 
-TextToTextSettings() contains the  fields shown in Table 1.0 
+TTSettings() contains the  fields shown in Table 1.0 
 
 #### Table 7.0:  
 
@@ -39,32 +39,32 @@ TextToTextSettings() contains the  fields shown in Table 1.0
 #### Examples 7.2:  
  
  ```python
-    from happytransformer import HappyTextToText, TextToTextSettings
+    from happytransformer import HappyTextToText, TTSettings
 
 #---------------------------------------------------
     happy_tt = HappyTextToText("T5", "t5-small")
 
-    greedy_settings = TextToTextSettings(no_repeat_ngram_size=2, max_length=20)
+    greedy_settings = TTSettings(no_repeat_ngram_size=2, max_length=20)
     output_greedy = happy_tt.generate_text(
         "translate English to French: nlp is a field of artificial intelligence ",
         args=greedy_settings)
 
-    beam_settings = TextToTextSettings(num_beams=5, max_length=20)
+    beam_settings = TTSettings(num_beams=5, max_length=20)
     output_beam_search = happy_tt.generate_text(
         "translate English to French: nlp is a field of artificial intelligence ",
         args=beam_settings)
 
-    generic_sampling_settings = TextToTextSettings(do_sample=True, top_k=0, temperature=0.7, max_length=20)
+    generic_sampling_settings = TTSettings(do_sample=True, top_k=0, temperature=0.7, max_length=20)
     output_generic_sampling = happy_tt.generate_text(
         "translate English to French: nlp is a field of artificial intelligence ",
         args=generic_sampling_settings)
 
-    top_k_sampling_settings = TextToTextSettings(do_sample=True, top_k=50, temperature=0.7, max_length=20)
+    top_k_sampling_settings = TTSettings(do_sample=True, top_k=50, temperature=0.7, max_length=20)
     output_top_k_sampling = happy_tt.generate_text(
         "translate English to French: nlp is a field of artificial intelligence ",
         args=top_k_sampling_settings)
 
-    top_p_sampling_settings = TextToTextSettings(do_sample=True, top_k=0, top_p=0.8, temperature=0.7, max_length=20)
+    top_p_sampling_settings = TTSettings(do_sample=True, top_k=0, top_p=0.8, temperature=0.7, max_length=20)
     output_top_p_sampling = happy_tt.generate_text(
         "translate English to French: nlp is a field of artificial intelligence ",
         args=top_p_sampling_settings)

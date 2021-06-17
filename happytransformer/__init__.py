@@ -4,7 +4,7 @@ from happytransformer.happy_text_classification import HappyTextClassification
 from happytransformer.happy_next_sentence import HappyNextSentence
 from happytransformer.happy_token_classification import HappyTokenClassification
 from happytransformer.happy_generation import HappyGeneration, GENSettings
-from happytransformer.happy_text_to_text import HappyTextToText, TextToTextSettings
+from happytransformer.happy_text_to_text import HappyTextToText, TTSettings
 
 from happytransformer.gen.default_args import ARGS_GEN_TRAIN, ARGS_GEN_EVAl
 from happytransformer.qa.default_args import ARGS_QA_TRAIN, ARGS_QA_EVAl, ARGS_QA_TEST
