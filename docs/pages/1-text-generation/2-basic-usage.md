@@ -8,7 +8,7 @@ permalink: /text-generation/usage/
 
 ## Text Generation Basic Usage 
 ### generate_text()
-The method predict_masks() contains 2 arguments:
+The method generate_text() contains 2 arguments:
 1. text (string): The text prompt for the model -- it will try to continue the text
 2. args (GENSettings): See this [webpage](/text-generation/settings/) for more information
 
