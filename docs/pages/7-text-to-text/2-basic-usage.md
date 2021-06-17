@@ -10,7 +10,7 @@ permalink: /text-to-text/usage/
 ### generate_text()
 The method generate_text() contains 2 arguments:
 1. text (string): The text prompt for the model. 
-2. settings (TTSettings): See this [webpage](/text-to-text/settings/) for more information
+2. args (TTSettings): See this [webpage](/text-to-text/settings/) for more information
 
 
 Returns: 
