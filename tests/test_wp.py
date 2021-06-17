@@ -27,6 +27,14 @@ def test_wp_basic():
         assert result.token == top_result
 
 
+def test_wp_high_k():
+
+    happy_wp = HappyWordPrediction("ALBERT", "albert-base-v2")
+    results = happy_wp.predict_mask(
+        "Please pass the salt and [MASK]", top_k=3000
+    )
+    assert results[0].token == "garlic"
+
 def test_wp_top_k():
     happy_wp = HappyWordPrediction('DISTILBERT', 'distilbert-base-uncased')
     result = happy_wp.predict_mask(

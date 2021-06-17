@@ -22,7 +22,7 @@ class TokenClassificationResult:
 
 class HappyTokenClassification(HappyTransformer):
     """
-    A user facing class for text classification
+    A user facing class for token classification
     """
     def __init__(
         self, model_type: str = "BERT", model_name: str = "dslim/bert-base-NER", load_path: str = ""):
