@@ -17,7 +17,7 @@ Initialize a HappyNextSentence() object to next sentence prediction
  "bert-base-uncased" and "bert-large-uncased" that have not been finetuned 
  
 
-#### Example 4.0:
+#### Example 6.0:
 ```python
     from happytransformer import HappyNextSentence
     # --------------------------------------#
