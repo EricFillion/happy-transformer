@@ -20,6 +20,7 @@ Happy Transformer is a package built on top of [Hugging Face's transformer libra
 | Word Prediction                    | ✔            | ✔          |
 | Token Classification               | ✔            |            | 
 | Next Sentence Prediction           | ✔            |            | 
+| Text-to-Text                       | ✔            |            | 
 
 <span class="fs-8">
 [GitHub](https://github.com/EricFillion/happy-transformer){: .btn .mr-30 }

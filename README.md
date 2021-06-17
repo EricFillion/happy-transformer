@@ -28,6 +28,7 @@ Happy Transformer is an package built on top of [Hugging Face's transformer libr
 | Question Answering                 | ✔            | ✔          | 
 | Next Sentence Prediction           | ✔            |            | 
 | Token Classification               | ✔            |            | 
+| Text-to-Text                       | ✔            |            | 
 
 ## Quick Start
 ```sh
@@ -49,6 +50,7 @@ from happytransformer import HappyWordPrediction
 - [Ted Brownlow](https://github.com/ted537) Maintainer
 
 ## Tutorials 
+[Text classification (training)](https://www.vennify.ai/train-text-classification-transformers/) 
 
 [Text classification (hate speech detection)](https://youtu.be/jti2sPQYzeQ) 
 
