@@ -10,9 +10,15 @@ class RobertaAdaptor(Adaptor):
 
     @staticmethod
     def postprocess_mask_prediction_token(text):
-        return text[1:] if text[0] == "Ġ" else text
+        if text:
+            return text[1:] if text[0] == "Ġ" else text
+        else:
+            return ""
 
 class AlbertAdaptor(Adaptor):
     @staticmethod
     def postprocess_mask_prediction_token(text):
-        return text[1:] if text[0] == "▁" else text
+        if text:
+            return text[1:] if text[0] == "▁" else text
+        else:
+            return ""

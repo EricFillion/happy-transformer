@@ -26,6 +26,28 @@ def test_wp_basic():
         result = results[0]
         assert result.token == top_result
 
+def test_wp_basic():
+    MODELS = [
+        ('DISTILBERT', 'distilbert-base-uncased', 'pepper'),
+        ('BERT', 'bert-base-uncased', '.'),
+        ('ALBERT', 'albert-base-v2', 'garlic'),
+        ('ROBERTA', "roberta-base", ' pepper')  # todo look into why roberta predicts a space
+    ]
+    for model_type, model_name, top_result in MODELS:
+        happy_wp = HappyWordPrediction(model_type, model_name)
+        results = happy_wp.predict_mask(
+            "Please pass the salt and [MASK]",
+        )
+        result = results[0]
+        assert result.token == top_result
+
+def test_wp_high_k():
+
+    happy_wp = HappyWordPrediction("ALBERT", "albert-base-v2")
+    results = happy_wp.predict_mask(
+        "Please pass the salt and [MASK]", top_k=3000
+    )
+    assert results[0].token == "garlic"
 
 def test_wp_top_k():
     happy_wp = HappyWordPrediction('DISTILBERT', 'distilbert-base-uncased')
