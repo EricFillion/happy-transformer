@@ -22,8 +22,8 @@ Inputs:
 ```python
 from happytransformer import HappyTextClassification
 # ---------------------------------------------------------
-    happy_tc = HappyTextClassification()
-    happy_tc.save("model/")
+happy_tc = HappyTextClassification()
+happy_tc.save("model/")
 ```
 ### Loading a model
 
@@ -34,5 +34,5 @@ When initializing a Happy Transformer object, provide a path for the load_path p
 ```python
 from happytransformer import HappyTextClassification
 # ---------------------------------------------------------
-    happy_tc = HappyTextClassification(load_path="model/")
+happy_tc = HappyTextClassification(load_path="model/")
 ```
