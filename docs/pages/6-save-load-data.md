@@ -39,14 +39,14 @@ Example 7.0 shows the process of saving and loading a dataset for word predictio
 ```python
 from happytransformer import HappyWordPrediction, WPTrainArgs
 # ---------------------------------------------------------
-    happy_wp = HappyWordPrediction()
-    train_args_1 = WPTrainArgs(save_preprocessed_data=True, save_preprocessed_data_path="data/preprocessed-data.json")
-    happy_wp.train("data/wp/train-eval.txt", args=train_args_1)
+happy_wp = HappyWordPrediction()
+train_args_1 = WPTrainArgs(save_preprocessed_data=True, save_preprocessed_data_path="data/preprocessed-data.json")
+happy_wp.train("data/wp/train-eval.txt", args=train_args_1)
     
     
-    train_args_2 = WPTrainArgs(load_preprocessed_data=True, load_preprocessed_data_path="data/preprocessed-data.json")
-    # if you're loading data, then you can set input_filepath to anything 
-    happy_wp.train(input_filepath="", args=train_args_2)
+train_args_2 = WPTrainArgs(load_preprocessed_data=True, load_preprocessed_data_path="data/preprocessed-data.json")
+# if you're loading data, then you can set input_filepath to anything 
+happy_wp.train(input_filepath="", args=train_args_2)
 
 ```
 
@@ -59,13 +59,13 @@ text classification training.
 ```python
 from happytransformer import HappyTextClassification, TCEvalArgs
 # ---------------------------------------------------------
-    happy_tc = HappyTextClassification()
-    eval_args_1 = TCEvalArgs(save_preprocessed_data=True, save_preprocessed_data_path="data/preprocessed-data.json")
-    result_1 = happy_tc.eval("data/tc/train-eval.txt", args=eval_args_1)
-    
-    eval_args_2 = TCEvalArgs(load_preprocessed_data=True, load_preprocessed_data_path="data/preprocessed-data.json")
-    # if you're loading data, then you can set input_filepath to anything 
-    result_2 = happy_tc.eval(input_filepath="", args=eval_args_2)
+happy_tc = HappyTextClassification()
+eval_args_1 = TCEvalArgs(save_preprocessed_data=True, save_preprocessed_data_path="data/preprocessed-data.json")
+result_1 = happy_tc.eval("data/tc/train-eval.txt", args=eval_args_1)
+
+eval_args_2 = TCEvalArgs(load_preprocessed_data=True, load_preprocessed_data_path="data/preprocessed-data.json")
+# if you're loading data, then you can set input_filepath to anything 
+result_2 = happy_tc.eval(input_filepath="", args=eval_args_2)
 
 ```
 
