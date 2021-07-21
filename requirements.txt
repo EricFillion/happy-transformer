@@ -1,5 +1,5 @@
 torch>=1.0
-tqdm>=4.27
+tqdm>=4.43
 transformers>=4.4.0
 pytest
 datasets>=1.6.0
