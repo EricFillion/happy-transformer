@@ -53,7 +53,7 @@ def test_wp_targets():
     happy_wp = HappyWordPrediction('DISTILBERT', 'distilbert-base-uncased')
     result = happy_wp.predict_mask(
         "Please pass the salt and [MASK]",
-        targets=["water", "spices"]
+        targets=["water", "spices"], top_k=2
     )
     assert result[0].token == "water" and result[1].token == "spices"
     assert type(result[0].score) == float
