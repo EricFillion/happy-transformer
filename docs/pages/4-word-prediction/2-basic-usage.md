@@ -54,7 +54,7 @@ from happytransformer import HappyWordPrediction
 #--------------------------------------#
 happy_wp = HappyWordPrediction()
 targets = ["technology", "healthcare"]
-result = happy_wp.predict_mask("To better the world I would invest in [MASK] and education.", targets=targets)
+result = happy_wp.predict_mask("To better the world I would invest in [MASK] and education.", targets=targets, top_k=2)
 print(result)  # [WordPredictionResult(token='healthcare', score=0.07380751520395279), WordPredictionResult(token='technology', score=0.009395276196300983)]
 print(result[1])  # WordPredictionResult(token='technology', score=0.009395276196300983)
 print(result[1].token)  # technology
