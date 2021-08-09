@@ -36,7 +36,6 @@ inputs:
 | load_preprocessed_data        | False |
 | load_preprocessed_data_path   | ""    |
 | preprocessing_processes       | 1     |
-| mlm_probability               | 0.15  |
 
 
 Information about the learning parameters can be found [here](/learning-parameters/)
@@ -44,8 +43,6 @@ Information about the learning parameters can be found [here](/learning-paramete
 Information about saving/loading preprocessed data can be found [here](/save-load-data/)
 
 preprocessing_processes: Number of processes used for preprocessing. We recommend 1-4. 
-
-mlm_probability: The probability of masking a token.
 
 
 
@@ -73,7 +70,6 @@ Input:
 | load_preprocessed_data        | False |
 | load_preprocessed_data_path   | ""    |
 | preprocessing_processes       | 1     |
-| mlm_probability               | 0.15  |
 
 See the explanations under Table 1.1 for more information 
 
