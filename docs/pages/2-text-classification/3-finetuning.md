@@ -22,7 +22,7 @@ inputs:
 #### Table 2.0
 
 1. text (string): text to be classified 
-2. label (int): the corresponding label
+2. label (int): the corresponding label. Must be greater than or equal to 0
 
 | Text                          | label |
 |-------------------------------|-------|

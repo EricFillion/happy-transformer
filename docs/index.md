@@ -28,6 +28,9 @@ Happy Transformer is a package built on top of [Hugging Face's transformer libra
 <span class="fs-8">
 [PyPI](https://pypi.org/project/happytransformer/){: .btn }
 </span>
+<span class="fs-8">
+[Discord](https://discord.gg/psVwe3wfTb){: .btn }
+</span>
 
 ## Courses
 
