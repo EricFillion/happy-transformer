@@ -4,3 +4,5 @@ transformers>=4.4.0
 pytest
 datasets>=1.6.0
 dataclasses; python_version<"3.7"
+sentencepiece
+protobuf
