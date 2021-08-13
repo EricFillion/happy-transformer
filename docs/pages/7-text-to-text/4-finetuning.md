@@ -6,21 +6,29 @@ layout: page
 permalink: /text-to-text/finetuning/
 ---
 
-## Text Generation Finetuning
+## Text-to-text Finetuning
 
-TextGeneration contains two methods for training 
-- train(): fine-tune the model to understand a body of text better
+HappyTextToText contains two methods for training 
+- train(): fine-tune the model to convert a standalone text to another standalone piece of text 
 - eval(): determine how well the model performs 
 
 ### train()
 
 inputs: 
-1. input_filepath (string): a path file to a csv file that contains nothing but text to train the model.
-2. args (TTTrainArgs): a dataclass with the same fields types as shown in Table 1.1. 
+1. input_filepath (string): a path file to a csv file as shown in table 7.1
+2. args (TTTrainArgs): a dataclass with the same fields types as shown in Table 7.2. 
 
-todo provide a sample CSV file 
 
 #### Table 7.1
+Contains two columns with the following header values: text_1 and text_2
+
+| text_1                        |text_2               |
+|-------------------------------|---------------------|
+| grammar: I has poor grammars  | I have poor grammar |
+| grammar: I wants too plays    | I want to play      |
+
+
+#### Table 7.2
 
 | Parameter                     |Default|
 |-------------------------------|-------|
@@ -50,23 +58,21 @@ max_input_length: The maximum number of tokens for the input. The rest get trunc
 max_output_length: Ditto, except for the output. 
 
 
-
 #### Example 7.3:
 ```python
     from happytransformer import HappyTextToText, TTTrainArgs
     # --------------------------------------#
-    
     happy_tt = HappyTextToText()
     args = TTTrainArgs(num_train_epochs=1) 
-    happy_tt.train("../../data/tt/train.txt", args=args)
+    happy_tt.train("../../data/tt/train-eval-grammar.csv", args=args)
 ```
 
 ### eval()
 Input:
-1. input_filepath (string): a path file to a csv file with the same format as described for the training data
-2. args (TTEvalArgs): a dataclass with the same fields shown in Table  7.2
+1. input_filepath (string): a path file to a csv file with the same format as described for the training data in table 7.1
+2. args (TTEvalArgs): a dataclass with the same fields shown in Table 7.3
 
-#### Table 7.2
+#### Table 7.3
 
 | Parameter                     |Default|
 |-------------------------------|-------|
@@ -78,13 +84,20 @@ Input:
 | max_input_length              | None  |
 | max_output_length             | None  |
 
-See the explanations under Table 7.1 for more information 
+See Table 7.1 for more information 
 
 
 Output: An object with the field "loss"
 
 #### Example 1.4
 ```python
- 
+    from happytransformer import HappyTextToText, TTEvalArgs
+    # --------------------------------------#
+    happy_tt = HappyTextToText()
+    args = TTEvalArgs(preprocessing_processes=1)
+    result = happy_tt.eval("../../data/tt/train-eval-grammar.csv", args=args)
+    print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
+    print(result)  # EvalResult(loss=3.2277376651763916)
+    print(result.loss)  # 3.2277376651763916
 
 ```

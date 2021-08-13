@@ -1,4 +1,4 @@
-from happytransformer import HappyTextToText, TTSettings
+from happytransformer import HappyTextToText, TTSettings, TTTrainArgs, TTEvalArgs
 
 def example_7_0():
     # --------------------------------------#
@@ -47,11 +47,26 @@ def example_7_2():
     print("Top-k Sampling:", output_top_k_sampling.text)  # Top-k Sampling: nlp est un domaine de l’intelligence artificielle
     print("Top-p Sampling:", output_top_p_sampling.text)  # Top-p Sampling: nlp est un domaine de l'intelligence artificielle
 
+def example_7_3():
+    happy_tt = HappyTextToText()
+    args = TTTrainArgs(num_train_epochs=1)
+    happy_tt.train("../../data/tt/train-eval-grammar.csv", args=args)
+
+def example_7_4():
+    happy_tt = HappyTextToText()
+    args = TTEvalArgs(preprocessing_processes=1)
+    result = happy_tt.eval("../../data/tt/train-eval-grammar.csv", args=args)
+    print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
+    print(result)  # EvalResult(loss=3.2277376651763916)
+    print(result.loss)  # 3.2277376651763916
+
 
 def main():
     # example_7_0()
-    example_7_1()
+    #example_7_1()
     # example_7_2()
+    # example_7_3()
+    example_7_4()
 
 if __name__ == "__main__":
     main()
