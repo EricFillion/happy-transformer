@@ -44,7 +44,6 @@ def generate_csv(csv_path, dataset):
                 if not input_text or not correction:
                     pass
                 else:
-                    print("---", type(correction))
                     writter.writerow([input_text, correction])
 
 if __name__ == "__main__":
