@@ -1,10 +1,9 @@
 import csv
-from happytransformer.happy_text_to_text import HappyTextToText
+from happytransformer.happy_text_to_text import HappyTextToText, TTTrainArgs
 from datasets import load_dataset
-from rouge_score import rouge_scorer
 
 def main():
-    happy_tt = HappyTextToText("T5", "patrickvonplaten/t5-tiny-random")
+    happy_tt = HappyTextToText("T5", "t5-base")
     # source ; https://en.wikipedia.org/wiki/Transformer_(machine_learning_model)
     text = "A transformer is a deep learning model that adopts the mechanism of attention, differentially weighing the significance of each part of the input data. It is used primarily in the field of natural language processing (NLP)"
     before_text = happy_tt.generate_text("summarize: "+ text)
@@ -17,7 +16,9 @@ def main():
 
     before_result = happy_tt.eval("eval.csv")
 
-    happy_tt.train("train.csv")
+    args = TTTrainArgs(max_input_length=1024, max_output_length=128)
+
+    happy_tt.train("train.csv", args=args)
     after_text = happy_tt.generate_text("summarize: " + text)
     after_result = happy_tt.eval("eval.csv")
 
