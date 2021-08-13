@@ -71,48 +71,30 @@ def test_tt_save():
     assert result_before.text == result_after.text
 
 
-def test_tc_train():
+def test_tt_train_simple():
     happy_tt = HappyTextToText()
-    results = happy_tt.train("../data/tt/train-eval-grammar.csv")
-
-
-def test_tc__subjective_train_grammar():
-    happy_tt = HappyTextToText()
-    input = "grammar: This sentences has bad grammar's error and overall is quality low?"
-    result_before = happy_tt.generate_text(input)
-    # args = TTTrainArgs(num_train_epochs=2)
-
     happy_tt.train("../data/tt/train-eval-grammar.csv")
-    result_after = happy_tt.generate_text(input)
 
-    print("input: " + input)
-    print("before: ", result_before.text)
-    print("after: ", result_after.text)
+def test_tt_eval_simple():
+    happy_tt = HappyTextToText()
+    happy_tt.eval("../data/tt/train-eval-grammar.csv")
 
-def test_tt_eval():
+def test_tt_eval_loss_decreases():
     happy_tt = HappyTextToText()
 
     before_result = happy_tt.eval("../data/tt/train-eval-grammar.csv")
     happy_tt.train("../data/tt/train-eval-grammar.csv")
     after_result = happy_tt.eval("../data/tt/train-eval-grammar.csv")
 
-    print('before_result', before_result)
-    print('after_result', after_result)
+    assert before_result.loss > after_result.loss
 
-
-def test_tc_subjective_train_translate():
+def test_tt_train_custom_p():
     happy_tt = HappyTextToText()
-    input = "translate English to Spanish: Hello, I like to eat apples."
+    args = TTTrainArgs(num_train_epochs=2, max_input_length=100, max_output_length=100)
+    happy_tt.train("../data/tt/train-eval-grammar.csv", args=args)
 
-    result_before = happy_tt.generate_text(input)
-    args = TTTrainArgs(num_train_epochs=5)
-
-    happy_tt.train("../data/tt/train-eval-translate.csv", args=args)
-    result_after = happy_tt.generate_text(input)
-
-    print("input: " + input)
-    answer = "Hola, me gusta comer manzanas."  # according to Google translate
-    print("expected: " + answer)
-
-    print("before: ", result_before.text)
-    print("after: ", result_after.text)
+def test_tt_eval_custom_p():
+    happy_tt = HappyTextToText()
+    args = TTEvalArgs(max_input_length=100, max_output_length=100)
+    result = happy_tt.eval("../data/tt/train-eval-grammar.csv", args=args)
+    assert type(result.loss) is float
