@@ -34,8 +34,8 @@ class TTTrainArgs:
     load_preprocessed_data_path: str = ""
     preprocessing_processes: int = 1
     batch_size: int = 1
-    max_input_length: int = None
-    max_output_length: int = None
+    max_input_length: int = 1024
+    max_output_length: int = 1024
 
 
 @dataclass
@@ -49,8 +49,8 @@ class TTEvalArgs:
     load_preprocessed_data: bool = ""
     load_preprocessed_data_path: str = ""
     preprocessing_processes: int = 1
-    max_input_length: int = None
-    max_output_length: int = None
+    max_input_length: int = 1024
+    max_output_length: int = 1024
 
 
 @dataclass
@@ -69,9 +69,9 @@ class TTrainer(HappyTrainer):
     """
     def __init__(self, model, model_type, tokenizer, device, logger):
         super().__init__(model, model_type, tokenizer, device, logger)
-        self.__max_input_length = self.tokenizer.model_max_length
-        self.__max_output_length = self.tokenizer.model_max_length
-  
+        self.__max_input_length = 1024
+        self.__max_output_length = 1024
+
 
     def train(self, input_filepath, dataclass_args=TTTrainArgs):
         """
@@ -93,7 +93,8 @@ class TTrainer(HappyTrainer):
 
         dataset = load_dataset("csv", data_files={"train": input_filepath}, delimiter=",")
 
-        self.__set_max_lengths(dataclass_args.max_input_length, dataclass_args.max_input_length)
+        self.__max_input_length = dataclass_args.max_input_length
+        self.__max_output_length = dataclass_args.max_output_length
 
         tokenized_dataset = dataset.map(
             self.__preprocess_function,
@@ -144,6 +145,10 @@ class TTrainer(HappyTrainer):
         """
         self.logger.info("Preprocessing evaluating data...")
         dataset = load_dataset("csv", data_files={"eval": input_filepath}, delimiter=",")
+
+        self.__max_input_length = dataclass_args.max_input_length
+        self.__max_output_length = dataclass_args.max_output_length
+
         tokenized_dataset = dataset.map(
             self.__preprocess_function,
             batched=True,
@@ -188,24 +193,6 @@ class TTrainer(HappyTrainer):
         model_inputs["labels"] = labels["input_ids"]
         return model_inputs
 
-    def __set_max_lengths(self, user_max_input_length, user_max_output_length):
-        """
-        :param user___max_input_length: User input for max input length. None by default
-        :param user_max_output_length: User input for max output length. None by default
-        :return:
-        """
-        # todo: there must be a cleaner way to accomplish this functionality.
-        # we need to pass these values to the preprocess_function
-
-        if user_max_input_length is None:
-            self.__max_input_length = self.tokenizer.model_max_length
-        else:
-            self.__max_input_length = user_max_input_length
-
-        if user_max_output_length is None:
-            self.min_output_length = self.tokenizer.model_max_length
-        else:
-            self.min_output_length = user_max_output_length
 
 
     def test(self, input_filepath, solve, args=TTTestArgs):
