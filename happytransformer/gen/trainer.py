@@ -72,6 +72,7 @@ class GENTrainer(HappyTrainer):
             self._generate_json(dataclass_args.save_preprocessed_data_path, tokenized_dataset["train"], "train")
 
         self.logger.info("Training...")
+        print("tokenized_dataset['train']", tokenized_dataset['train'])
 
         self._run_train(tokenized_dataset['train'], dataclass_args, default_data_collator)
 
@@ -102,7 +103,6 @@ class GENTrainer(HappyTrainer):
         self.logger.info("Evaluating...")
 
         result = self._run_eval(tokenized_dataset['eval'], default_data_collator, dataclass_args)
-
         return EvalResult(loss=result["eval_loss"])
 
     def test(self, input_filepath, solve, args):

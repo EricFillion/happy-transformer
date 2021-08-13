@@ -1,4 +1,4 @@
-from happytransformer import HappyTextToText, TTSettings
+from happytransformer import HappyTextToText, TTSettings, TTTrainArgs, TTEvalArgs
 
 
 
@@ -69,3 +69,50 @@ def test_tt_save():
     result_after = happy.generate_text("translate English to French: Hello my name is Eric")
 
     assert result_before.text == result_after.text
+
+
+def test_tc_train():
+    happy_tt = HappyTextToText()
+    results = happy_tt.train("../data/tt/train-eval-grammar.csv")
+
+
+def test_tc__subjective_train_grammar():
+    happy_tt = HappyTextToText()
+    input = "grammar: This sentences has bad grammar's error and overall is quality low?"
+    result_before = happy_tt.generate_text(input)
+    # args = TTTrainArgs(num_train_epochs=2)
+
+    happy_tt.train("../data/tt/train-eval-grammar.csv")
+    result_after = happy_tt.generate_text(input)
+
+    print("input: " + input)
+    print("before: ", result_before.text)
+    print("after: ", result_after.text)
+
+def test_tt_eval():
+    happy_tt = HappyTextToText()
+
+    before_result = happy_tt.eval("../data/tt/train-eval-grammar.csv")
+    happy_tt.train("../data/tt/train-eval-grammar.csv")
+    after_result = happy_tt.eval("../data/tt/train-eval-grammar.csv")
+
+    print('before_result', before_result)
+    print('after_result', after_result)
+
+
+def test_tc_subjective_train_translate():
+    happy_tt = HappyTextToText()
+    input = "translate English to Spanish: Hello, I like to eat apples."
+
+    result_before = happy_tt.generate_text(input)
+    args = TTTrainArgs(num_train_epochs=5)
+
+    happy_tt.train("../data/tt/train-eval-translate.csv", args=args)
+    result_after = happy_tt.generate_text(input)
+
+    print("input: " + input)
+    answer = "Hola, me gusta comer manzanas."  # according to Google translate
+    print("expected: " + answer)
+
+    print("before: ", result_before.text)
+    print("after: ", result_after.text)
