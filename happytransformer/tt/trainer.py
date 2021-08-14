@@ -167,6 +167,7 @@ class TTTrainer(HappyTrainer):
                 do_eval=True,
                 seed=42,
                 report_to=["none"],
+                per_device_eval_batch_size=dataclass_args.batch_size,
             )
 
             trainer = Seq2SeqTrainer(
