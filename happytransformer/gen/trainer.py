@@ -72,7 +72,6 @@ class GENTrainer(HappyTrainer):
             self._generate_json(dataclass_args.save_preprocessed_data_path, tokenized_dataset["train"], "train")
 
         self.logger.info("Training...")
-        print("tokenized_dataset['train']", tokenized_dataset['train'])
 
         self._run_train(tokenized_dataset['train'], dataclass_args, default_data_collator)
 
