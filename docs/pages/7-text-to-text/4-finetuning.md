@@ -20,9 +20,9 @@ inputs:
 
 
 #### Table 7.1
-Contains two columns with the following header values: text_1 and text_2
+Contains two columns with the following header values: input and target
 
-| text_1                        |text_2               |
+| input                         |target               |
 |-------------------------------|---------------------|
 | grammar: I has poor grammars  | I have poor grammar |
 | grammar: I wants too plays    | I want to play      |

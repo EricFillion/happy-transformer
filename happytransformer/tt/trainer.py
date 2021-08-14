@@ -100,7 +100,7 @@ class TTTrainer(HappyTrainer):
             self.__preprocess_function,
             batched=True,
             num_proc=dataclass_args.preprocessing_processes,
-            remove_columns=["text_1", "text_2"],
+            remove_columns=["input", "target"],
         )
 
         self.logger.info("Training...")
@@ -152,7 +152,7 @@ class TTTrainer(HappyTrainer):
         tokenized_dataset = dataset.map(
             self.__preprocess_function,
             batched=True,
-            remove_columns=["text_1", "text_2"],
+            remove_columns=["input", "target"],
             num_proc=dataclass_args.preprocessing_processes,
         )
 
@@ -185,11 +185,11 @@ class TTTrainer(HappyTrainer):
         :param examples:
         :return:
         """
-        model_inputs = self.tokenizer(examples["text_1"], max_length=self.__max_input_length, truncation=True)
+        model_inputs = self.tokenizer(examples["input"], max_length=self.__max_input_length, truncation=True)
 
         # Setup the tokenizer for targets
         with self.tokenizer.as_target_tokenizer():
-            labels = self.tokenizer(examples["text_2"], max_length=self.__max_output_length, truncation=True)
+            labels = self.tokenizer(examples["target"], max_length=self.__max_output_length, truncation=True)
 
         model_inputs["labels"] = labels["input_ids"]
         return model_inputs

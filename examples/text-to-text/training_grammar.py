@@ -36,7 +36,7 @@ def main():
 def generate_csv(csv_path, dataset):
     with open(csv_path, 'w', newline='') as csvfile:
         writter = csv.writer(csvfile)
-        writter.writerow(["text_1", "text_2"])
+        writter.writerow(["input", "target"])
         for case in dataset:
             input_text = "grammar: " + case["sentence"]
             for correction in case["corrections"]:
