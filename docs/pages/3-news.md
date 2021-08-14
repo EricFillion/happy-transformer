@@ -6,6 +6,14 @@ nav_order: 4
 
 ---
 ## News: 
+### August 14th, 2021
+**Introducing Version 2.3.0!**
+
+New Features: 
+- Text-to-text fine-tuning is now available!
+
+
+## News: 
 ### May 4th, 2021
 **Introducing Version 2.2.0!**
 
