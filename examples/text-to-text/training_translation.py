@@ -37,7 +37,7 @@ def generate_csv(csv_path, dataset):
         writter.writerow(["text_1", "text_2"])
         for case in dataset:
             english_text = "translate English to Persian: " + case["source"]
-            persian_text = case["targets"]
+            persian_text = case["targets"][0]
             writter.writerow([english_text, persian_text])
 
 
