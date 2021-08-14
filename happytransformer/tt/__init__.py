@@ -1,2 +1,2 @@
-from .trainer import TTrainer
+from .trainer import TTTrainer
 name = "happytransformer.tt"

@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from transformers import Text2TextGenerationPipeline, AutoModelForSeq2SeqLM
 
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.tt.trainer import TTrainer
+from happytransformer.tt.trainer import TTTrainer
 from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.adaptors import get_adaptor
 from happytransformer.tt.trainer import TTTrainArgs, TTEvalArgs, TTTestArgs
@@ -58,7 +58,7 @@ class HappyTextToText(HappyTransformer):
         self._pipeline = Text2TextGenerationPipeline(model=self.model,
                                                      tokenizer=self.tokenizer, device=device_number)
 
-        self._trainer = TTrainer(self.model, model_type, self.tokenizer, self._device, self.logger)
+        self._trainer = TTTrainer(self.model, model_type, self.tokenizer, self._device, self.logger)
 
 
     def __assert_default_text_is_val(self, text):

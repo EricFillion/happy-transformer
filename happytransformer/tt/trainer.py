@@ -63,7 +63,7 @@ class TTTestArgs:
     load_preprocessed_data: bool = False
     load_preprocessed_data_path: str = ""
 
-class TTrainer(HappyTrainer):
+class TTTrainer(HappyTrainer):
     """
     Trainer class for HappyTextToText
     """
