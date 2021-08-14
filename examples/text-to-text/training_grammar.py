@@ -41,9 +41,7 @@ def generate_csv(csv_path, dataset):
             input_text = "grammar: " + case["sentence"]
             for correction in case["corrections"]:
                 # a few of the case are have None values. We'll skip them
-                if not input_text or not correction:
-                    pass
-                else:
+                if input_text and correction:
                     writter.writerow([input_text, correction])
 
 if __name__ == "__main__":
