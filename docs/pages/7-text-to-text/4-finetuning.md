@@ -45,8 +45,8 @@ Contains two columns with the following header values: text_1 and text_2
 | load_preprocessed_data        | False |
 | load_preprocessed_data_path   | ""    |
 | preprocessing_processes       | 1     |
-| max_input_length              | None  |
-| max_output_length             | None  |
+| max_input_length              | 1024  |
+| max_output_length             | 1024  |
 
 
 Information about the learning parameters can be found [here](/learning-parameters/)
@@ -54,7 +54,7 @@ Information about the learning parameters can be found [here](/learning-paramete
 Information about saving/loading preprocessed data can be found [here](/save-load-data/)
 
 preprocessing_processes: Number of processes used for preprocessing. We recommend 1-4. 
-max_input_length: The maximum number of tokens for the input. The rest get truncated. If None, uses the maximum number of tokens as permitted by the tokenizer. 
+max_input_length: The maximum number of tokens for the input. The rest get truncated.
 max_output_length: Ditto, except for the output. 
 
 
