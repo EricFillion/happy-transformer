@@ -10,7 +10,7 @@
 New Course: Create a text generation web app. Also learn how to fine-tune GPT-Neo [link](https://www.udemy.com/course/nlp-text-generation-python-web-app/?couponCode=LAUNCH)
 
 
-Join our brand new Discord server: [![Support Server](https://img.shields.io/discord/839263772312862740.svg?label=Discord&logo=Discord&colorB=7289da&style=?style=flat-square&logo=appveyor)](https://discord.gg/psVwe3wfTb)
+Join our Discord server: [![Support Server](https://img.shields.io/discord/839263772312862740.svg?label=Discord&logo=Discord&colorB=7289da&style=?style=flat-square&logo=appveyor)](https://discord.gg/psVwe3wfTb)
 
 
 
@@ -26,9 +26,9 @@ Happy Transformer is an package built on top of [Hugging Face's transformer libr
 | Text Classification                | ✔            | ✔          | 
 | Word Prediction                    | ✔            | ✔          |
 | Question Answering                 | ✔            | ✔          | 
+| Text-to-Text                       | ✔            | ✔          | 
 | Next Sentence Prediction           | ✔            |            | 
 | Token Classification               | ✔            |            | 
-| Text-to-Text                       | ✔            |            | 
 
 ## Quick Start
 ```sh
