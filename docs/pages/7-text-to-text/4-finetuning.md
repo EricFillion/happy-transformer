@@ -10,7 +10,7 @@ permalink: /text-to-text/finetuning/
 
 HappyTextToText contains two methods for training 
 - train(): fine-tune the model to convert a standalone text to another standalone piece of text 
-- eval(): determine how well the model performs 
+- eval(): determines how well the model performs 
 
 ### train()
 
@@ -40,10 +40,6 @@ Contains two columns with the following header values: input and target
 | adam_beta2                    | 0.999 |
 | adam_epsilon                  | 1e-8  |
 | max_grad_norm                 | 1.0   |
-| save_preprocessed_data        | False |
-| save_preprocessed_data_path   | ""    |
-| load_preprocessed_data        | False |
-| load_preprocessed_data_path   | ""    |
 | preprocessing_processes       | 1     |
 | max_input_length              | 1024  |
 | max_output_length             | 1024  |
@@ -51,7 +47,6 @@ Contains two columns with the following header values: input and target
 
 Information about the learning parameters can be found [here](/learning-parameters/)
 
-Information about saving/loading preprocessed data can be found [here](/save-load-data/)
 
 preprocessing_processes: Number of processes used for preprocessing. We recommend 1-4. 
 max_input_length: The maximum number of tokens for the input. The rest get truncated.
@@ -76,18 +71,14 @@ Input:
 
 | Parameter                     |Default|
 |-------------------------------|-------|
-| save_preprocessed_data        | False |
-| save_preprocessed_data_path   | ""    |
-| load_preprocessed_data        | False |
-| load_preprocessed_data_path   | ""    |
 | preprocessing_processes       | 1     |
-| max_input_length              | None  |
-| max_output_length             | None  |
+| max_input_length              | 1024  |
+| max_output_length             | 1024  |
 
 See Table 7.1 for more information 
 
 
-Output: An object with the field "loss"
+Output: An object with a single field called "loss"
 
 #### Example 1.4
 ```python
