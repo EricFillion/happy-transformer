@@ -17,6 +17,9 @@ examples/question_answering/eval.txt
 examples/generation/train.txt
 examples/generation/eval.txt
 
+examples/text-to-text/train.csv
+examples/text-to-text/eval.csv
+
 main.py
 tests/model/
 

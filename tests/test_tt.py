@@ -1,4 +1,4 @@
-from happytransformer import HappyTextToText, TTSettings
+from happytransformer import HappyTextToText, TTSettings, TTTrainArgs, TTEvalArgs
 
 
 
@@ -69,3 +69,32 @@ def test_tt_save():
     result_after = happy.generate_text("translate English to French: Hello my name is Eric")
 
     assert result_before.text == result_after.text
+
+
+def test_tt_train_simple():
+    happy_tt = HappyTextToText()
+    happy_tt.train("../data/tt/train-eval-grammar.csv")
+
+def test_tt_eval_simple():
+    happy_tt = HappyTextToText()
+    happy_tt.eval("../data/tt/train-eval-grammar.csv")
+
+def test_tt_eval_loss_decreases():
+    happy_tt = HappyTextToText()
+
+    before_result = happy_tt.eval("../data/tt/train-eval-grammar.csv")
+    happy_tt.train("../data/tt/train-eval-grammar.csv")
+    after_result = happy_tt.eval("../data/tt/train-eval-grammar.csv")
+
+    assert before_result.loss > after_result.loss
+
+def test_tt_train_custom_p():
+    happy_tt = HappyTextToText()
+    args = TTTrainArgs(num_train_epochs=2, max_input_length=100, max_output_length=100, preprocessing_processes=4, batch_size=2)
+    happy_tt.train("../data/tt/train-eval-grammar.csv", args=args)
+
+def test_tt_eval_custom_p():
+    happy_tt = HappyTextToText()
+    args = TTEvalArgs(max_input_length=100, max_output_length=100, preprocessing_processes=4, batch_size=2)
+    result = happy_tt.eval("../data/tt/train-eval-grammar.csv", args=args)
+    assert type(result.loss) is float

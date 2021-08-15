@@ -102,7 +102,6 @@ class GENTrainer(HappyTrainer):
         self.logger.info("Evaluating...")
 
         result = self._run_eval(tokenized_dataset['eval'], default_data_collator, dataclass_args)
-
         return EvalResult(loss=result["eval_loss"])
 
     def test(self, input_filepath, solve, args):

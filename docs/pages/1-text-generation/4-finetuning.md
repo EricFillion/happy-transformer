@@ -8,7 +8,7 @@ permalink: /text-generation/finetuning/
 
 ## Text Generation Finetuning
 
-TextGeneration contains two methods for training 
+HappyTextGeneration contains two methods for training 
 - train(): fine-tune the model to understand a body of text better
 - eval(): determine how well the model performs 
 

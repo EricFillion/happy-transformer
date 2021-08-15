@@ -1,0 +1,5 @@
+input,target
+grammar: This sentences has bad grammar's error and overall is quality low?,This sentence has bad grammar errors and overall is low quality.
+grammar: This sentence: had bad grammar?,This sentence has bad grammar.
+grammar: not correct sentence?,This sentence is not correct.
+grammar: You're laptop is broken,Your laptop is broken

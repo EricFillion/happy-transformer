@@ -14,10 +14,18 @@ from happytransformer.tt.trainer import TTTrainArgs, TTEvalArgs, TTTestArgs
 
 @dataclass
 class TextToTextResult:
+    """
+    Returned when HappyTextToText.generate() is called
+    """
     text: str
 
 @dataclass
 class TTSettings:
+    """
+    Used to adjust the text generation algorithm that's used when
+    HappyTextToText.generate() is called 
+
+    """
     min_length: int = 10
     max_length: int = 50
     do_sample: bool = False
@@ -70,7 +78,7 @@ class HappyTextToText(HappyTransformer):
                       args: TTSettings = TTSettings()) -> TextToTextResult:
         """
         :param text: starting text that the model uses as a prompt to continue it.
-        :param args: A GENSettings object
+        :param args: A TTSettings object
         :return: A TextToTextResult() object
         """
         self.__assert_default_text_is_val(text)
@@ -87,11 +95,30 @@ class HappyTextToText(HappyTransformer):
                                 )
         return TextToTextResult(text=output[0]['generated_text'])
 
-    def train(self, input_filepath, args=TTTrainArgs):
-        raise NotImplementedError("train() is currently not available")
+    def train(self, input_filepath, args=TTTrainArgs()):
+        """
+        Trains the text-to-text model
+        input_filepath: a string that contains the location of a csv file
+        for training. Contains the following header values: text_1, text_2
+        args: A TTTrainArgs() object
+        return: None
+        """
+        self._trainer.train(input_filepath=input_filepath, dataclass_args=args)
 
-    def eval(self, input_filepath, args=TTEvalArgs):
-        raise NotImplementedError("eval() is currently not available")
+    def eval(self, input_filepath, args=TTEvalArgs()):
+        """
+        Evaluated the text-to-text model
+
+        input_filepath: a string that contains the location of a csv file
+        for training. Contains the following header values: text_1, text_2
+
+        args: A TTEvalArgs() object
+        return: an EvalResult() object
+        """
+
+        result = self._trainer.eval(input_filepath=input_filepath, dataclass_args=args)
+        return result
+
 
     def test(self, input_filepath, args=TTTestArgs):
         raise NotImplementedError("test() is currently not available")
