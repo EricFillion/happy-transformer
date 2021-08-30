@@ -24,6 +24,38 @@ def test_default_min_max_length():
     length = len(tokens[0])
     assert length == 5
 
+def test_bad_words():
+    
+    def robin_karp_compare(generated_tokens, bad_word_phrase):
+        """ An implementation of the Robin Karp Algorithm for efficient list comparison"""
+        generated_tokens_length = len(generated_tokens)
+        bad_word_phrase_length =  len(bad_word_phrase)
+        for i in range(0,generated_tokens_length-bad_word_phrase_length+1):
+            for j in range(0,bad_word_phrase_length):
+                if generated_tokens[i+j] != bad_word_phrase[j]:
+                    break
+            else:
+                return i # If true, return the index
+        return -1 
+
+    happy_gen = HappyGeneration()
+
+    # Test single words
+    args_test_word_single = GENSettings(bad_words=["new","tool"])
+    output_single = happy_gen.generate_text("Artificial intelligence is ", args=args_test_word_single)
+    tokens_single = happy_gen.tokenizer.encode(output_single.text, return_tensors="pt")
+    bad_words_ids_single = [happy_gen.tokenizer(" "+phrase.strip()).input_ids for phrase in args_test_word_single.bad_words]
+    for phrase in bad_words_ids_single:
+        for word_id in phrase:
+            assert word_id not in tokens_single[0]
+
+    # Test phrases 
+    args_test_word_phrase = GENSettings(bad_words=["new field"])
+    output_phrase = happy_gen.generate_text("Artificial intelligence is ", args=args_test_word_phrase)
+    tokens_phrase = happy_gen.tokenizer.encode(output_phrase.text, return_tensors="pt")
+    bad_words_ids_phrase = [happy_gen.tokenizer(" "+phrase.strip()).input_ids for phrase in args_test_word_phrase.bad_words]
+    for phrase in bad_words_ids_phrase:
+       assert robin_karp_compare(tokens_phrase[0], phrase) == -1
 
 def test_top_p():
     happy_gen = HappyGeneration()
@@ -87,7 +119,6 @@ def test_all_methods():
     print("generic-sampling: ", output_generic_sampling.text, end="\n\n")
     print("top-k-sampling: ", output_top_k_sampling.text, end="\n\n")
     print("top-p-sampling: ", output_top_p_sampling.text, end="\n\n")
-
 
 def test_gen_train_basic():
     happy_gen = HappyGeneration()

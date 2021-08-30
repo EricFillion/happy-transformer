@@ -2,6 +2,7 @@
 Contains the HappyGeneration class
 """
 from dataclasses import dataclass
+from typing import List
 from transformers import AutoModelForCausalLM, TextGenerationPipeline
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.gen.trainer import GENTrainer, GENTrainArgs, GENEvalArgs
@@ -27,6 +28,7 @@ class GENSettings:
     top_k: int = 50
     no_repeat_ngram_size: int = 0
     top_p: float = 1
+    bad_words: List[int] = None
 
 @dataclass
 class GenerationResult:
@@ -82,7 +84,10 @@ class HappyGeneration(HappyTransformer):
         input_ids = self.tokenizer.encode(text, return_tensors="pt")
         adjusted_min_length = args.min_length + len(input_ids[0])
         adjusted_max_length = args.max_length + len(input_ids[0])
-
+        if args.bad_words:
+            bad_words_ids = [self.tokenizer(" "+phrase.strip()).input_ids for phrase in args.bad_words]
+        else:
+            bad_words_ids = None
         output = self._pipeline(text, min_length=adjusted_min_length,
                                 return_full_text=False,
                                 max_length=adjusted_max_length,
@@ -92,7 +97,8 @@ class HappyGeneration(HappyTransformer):
                                 temperature=args.temperature,
                                 top_k=args.top_k,
                                 no_repeat_ngram_size=args.no_repeat_ngram_size,
-                                top_p=args.top_p
+                                top_p=args.top_p,
+                                bad_words_ids = bad_words_ids
                                 )
         return GenerationResult(text=output[0]['generated_text'])
 
