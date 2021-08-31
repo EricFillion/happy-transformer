@@ -71,7 +71,7 @@ from happytransformer import HappyGeneration, GENSettings
         "Artificial intelligence is ",
         args=top_p_sampling_settings)
 
-    bad_words_settings = GENSettings(do_sample=True, top_k=0, temperature = 0.7, max_length = 10, bad_words = ["new form", "social"])
+    bad_words_settings = GENSettings(bad_words = ["new form", "social"])
     output_bad_words = happy_gen.generate_text(
         "Artificial intelligence is ",
         args=bad_words_settings)

@@ -60,6 +60,17 @@ def example_1_4():
     print(result)  # EvalResult(loss=3.3437771797180176)
     print(result.loss)  # 3.3437771797180176
 
+def example_1_5():
+    happy_gen = HappyGeneration()
+    args = GENSettings(bad_words = ["new form", "social"]) # Provide a list of bad words/phrases
+    result = happy_gen.generate_text(
+        "Artificial intelligence is ",
+        args=args)
+    print(result.text)
+    
+
+
+
 
 if __name__ == "__main__":
     # example_1_0()
@@ -67,5 +78,6 @@ if __name__ == "__main__":
     example_1_2()
     # example_1_3()
     # example_1_4()
+    # example_1_5()
 
 

@@ -28,7 +28,7 @@ class GENSettings:
     top_k: int = 50
     no_repeat_ngram_size: int = 0
     top_p: float = 1
-    bad_words: List[int] = None
+    bad_words: List[str] = None
 
 @dataclass
 class GenerationResult:
@@ -98,7 +98,7 @@ class HappyGeneration(HappyTransformer):
                                 top_k=args.top_k,
                                 no_repeat_ngram_size=args.no_repeat_ngram_size,
                                 top_p=args.top_p,
-                                bad_words_ids = bad_words_ids
+                                bad_words_ids=bad_words_ids
                                 )
         return GenerationResult(text=output[0]['generated_text'])
 
