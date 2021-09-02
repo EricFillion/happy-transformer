@@ -47,13 +47,12 @@ def test_tc_test():
     )
 
     result = happy_tc.test("../data/tc/test.csv")
+
+    labels_result = [case.label for case in result]
     answer = [
-        TextClassificationResult(label='POSITIVE', score=0.9998401999473572),
-        TextClassificationResult(label='NEGATIVE', score=0.9772131443023682),
-        TextClassificationResult(label='NEGATIVE', score=0.9966067671775818),
-        TextClassificationResult(label='POSITIVE', score=0.9792295098304749)
+        'POSITIVE', 'NEGATIVE', 'NEGATIVE', 'POSITIVE'
     ]
-    assert result == answer
+    assert labels_result == answer
 
 
 def test_tc_train_effectiveness():
