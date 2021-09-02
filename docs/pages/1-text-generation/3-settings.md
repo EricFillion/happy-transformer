@@ -35,6 +35,7 @@ GENSettings() contains the  fields shown in Table 1.0
 | top_k                | 50    | How many potential answers are considered when performing sampling         | 
 | top_p                | 1.0   | Min number of tokens are selected where their probabilities add up to top_p|
 | no_repeat_ngram_size | 0     | The size of an n-gram that cannot occur more than once. (0=infinity)       |
+| bad_words            | None  | List of words/phrases that cannot be generated.                            | 
 
 
 #### Examples 1.2:  
@@ -69,12 +70,17 @@ from happytransformer import HappyGeneration, GENSettings
     output_top_p_sampling = happy_gen.generate_text(
         "Artificial intelligence is ",
         args=top_p_sampling_settings)
+
+    bad_words_settings = GENSettings(bad_words = ["new form", "social"])
+    output_bad_words = happy_gen.generate_text(
+        "Artificial intelligence is ",
+        args=bad_words_settings)
         
     print("Greedy:", output_greedy.text)  # a new field of research that has been gaining
     print("Beam:", output_beam_search.text) # one of the most promising areas of research in
     print("Generic Sampling:", output_generic_sampling.text)  #  an area of highly promising research, and a
     print("Top-k Sampling:", output_top_k_sampling.text)  # a new form of social engineering. In this
     print("Top-p Sampling:", output_top_p_sampling.text)  # a new form of social engineering. In this
-
+    print("Bad Words:", output_bad_words.text) # a technology that enables us to help people deal
 ```
 

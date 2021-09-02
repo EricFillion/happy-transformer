@@ -24,6 +24,21 @@ def test_default_min_max_length():
     length = len(tokens[0])
     assert length == 5
 
+def test_bad_words():
+    happy_gen = HappyGeneration()
+    # Test single words
+    args_test_word_single = GENSettings(bad_words=["new","tool"])
+    output_single = happy_gen.generate_text("Artificial intelligence is ", args=args_test_word_single)
+    output_words_single = output_single.text.split()
+    for phrase in args_test_word_single.bad_words:
+        for word in phrase.split():
+            assert word not in output_words_single
+    # Test phrases 
+    args_test_word_phrase = GENSettings(bad_words=["new field"])
+    output_phrase = happy_gen.generate_text("Artificial intelligence is ", args=args_test_word_phrase)
+    for phrase in args_test_word_phrase.bad_words:
+        assert phrase not in output_phrase.text
+
 
 def test_top_p():
     happy_gen = HappyGeneration()
@@ -87,7 +102,6 @@ def test_all_methods():
     print("generic-sampling: ", output_generic_sampling.text, end="\n\n")
     print("top-k-sampling: ", output_top_k_sampling.text, end="\n\n")
     print("top-p-sampling: ", output_top_p_sampling.text, end="\n\n")
-
 
 def test_gen_train_basic():
     happy_gen = HappyGeneration()
