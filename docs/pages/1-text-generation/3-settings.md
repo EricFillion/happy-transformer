@@ -38,7 +38,7 @@ GENSettings() contains the  fields shown in Table 1.0
 | bad_words            | None  | List of words/phrases that cannot be generated.                            | 
 
 
-#### Examples 1.2:  
+#### Example 1.2:  
  
  ```python
 from happytransformer import HappyGeneration, GENSettings
