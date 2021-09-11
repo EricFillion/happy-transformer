@@ -27,7 +27,8 @@ def test_default_min_max_length():
 def test_bad_words():
     happy_gen = HappyGeneration()
     # Test single words
-    args_test_word_single = GENSettings(bad_words=["new","tool"])
+    args_test_word_single = GENSettings(bad_words=["new", "tool"])
+    # result without bad_words:  "a new field of research that has been gaining momentum"
     output_single = happy_gen.generate_text("Artificial intelligence is ", args=args_test_word_single)
     output_words_single = output_single.text.split()
     for phrase in args_test_word_single.bad_words:
