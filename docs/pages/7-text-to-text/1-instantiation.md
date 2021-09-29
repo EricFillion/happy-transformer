@@ -18,8 +18,8 @@ Initialize a HappyTextToText() object to perform text-to-text generation
 
 #### Example 7.0:
 ```python
-    from happytransformer import HappyTextToText
-    # --------------------------------------#
-    happy_tt = HappyTextToText("T5", "t5-small")  # default
+from happytransformer import HappyTextToText
+# --------------------------------------#
+happy_tt = HappyTextToText("T5", "t5-small")  # default
 
 ```

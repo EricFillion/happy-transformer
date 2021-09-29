@@ -48,12 +48,12 @@ preprocessing_processes: Number of processes used for preprocessing. We recommen
 
 #### Example 1.3:
 ```python
-    from happytransformer import HappyGeneration, GENTrainArgs
-    # --------------------------------------#
-    
-    happy_gen = HappyGeneration()
-    args = GENTrainArgs(num_train_epochs=1) 
-    happy_gen.train("../../data/gen/train-eval.txt", args=args)
+from happytransformer import HappyGeneration, GENTrainArgs
+# --------------------------------------#
+
+happy_gen = HappyGeneration()
+args = GENTrainArgs(num_train_epochs=1) 
+happy_gen.train("../../data/gen/train-eval.txt", args=args)
 ```
 
 ### eval()
@@ -79,13 +79,13 @@ Output: An object with the field "loss"
 
 #### Example 1.4
 ```python
-    from happytransformer import HappyGeneration, GENEvalArgs
-    # --------------------------------------#
-    happy_gen = HappyGeneration()  
-    args = GENEvalArgs(preprocessing_processes=2)
-    result = happy_gen.eval("../../data/gen/train-eval.txt", args=args)
-    print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
-    print(result)  # EvalResult(loss=3.3437771797180176)
-    print(result.loss)  # 3.3437771797180176
+from happytransformer import HappyGeneration, GENEvalArgs
+# --------------------------------------#
+happy_gen = HappyGeneration()  
+args = GENEvalArgs(preprocessing_processes=2)
+result = happy_gen.eval("../../data/gen/train-eval.txt", args=args)
+print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
+print(result)  # EvalResult(loss=3.3437771797180176)
+print(result.loss)  # 3.3437771797180176
 
 ```

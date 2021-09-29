@@ -29,12 +29,12 @@ number of labels, so if you use these models you can set num_labels freely
 
 #### Example 2.0:
 ```python
-    from happytransformer import HappyTextClassification
-    # --------------------------------------#
-    happy_tc_distilbert = HappyTextClassification("DISTILBERT", "distilbert-base-uncased", num_labels=2)  # default 
-    happy_tc_albert = HappyTextClassification(model_type="ALBERT", model_name="albert-base-v2")
-    happy_tc_bert = HappyTextClassification("BERT", "bert-base-uncased")
-    happy_tc_roberta = HappyTextClassification("ROBERTA", "roberta-base")
+from happytransformer import HappyTextClassification
+# --------------------------------------#
+happy_tc_distilbert = HappyTextClassification("DISTILBERT", "distilbert-base-uncased", num_labels=2)  # default 
+happy_tc_albert = HappyTextClassification(model_type="ALBERT", model_name="albert-base-v2")
+happy_tc_bert = HappyTextClassification("BERT", "bert-base-uncased")
+happy_tc_roberta = HappyTextClassification("ROBERTA", "roberta-base")
 
 ```
 

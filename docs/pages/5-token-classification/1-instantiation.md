@@ -16,8 +16,8 @@ Initialize a HappyTokenClassification() object for token classification
 
 #### Example 5.0:
 ```python
-    from happytransformer import HappyTokenClassification
-    # --------------------------------------#
-    happy_toc = HappyTokenClassification("BERT", "dslim/bert-base-NER")  # default 
-    happy_toc_large = HappyTokenClassification("XLM-ROBERTA", "xlm-roberta-large-finetuned-conll03-english") 
+from happytransformer import HappyTokenClassification
+# --------------------------------------#
+happy_toc = HappyTokenClassification("BERT", "dslim/bert-base-NER")  # default 
+happy_toc_large = HappyTokenClassification("XLM-ROBERTA", "xlm-roberta-large-finetuned-conll03-english") 
 ```

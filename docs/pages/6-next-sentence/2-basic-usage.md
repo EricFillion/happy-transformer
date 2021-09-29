@@ -21,26 +21,26 @@ A float between 0 and 1 that represents how likely sentence_a follows sentence_b
 
 #### Example 6.1:
 ```python
-    from happytransformer import HappyNextSentence
-    # --------------------------------------#
-    happy_ns = HappyNextSentence()
-    result = happy_ns.predict_next_sentence(
-        "How old are you?",
-        "I am 21 years old."
-    )
-    print(type(result))  # <class 'float'>
-    print(result)  # 0.9999918937683105
+from happytransformer import HappyNextSentence
+# --------------------------------------#
+happy_ns = HappyNextSentence()
+result = happy_ns.predict_next_sentence(
+    "How old are you?",
+    "I am 21 years old."
+)
+print(type(result))  # <class 'float'>
+print(result)  # 0.9999918937683105
 ```
 
 #### Example 6.2:
 ```python
-    from happytransformer import HappyNextSentence
-    # --------------------------------------#
-    happy_ns = HappyNextSentence()
-    result = happy_ns.predict_next_sentence(
-        "How old are you?",
-        "Queen's University is in Kingston Ontario Canada"
-    )
-    print(type(result))  # <class 'float'>
-    print(result)  # 0.00018497584096621722
+from happytransformer import HappyNextSentence
+# --------------------------------------#
+happy_ns = HappyNextSentence()
+result = happy_ns.predict_next_sentence(
+    "How old are you?",
+    "Queen's University is in Kingston Ontario Canada"
+)
+print(type(result))  # <class 'float'>
+print(result)  # 0.00018497584096621722
 ```

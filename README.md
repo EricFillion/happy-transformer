@@ -39,10 +39,10 @@ pip install happytransformer
 
 from happytransformer import HappyWordPrediction
 #--------------------------------------#
-    happy_wp = HappyWordPrediction()  # default uses distilbert-base-uncased
-    result = happy_wp.predict_mask("I think therefore I [MASK]")
-    print(result)  # [WordPredictionResult(token='am', score=0.10172799974679947)]
-    print(result[0].token)  # am
+happy_wp = HappyWordPrediction()  # default uses distilbert-base-uncased
+result = happy_wp.predict_mask("I think therefore I [MASK]")
+print(result)  # [WordPredictionResult(token='am', score=0.10172799974679947)]
+print(result[0].token)  # am
 ```
 
 ## Maintainers

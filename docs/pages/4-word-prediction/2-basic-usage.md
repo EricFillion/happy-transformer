@@ -23,14 +23,14 @@ Note: if targets are provided, then top_k will be ignored and a score for each t
 
 from happytransformer import HappyWordPrediction
 #--------------------------------------#
-    happy_wp = HappyWordPrediction()  # default uses distilbert-base-uncased
-    result = happy_wp.predict_mask("I think therefore I [MASK]")
-    print(type(result))  # <class 'list'>
-    print(result)  # [WordPredictionResult(token='am', score=0.10172799974679947)]
-    print(type(result[0]))  # <class 'happytransformer.happy_word_prediction.WordPredictionResult'>
-    print(result[0])  # [WordPredictionResult(token='am', score=0.10172799974679947)]
-    print(result[0].token)  # am
-    print(result[0].score)  # 0.10172799974679947
+happy_wp = HappyWordPrediction()  # default uses distilbert-base-uncased
+result = happy_wp.predict_mask("I think therefore I [MASK]")
+print(type(result))  # <class 'list'>
+print(result)  # [WordPredictionResult(token='am', score=0.10172799974679947)]
+print(type(result[0]))  # <class 'happytransformer.happy_word_prediction.WordPredictionResult'>
+print(result[0])  # [WordPredictionResult(token='am', score=0.10172799974679947)]
+print(result[0].token)  # am
+print(result[0].score)  # 0.10172799974679947
     
 
 ```

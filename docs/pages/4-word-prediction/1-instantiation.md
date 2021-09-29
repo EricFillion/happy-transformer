@@ -26,12 +26,12 @@ We recommend using "HappyWordPrediction("ALBERT", "albert-xxlarge-v2")" for the 
 
 #### Example 4.0:
 ```python
-    from happytransformer import HappyWordPrediction
-    # --------------------------------------#
-    happy_wp_distilbert = HappyWordPrediction("DISTILBERT", "distilbert-base-uncased")  # default
-    happy_wp_albert = HappyWordPrediction("ALBERT", "albert-base-v2")
-    happy_wp_bert = HappyWordPrediction("BERT", "bert-base-uncased")
-    happy_wp_roberta = HappyWordPrediction("ROBERTA", "roberta-base")
+from happytransformer import HappyWordPrediction
+# --------------------------------------#
+happy_wp_distilbert = HappyWordPrediction("DISTILBERT", "distilbert-base-uncased")  # default
+happy_wp_albert = HappyWordPrediction("ALBERT", "albert-base-v2")
+happy_wp_bert = HappyWordPrediction("BERT", "bert-base-uncased")
+happy_wp_roberta = HappyWordPrediction("ROBERTA", "roberta-base")
 
 ```
 ## Tutorials 

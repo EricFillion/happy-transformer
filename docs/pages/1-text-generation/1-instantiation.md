@@ -23,11 +23,11 @@ If you are using Google Colab on a free instance, then we recommended using  "gp
 
 #### Example 1.0:
 ```python
-    from happytransformer import HappyGeneration
-    # --------------------------------------#
-    happy_gen = HappyGeneration("GPT2", "gpt2")  # default
-    # happy_gen = HappyGeneration("GPT2", "gpt2-large")  # Good for Google Colab
-    # happy_gen = HappyGeneration("GPT2", "gpt2-xl")  # Best performance 
+from happytransformer import HappyGeneration
+# --------------------------------------#
+happy_gen = HappyGeneration("GPT2", "gpt2")  # default
+# happy_gen = HappyGeneration("GPT2", "gpt2-large")  # Good for Google Colab
+# happy_gen = HappyGeneration("GPT2", "gpt2-xl")  # Best performance 
 
 ```
 
