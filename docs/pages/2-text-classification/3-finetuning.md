@@ -55,13 +55,13 @@ Output: None
 
 #### Example 2.2:
 ```python
-    from happytransformer import HappyTextClassification, TCTrainArgs
-    # --------------------------------------#
-    happy_tc = HappyTextClassification(model_type="DISTILBERT",
-                                       model_name="distilbert-base-uncased-finetuned-sst-2-english",
-                                       num_labels=2)  # Don't forget to set num_labels! 
-    args = TCTrainArgs(num_train_epochs=1)
-    happy_tc.train("../../data/tc/train-eval.csv", args=args)
+from happytransformer import HappyTextClassification, TCTrainArgs
+# --------------------------------------#
+happy_tc = HappyTextClassification(model_type="DISTILBERT",
+                                   model_name="distilbert-base-uncased-finetuned-sst-2-english",
+                                   num_labels=2)  # Don't forget to set num_labels! 
+args = TCTrainArgs(num_train_epochs=1)
+happy_tc.train("../../data/tc/train-eval.csv", args=args)
 
 ```
 
@@ -75,16 +75,16 @@ An object with the field "loss"
 
 #### Example 2.3:
 ```python
-    from happytransformer import HappyTextClassification, TCEvalArgs
-    # --------------------------------------#
-    happy_tc = HappyTextClassification(model_type="DISTILBERT",
-                                       model_name="distilbert-base-uncased-finetuned-sst-2-english",
-                                       num_labels=2)  # Don't forget to set num_labels!
-    args = TCEvalArgs(save_preprocessed_data=False) # for demonstration -- not needed 
-    result = happy_tc.eval("../../data/tc/train-eval.csv", args=args)
-    print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
-    print(result)  # EvalResult(eval_loss=0.007262040860950947)
-    print(result.loss)  # 0.007262040860950947
+from happytransformer import HappyTextClassification, TCEvalArgs
+# --------------------------------------#
+happy_tc = HappyTextClassification(model_type="DISTILBERT",
+                                   model_name="distilbert-base-uncased-finetuned-sst-2-english",
+                                   num_labels=2)  # Don't forget to set num_labels!
+args = TCEvalArgs(save_preprocessed_data=False) # for demonstration -- not needed 
+result = happy_tc.eval("../../data/tc/train-eval.csv", args=args)
+print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
+print(result)  # EvalResult(eval_loss=0.007262040860950947)
+print(result.loss)  # 0.007262040860950947
 
 ```
 
@@ -110,17 +110,17 @@ The list is in order by ascending csv index.
 
 #### Example 2.4:
 ```python
-    from happytransformer import HappyTextClassification
-    # --------------------------------------#
-    happy_tc = HappyTextClassification(model_type="DISTILBERT",
-                                       model_name="distilbert-base-uncased-finetuned-sst-2-english",
-                                       num_labels=2)  # Don't forget to set num_labels!
-    result = happy_tc.test("../../data/tc/test.csv")
-    print(type(result))  # <class 'list'>
-    print(result)  # [TextClassificationResult(label='POSITIVE', score=0.9998401999473572), TextClassificationResult(label='LABEL_0', score=0.9772131443023682)...
-    print(type(result[0]))  # <class 'happytransformer.happy_text_classification.TextClassificationResult'>
-    print(result[0])  # TextClassificationResult(label='POSITIVE', score=0.9998401999473572)
-    print(result[0].label)  # POSITIVE
+from happytransformer import HappyTextClassification
+# --------------------------------------#
+happy_tc = HappyTextClassification(model_type="DISTILBERT",
+                                   model_name="distilbert-base-uncased-finetuned-sst-2-english",
+                                   num_labels=2)  # Don't forget to set num_labels!
+result = happy_tc.test("../../data/tc/test.csv")
+print(type(result))  # <class 'list'>
+print(result)  # [TextClassificationResult(label='POSITIVE', score=0.9998401999473572), TextClassificationResult(label='LABEL_0', score=0.9772131443023682)...
+print(type(result[0]))  # <class 'happytransformer.happy_text_classification.TextClassificationResult'>
+print(result[0])  # TextClassificationResult(label='POSITIVE', score=0.9998401999473572)
+print(result[0].label)  # POSITIVE
 
 
 ```
@@ -128,18 +128,18 @@ The list is in order by ascending csv index.
 
 #### Example 2.5:
 ```python
-    from happytransformer import HappyTextClassification
-    # --------------------------------------#
-    happy_tc = HappyTextClassification(model_type="DISTILBERT",
-                                       model_name="distilbert-base-uncased-finetuned-sst-2-english",
-                                       num_labels=2)  # Don't forget to set num_labels!
-    before_loss = happy_tc.eval("../../data/tc/train-eval.csv").loss
-    happy_tc.train("../../data/tc/train-eval.csv")
-    after_loss = happy_tc.eval("../../data/tc/train-eval.csv").loss
-    print("Before loss: ", before_loss)  # 0.007262040860950947
-    print("After loss: ", after_loss)  # 0.000162081079906784
-    # Since after_loss < before_loss, the model learned!
-    # Note: typically you evaluate with a separate dataset
-    # but for simplicity we used the same one
+from happytransformer import HappyTextClassification
+# --------------------------------------#
+happy_tc = HappyTextClassification(model_type="DISTILBERT",
+                                   model_name="distilbert-base-uncased-finetuned-sst-2-english",
+                                   num_labels=2)  # Don't forget to set num_labels!
+before_loss = happy_tc.eval("../../data/tc/train-eval.csv").loss
+happy_tc.train("../../data/tc/train-eval.csv")
+after_loss = happy_tc.eval("../../data/tc/train-eval.csv").loss
+print("Before loss: ", before_loss)  # 0.007262040860950947
+print("After loss: ", after_loss)  # 0.000162081079906784
+# Since after_loss < before_loss, the model learned!
+# Note: typically you evaluate with a separate dataset
+# but for simplicity we used the same one
 
 ```

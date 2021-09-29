@@ -39,41 +39,41 @@ TTSettings() contains the  fields shown in Table 1.0
 #### Examples 7.2:  
  
  ```python
-    from happytransformer import HappyTextToText, TTSettings
+from happytransformer import HappyTextToText, TTSettings
 
 #---------------------------------------------------
-    happy_tt = HappyTextToText("T5", "t5-small")
+happy_tt = HappyTextToText("T5", "t5-small")
 
-    greedy_settings = TTSettings(no_repeat_ngram_size=2, max_length=20)
-    output_greedy = happy_tt.generate_text(
-        "translate English to French: nlp is a field of artificial intelligence ",
-        args=greedy_settings)
+greedy_settings = TTSettings(no_repeat_ngram_size=2, max_length=20)
+output_greedy = happy_tt.generate_text(
+    "translate English to French: nlp is a field of artificial intelligence ",
+    args=greedy_settings)
 
-    beam_settings = TTSettings(num_beams=5, max_length=20)
-    output_beam_search = happy_tt.generate_text(
-        "translate English to French: nlp is a field of artificial intelligence ",
-        args=beam_settings)
+beam_settings = TTSettings(num_beams=5, max_length=20)
+output_beam_search = happy_tt.generate_text(
+    "translate English to French: nlp is a field of artificial intelligence ",
+    args=beam_settings)
 
-    generic_sampling_settings = TTSettings(do_sample=True, top_k=0, temperature=0.7, max_length=20)
-    output_generic_sampling = happy_tt.generate_text(
-        "translate English to French: nlp is a field of artificial intelligence ",
-        args=generic_sampling_settings)
+generic_sampling_settings = TTSettings(do_sample=True, top_k=0, temperature=0.7, max_length=20)
+output_generic_sampling = happy_tt.generate_text(
+    "translate English to French: nlp is a field of artificial intelligence ",
+    args=generic_sampling_settings)
 
-    top_k_sampling_settings = TTSettings(do_sample=True, top_k=50, temperature=0.7, max_length=20)
-    output_top_k_sampling = happy_tt.generate_text(
-        "translate English to French: nlp is a field of artificial intelligence ",
-        args=top_k_sampling_settings)
+top_k_sampling_settings = TTSettings(do_sample=True, top_k=50, temperature=0.7, max_length=20)
+output_top_k_sampling = happy_tt.generate_text(
+    "translate English to French: nlp is a field of artificial intelligence ",
+    args=top_k_sampling_settings)
 
-    top_p_sampling_settings = TTSettings(do_sample=True, top_k=0, top_p=0.8, temperature=0.7, max_length=20)
-    output_top_p_sampling = happy_tt.generate_text(
-        "translate English to French: nlp is a field of artificial intelligence ",
-        args=top_p_sampling_settings)
+top_p_sampling_settings = TTSettings(do_sample=True, top_k=0, top_p=0.8, temperature=0.7, max_length=20)
+output_top_p_sampling = happy_tt.generate_text(
+    "translate English to French: nlp is a field of artificial intelligence ",
+    args=top_p_sampling_settings)
 
-    print("Greedy:", output_greedy.text)  # Greedy: nlp est un domaine de l'intelligence artificielle
-    print("Beam:", output_beam_search.text)  # Beam: nlp est un domaine de l'intelligence artificielle
-    print("Generic Sampling:", output_generic_sampling.text)  # Generic Sampling: nlp est un champ d'intelligence artificielle
-    print("Top-k Sampling:", output_top_k_sampling.text)  # Top-k Sampling: nlp est un domaine de l’intelligence artificielle
-    print("Top-p Sampling:", output_top_p_sampling.text)  # Top-p Sampling: nlp est un domaine de l'intelligence artificielle
+print("Greedy:", output_greedy.text)  # Greedy: nlp est un domaine de l'intelligence artificielle
+print("Beam:", output_beam_search.text)  # Beam: nlp est un domaine de l'intelligence artificielle
+print("Generic Sampling:", output_generic_sampling.text)  # Generic Sampling: nlp est un champ d'intelligence artificielle
+print("Top-k Sampling:", output_top_k_sampling.text)  # Top-k Sampling: nlp est un domaine de l’intelligence artificielle
+print("Top-p Sampling:", output_top_p_sampling.text)  # Top-p Sampling: nlp est un domaine de l'intelligence artificielle
 
 ```
 

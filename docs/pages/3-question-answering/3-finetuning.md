@@ -60,11 +60,11 @@ Output: None
 
 #### Example 3.3:
 ```python
-    from happytransformer import HappyQuestionAnswering, QATrainArgs
-    # --------------------------------------#
-    happy_qa = HappyQuestionAnswering()
-    args = QATrainArgs(num_train_epochs=1)
-    happy_qa.train("../../data/qa/train-eval.csv", args=args)
+from happytransformer import HappyQuestionAnswering, QATrainArgs
+# --------------------------------------#
+happy_qa = HappyQuestionAnswering()
+args = QATrainArgs(num_train_epochs=1)
+happy_qa.train("../../data/qa/train-eval.csv", args=args)
 
 ```
 
@@ -91,14 +91,14 @@ Output: A dataclass with the variable "loss"
 
 #### Example 3.4:
 ```python
-    from happytransformer import HappyQuestionAnswering, QAEvalArgs
-    # --------------------------------------#
-    happy_qa = HappyQuestionAnswering()
-    args = QAEvalArgs() #  The default settings as an example
-    result = happy_qa.eval("../../data/qa/train-eval.csv")
-    print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
-    print(result)  # EvalResult(eval_loss=0.11738169193267822)
-    print(result.loss)  # 0.1173816919326782
+from happytransformer import HappyQuestionAnswering, QAEvalArgs
+# --------------------------------------#
+happy_qa = HappyQuestionAnswering()
+args = QAEvalArgs() #  The default settings as an example
+result = happy_qa.eval("../../data/qa/train-eval.csv")
+print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
+print(result)  # EvalResult(eval_loss=0.11738169193267822)
+print(result.loss)  # 0.1173816919326782
 
 ```
 
@@ -123,15 +123,15 @@ Output: A list of named tuples with keys: "answer", "score", "start" and "end"
 
 #### Example 3.5:
 ```python
-    from happytransformer import HappyQuestionAnswering, QATestArgs
-    # --------------------------------------#
-    happy_qa = HappyQuestionAnswering()
-    args = QATestArgs() #  Using the default settings as an example
-    result = happy_qa.test("../../data/qa/test.csv", args=args)
-    print(type(result))
-    print(result)  # [QuestionAnsweringResult(answer='October 31st', score=0.9939756989479065, start=0, end=12), QuestionAnsweringResult(answer='November 23rd', score=0.967872679233551, start=12, end=25)]
-    print(result[0])  # QuestionAnsweringResult(answer='October 31st', score=0.9939756989479065, start=0, end=12)
-    print(result[0].answer)  # October 31st
+from happytransformer import HappyQuestionAnswering, QATestArgs
+# --------------------------------------#
+happy_qa = HappyQuestionAnswering()
+args = QATestArgs() #  Using the default settings as an example
+result = happy_qa.test("../../data/qa/test.csv", args=args)
+print(type(result))
+print(result)  # [QuestionAnsweringResult(answer='October 31st', score=0.9939756989479065, start=0, end=12), QuestionAnsweringResult(answer='November 23rd', score=0.967872679233551, start=12, end=25)]
+print(result[0])  # QuestionAnsweringResult(answer='October 31st', score=0.9939756989479065, start=0, end=12)
+print(result[0].answer)  # October 31st
 
 ```
 

@@ -19,9 +19,9 @@ Initialize a HappyNextSentence() object to next sentence prediction
 
 #### Example 6.0:
 ```python
-    from happytransformer import HappyNextSentence
-    # --------------------------------------#
-    happy_ns = HappyNextSentence("BERT", "bert-base-uncased")  # default 
-    happy_ns_large = HappyNextSentence("BERT", "bert-large-uncased") 
+from happytransformer import HappyNextSentence
+# --------------------------------------#
+happy_ns = HappyNextSentence("BERT", "bert-base-uncased")  # default 
+happy_ns_large = HappyNextSentence("BERT", "bert-large-uncased") 
 
 ```

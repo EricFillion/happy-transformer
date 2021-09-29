@@ -25,12 +25,12 @@ We recommend using "HappyQuestionAnswering("ALBERT", "mfeb/albert-xxlarge-v2-squ
 
 #### Example 3.0:
 ```python
-    from happytransformer import HappyQuestionAnswering
-    # --------------------------------------#
-    happy_qa_distilbert = HappyQuestionAnswering("DISTILBERT", "distilbert-base-cased-distilled-squad")  # default
-    happy_qa_albert = HappyQuestionAnswering("ALBERT", "mfeb/albert-xxlarge-v2-squad2")
-    # good model when using with limited hardware 
-    happy_qa_bert = HappyQuestionAnswering("BERT", "mrm8488/bert-tiny-5-finetuned-squadv2")
-    happy_qa_roberta = HappyQuestionAnswering("ROBERTA", "deepset/roberta-base-squad2")
+from happytransformer import HappyQuestionAnswering
+# --------------------------------------#
+happy_qa_distilbert = HappyQuestionAnswering("DISTILBERT", "distilbert-base-cased-distilled-squad")  # default
+happy_qa_albert = HappyQuestionAnswering("ALBERT", "mfeb/albert-xxlarge-v2-squad2")
+# good model when using with limited hardware 
+happy_qa_bert = HappyQuestionAnswering("BERT", "mrm8488/bert-tiny-5-finetuned-squadv2")
+happy_qa_roberta = HappyQuestionAnswering("ROBERTA", "deepset/roberta-base-squad2")
 
 ```

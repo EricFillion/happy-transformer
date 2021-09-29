@@ -54,11 +54,11 @@ line-by-line: If False, training data is concatenated and then divided into sect
 
 #### Example 4.4:
 ```python
-    from happytransformer import HappyWordPrediction, WPTrainArgs
-    # --------------------------------------#
-    happy_wp = HappyWordPrediction()
-    args = WPTrainArgs(num_train_epochs=1) 
-    happy_wp.train("../../data/wp/train-eval.txt", args=args)
+from happytransformer import HappyWordPrediction, WPTrainArgs
+# --------------------------------------#
+happy_wp = HappyWordPrediction()
+args = WPTrainArgs(num_train_epochs=1) 
+happy_wp.train("../../data/wp/train-eval.txt", args=args)
 ```
 
 ### eval()
@@ -83,13 +83,13 @@ Output: An object with the field "loss"
 
 #### Example 4.5
 ```python
-    from happytransformer import HappyWordPrediction, WPEvalArgs
-    # --------------------------------------#
-    happy_wp = HappyWordPrediction()  
-    args = WPEvalArgs(preprocessing_processes=2)
-    result = happy_wp.eval("../../data/wp/train-eval.txt", args=args)
-    print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
-    print(result)  # EvalResult(eval_loss=0.459536075592041)
-    print(result.loss)  # 0.459536075592041
+from happytransformer import HappyWordPrediction, WPEvalArgs
+# --------------------------------------#
+happy_wp = HappyWordPrediction()  
+args = WPEvalArgs(preprocessing_processes=2)
+result = happy_wp.eval("../../data/wp/train-eval.txt", args=args)
+print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
+print(result)  # EvalResult(eval_loss=0.459536075592041)
+print(result.loss)  # 0.459536075592041
 ```
 

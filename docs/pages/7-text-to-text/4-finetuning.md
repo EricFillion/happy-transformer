@@ -82,13 +82,13 @@ Output: An object with a single field called "loss"
 
 #### Example 1.4
 ```python
-    from happytransformer import HappyTextToText, TTEvalArgs
-    # --------------------------------------#
-    happy_tt = HappyTextToText()
-    args = TTEvalArgs(preprocessing_processes=1)
-    result = happy_tt.eval("../../data/tt/train-eval-grammar.csv", args=args)
-    print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
-    print(result)  # EvalResult(loss=3.2277376651763916)
-    print(result.loss)  # 3.2277376651763916
+from happytransformer import HappyTextToText, TTEvalArgs
+# --------------------------------------#
+happy_tt = HappyTextToText()
+args = TTEvalArgs(preprocessing_processes=1)
+result = happy_tt.eval("../../data/tt/train-eval-grammar.csv", args=args)
+print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
+print(result)  # EvalResult(loss=3.2277376651763916)
+print(result.loss)  # 3.2277376651763916
 
 ```

@@ -21,25 +21,25 @@ The list is in descending order by score
 
 #### Example 3.1:
 ```python
-    from happytransformer import HappyQuestionAnswering
-    # --------------------------------------#
-    happy_qa = HappyQuestionAnswering()
-    result = happy_qa.answer_question("Today's date is January 10th, 2021", "What is the date?")
-    print(type(result))  # <class 'list'>
-    print(result)  # [QuestionAnsweringResult(answer='January 10th, 2021', score=0.9711642265319824, start=16, end=34)]
-    print(type(result[0]))  # <class 'happytransformer.happy_question_answering.QuestionAnsweringResult'>
-    print(result[0])  # QuestionAnsweringResult(answer='January 10th, 2021', score=0.9711642265319824, start=16, end=34)
-    print(result[0].answer)  # January 10th, 2021
+from happytransformer import HappyQuestionAnswering
+# --------------------------------------#
+happy_qa = HappyQuestionAnswering()
+result = happy_qa.answer_question("Today's date is January 10th, 2021", "What is the date?")
+print(type(result))  # <class 'list'>
+print(result)  # [QuestionAnsweringResult(answer='January 10th, 2021', score=0.9711642265319824, start=16, end=34)]
+print(type(result[0]))  # <class 'happytransformer.happy_question_answering.QuestionAnsweringResult'>
+print(result[0])  # QuestionAnsweringResult(answer='January 10th, 2021', score=0.9711642265319824, start=16, end=34)
+print(result[0].answer)  # January 10th, 2021
 ```
 
 #### Example 3.2:
 ```python
-    from happytransformer import HappyQuestionAnswering
-    # --------------------------------------#
-    happy_qa = HappyQuestionAnswering()
-    result = happy_qa.answer_question("Today's date is January 10th, 2021", "What is the date?", top_k=2)
-    print(type(result))  # <class 'list'>
-    print(result)  # [QuestionAnsweringResult(answer='January 10th, 2021', score=0.9711642265319824, start=16, end=34), QuestionAnsweringResult(answer='January 10th', score=0.017306014895439148, start=16, end=28)]
-    print(result[1].answer)  # January 10th
+from happytransformer import HappyQuestionAnswering
+# --------------------------------------#
+happy_qa = HappyQuestionAnswering()
+result = happy_qa.answer_question("Today's date is January 10th, 2021", "What is the date?", top_k=2)
+print(type(result))  # <class 'list'>
+print(result)  # [QuestionAnsweringResult(answer='January 10th, 2021', score=0.9711642265319824, start=16, end=34), QuestionAnsweringResult(answer='January 10th', score=0.017306014895439148, start=16, end=28)]
+print(result[1].answer)  # January 10th
 
 ```
