@@ -53,11 +53,11 @@ class TCTrainer(HappyTrainer):
     A class for training text classification functionality
     """
 
-    def train(self, input_filepath, dataclass_args: TCTrainArgs):
+    def train(self, input_filepath, dataclass_args: TCTrainArgs, encoding="utf-8"):
 
         if not dataclass_args.load_preprocessed_data:
             self.logger.info("Preprocessing dataset...")
-            contexts, labels = self._get_data(input_filepath)
+            contexts, labels = self._get_data(input_filepath, encoding=encoding)
             train_encodings = self.tokenizer(contexts, truncation=True, padding=True)
         else:
             self.logger.info("Loading dataset from %s...", dataclass_args.load_preprocessed_data_path)
@@ -108,7 +108,7 @@ class TCTrainer(HappyTrainer):
         ]
 
     @staticmethod
-    def _get_data(filepath, test_data=False):
+    def _get_data(filepath, encoding, test_data=False):
         """
         Used for parsing data for training and evaluating (both contain labels)
         :param filepath: a string that contains the location of the data
@@ -116,7 +116,7 @@ class TCTrainer(HappyTrainer):
         """
         contexts = []
         labels = []
-        with open(filepath, newline='') as csv_file:
+        with open(filepath, newline='', encoding=encoding) as csv_file:
             reader = csv.DictReader(csv_file)
             for row in reader:
                 contexts.append(row['text'])
