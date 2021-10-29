@@ -44,14 +44,15 @@ class HappyGeneration(HappyTransformer):
     to understand and to offload complex tasks to
     other classes.
     """
-    def __init__(self, model_type: str = "GPT2", model_name: str = "gpt2", load_path: str = ""):
+    def __init__(self, model_type: str = "GPT2", model_name: str = "gpt2", 
+                 load_path: str = "", use_auth_token: str = None):
 
         self.adaptor = get_adaptor(model_type)
 
         if load_path != "":
             model = AutoModelForCausalLM.from_pretrained(load_path)
         else:
-            model = AutoModelForCausalLM.from_pretrained(model_name)
+            model = AutoModelForCausalLM.from_pretrained(model_name, use_auth_token=use_auth_token)
 
         super().__init__(model_type, model_name, model)
         device_number = detect_cuda_device_number()

@@ -9,13 +9,15 @@ class HappyNextSentence(HappyTransformer):
     A user facing class for next sentence prediction
     """
     def __init__(self, model_type="BERT",
-                 model_name="bert-base-uncased", load_path: str = ""):
+                 model_name="bert-base-uncased", 
+                 load_path: str = "", 
+                 use_auth_token: str = None):
 
         self.adaptor = get_adaptor(model_type)
         if load_path != "":
             model = AutoModelForNextSentencePrediction.from_pretrained(load_path)
         else:
-            model = AutoModelForNextSentencePrediction.from_pretrained(model_name)
+            model = AutoModelForNextSentencePrediction.from_pretrained(model_name, use_auth_token=use_auth_token)
 
         super().__init__(model_type, model_name, model)
         self._pipeline = None

@@ -18,7 +18,8 @@ The outputted answer is always a text-span with the provided information.
 1. model_type (string): specify the model name in all caps, such as "ROBERTA" or "ALBERT"
 2. model_name(string): below is a URL that contains potential models. 
    [MODELS](https://huggingface.co/models?filter=question-answering)
-
+3. use_auth_token (string): Specify the authentication token to 
+   [load private](https://huggingface.co/transformers/model_sharing.html) models. 
 
 We recommend using "HappyQuestionAnswering("ALBERT", "mfeb/albert-xxlarge-v2-squad2")" for the best performance 
 
@@ -32,5 +33,6 @@ happy_qa_albert = HappyQuestionAnswering("ALBERT", "mfeb/albert-xxlarge-v2-squad
 # good model when using with limited hardware 
 happy_qa_bert = HappyQuestionAnswering("BERT", "mrm8488/bert-tiny-5-finetuned-squadv2")
 happy_qa_roberta = HappyQuestionAnswering("ROBERTA", "deepset/roberta-base-squad2")
+happy_qa__private_roberta = HappyQuestionAnswering("ROBERTA", "user-repo/roberta-base-squad2", use_auth_token="123abc")
 
 ```

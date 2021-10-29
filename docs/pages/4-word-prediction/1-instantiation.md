@@ -17,7 +17,8 @@ Initialize a HappyWordPrediction object to perform word prediction.
  1. model_type (string): Specify the model name in all caps, such as "ROBERTA" or "ALBERT" 
  2. model_name(string): below is a URL that contains potential models: 
        [MODELS](https://huggingface.co/models?filter=masked-lm)
- 
+ 3. use_auth_token (string): Specify the authentication token to 
+       [load private](https://huggingface.co/transformers/model_sharing.html) models. 
 
 Note: For all Transformers, the masked token is **"[MASK]"**
 
@@ -32,6 +33,7 @@ happy_wp_distilbert = HappyWordPrediction("DISTILBERT", "distilbert-base-uncased
 happy_wp_albert = HappyWordPrediction("ALBERT", "albert-base-v2")
 happy_wp_bert = HappyWordPrediction("BERT", "bert-base-uncased")
 happy_wp_roberta = HappyWordPrediction("ROBERTA", "roberta-base")
+happy_wp_private_roberta = HappyWordPrediction("ROBERTA", "user-repo/roberta-base", use_auth_token="123abc")
 
 ```
 ## Tutorials 

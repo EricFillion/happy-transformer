@@ -25,7 +25,7 @@ class HappyTextClassification(HappyTransformer):
     """
 
     def __init__(self, model_type="DISTILBERT",
-                 model_name="distilbert-base-uncased", num_labels: int = 2, load_path: str = ""):
+                 model_name="distilbert-base-uncased", num_labels: int = 2, load_path: str = "", use_auth_token: str = None):
         self.adaptor = get_adaptor(model_type)
 
         config = AutoConfig.from_pretrained(model_name, num_labels=num_labels)
@@ -33,7 +33,7 @@ class HappyTextClassification(HappyTransformer):
         if load_path != "":
             model = AutoModelForSequenceClassification.from_pretrained(load_path, config=config)
         else:
-            model = AutoModelForSequenceClassification.from_pretrained(model_name, config=config)
+            model = AutoModelForSequenceClassification.from_pretrained(model_name, config=config, use_auth_token=use_auth_token)
 
 
         super().__init__(model_type, model_name, model)
