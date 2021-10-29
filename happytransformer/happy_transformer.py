@@ -15,14 +15,14 @@ class HappyTransformer():
 
     """
 
-    def __init__(self, model_type, model_name, model, load_path=""):
+    def __init__(self, model_type, model_name, model, load_path="", use_auth_token: str = None):
         self.model_type = model_type  # BERT, #DISTILBERT, ROBERTA, ALBERT etc
         self.model_name = model_name
 
         if load_path != "":
             self.tokenizer = AutoTokenizer.from_pretrained(load_path)
         else:
-            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+            self.tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=use_auth_token)
         self.model = model
         self.model.eval()
         self._trainer = None  # initialized in child class
