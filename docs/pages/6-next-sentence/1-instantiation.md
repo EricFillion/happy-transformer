@@ -14,8 +14,9 @@ Initialize a HappyNextSentence() object to next sentence prediction
 **Initialization Arguments:**
  1. model_type (string): The default is "BERT", which is currently the only available model 
  2. model_name(string): We recommend  BERT models like 
- "bert-base-uncased" and "bert-large-uncased" that have not been finetuned 
- 
+ "bert-base-uncased" and "bert-large-uncased" that have not been finetuned  
+ 3. use_auth_token (string): Specify the authentication token to 
+       [load private](https://huggingface.co/transformers/model_sharing.html) models. 
 
 #### Example 6.0:
 ```python
@@ -23,5 +24,5 @@ from happytransformer import HappyNextSentence
 # --------------------------------------#
 happy_ns = HappyNextSentence("BERT", "bert-base-uncased")  # default 
 happy_ns_large = HappyNextSentence("BERT", "bert-large-uncased") 
-
+happy_ns_private = HappyNextSentence("BERT", "user-repo/bert-base-uncased", use_auth_token="123abc")
 ```

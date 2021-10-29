@@ -18,8 +18,10 @@ detect if an email is spam based on its text.
 1. model_type (string):  specify the model name in all caps, such as "ROBERTA" or "ALBERT"
 2. model_name(string): below is a URL that contains potential models. The default is "distilbert-base-uncased"
        [MODELS](https://huggingface.co/models?filter=text-classification)
-3. num_labels(int): The number of text categories. The default is 2
-    
+3. num_labels(int): The number of text categories. The default is 2 
+4. use_auth_token (string): Specify the authentication token to 
+   [load private](https://huggingface.co/transformers/model_sharing.html) models. 
+
 WARNING: If you try to load a pretrained model that has a different number of categories 
 than num_labels, then you will get an error 
 
@@ -35,6 +37,7 @@ happy_tc_distilbert = HappyTextClassification("DISTILBERT", "distilbert-base-unc
 happy_tc_albert = HappyTextClassification(model_type="ALBERT", model_name="albert-base-v2")
 happy_tc_bert = HappyTextClassification("BERT", "bert-base-uncased")
 happy_tc_roberta = HappyTextClassification("ROBERTA", "roberta-base")
+happy_tc_private_roberta = HappyTextClassification("ROBERTA", "user-repo/roberta-base", use_auth_token="123abc")
 
 ```
 
