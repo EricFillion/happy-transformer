@@ -6,14 +6,15 @@ nav_order: 4
 
 ---
 ## News: 
+### October 29th, 2021
+- You can now use private models from Hugging Face's Model Hub
+
 ### August 14th, 2021
 **Introducing Version 2.3.0!**
 
 New Features: 
 - Text-to-text fine-tuning is now available!
 
-
-## News: 
 ### May 4th, 2021
 **Introducing Version 2.2.0!**
 
