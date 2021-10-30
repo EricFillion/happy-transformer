@@ -76,4 +76,9 @@ print("Top-k Sampling:", output_top_k_sampling.text)  # Top-k Sampling: nlp est 
 print("Top-p Sampling:", output_top_p_sampling.text)  # Top-p Sampling: nlp est un domaine de l'intelligence artificielle
 
 ```
+## Tutorials 
+
+[Top T5 Models ](https://www.vennify.ai/top-t5-transformer-models/)
+[Grammar Correction](https://www.vennify.ai/grammar-correction-python/)
+[Fine-tune a Grammar Correction Model](https://www.vennify.ai/fine-tune-grammar-correction/)
 
