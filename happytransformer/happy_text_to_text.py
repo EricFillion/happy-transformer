@@ -51,7 +51,7 @@ class HappyTextToText(HappyTransformer):
             model = AutoModelForSeq2SeqLM.from_pretrained(model_name, use_auth_token=use_auth_token)
 
 
-        super().__init__(model_type, model_name, model)
+        super().__init__(model_type, model_name, model, use_auth_token=use_auth_token)
 
         device_number = detect_cuda_device_number()
 
