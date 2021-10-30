@@ -32,7 +32,7 @@ class HappyWordPrediction(HappyTransformer):
         else:
             model = AutoModelForMaskedLM.from_pretrained(model_name, use_auth_token=use_auth_token)
 
-        super().__init__(model_type, model_name, model, load_path=load_path)
+        super().__init__(model_type, model_name, model, load_path=load_path, use_auth_token=use_auth_token)
 
         device_number = detect_cuda_device_number()
 
