@@ -50,12 +50,18 @@ print(result[0].token)  # am
 - [Ted Brownlow](https://github.com/ted537) Maintainer
 
 ## Tutorials 
+[Text generation with training (GPT-Neo)](https://youtu.be/GzHJ3NUVtV4)
+
 [Text classification (training)](https://www.vennify.ai/train-text-classification-transformers/) 
 
 [Text classification (hate speech detection)](https://youtu.be/jti2sPQYzeQ) 
 
 [Text classification (sentiment analysis)](https://youtu.be/Ew72EAgM7FM)
 
-[Text generation with training (GPT-Neo)](https://youtu.be/GzHJ3NUVtV4)
-
 [Word prediction with training (DistilBERT, RoBERTa)](https://youtu.be/AWe0PHsPc_M)
+
+[Top T5 Models ](https://www.vennify.ai/top-t5-transformer-models/)
+
+[Grammar Correction](https://www.vennify.ai/grammar-correction-python/)
+
+[Fine-tune a Grammar Correction Model](https://www.vennify.ai/fine-tune-grammar-correction/)

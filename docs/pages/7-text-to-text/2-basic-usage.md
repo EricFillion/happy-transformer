@@ -29,4 +29,9 @@ print(result)  # TextToTextResult(text="nlp est un domaine de l'intelligence art
 print(result.text)  # nlp est un domaine de l’intelligence artificielle. n
 
 ```
+## Tutorials
+
+[Top T5 Models ](https://www.vennify.ai/top-t5-transformer-models/)
+[Grammar Correction](https://www.vennify.ai/grammar-correction-python/)
+[Fine-tune a Grammar Correction Model](https://www.vennify.ai/fine-tune-grammar-correction/)
 
