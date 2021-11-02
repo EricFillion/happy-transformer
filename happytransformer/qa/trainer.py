@@ -55,7 +55,7 @@ class QATrainer(HappyTrainer):
     Trainer class for HappyTextClassification
     """
 
-    def train(self, input_filepath, dataclass_args: QATrainArgs):
+    def train(self, input_filepath, dataclass_args: QATrainArgs, encoding="utf-8"):
         """
         See docstring in HappyQuestionAnswering.train()
         """
@@ -69,7 +69,7 @@ class QATrainer(HappyTrainer):
                              "It will be added soon. ")
 
         self.logger.info("Preprocessing dataset...")
-        contexts, questions, answers = self._get_data(input_filepath)
+        contexts, questions, answers = self._get_data(input_filepath, encoding=encoding)
         self.__add_end_idx(contexts, answers)
         encodings = self.tokenizer(contexts, questions, truncation=True, padding=True)
         self.__add_token_positions(encodings, answers)
@@ -77,7 +77,7 @@ class QATrainer(HappyTrainer):
         data_collator = DataCollatorWithPadding(self.tokenizer)
         self._run_train(dataset, dataclass_args, data_collator)
 
-    def eval(self, input_filepath, dataclass_args: QAEvalArgs):
+    def eval(self, input_filepath, dataclass_args: QAEvalArgs, encoding="utf-8"):
         """
         See docstring in HappyQuestionAnswering.eval()
 
@@ -91,7 +91,7 @@ class QATrainer(HappyTrainer):
                              "not available for question answering models. "
                              "It will be added soon. ")
 
-        contexts, questions, answers = self._get_data(input_filepath)
+        contexts, questions, answers = self._get_data(input_filepath, encoding=encoding)
 
         self.__add_end_idx(contexts, answers)
         encodings = self.tokenizer(contexts, questions, truncation=True, padding=True)
@@ -103,7 +103,7 @@ class QATrainer(HappyTrainer):
         return EvalResult(loss=result["eval_loss"])
 
 
-    def test(self, input_filepath, solve, dataclass_args: QATestArgs):
+    def test(self, input_filepath, solve, dataclass_args: QATestArgs, encoding="utf-8"):
         """
         See docstring in HappyQuestionAnswering.test()
 
@@ -118,7 +118,7 @@ class QATrainer(HappyTrainer):
                              "not available for question answering models. "
                              "It will be added soon. ")
 
-        contexts, questions = self._get_data(input_filepath, test_data=True)
+        contexts, questions = self._get_data(input_filepath, test_data=True, encoding=encoding)
 
         return [
             solve(context, question)[0]
@@ -127,7 +127,7 @@ class QATrainer(HappyTrainer):
         ]
 
     @staticmethod
-    def _get_data(filepath, test_data=False):
+    def _get_data(filepath, encoding, test_data=False):
         """
         Used to collect
         :param filepath: a string that contains the location of the data
@@ -137,7 +137,7 @@ class QATrainer(HappyTrainer):
         contexts = []
         questions = []
         answers = []
-        with open(filepath, newline='') as csv_file:
+        with open(filepath, newline='', encoding=encoding) as csv_file:
             reader = csv.DictReader(csv_file)
             for row in reader:
                 contexts.append(row['context'])
