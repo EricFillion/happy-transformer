@@ -54,7 +54,9 @@ class TCTrainer(HappyTrainer):
     """
 
     def train(self, input_filepath, dataclass_args: TCTrainArgs, encoding="utf-8"):
-
+        """
+        :param encoding: name of the encoding used to decode the file
+        """
         if not dataclass_args.load_preprocessed_data:
             self.logger.info("Preprocessing dataset...")
             contexts, labels = self._get_data(input_filepath, encoding=encoding)
@@ -73,10 +75,10 @@ class TCTrainer(HappyTrainer):
         data_collator = DataCollatorWithPadding(self.tokenizer)
         self._run_train(train_dataset, dataclass_args, data_collator)
 
-    def eval(self, input_filepath, dataclass_args: TCEvalArgs):
+    def eval(self, input_filepath, dataclass_args: TCEvalArgs, encoding="utf-8"):
         if not dataclass_args.load_preprocessed_data:
             self.logger.info("Preprocessing dataset...")
-            contexts, labels = self._get_data(input_filepath)
+            contexts, labels = self._get_data(input_filepath, encoding=encoding)
             eval_encodings = self.tokenizer(contexts, truncation=True, padding=True)
         else:
             self.logger.info("Loading dataset from %s...", dataclass_args.load_preprocessed_data_path)
@@ -95,12 +97,12 @@ class TCTrainer(HappyTrainer):
         result = self._run_eval(eval_dataset, data_collator, dataclass_args)
         return EvalResult(loss=result["eval_loss"])
 
-    def test(self, input_filepath, solve, dataclass_args: TCTestArgs):
+    def test(self, input_filepath, solve, dataclass_args: TCTestArgs, encoding="utf-8"):
         """
         See docstring in HappyQuestionAnswering.test()
         solve: HappyQuestionAnswering.answers_to_question()
         """
-        contexts = self._get_data(input_filepath, test_data=True)
+        contexts = self._get_data(input_filepath, test_data=True, encoding=encoding)
 
         return [
             solve(context)
