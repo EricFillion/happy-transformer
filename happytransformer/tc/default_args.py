@@ -11,6 +11,7 @@ ARGS_TC_TRAIN = {
     'save_preprocessed_data_path': "",
     'load_preprocessed_data': False,
     'load_preprocessed_data_path': "",
+    'encoding': "utf-8"
 }
 
 ARGS_TC_EVAL = {
@@ -19,6 +20,8 @@ ARGS_TC_EVAL = {
     'save_preprocessed_data_path': "",
     'load_preprocessed_data': False,
     'load_preprocessed_data_path': "",
+    'encoding': "utf-8"
+
 }
 
 ARGS_TC_TEST = {
@@ -26,6 +29,7 @@ ARGS_TC_TEST = {
     'save_preprocessed_data_path': "",
     'load_preprocessed_data': False,
     'load_preprocessed_data_path': "",
+    'encoding': "utf-8"
 
 }
 
