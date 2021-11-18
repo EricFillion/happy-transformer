@@ -45,10 +45,11 @@ class HappyTrainer:
         raise NotImplementedError()
 
     @staticmethod
-    def _get_data(filepath, test_data=False):
+    def _get_data(filepath, encoding="utf-8", test_data=False):
         """
 
         :param filepath:  A string to file location
+        :param encoding: Encoding format
         :param test_data: False for train and eval, True for test
         :return: varies for each task
         """
