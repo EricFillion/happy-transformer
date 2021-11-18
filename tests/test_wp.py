@@ -29,11 +29,11 @@ def test_wp_basic():
 
 def test_wp_high_k():
 
-    happy_wp = HappyWordPrediction("ALBERT", "albert-base-v2")
+    happy_wp = HappyWordPrediction("DISTILBERT", "distilbert-base-uncased")
     results = happy_wp.predict_mask(
         "Please pass the salt and [MASK]", top_k=3000
     )
-    assert results[0].token == "garlic"
+    assert results[0].token == "pepper"
 
 def test_wp_top_k():
     happy_wp = HappyWordPrediction('DISTILBERT', 'distilbert-base-uncased')
@@ -61,22 +61,22 @@ def test_wp_targets():
 
 
 def test_wp_train_default():
-    happy_wp = HappyWordPrediction('', 'distilroberta-base')
+    happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
     happy_wp.train("../data/wp/train-eval.txt")
 
 def test_wp_train_line_by_line():
-    happy_wp = HappyWordPrediction('', 'distilroberta-base')
+    happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
     happy_wp.train("../data/wp/train-eval.txt", args=WPTrainArgs(line_by_line=True))
 
 
 
 def test_wp_eval_basic():
-    happy_wp = HappyWordPrediction('', 'distilroberta-base')
+    happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
     result = happy_wp.eval("../data/wp/train-eval.txt")
     assert type(result.loss) == float
 
 def test_wp_train_effectiveness_multi():
-    happy_wp = HappyWordPrediction('', 'distilroberta-base')
+    happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
 
     before_result = happy_wp.eval("../data/wp/train-eval.txt")
 
@@ -92,13 +92,13 @@ def test_wp_eval_some_settings():
     """
     args = {'line_by_line': True,
             }
-    happy_wp = HappyWordPrediction('', 'distilroberta-base')
+    happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
     result = happy_wp.eval("../data/wp/train-eval.txt", args)
     assert type(result.loss) == float
 
 
 def test_wp_save_load_train():
-    happy_wp = HappyWordPrediction('', 'distilroberta-base')
+    happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
     output_path = "data/wp-train.json"
     data_path = "../data/wp/train-eval.txt"
     args = ARGS_WP_TRAIN
@@ -106,7 +106,7 @@ def test_wp_save_load_train():
     run_save_load(happy_wp, output_path, args, data_path, "train")
 
 def test_wp_save_load_eval():
-    happy_wp = HappyWordPrediction('', 'distilroberta-base')
+    happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
     output_path = "data/wp-eval.json"
     data_path = "../data/wp/train-eval.txt"
     args = ARGS_WP_EVAl
@@ -126,7 +126,7 @@ def test_wp_save():
 
 def test_wp_train_eval_with_dic():
 
-    happy_wp = HappyWordPrediction('', 'distilroberta-base')
+    happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
     train_args = {'learning_rate': 0.01, 'line_by_line': True, "num_train_epochs": 1}
 
 
@@ -138,7 +138,7 @@ def test_wp_train_eval_with_dic():
 
 def test_wp_train_eval_with_dataclass():
 
-    happy_wp = HappyWordPrediction('', 'distilroberta-base')
+    happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
     train_args = WPTrainArgs(learning_rate=0.01, line_by_line=True, num_train_epochs=1)
 
     happy_wp.train("../data/wp/train-eval.txt" , args=train_args)

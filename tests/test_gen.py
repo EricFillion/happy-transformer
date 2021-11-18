@@ -10,14 +10,14 @@ from happytransformer import (
 from tests.shared_tests import run_save_load
 
 def test_default_simple():
-    happy_gen = HappyGeneration()
+    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     args = GENSettings(min_length=5, max_length=5)
     output = happy_gen.generate_text("Artificial intelligence is ", args=args)
     assert type(output.text) == str
 
 
 def test_default_min_max_length():
-    happy_gen = HappyGeneration()
+    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     args = GENSettings(min_length=5, max_length=5)
     output = happy_gen.generate_text("Artificial intelligence is ", args=args)
     tokens = happy_gen.tokenizer.encode(output.text, return_tensors="pt")
@@ -25,7 +25,7 @@ def test_default_min_max_length():
     assert length == 5
 
 def test_bad_words():
-    happy_gen = HappyGeneration()
+    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     # Test single words
     args_test_word_single = GENSettings(bad_words=["new", "tool"])
     # result without bad_words:  "a new field of research that has been gaining momentum"
@@ -42,7 +42,7 @@ def test_bad_words():
 
 
 def test_top_p():
-    happy_gen = HappyGeneration()
+    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     # Test small values
     args_small = GENSettings(top_p=0.01,  max_length=5)
     output_small = happy_gen.generate_text("Artificial intelligence is ", args=args_small)
@@ -60,7 +60,7 @@ def test_top_p():
 
 
 def test_all_methods():
-    happy_gen = HappyGeneration()
+    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
 
     greedy_settings = GENSettings(min_length=5, max_length=5, no_repeat_ngram_size=2)
     output_greedy = happy_gen.generate_text(
@@ -105,16 +105,16 @@ def test_all_methods():
     print("top-p-sampling: ", output_top_p_sampling.text, end="\n\n")
 
 def test_gen_train_basic():
-    happy_gen = HappyGeneration()
+    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     happy_gen.train("../data/gen/train-eval.txt")
 
 def test_gen_eval_basic():
-    happy_gen = HappyGeneration()
+    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     result = happy_gen.eval("../data/gen/train-eval.txt")
     assert type(result.loss) == float
 
 def test_gen_train_effectiveness_multi():
-    happy_gen = HappyGeneration()
+    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     before_result = happy_gen.eval("../data/gen/train-eval.txt")
     happy_gen.train("../data/gen/train-eval.txt")
     after_result = happy_gen.eval("../data/gen/train-eval.txt")
@@ -122,19 +122,19 @@ def test_gen_train_effectiveness_multi():
     assert after_result.loss < before_result.loss
 
 def test_gen_save_load_train():
-    happy_gen = HappyGeneration()
+    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     output_path = "data/gen-train.txt"
     data_path = "../data/gen/train-eval.txt"
     run_save_load(happy_gen, output_path, ARGS_GEN_TRAIN, data_path, "train")
 
 def test_gen_save_load_eval():
-    happy_gen = HappyGeneration()
+    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     output_path = "data/wp-eval.txt"
     data_path = "../data/gen/train-eval.txt"
     run_save_load(happy_gen, output_path, ARGS_GEN_EVAl, data_path, "eval")
 
 def test_gen_save():
-    happy = HappyGeneration()
+    happy = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     happy.save("model/")
     result_before = happy.generate_text("Natural language processing is")
 
@@ -145,7 +145,7 @@ def test_gen_save():
 
 def test_wp_train_eval_with_dic():
 
-    happy_gen = HappyGeneration()
+    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     train_args = {'learning_rate': 0.01,  "num_train_epochs": 1}
 
 
@@ -158,7 +158,7 @@ def test_wp_train_eval_with_dic():
 
 def test_gen_train_eval_with_dataclass():
 
-    happy_gen = HappyGeneration()
+    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     train_args = GENTrainArgs(learning_rate=0.01, num_train_epochs=1)
 
     happy_gen.train("../data/gen/train-eval.txt" , args=train_args)
@@ -170,7 +170,7 @@ def test_gen_train_eval_with_dataclass():
     assert type(after_result.loss) == float
 
 def test_generate_after_train_eval():
-    happy_gen = HappyGeneration()
+    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     happy_gen.train("../data/gen/train-eval.txt")
     eval_result = happy_gen.eval("../data/gen/train-eval.txt")
     output = happy_gen.generate_text("Artificial intelligence is ")

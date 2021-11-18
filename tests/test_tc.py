@@ -15,7 +15,6 @@ from tests.shared_tests import run_save_load
 from pytest import approx
 
 
-
 def test_classify_text():
     happy_tc = HappyTextClassification(model_type="DISTILBERT", model_name="distilbert-base-uncased-finetuned-sst-2-english")
     result = happy_tc.classify_text("What a great movie")
@@ -25,8 +24,8 @@ def test_classify_text():
 
 def test_tc_train():
     happy_tc = HappyTextClassification(
-        model_type="DISTILBERT",
-        model_name="distilbert-base-uncased-finetuned-sst-2-english"
+        model_type="BERT",
+        model_name="prajjwal1/bert-tiny"
     )
     results = happy_tc.train("../data/tc/train-eval.csv")
 
@@ -58,8 +57,8 @@ def test_tc_test():
 def test_tc_train_effectiveness():
     """assert that training decreases the loss"""
     happy_tc = HappyTextClassification(
-        model_type="DISTILBERT",
-        model_name="distilbert-base-uncased"
+        model_type="BERT",
+        model_name="prajjwal1/bert-tiny"
     )
     before_loss = happy_tc.eval("../data/tc/train-eval.csv").loss
     happy_tc.train("../data/tc/train-eval.csv")
@@ -70,8 +69,8 @@ def test_tc_train_effectiveness():
 def test_tc_train_effectiveness_multi():
     
     happy_tc = HappyTextClassification(
-        model_type="DISTILBERT",
-        model_name="distilbert-base-uncased", 
+        model_type="BERT",
+        model_name="prajjwal1/bert-tiny",
         num_labels=3
     )
     before_loss = happy_tc.eval("../data/tc/train-eval-multi.csv").loss
@@ -81,7 +80,8 @@ def test_tc_train_effectiveness_multi():
 
 
 def test_tc_save():
-    happy = HappyTextClassification()
+    happy = HappyTextClassification(model_type="BERT",
+        model_name="prajjwal1/bert-tiny")
     happy.save("model/")
     result_before = happy.classify_text("What a great movie")
 
@@ -93,7 +93,8 @@ def test_tc_save():
 
 def test_tc_with_dic():
 
-    happy_tc = HappyTextClassification()
+    happy_tc = HappyTextClassification(model_type="BERT",
+        model_name="prajjwal1/bert-tiny")
     train_args = {'learning_rate': 0.01,  "num_train_epochs": 1}
 
 
@@ -110,7 +111,8 @@ def test_tc_with_dic():
 
 def test_tc_with_dataclass():
 
-    happy_tc = HappyTextClassification()
+    happy_tc = HappyTextClassification(model_type="BERT",
+        model_name="prajjwal1/bert-tiny")
     train_args = TCTrainArgs(learning_rate=0.01, num_train_epochs=1)
 
     happy_tc.train("../data/tc/train-eval.csv", args=train_args)
@@ -125,14 +127,15 @@ def test_tc_with_dataclass():
     result_test = happy_tc.test("../data/tc/test.csv", args=test_args)
 
 def test_tc_save_load_train():
-    happy_wp = HappyTextClassification()
+    happy_wp = HappyTextClassification(model_type="BERT",
+        model_name="prajjwal1/bert-tiny")
     output_path = "data/tc-train.json"
     data_path = "../data/tc/train-eval.csv"
     run_save_load(happy_wp, output_path, ARGS_TC_TRAIN, data_path, "train")
 
 
 def test_tc_save_load_eval():
-    happy_wp = HappyTextClassification()
+    happy_wp = HappyTextClassification(model_type="DISTILBERT", model_name="distilbert-base-uncased-finetuned-sst-2-english")
     output_path = "data/tc-train.json"
     data_path = "../data/tc/train-eval.csv"
     run_save_load(happy_wp, output_path, ARGS_TC_EVAL, data_path, "eval")

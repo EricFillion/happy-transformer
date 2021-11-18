@@ -10,7 +10,7 @@ def test_classify_text():
     assert result == expected_result
 
 def test_toc_save():
-    happy = HappyTokenClassification()
+    happy = HappyTokenClassification(model_type="BERT", model_name="dslim/bert-base-NER")
     happy.save("model/")
     result_before = happy.classify_token("My name is Geoffrey and I live in Toronto")
 
