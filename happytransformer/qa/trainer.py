@@ -31,6 +31,7 @@ class QATrainArgs:
     load_preprocessed_data: bool = ARGS_QA_TRAIN["load_preprocessed_data"]
     load_preprocessed_data_path: str = ARGS_QA_TRAIN["load_preprocessed_data_path"]
     batch_size: int = ARGS_QA_TRAIN["batch_size"]
+    encoding: str = ARGS_QA_TRAIN["encoding"]
 
 
 @dataclass
@@ -40,6 +41,7 @@ class QAEvalArgs:
     save_preprocessed_data_path: str = ARGS_QA_EVAl["save_preprocessed_data_path"]
     load_preprocessed_data: bool = ARGS_QA_EVAl["load_preprocessed_data"]
     load_preprocessed_data_path: str = ARGS_QA_EVAl["load_preprocessed_data_path"]
+    encoding: str = ARGS_QA_EVAl["encoding"]
 
 
 @dataclass
@@ -48,6 +50,7 @@ class QATestArgs:
     save_preprocessed_data_path: str = ARGS_QA_TEST["save_preprocessed_data_path"]
     load_preprocessed_data: bool = ARGS_QA_TEST["load_preprocessed_data"]
     load_preprocessed_data_path: str = ARGS_QA_TEST["load_preprocessed_data_path"]
+    encoding: str = ARGS_QA_TEST["encoding"]
 
 
 class QATrainer(HappyTrainer):
