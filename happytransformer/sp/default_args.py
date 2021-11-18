@@ -6,7 +6,6 @@ ARGS_SP_TRAIN = {
     'adam_epsilon': 1e-8,
     'max_grad_norm':  1.0,
     'num_train_epochs': 3.0,
-    'encoding': "utf-8"
 
 }
 

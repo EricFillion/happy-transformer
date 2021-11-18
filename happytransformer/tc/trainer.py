@@ -30,7 +30,6 @@ class TCTrainArgs:
     save_preprocessed_data_path: str = ARGS_TC_TRAIN["save_preprocessed_data_path"]
     load_preprocessed_data: bool = ARGS_TC_TRAIN["load_preprocessed_data"]
     load_preprocessed_data_path: str = ARGS_TC_TRAIN["load_preprocessed_data_path"]
-    encoding: str = ARGS_TC_TRAIN["encoding"]
 
 
 @dataclass
@@ -40,7 +39,6 @@ class TCEvalArgs:
     load_preprocessed_data: bool = ARGS_TC_EVAL["load_preprocessed_data"]
     load_preprocessed_data_path: str = ARGS_TC_EVAL["load_preprocessed_data_path"]
     batch_size: int = ARGS_TC_EVAL["batch_size"]
-    encoding: str = ARGS_TC_EVAL["encoding"]
 
 
 @dataclass
@@ -49,7 +47,6 @@ class TCTestArgs:
     save_preprocessed_data_path: str = ARGS_TC_TEST["save_preprocessed_data_path"]
     load_preprocessed_data: bool = ARGS_TC_TEST["load_preprocessed_data"]
     load_preprocessed_data_path: str = ARGS_TC_TEST["load_preprocessed_data_path"]
-    encoding: str = ARGS_TC_TEST["encoding"]
 
 class TCTrainer(HappyTrainer):
     """
@@ -58,11 +55,10 @@ class TCTrainer(HappyTrainer):
 
     def train(self, input_filepath, dataclass_args: TCTrainArgs):
         """
-        :param encoding: name of the encoding used to decode the file
         """
         if not dataclass_args.load_preprocessed_data:
             self.logger.info("Preprocessing dataset...")
-            contexts, labels = self._get_data(input_filepath, encoding=TCTrainArgs.encoding)
+            contexts, labels = self._get_data(input_filepath)
             train_encodings = self.tokenizer(contexts, truncation=True, padding=True)
         else:
             self.logger.info("Loading dataset from %s...", dataclass_args.load_preprocessed_data_path)
@@ -81,7 +77,7 @@ class TCTrainer(HappyTrainer):
     def eval(self, input_filepath, dataclass_args: TCEvalArgs):
         if not dataclass_args.load_preprocessed_data:
             self.logger.info("Preprocessing dataset...")
-            contexts, labels = self._get_data(input_filepath, encoding=TCEvalArgs.encoding)
+            contexts, labels = self._get_data(input_filepath)
             eval_encodings = self.tokenizer(contexts, truncation=True, padding=True)
         else:
             self.logger.info("Loading dataset from %s...", dataclass_args.load_preprocessed_data_path)
@@ -105,7 +101,7 @@ class TCTrainer(HappyTrainer):
         See docstring in HappyQuestionAnswering.test()
         solve: HappyQuestionAnswering.answers_to_question()
         """
-        contexts = self._get_data(input_filepath, test_data=True, encoding=TCTestArgs.encoding)
+        contexts = self._get_data(input_filepath, test_data=True)
 
         return [
             solve(context)
@@ -113,7 +109,7 @@ class TCTrainer(HappyTrainer):
         ]
 
     @staticmethod
-    def _get_data(filepath, encoding="utf-8", test_data=False):
+    def _get_data(filepath, test_data=False):
         """
         Used for parsing data for training and evaluating (both contain labels)
         :param filepath: a string that contains the location of the data
@@ -121,7 +117,7 @@ class TCTrainer(HappyTrainer):
         """
         contexts = []
         labels = []
-        with open(filepath, newline='', encoding=encoding) as csv_file:
+        with open(filepath, newline='', encoding="utf-8") as csv_file:
             reader = csv.DictReader(csv_file)
             for row in reader:
                 contexts.append(row['text'])

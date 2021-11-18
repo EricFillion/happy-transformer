@@ -11,7 +11,6 @@ ARGS_QA_TRAIN = {
     'save_preprocessed_data_path': "",
     'load_preprocessed_data': False,
     'load_preprocessed_data_path': "",
-    'encoding': "utf-8"
 
 }
 
@@ -22,7 +21,6 @@ ARGS_QA_EVAl = {
     'load_preprocessed_data': False,
     'load_preprocessed_data_path': "",
     'batch_size': 1,
-    'encoding': "utf-8"
 
 }
 
@@ -31,6 +29,5 @@ ARGS_QA_TEST = {
     'save_preprocessed_data_path': "",
     'load_preprocessed_data': False,
     'load_preprocessed_data_path': "",
-    'encoding': "utf-8"
 
 }
