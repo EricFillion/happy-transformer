@@ -54,8 +54,7 @@ class TCTrainer(HappyTrainer):
     """
 
     def train(self, input_filepath, dataclass_args: TCTrainArgs):
-        """
-        """
+
         if not dataclass_args.load_preprocessed_data:
             self.logger.info("Preprocessing dataset...")
             contexts, labels = self._get_data(input_filepath)
