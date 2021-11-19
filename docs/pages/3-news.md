@@ -6,6 +6,13 @@ nav_order: 4
 
 ---
 ## News: 
+
+### November 19th, 2021
+**Introducing Version 2.4.0!**
+- We added the ability to enable half-precision training, which decreases train time and memory consumption.
+Just simply set the "fp16" training argument to True while using CUDA/ a GPU.   
+- We also set the character encoding format to utf-8 for HappyTextClassification and HappyQuestionAnswering. Before it would change based on your system.  
+
 ### October 29th, 2021
 - You can now use private models from Hugging Face's Model Hub
 
