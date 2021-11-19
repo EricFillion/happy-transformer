@@ -20,7 +20,6 @@ ARGS_QA_EVAl = {
     'load_preprocessed_data': False,
     'load_preprocessed_data_path': "",
     'batch_size': 1,
-
 }
 
 ARGS_QA_TEST = {

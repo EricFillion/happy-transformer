@@ -116,7 +116,7 @@ class TCTrainer(HappyTrainer):
         """
         contexts = []
         labels = []
-        with open(filepath, newline='') as csv_file:
+        with open(filepath, newline='', encoding="utf-8") as csv_file:
             reader = csv.DictReader(csv_file)
             for row in reader:
                 contexts.append(row['text'])

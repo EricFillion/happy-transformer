@@ -24,7 +24,6 @@ ARGS_GEN_EVAl = {
     'load_preprocessed_data_path': "",
     'preprocessing_processes': 1,
     'mlm_probability': 0.15,
-
 }
 
 
@@ -33,5 +32,4 @@ ARGS_GEN_TEST = {
     'save_preprocessed_data_path': "",
     'load_preprocessed_data': False,
     'load_preprocessed_data_path': "",
-
 }
