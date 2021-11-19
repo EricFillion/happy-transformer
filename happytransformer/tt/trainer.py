@@ -36,6 +36,7 @@ class TTTrainArgs:
     batch_size: int = 1
     max_input_length: int = 1024
     max_output_length: int = 1024
+    fp16: bool = False
 
 
 @dataclass

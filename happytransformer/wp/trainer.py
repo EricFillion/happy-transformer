@@ -30,6 +30,7 @@ class WPTrainArgs:
     preprocessing_processes: int = ARGS_WP_TRAIN["preprocessing_processes"]
     mlm_probability: float = ARGS_WP_TRAIN["mlm_probability"]
     line_by_line: bool = ARGS_WP_TRAIN["line_by_line"]
+    fp16: bool = ARGS_WP_TRAIN["fp16"]
 
 
 @dataclass

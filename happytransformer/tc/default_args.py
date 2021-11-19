@@ -11,6 +11,8 @@ ARGS_TC_TRAIN = {
     'save_preprocessed_data_path': "",
     'load_preprocessed_data': False,
     'load_preprocessed_data_path': "",
+    'fp16': False
+
 }
 
 ARGS_TC_EVAL = {
