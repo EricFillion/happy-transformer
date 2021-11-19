@@ -1,3 +1,4 @@
+import torch
 from happytransformer import HappyTextToText, TTSettings, TTTrainArgs, TTEvalArgs
 
 
@@ -74,6 +75,13 @@ def test_tt_save():
 def test_tt_train_simple():
     happy_tt = HappyTextToText("T5", "t5-small")
     happy_tt.train("../data/tt/train-eval-grammar.csv")
+
+def test_tt_train_fp16():
+    # Can only be used if fp16 if CUDA is available
+    if torch.cuda.is_available():
+        happy_tt = HappyTextToText("T5", "t5-small")
+        args = TTTrainArgs(fp16=True)
+        happy_tt.train("../data/tt/train-eval-grammar.csv", args=args)
 
 def test_tt_eval_simple():
     happy_tt = HappyTextToText("T5", "t5-small")

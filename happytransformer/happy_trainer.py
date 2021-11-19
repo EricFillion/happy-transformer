@@ -1,6 +1,7 @@
 """
 Parent class for training classes, such as TCTrainer and QATrainer
 """
+import torch
 from dataclasses import dataclass
 import tempfile
 from transformers import TrainingArguments, Trainer
@@ -54,13 +55,16 @@ class HappyTrainer:
         """
         raise NotImplementedError()
 
-    @staticmethod
-    def _get_training_args(dataclass_args, output_path):
+    def _get_training_args(self, dataclass_args, output_path):
         """
         :param args: a dataclass of arguments for training
         :param output_path: A string to a temporary directory
         :return: A TrainingArguments object
         """
+        if self.device != "cuda":
+            if dataclass_args.fp16:
+                ValueError("fp16 is only available when CUDA/ a GPU is being used. ")
+
         return TrainingArguments(
             output_dir=output_path,
             learning_rate=dataclass_args.learning_rate,
@@ -71,7 +75,8 @@ class HappyTrainer:
             max_grad_norm=dataclass_args.max_grad_norm,
             num_train_epochs=dataclass_args.num_train_epochs,
             report_to=["none"],
-            per_device_train_batch_size=dataclass_args.batch_size
+            per_device_train_batch_size=dataclass_args.batch_size,
+            fp16=dataclass_args.fp16
 
         )
 

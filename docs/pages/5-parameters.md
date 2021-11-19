@@ -23,3 +23,5 @@ adam_epsilon: The epsilon parameter for the Adam with weight decay optimizer.
 max_grad_norm: Used to prevent exploding gradients. Prevents the derivatives of the loss function from exceed the absolute value of "max_grad_norm". 
 
 batch_size: Number of training examples used per iteration 
+
+fp16: If true, enables half precision training which saves space by using 16 bits instead of 32 to store the model's weights. Only available when CUDA/a a GPU is being used.   

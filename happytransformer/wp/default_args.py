@@ -14,6 +14,7 @@ ARGS_WP_TRAIN = {
     'preprocessing_processes': 1,
     'mlm_probability': 0.15,
     'line_by_line': False,
+    'fp16': False
 }
 
 

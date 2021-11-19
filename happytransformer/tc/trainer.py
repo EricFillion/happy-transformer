@@ -30,6 +30,7 @@ class TCTrainArgs:
     save_preprocessed_data_path: str = ARGS_TC_TRAIN["save_preprocessed_data_path"]
     load_preprocessed_data: bool = ARGS_TC_TRAIN["load_preprocessed_data"]
     load_preprocessed_data_path: str = ARGS_TC_TRAIN["load_preprocessed_data_path"]
+    fp16: bool = ARGS_TC_TRAIN["fp16"]
 
 
 @dataclass

@@ -29,6 +29,7 @@ class GENTrainArgs:
     load_preprocessed_data_path: str = ARGS_GEN_TRAIN["load_preprocessed_data_path"]
     preprocessing_processes: int = ARGS_GEN_TRAIN["preprocessing_processes"]
     mlm_probability: float = ARGS_GEN_TRAIN["mlm_probability"]
+    fp16: bool = ARGS_GEN_TRAIN["fp16"]
 
 
 @dataclass

@@ -36,6 +36,7 @@ inputs:
 | load_preprocessed_data        | False |
 | load_preprocessed_data_path   | ""    |
 | preprocessing_processes       | 1     |
+| fp16                          | False |
 
 
 Information about the learning parameters can be found [here](/learning-parameters/)

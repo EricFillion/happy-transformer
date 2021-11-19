@@ -43,6 +43,7 @@ Contains two columns with the following header values: input and target
 | preprocessing_processes       | 1     |
 | max_input_length              | 1024  |
 | max_output_length             | 1024  |
+| fp16                          | False |
 
 
 Information about the learning parameters can be found [here](/learning-parameters/)

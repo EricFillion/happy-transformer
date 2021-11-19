@@ -31,6 +31,7 @@ class QATrainArgs:
     load_preprocessed_data: bool = ARGS_QA_TRAIN["load_preprocessed_data"]
     load_preprocessed_data_path: str = ARGS_QA_TRAIN["load_preprocessed_data_path"]
     batch_size: int = ARGS_QA_TRAIN["batch_size"]
+    fp16: bool = ARGS_QA_TRAIN["fp16"]
 
 
 @dataclass

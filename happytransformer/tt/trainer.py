@@ -36,6 +36,7 @@ class TTTrainArgs:
     batch_size: int = 1
     max_input_length: int = 1024
     max_output_length: int = 1024
+    fp16: bool = False
 
 
 @dataclass
@@ -123,7 +124,9 @@ class TTTrainer(HappyTrainer):
                 num_train_epochs=dataclass_args.num_train_epochs,
                 report_to=["none"],
                 save_strategy="no", # no checkpoints are saved
-                per_device_train_batch_size=dataclass_args.batch_size
+                per_device_train_batch_size=dataclass_args.batch_size,
+                fp16=dataclass_args.fp16
+
             )
 
             trainer = Seq2SeqTrainer(
