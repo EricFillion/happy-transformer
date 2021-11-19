@@ -71,7 +71,8 @@ class HappyTrainer:
             max_grad_norm=dataclass_args.max_grad_norm,
             num_train_epochs=dataclass_args.num_train_epochs,
             report_to=["none"],
-            per_device_train_batch_size=dataclass_args.batch_size
+            per_device_train_batch_size=dataclass_args.batch_size,
+            fp16=dataclass_args.fp16
 
         )
 
