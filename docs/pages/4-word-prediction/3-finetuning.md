@@ -38,6 +38,7 @@ inputs:
 | preprocessing_processes       | 1     |
 | mlm_probability               | 0.15  |
 | line-by-line                  | False |
+| fp16                          | False |
 
 
 Information about the learning parameters can be found [here](/learning-parameters/)

@@ -50,7 +50,8 @@ Information about saving/loading preprocessed data can be found [here](/save-loa
 | save_preprocessed_data_path   | ""    |
 | load_preprocessed_data        | False |
 | load_preprocessed_data_path   | ""    |
- 
+| fp16                          | False |
+
 Output: None
 
 #### Example 2.2:
