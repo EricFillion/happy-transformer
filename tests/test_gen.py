@@ -1,3 +1,5 @@
+import torch
+
 from happytransformer import (
     HappyGeneration,
     ARGS_GEN_TRAIN,
@@ -107,6 +109,13 @@ def test_all_methods():
 def test_gen_train_basic():
     happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     happy_gen.train("../data/gen/train-eval.txt")
+
+def test_gen_train_hp():
+    # Can only be used if fp16 if CUDA is available
+    if torch.cuda.is_available():
+        happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
+        args = GENTrainArgs(fp16=True)
+        happy_gen.train("../data/gen/train-eval.txt", args=args)
 
 def test_gen_eval_basic():
     happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
