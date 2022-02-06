@@ -75,9 +75,9 @@ class HappyTrainer:
             max_grad_norm=dataclass_args.max_grad_norm,
             num_train_epochs=dataclass_args.num_train_epochs,
             report_to=["none"],
+            save_strategy="no",
             per_device_train_batch_size=dataclass_args.batch_size,
             fp16=dataclass_args.fp16,
-            save_strategy="no"  # no checkpoints are saved
 
         )
 
