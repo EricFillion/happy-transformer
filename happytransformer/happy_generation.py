@@ -4,7 +4,7 @@ Contains the HappyGeneration class
 from dataclasses import dataclass
 from typing import List
 from transformers import TFAutoModelForCausalLM, AutoModelForCausalLM, TextGenerationPipeline
-from happytransformer.happy_transformer import HappyTransformer
+from happytransformer.happy_transformer import TFHappyTransformer
 from happytransformer.gen.trainer import GENTrainer, GENTrainArgs, GENEvalArgs
 from happytransformer.adaptors import get_adaptor
 from happytransformer.gen import ARGS_GEN_TRAIN, ARGS_GEN_EVAl, ARGS_GEN_TEST
