@@ -4,7 +4,7 @@ Contains the HappyGeneration class
 from dataclasses import dataclass
 from typing import List
 from transformers import TFAutoModelForCausalLM, AutoModelForCausalLM, TextGenerationPipeline
-from happytransformer.happy_transformer import TFHappyTransformer
+from happytransformer.happy_transformer import HappyTransformer, TFHappyTransformer
 from happytransformer.gen.trainer import GENTrainer, GENTrainArgs, GENEvalArgs
 from happytransformer.adaptors import get_adaptor
 from happytransformer.gen import ARGS_GEN_TRAIN, ARGS_GEN_EVAl, ARGS_GEN_TEST
@@ -153,7 +153,7 @@ class HappyGeneration(HappyTransformer):
     def test(self, input_filepath, args=ARGS_GEN_TEST):
         raise NotImplementedError("test() is currently not available")
         
-class TFHappyGeneration(HappyTransformer):
+class TFHappyGeneration(TFHappyTransformer):
     """
     This class is a user facing class that allows users to generate text using
     text generation Transformer models.
