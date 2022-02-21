@@ -47,8 +47,10 @@ class HappyTextToText(HappyTransformer):
 
         if load_path != "":
             model = AutoModelForSeq2SeqLM.from_pretrained(load_path)
+            model.gradient_checkpointing_enable()
         else:
             model = AutoModelForSeq2SeqLM.from_pretrained(model_name, use_auth_token=use_auth_token)
+            model.gradient_checkpointing_enable()
 
 
         super().__init__(model_type, model_name, model, use_auth_token=use_auth_token, load_path=load_path)
