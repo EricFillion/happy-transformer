@@ -1,6 +1,5 @@
 """
 Contains functions that are shared amongst the children of the HappyTrainer class.
-
 Based on
 https://github.com/huggingface/transformers/blob/master/examples/pytorch/language-modeling/run_mlm.py
 and
@@ -119,7 +118,6 @@ def get_tpu_device_list_str_long_short():
     """
     tpu_device_list_str_long_short = xu.get_devices_str(long=True, short=True)
     return tpu_device_list_str_long_short
-"""
 
 
 def preprocess_concatenate(tokenizer, dataset, preprocessing_processes, mlm=True):
