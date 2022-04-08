@@ -1,4 +1,4 @@
-torch>=1.0
+torch==1.9
 tqdm>=4.43
 transformers>=4.4.0
 pytest
@@ -6,4 +6,3 @@ datasets>=1.6.0
 dataclasses; python_version<"3.7"
 sentencepiece
 protobuf
-torch_xla
