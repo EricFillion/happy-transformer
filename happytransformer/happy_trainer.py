@@ -20,7 +20,6 @@ class HappyTrainer:
 
     def train(self, input_filepath, args):
         """
-
         :param input_filepath: A string to file location
         :param args: a dictionary that contains settings
         :return:
@@ -29,7 +28,6 @@ class HappyTrainer:
 
     def test(self, input_filepath, solve, args):
         """
-
         :param input_filepath: A string to file location
         :param solve: a method for using the model for the given task
         :return: test results
@@ -48,7 +46,6 @@ class HappyTrainer:
     @staticmethod
     def _get_data(filepath, test_data=False):
         """
-
         :param filepath:  A string to file location
         :param test_data: False for train and eval, True for test
         :return: varies for each task
@@ -61,9 +58,9 @@ class HappyTrainer:
         :param output_path: A string to a temporary directory
         :return: A TrainingArguments object
         """
-        if self.device != "cuda":
+        if self.device != "cuda" and self.device != "xla":
             if dataclass_args.fp16:
-                ValueError("fp16 is only available when CUDA/ a GPU is being used. ")
+                ValueError("fp16 is only available when CUDA/ a GPU or XLA is being used. ")
 
         return TrainingArguments(
             output_dir=output_path,
@@ -84,7 +81,6 @@ class HappyTrainer:
 
     def _run_train(self, dataset, dataclass_args, data_collator):
         """
-
         :param dataset: a child of torch.utils.data.Dataset
         :param dataclass_args: a dataclass that contains settings
         :return: None
