@@ -1,6 +1,5 @@
 """
 Fine-tune Text-to-text models
-
 Based on the following sources:
 1. https://github.com/huggingface/notebooks/blob/master/examples/summarization.ipynb
 2. https://github.com/huggingface/transformers/blob/master/examples/pytorch/summarization/run_summarization.py
@@ -13,6 +12,7 @@ from dataclasses import dataclass
 from happytransformer.happy_trainer import HappyTrainer, EvalResult
 from datasets import load_dataset
 from transformers import DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer
+import torch_xla.core.xla_model as xm
 import tempfile
 
 
