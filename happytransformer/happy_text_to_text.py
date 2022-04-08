@@ -7,7 +7,7 @@ from transformers import Text2TextGenerationPipeline, AutoModelForSeq2SeqLM
 
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.tt.trainer import TTTrainer
-from happytransformer.cuda_detect import detect_cuda_device_number
+from happytransformer.cuda_detect import detect_cuda_device_number, detect_tpu_device_number
 from happytransformer.adaptors import get_adaptor
 from happytransformer.tt.trainer import TTTrainArgs, TTEvalArgs, TTTestArgs
 
@@ -24,7 +24,6 @@ class TTSettings:
     """
     Used to adjust the text generation algorithm that's used when
     HappyTextToText.generate() is called 
-
     """
     min_length: int = 10
     max_length: int = 50
@@ -55,7 +54,7 @@ class HappyTextToText(HappyTransformer):
 
         super().__init__(model_type, model_name, model, use_auth_token=use_auth_token, load_path=load_path)
 
-        device_number = detect_cuda_device_number()
+        device_number = detect_tpu_device_number()
 
         self._pipeline = Text2TextGenerationPipeline(model=self.model,
                                                      tokenizer=self.tokenizer, device=device_number)
@@ -110,10 +109,8 @@ class HappyTextToText(HappyTransformer):
     def eval(self, input_filepath, args=TTEvalArgs()):
         """
         Evaluated the text-to-text model
-
         input_filepath: a string that contains the location of a csv file
         for training. Contains the following header values: text_1, text_2
-
         args: A TTEvalArgs() object
         return: an EvalResult() object
         """
