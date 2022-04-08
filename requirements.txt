@@ -1,4 +1,4 @@
-torch==1.9
+torch==1.10, !torch-1.11
 tqdm>=4.43
 transformers>=4.4.0
 pytest
