@@ -46,18 +46,18 @@ def test_bad_words():
 def test_top_p():
     happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     # Test small values
-    args_small = GENSettings(top_p=0.01,  max_length=5)
+    args_small = GENSettings(top_p=0.01,  min_length=20, max_length=20)
     output_small = happy_gen.generate_text("Artificial intelligence is ", args=args_small)
     tokens_small = happy_gen.tokenizer.encode(output_small.text, return_tensors="pt")
     length_small = len(tokens_small[0])
-    assert length_small == 5
+    assert length_small == 20
 
     # Test large values
-    args_large = GENSettings(top_p=1, max_length=5)
+    args_large = GENSettings(top_p=1, min_length=20, max_length=20)
     output_large = happy_gen.generate_text("Artificial intelligence is ", args=args_large)
     tokens_large = happy_gen.tokenizer.encode(output_large.text, return_tensors="pt")
     length_large = len(tokens_large[0])
-    assert length_large == 5
+    assert length_large == 20
 
 
 
