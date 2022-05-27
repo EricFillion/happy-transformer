@@ -24,7 +24,7 @@ inputs:
 1. text (string): text to be classified 
 2. label (int): the corresponding label. Must be greater than or equal to 0
 
-| Text                          | label |
+| text                          | label |
 |-------------------------------|-------|
 | Wow what a great place to eat | 1     |
 | Horrible food                 | 0     |
