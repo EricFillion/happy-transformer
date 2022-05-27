@@ -20,19 +20,21 @@ Inputs:
 
 #### Example 8.0 
 ```python
-from happytransformer import HappyTextClassification
+from happytransformer import HappyGeneration
 # ---------------------------------------------------------
-happy_tc = HappyTextClassification()
-happy_tc.save("model/")
+happy_gen = HappyGeneration(model_type="GPT-NEO", model_name="EleutherAI/gpt-neo-125M")
+happy_gen.save("model/")
 ```
 ### Loading a model
 
 When initializing a Happy Transformer object, provide a path for the load_path parameter. 
+Also provide the same values as before for the model_type and model_name parameters.   
 
 #### Example 8.1
 
 ```python
-from happytransformer import HappyTextClassification
+from happytransformer import HappyGeneration
 # ---------------------------------------------------------
-happy_tc = HappyTextClassification(load_path="model/")
+happy_gen = HappyGeneration(model_type="GPT-NEO", model_name="EleutherAI/gpt-neo-125M", load_path="model/")
+
 ```
