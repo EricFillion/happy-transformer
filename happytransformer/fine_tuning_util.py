@@ -22,7 +22,10 @@ def preprocess_concatenate(tokenizer, dataset, preprocessing_processes, mlm=True
 
 
     def tokenize_function(example):
-        return tokenizer(example["text"])
+        texts = example["text"]
+        # Add newlines back that were removed from load_dataset().
+        texts = [case + "\n" for case in texts[:]]
+        return tokenizer(texts)
 
     tokenized_dataset = dataset.map(tokenize_function, batched=True,
                                       num_proc=preprocessing_processes,
