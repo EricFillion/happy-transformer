@@ -57,6 +57,7 @@ class GENTrainer(HappyTrainer):
 
         if not dataclass_args.load_preprocessed_data:
             self.logger.info("Preprocessing dataset...")
+            # load_dataset separates the next by newline. Newlines are added back within preprocess_concatenate.
             dataset = load_dataset("text", data_files={"train": input_filepath})
             tokenized_dataset = preprocess_concatenate(self.tokenizer, dataset, dataclass_args.preprocessing_processes, False)
 
