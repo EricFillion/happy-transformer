@@ -25,15 +25,15 @@ class HappyTextClassification(HappyTransformer):
     """
 
     def __init__(self, model_type="DISTILBERT",
-                 model_name="distilbert-base-uncased", num_labels: int = 2, load_path: str = "", use_auth_token: str = None):
+                 model_name="distilbert-base-uncased", num_labels: int = 2, load_path: str = "", use_auth_token: str = None, from_tf=False):
         self.adaptor = get_adaptor(model_type)
 
         config = AutoConfig.from_pretrained(model_name, num_labels=num_labels)
 
         if load_path != "":
-            model = AutoModelForSequenceClassification.from_pretrained(load_path, config=config)
+            model = AutoModelForSequenceClassification.from_pretrained(load_path, config=config, from_tf=from_tf)
         else:
-            model = AutoModelForSequenceClassification.from_pretrained(model_name, config=config, use_auth_token=use_auth_token)
+            model = AutoModelForSequenceClassification.from_pretrained(model_name, config=config, use_auth_token=use_auth_token, from_tf=from_tf)
 
 
         super().__init__(model_type, model_name, model, use_auth_token=use_auth_token, load_path=load_path)
