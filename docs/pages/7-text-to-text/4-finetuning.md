@@ -56,11 +56,11 @@ max_output_length: Ditto, except for the output.
 
 #### Example 7.3:
 ```python
-    from happytransformer import HappyTextToText, TTTrainArgs
-    # --------------------------------------#
-    happy_tt = HappyTextToText()
-    args = TTTrainArgs(num_train_epochs=1) 
-    happy_tt.train("../../data/tt/train-eval-grammar.csv", args=args)
+from happytransformer import HappyTextToText, TTTrainArgs
+# --------------------------------------#
+happy_tt = HappyTextToText()
+args = TTTrainArgs(num_train_epochs=1) 
+happy_tt.train("../../data/tt/train-eval-grammar.csv", args=args)
 ```
 
 ### eval()
