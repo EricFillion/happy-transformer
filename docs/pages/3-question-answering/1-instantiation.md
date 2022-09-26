@@ -20,7 +20,7 @@ The outputted answer is always a text-span with the provided information.
    [MODELS](https://huggingface.co/models?filter=question-answering)
 3. use_auth_token (string): Specify the authentication token to 
    [load private](https://huggingface.co/transformers/model_sharing.html) models. 
- 4. from_tf (bool): Set to True if you wish to convert a TensorFlow model to PyTorch model.
+ 4. from_tf (bool): Set to True if you want to convert a TensorFlow model to PyTorch model.
 
 We recommend using "HappyQuestionAnswering("ALBERT", "mfeb/albert-xxlarge-v2-squad2")" for the best performance 
 
