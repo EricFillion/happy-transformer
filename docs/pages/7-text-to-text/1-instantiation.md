@@ -16,6 +16,7 @@ Initialize a HappyTextToText() object to perform text-to-text generation
        [standard models](https://huggingface.co/models?pipeline_tag=text2text-generation) and [translation models](https://huggingface.co/models?pipeline_tag=translation)
  3. use_auth_token (string): Specify the authentication token to 
        [load private](https://huggingface.co/transformers/model_sharing.html) models. 
+ 4. from_tf (bool): Set to True if you wish to convert a TensorFlow model to PyTorch model.
 
 
 #### Example 7.0:
