@@ -17,6 +17,7 @@ Initialize a HappyNextSentence() object to next sentence prediction
  "bert-base-uncased" and "bert-large-uncased" that have not been finetuned  
  3. use_auth_token (string): Specify the authentication token to 
        [load private](https://huggingface.co/transformers/model_sharing.html) models. 
+ 4. from_tf (bool): Set to True if you want to convert a TensorFlow model to PyTorch model.
 
 #### Example 6.0:
 ```python

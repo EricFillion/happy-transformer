@@ -41,14 +41,14 @@ class HappyTextToText(HappyTransformer):
     """
     A user facing class for text to text generation
     """
-    def __init__(self, model_type: str = "T5", model_name: str = "t5-small", load_path: str = "", use_auth_token: str = None):
+    def __init__(self, model_type: str = "T5", model_name: str = "t5-small", load_path: str = "", use_auth_token: str = None, from_tf=False):
 
         self.adaptor = get_adaptor(model_type)
 
         if load_path != "":
-            model = AutoModelForSeq2SeqLM.from_pretrained(load_path)
+            model = AutoModelForSeq2SeqLM.from_pretrained(load_path, from_tf=from_tf)
         else:
-            model = AutoModelForSeq2SeqLM.from_pretrained(model_name, use_auth_token=use_auth_token)
+            model = AutoModelForSeq2SeqLM.from_pretrained(model_name, use_auth_token=use_auth_token, from_tf=from_tf)
 
 
         super().__init__(model_type, model_name, model, use_auth_token=use_auth_token, load_path=load_path)

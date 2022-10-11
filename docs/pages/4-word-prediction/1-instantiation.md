@@ -19,6 +19,7 @@ Initialize a HappyWordPrediction object to perform word prediction.
        [MODELS](https://huggingface.co/models?filter=masked-lm)
  3. use_auth_token (string): Specify the authentication token to 
        [load private](https://huggingface.co/transformers/model_sharing.html) models. 
+ 4. from_tf (bool): Set to True if you want to convert a TensorFlow model to PyTorch model.
 
 Note: For all Transformers, the masked token is **"[MASK]"**
 

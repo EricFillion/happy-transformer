@@ -16,6 +16,7 @@ Initialize a HappyTextGeneration() object to perform text generation
        [MODELS](https://huggingface.co/models?pipeline_tag=text-generation)
  3. use_auth_token (string): Specify the authentication token to 
     [load private](https://huggingface.co/transformers/model_sharing.html) models. 
+ 4. from_tf (bool): Set to True if you want to convert a TensorFlow model to PyTorch model.
  
 
 We recommend using "HappyTextGeneration("GPT2", "gpt2-xl")" for the best performance. 
