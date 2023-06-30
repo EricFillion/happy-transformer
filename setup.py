@@ -26,7 +26,8 @@ setup(
             'datasets>=1.6.0',
             'dataclasses; python_version < "3.7"',
             'sentencepiece',
-            'protobuf'
+            'protobuf',
+            'accelerate>=0.20.1'
 
     ],
     classifiers=[
