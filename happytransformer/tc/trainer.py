@@ -15,22 +15,14 @@ from transformers import DataCollatorWithPadding
 from tqdm import tqdm
 from happytransformer.tc.default_args import ARGS_TC_TRAIN, ARGS_TC_EVAL, ARGS_TC_TEST
 import json
+from happytransformer.happy_trainer import TrainArgs
 
 @dataclass
-class TCTrainArgs:
-    learning_rate: float = ARGS_TC_TRAIN["learning_rate"]
-    num_train_epochs: int = ARGS_TC_TRAIN["num_train_epochs"]
-    batch_size: int = ARGS_TC_TRAIN["batch_size"]
-    weight_decay: float = ARGS_TC_TRAIN["weight_decay"]
-    adam_beta1: float = ARGS_TC_TRAIN["adam_beta1"]
-    adam_beta2: float = ARGS_TC_TRAIN["adam_beta2"]
-    adam_epsilon: float = ARGS_TC_TRAIN["adam_epsilon"]
-    max_grad_norm:  float = ARGS_TC_TRAIN["max_grad_norm"]
+class TCTrainArgs(TrainArgs):
     save_preprocessed_data: bool = ARGS_TC_TRAIN["save_preprocessed_data"]
     save_preprocessed_data_path: str = ARGS_TC_TRAIN["save_preprocessed_data_path"]
     load_preprocessed_data: bool = ARGS_TC_TRAIN["load_preprocessed_data"]
     load_preprocessed_data_path: str = ARGS_TC_TRAIN["load_preprocessed_data_path"]
-    fp16: bool = ARGS_TC_TRAIN["fp16"]
 
 
 @dataclass

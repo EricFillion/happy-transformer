@@ -10,6 +10,36 @@ from transformers import TrainingArguments, Trainer
 class EvalResult:
     loss: float
 
+"""
+    'learning_rate': 5e-5,
+    'num_train_epochs': 3.0,
+    'batch_size': 1,
+    'weight_decay': 0,
+    'adam_beta1': 0.9,
+    'adam_beta2': 0.999,
+    'adam_epsilon': 1e-8,
+    'max_grad_norm':  1.0,
+    'save_preprocessed_data': False,
+    'save_preprocessed_data_path': "",
+    'load_preprocessed_data': False,
+    'load_preprocessed_data_path': "",
+    'fp16': False
+ """
+
+@dataclass
+class TrainArgs:
+    learning_rate: float = 5e-5
+    num_train_epochs: int = 3.0
+    batch_size: int = 1
+    weight_decay: float = 0
+    adam_beta1: float = 0.9
+    adam_beta2: float = 0.999
+    adam_epsilon: float = 1e-8
+    max_grad_norm:  float = 1.0
+    fp16: bool = False
+
+
+
 class HappyTrainer:
     def __init__(self, model, model_type, tokenizer, device, logger):
         self.model = model

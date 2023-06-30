@@ -14,29 +14,21 @@ from happytransformer.happy_trainer import HappyTrainer, EvalResult
 from datasets import load_dataset
 from transformers import DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer
 import tempfile
+from happytransformer.happy_trainer import TrainArgs
 
 
 @dataclass
-class TTTrainArgs:
+class TTTrainArgs(TrainArgs):
     """
     Used to adjust the settings when calling HappyTextToText.train()
     """
-    learning_rate: float = 5e-5
-    num_train_epochs: int = 3
-    weight_decay: float = 0
-    adam_beta1: float = 0.9
-    adam_beta2: float = 0.999
-    adam_epsilon: float = 1e-8
-    max_grad_norm: float = 1.0
     save_preprocessed_data: bool = False
     save_preprocessed_data_path: str = ""
     load_preprocessed_data: bool = False
     load_preprocessed_data_path: str = ""
     preprocessing_processes: int = 1
-    batch_size: int = 1
     max_input_length: int = 1024
     max_output_length: int = 1024
-    fp16: bool = False
 
 
 @dataclass
