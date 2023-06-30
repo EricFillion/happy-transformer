@@ -31,6 +31,7 @@ class TrainArgs:
     learning_rate: float = 5e-5
     num_train_epochs: int = 3.0
     batch_size: int = 1
+    gas: int = 1
     weight_decay: float = 0
     adam_beta1: float = 0.9
     adam_beta2: float = 0.999
@@ -108,7 +109,7 @@ class HappyTrainer:
             save_strategy="no",
             per_device_train_batch_size=dataclass_args.batch_size,
             fp16=dataclass_args.fp16,
-
+            gradient_accumulation_steps=dataclass_args.gas
         )
 
 

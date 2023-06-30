@@ -117,8 +117,8 @@ class TTTrainer(HappyTrainer):
                 report_to=["none"],
                 save_strategy="no",
                 per_device_train_batch_size=dataclass_args.batch_size,
-                fp16=dataclass_args.fp16
-
+                fp16=dataclass_args.fp16,
+                gradient_accumulation_steps=dataclass_args.gas
             )
 
             trainer = Seq2SeqTrainer(
