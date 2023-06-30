@@ -5,6 +5,7 @@ import torch
 from dataclasses import dataclass
 import tempfile
 from transformers import TrainingArguments, Trainer
+import math
 
 @dataclass
 class EvalResult:
@@ -38,6 +39,7 @@ class TrainArgs:
     adam_epsilon: float = 1e-8
     max_grad_norm:  float = 1.0
     fp16: bool = False
+    eval_per_epoch: int = 2
 
 
 
@@ -86,7 +88,7 @@ class HappyTrainer:
         """
         raise NotImplementedError()
 
-    def _get_training_args(self, dataclass_args, output_path):
+    def _get_training_args(self, dataclass_args, output_path, data_len ):
         """
         :param args: a dataclass of arguments for training
         :param output_path: A string to a temporary directory
@@ -95,6 +97,14 @@ class HappyTrainer:
         if self.device != "cuda":
             if dataclass_args.fp16:
                 ValueError("fp16 is only available when CUDA/ a GPU is being used. ")
+
+        eval_steps = action_step(
+            ape=dataclass_args.eval_per_epoch,
+            batch_size=dataclass_args.batch_size,
+            gas=dataclass_args.gas,
+            data_len=data_len,
+            num_gpus= 1 # todo make this adjustable
+        )
 
         return TrainingArguments(
             output_dir=output_path,
@@ -107,6 +117,9 @@ class HappyTrainer:
             num_train_epochs=dataclass_args.num_train_epochs,
             report_to=["none"],
             save_strategy="no",
+            # todo enable after supporting eval dataset
+            #evaluation_strategy="steps",
+            #eval_steps=eval_steps,
             per_device_train_batch_size=dataclass_args.batch_size,
             fp16=dataclass_args.fp16,
             gradient_accumulation_steps=dataclass_args.gas
@@ -121,7 +134,7 @@ class HappyTrainer:
         :return: None
         """
         with tempfile.TemporaryDirectory() as tmp_dir_name:
-            training_args = self._get_training_args(dataclass_args, tmp_dir_name)
+            training_args = self._get_training_args(dataclass_args, tmp_dir_name, len(dataset))
             trainer = Trainer(
                 model=self.model,
                 args=training_args,
@@ -158,3 +171,19 @@ class HappyTrainer:
             per_device_eval_batch_size=dataclass_args.batch_size,
 
         )
+
+
+def action_step(ape, batch_size, gas, data_len, num_gpus) -> int:
+    """
+    :param ape: The number of actions per epoch (save, eval or log).
+    :param batch_size: The batch size.
+    :param gas: Gradient accumulation steps
+    :param data_len: Number of cases within the  training data
+    :param num_gpus: Number of GPUs
+    :return: The numbner
+    """
+    epoch_step_len = data_len / (batch_size * gas * num_gpus)
+
+    action_step = math.ceil(epoch_step_len / ape)
+
+    return action_step
