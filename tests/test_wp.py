@@ -9,7 +9,7 @@ from happytransformer import (
 )
 from happytransformer.happy_word_prediction import WordPredictionResult
 from tests.shared_tests import run_save_load
-
+import pytest
 
 def test_wp_basic():
     MODELS = [
@@ -99,18 +99,16 @@ def test_wp_eval_some_settings():
 
 def test_wp_save_load_train():
     happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
-    output_path = "data/wp-train.json"
+    output_path = "data/wp-train/"
     data_path = "../data/wp/train-eval.txt"
-    args = ARGS_WP_TRAIN
-    args["line_by_line"] = True
+    args = WPTrainArgs(line_by_line=True)
     run_save_load(happy_wp, output_path, args, data_path, "train")
 
 def test_wp_save_load_eval():
     happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
     output_path = "data/wp-eval.json"
     data_path = "../data/wp/train-eval.txt"
-    args = ARGS_WP_EVAl
-    args["line_by_line"] = True
+    args = WPEvalArgs(line_by_line=True)
     run_save_load(happy_wp, output_path, args, data_path, "eval")
 
 def test_wp_save():
@@ -129,8 +127,9 @@ def test_wp_train_eval_with_dic():
     happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
     train_args = {'learning_rate': 0.01, 'line_by_line': True, "num_train_epochs": 1}
 
-
+    # dictionaries are no longer supported so we expect a ValueError
     happy_wp.train("../data/wp/train-eval.txt" , args=train_args)
+
     eval_args = {'line_by_line': True}
 
     after_result = happy_wp.eval("../data/wp/train-eval.txt", args=eval_args)

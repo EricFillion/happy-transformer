@@ -95,7 +95,7 @@ class HappyTextToText(HappyTransformer):
                                 )
         return TextToTextResult(text=output[0]['generated_text'])
 
-    def train(self, input_filepath, args=TTTrainArgs()):
+    def train(self, input_filepath, eval_filepath: str = "", args=TTTrainArgs()):
         """
         Trains the text-to-text model
         input_filepath: a string that contains the location of a csv file
@@ -103,7 +103,7 @@ class HappyTextToText(HappyTransformer):
         args: A TTTrainArgs() object
         return: None
         """
-        self._trainer.train(input_filepath=input_filepath, dataclass_args=args)
+        self._trainer.train(input_filepath=input_filepath, eval_filepath=eval_filepath, dataclass_args=args)
 
     def eval(self, input_filepath, args=TTEvalArgs()):
         """

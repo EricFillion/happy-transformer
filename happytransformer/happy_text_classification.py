@@ -61,12 +61,12 @@ class HappyTextClassification(HappyTransformer):
         first_result = results[0]
 
         return TextClassificationResult(label=first_result["label"], score=first_result["score"])
-    
-    def train(self, input_filepath, args=TCTrainArgs()):
+
+    def train(self, input_filepath: str, eval_filepath: str = "", args=TCTrainArgs()):
         """
         Trains the question answering model
-        input_filepath: a string that contains the location of a csv file
-        for training. Contains the following header values: text, label
+        input_filepath: a string that contains the location of a csv file for training and evaluating if eval_filepath is not provided.  Contains the following header values: text, label
+        eval_filepath: a string that contains the location of a csv file for evaluation. Contains the following header values: text, label.
         args: Either a TCTrainArgs() object or a dictionary that contains all of the same keys as ARGS_TC_TRAIN
         return: None
         """
@@ -79,7 +79,7 @@ class HappyTextClassification(HappyTransformer):
         else:
             raise ValueError("Invalid args type. Use a TCTrainArgs object or a dictionary")
 
-        self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
+        self._trainer.train(input_filepath=input_filepath, eval_filepath=eval_filepath, dataclass_args=method_dataclass_args)
 
     def eval(self, input_filepath, args=TCEvalArgs()) -> EvalResult:
         """

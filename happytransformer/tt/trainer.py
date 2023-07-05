@@ -15,6 +15,7 @@ from datasets import load_dataset
 from transformers import DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer
 import tempfile
 from happytransformer.happy_trainer import TrainArgs
+from typing import Union
 
 
 @dataclass
@@ -65,48 +66,61 @@ class TTTrainer(HappyTrainer):
         self.__max_input_length = 1024
         self.__max_output_length = 1024
 
+    def _tok_function(self, raw_dataset, dataclass_args: Union[TTTrainArgs, TTEvalArgs]):
 
-    def train(self, input_filepath, dataclass_args=TTTrainArgs):
+
+        self.__max_input_length = dataclass_args.max_input_length
+        self.__max_output_length = dataclass_args.max_output_length
+
+        def __preprocess_function(examples):
+            """
+            :param examples:
+            :return:
+            """
+            model_inputs = self.tokenizer(examples["input"], max_length=self.__max_input_length, truncation=True)
+
+            # Setup the tokenizer for targets
+            with self.tokenizer.as_target_tokenizer():
+                labels = self.tokenizer(examples["target"], max_length=self.__max_output_length, truncation=True)
+
+            model_inputs["labels"] = labels["input_ids"]
+            return model_inputs
+
+        tok_dataset = raw_dataset.map(
+            __preprocess_function,
+            batched=True,
+            num_proc=dataclass_args.preprocessing_processes,
+            remove_columns=["input", "target"],
+        )
+
+        return tok_dataset
+
+    def train(self, input_filepath, eval_filepath: str = "", dataclass_args: TTTrainArgs= TTTrainArgs()):
         """
         :param input_filepath: A file path to a csv file that contains two columns: text_1 and text_2
         :param dataclass_args: A TTTrainArgs() object
         :return: None
         """
 
-        if dataclass_args.save_preprocessed_data:
-            self.logger.info("Saving preprocessed data is currently "
-                             "not available for text-to-text models. "
-                             )
-        if dataclass_args.load_preprocessed_data:
-            self.logger.info("Loading preprocessed data is currently "
-                             "not available for text-to-text models. "
-                             )
 
         self.logger.info("Preprocessing training data...")
-
-        dataset = load_dataset("csv", data_files={"train": input_filepath}, delimiter=",")
-
-        self.__max_input_length = dataclass_args.max_input_length
-        self.__max_output_length = dataclass_args.max_output_length
-
-        tokenized_dataset = dataset.map(
-            self.__preprocess_function,
-            batched=True,
-            num_proc=dataclass_args.preprocessing_processes,
-            remove_columns=["input", "target"],
-        )
+        train_data, eval_data = self._preprocess_data(input_filepath=input_filepath,
+                                                      eval_filepath=eval_filepath,
+                                                      dataclass_args=dataclass_args,
+                                                      file_type="csv")
 
         self.logger.info("Training...")
 
         # Pads inputs and labels to max length
         data_collator = DataCollatorForSeq2Seq(self.tokenizer, model=self.model)
 
+        # todo add eval steps.
         # A temp dir is used so any files that are generated are deleted after training
         with tempfile.TemporaryDirectory() as tmp_dir_name:
             training_args = Seq2SeqTrainingArguments(
                 tmp_dir_name,
                 do_train=True,
-                do_eval=False,
+                do_eval=True,
                 learning_rate=dataclass_args.learning_rate,
                 weight_decay=dataclass_args.weight_decay,
                 adam_beta1=dataclass_args.adam_beta1,
@@ -118,16 +132,16 @@ class TTTrainer(HappyTrainer):
                 save_strategy="no",
                 per_device_train_batch_size=dataclass_args.batch_size,
                 fp16=dataclass_args.fp16,
-                gradient_accumulation_steps=dataclass_args.gas
-            )
+                gradient_accumulation_steps=dataclass_args.gas)
 
             trainer = Seq2SeqTrainer(
                 model=self.model,
                 args=training_args,
-                train_dataset=tokenized_dataset['train'],
+                train_dataset=train_data,
+                eval_dataset=eval_data,
                 tokenizer=self.tokenizer,
-                data_collator=data_collator,
-            )
+                data_collator=data_collator)
+
             trainer.train()
 
 
@@ -141,15 +155,8 @@ class TTTrainer(HappyTrainer):
         self.logger.info("Preprocessing evaluating data...")
         dataset = load_dataset("csv", data_files={"eval": input_filepath}, delimiter=",")
 
-        self.__max_input_length = dataclass_args.max_input_length
-        self.__max_output_length = dataclass_args.max_output_length
+        tokenized_dataset = self._tok_function(dataset, dataclass_args)
 
-        tokenized_dataset = dataset.map(
-            self.__preprocess_function,
-            batched=True,
-            remove_columns=["input", "target"],
-            num_proc=dataclass_args.preprocessing_processes,
-        )
 
         # Pads inputs and labels to max length
         data_collator = DataCollatorForSeq2Seq(self.tokenizer, model=self.model)
@@ -175,19 +182,7 @@ class TTTrainer(HappyTrainer):
             result = trainer.evaluate()
             return EvalResult(loss=result["eval_loss"])
 
-    def __preprocess_function(self, examples):
-        """
-        :param examples:
-        :return:
-        """
-        model_inputs = self.tokenizer(examples["input"], max_length=self.__max_input_length, truncation=True)
 
-        # Setup the tokenizer for targets
-        with self.tokenizer.as_target_tokenizer():
-            labels = self.tokenizer(examples["target"], max_length=self.__max_output_length, truncation=True)
-
-        model_inputs["labels"] = labels["input_ids"]
-        return model_inputs
 
 
 

@@ -7,6 +7,7 @@ Contains shared variables and methods for these classes.
 import logging
 import torch
 from transformers import  AutoTokenizer, AutoConfig
+from happytransformer.happy_trainer import  TrainArgs
 
 class HappyTransformer():
     """
@@ -49,12 +50,12 @@ class HappyTransformer():
         self.logger.info("Using model: %s", self._device)
 
 
-    def train(self, input_filepath, args):
+    def train(self, input_filepath: str , eval_filepath: str,  args: TrainArgs):
         """
         Trains a model
-        :param input_filepath: a string that contains a path to a csv file
-         that contains testing data
-        :param args: settings in the form of a dictionary
+        :param input_filepath: A string that contains a path to a file that contains training data.
+        :param input_filepath: A  string that contains a path to a file that contains eval data.
+        :param args: A TrainArgs() child class such as GENTrainArgs()
         :return: None
         """
         raise NotImplementedError()

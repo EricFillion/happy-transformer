@@ -46,25 +46,33 @@ class TCTrainer(HappyTrainer):
     A class for training text classification functionality
     """
 
-    def train(self, input_filepath, dataclass_args: TCTrainArgs):
+    def _tok_function(self, raw_dataset, dataclass_args: TCTrainArgs):
 
-        if not dataclass_args.load_preprocessed_data:
-            self.logger.info("Preprocessing dataset...")
-            contexts, labels = self._get_data(input_filepath)
-            train_encodings = self.tokenizer(contexts, truncation=True, padding=True)
-        else:
-            self.logger.info("Loading dataset from %s...", dataclass_args.load_preprocessed_data_path)
-            train_encodings, labels = self._get_preprocessed_data(dataclass_args.load_preprocessed_data_path)
+        def __preprocess_function(case):
+            result = self.tokenizer(case["text"], truncation=True, padding=True)
+            result["labels"] = case["label"]
+            return result
 
-        if dataclass_args.save_preprocessed_data:
-            self.logger.info("Saving training dataset to %s...", dataclass_args.save_preprocessed_data_path)
-            input_ids = train_encodings["input_ids"]
-            attention_mask = train_encodings["attention_mask"]
-            self._generate_json(dataclass_args.save_preprocessed_data_path, input_ids, attention_mask, labels, "train")
+        tok_dataset = raw_dataset.map(
+            __preprocess_function,
+            batched=True,
+            num_proc=1,
+            remove_columns=["text"],
+            desc="Tokenizing data"
+        )
 
-        train_dataset = TextClassificationDataset(train_encodings, labels)
+        return tok_dataset
+
+
+    def train(self, input_filepath, eval_filepath, dataclass_args: TCTrainArgs):
+
+        train_data, eval_data = self._preprocess_data(input_filepath=input_filepath,
+                                                      eval_filepath=eval_filepath,
+                                                      dataclass_args=dataclass_args,
+                                                      file_type="csv")
+
         data_collator = DataCollatorWithPadding(self.tokenizer)
-        self._run_train(train_dataset, dataclass_args, data_collator)
+        self._run_train(train_data, eval_data, dataclass_args, data_collator)
 
     def eval(self, input_filepath, dataclass_args: TCEvalArgs):
         if not dataclass_args.load_preprocessed_data:

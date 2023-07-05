@@ -129,13 +129,17 @@ def test_tc_with_dataclass():
 def test_tc_save_load_train():
     happy_wp = HappyTextClassification(model_type="BERT",
         model_name="prajjwal1/bert-tiny")
-    output_path = "data/tc-train.json"
+
+    output_path = "data/tc-train/"
     data_path = "../data/tc/train-eval.csv"
-    run_save_load(happy_wp, output_path, ARGS_TC_TRAIN, data_path, "train")
+    args = TCTrainArgs(num_train_epochs=1)
+    run_save_load(happy_wp, output_path, args, data_path, "train")
 
 
 def test_tc_save_load_eval():
     happy_wp = HappyTextClassification(model_type="DISTILBERT", model_name="distilbert-base-uncased-finetuned-sst-2-english")
     output_path = "data/tc-train.json"
     data_path = "../data/tc/train-eval.csv"
-    run_save_load(happy_wp, output_path, ARGS_TC_EVAL, data_path, "eval")
+    args = TCEvalArgs()
+
+    run_save_load(happy_wp, output_path, args, data_path, "eval")

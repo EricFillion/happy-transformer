@@ -1,7 +1,6 @@
 import torch
 from happytransformer import HappyTextToText, TTSettings, TTTrainArgs, TTEvalArgs
-
-
+from tests.shared_tests import run_save_load
 
 def test_default_simple():
     happy_tt = HappyTextToText("T5", "t5-small")
@@ -89,7 +88,6 @@ def test_tt_eval_simple():
 
 def test_tt_eval_loss_decreases():
     happy_tt = HappyTextToText("T5", "t5-small")
-
     before_result = happy_tt.eval("../data/tt/train-eval-grammar.csv")
     happy_tt.train("../data/tt/train-eval-grammar.csv")
     after_result = happy_tt.eval("../data/tt/train-eval-grammar.csv")
@@ -106,3 +104,21 @@ def test_tt_eval_custom_p():
     args = TTEvalArgs(max_input_length=100, max_output_length=100, preprocessing_processes=1, batch_size=2)
     result = happy_tt.eval("../data/tt/train-eval-grammar.csv", args=args)
     assert type(result.loss) is float
+
+
+def test_tt_save_load_train():
+    happy_tt = HappyTextToText("T5", "t5-small")
+
+    output_path = "data/tt-train/"
+    data_path = "../data/tt/train-eval-grammar.csv"
+    args = TTTrainArgs(num_train_epochs=1)
+
+    run_save_load(happy_tt, output_path, args, data_path, "train")
+
+def test_tt_save_load_eval():
+    happy_tt = HappyTextToText("T5", "t5-small")
+    output_path = "data/tt-train/"
+    data_path = "../data/tt/train-eval-grammar.csv"
+
+    args = TTTrainArgs(num_train_epochs=1)
+    run_save_load(happy_tt, output_path, args, data_path, "eval")

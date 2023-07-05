@@ -89,6 +89,7 @@ class HappyGeneration(HappyTransformer):
             bad_words_ids = [self.tokenizer(" "+phrase.strip()).input_ids for phrase in args.bad_words]
         else:
             bad_words_ids = None
+
         output = self._pipeline(text, min_length=adjusted_min_length,
                                 return_full_text=False,
                                 max_length=adjusted_max_length,
@@ -115,9 +116,11 @@ class HappyGeneration(HappyTransformer):
         return result[len(text):]
 
 
-    def train(self, input_filepath: str, args=GENTrainArgs()):
+    def train(self, input_filepath: str, eval_filepath: str ="", args=GENTrainArgs()):
         """
-        :param input_filepath:a file path to a text file that contains nothing but training data
+        :param input_filepath: A file path to a text file that contains training data. This data will also be used for evaluating if
+        eval_filepath is not provided.
+        :param eval_filepath: A file path to a text file that contains evaluating data.
         :param args: either a GENTrainArgs() object or a dictionary that contains all of the same keys as ARGS_GEN_TRAIN
         :return: None
         """
@@ -131,7 +134,7 @@ class HappyGeneration(HappyTransformer):
         else:
             raise ValueError("Invalid args type. Use a GENTrainArgs object or a dictionary")
 
-        self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
+        self._trainer.train(input_filepath=input_filepath, eval_filepath=eval_filepath,  dataclass_args=method_dataclass_args)
 
     def eval(self, input_filepath: str, args=GENEvalArgs()) -> EvalResult:
         """

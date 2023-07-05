@@ -132,15 +132,18 @@ def test_gen_train_effectiveness_multi():
 
 def test_gen_save_load_train():
     happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
-    output_path = "data/gen-train.txt"
+    output_path = "data/gen-train/"
     data_path = "../data/gen/train-eval.txt"
-    run_save_load(happy_gen, output_path, ARGS_GEN_TRAIN, data_path, "train")
+    args = GENTrainArgs()
+    run_save_load(happy_gen, output_path, args, data_path, "train")
 
 def test_gen_save_load_eval():
     happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     output_path = "data/wp-eval.txt"
     data_path = "../data/gen/train-eval.txt"
-    run_save_load(happy_gen, output_path, ARGS_GEN_EVAl, data_path, "eval")
+    args = GENEvalArgs()
+
+    run_save_load(happy_gen, output_path, args, data_path, "eval")
 
 def test_gen_save():
     happy = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
@@ -148,7 +151,7 @@ def test_gen_save():
     result_before = happy.generate_text("Natural language processing is")
 
     happy = HappyGeneration(load_path="model/")
-    result_after=happy.generate_text("Natural language processing is")
+    result_after = happy.generate_text("Natural language processing is")
 
     assert result_before == result_after
 

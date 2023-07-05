@@ -74,7 +74,7 @@ class HappyQuestionAnswering(HappyTransformer):
             for answer in answers
         ]
 
-    def train(self, input_filepath, args=QATrainArgs()):
+    def train(self, input_filepath, eval_filepath: str= "",  args=QATrainArgs()):
         """
         Trains the question answering model
 
@@ -97,7 +97,7 @@ class HappyQuestionAnswering(HappyTransformer):
             raise ValueError("Invalid args type. Use a QATrainArgs object or a dictionary")
 
 
-        self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
+        self._trainer.train(input_filepath=input_filepath, eval_filepath=eval_filepath, dataclass_args=method_dataclass_args)
 
     def eval(self, input_filepath, args=QAEvalArgs()) -> EvalResult:
         """

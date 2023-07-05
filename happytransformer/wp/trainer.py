@@ -11,6 +11,7 @@ from datasets import load_dataset
 from happytransformer.fine_tuning_util import preprocess_concatenate
 from happytransformer.wp.default_args import ARGS_WP_TRAIN, ARGS_WP_EVAl, ARGS_WP_TEST
 from happytransformer.happy_trainer import TrainArgs
+from typing import Union
 
 import json
 
@@ -43,37 +44,41 @@ class WPTrainer(HappyTrainer):
     """
     Trainer class for HappyWordPrediction
     """
-    def train(self, input_filepath, dataclass_args: WPTrainArgs):
+    line_by_line = False
+
+    def _tok_function(self, raw_dataset, dataclass_args: Union[WPTrainArgs, WPEvalArgs]):
+        if not self.line_by_line:
+            return preprocess_concatenate(tokenizer=self.tokenizer, dataset=raw_dataset,
+                                      preprocessing_processes=dataclass_args.preprocessing_processes, mlm=True)
+        else:
+            def tokenize_function(example):
+                return self.tokenizer(example["text"],
+                                 add_special_tokens=True, truncation=True)
+
+            tokenized_dataset = raw_dataset.map(tokenize_function, batched=True,
+                                            num_proc=dataclass_args.preprocessing_processes,
+                                            remove_columns=["text"])
+            return tokenized_dataset
+
+    def train(self, input_filepath, eval_filepath: str ="", dataclass_args: WPTrainArgs = WPTrainArgs()):
         """
         :param input_filepath: A file path to a text file that contains nothing but training data
+        :param eval_filepath: todo
         :param dataclass_args: A WPTrainArgs() object
         :return: None
         """
-        if not dataclass_args.load_preprocessed_data:
-            self.logger.info("Preprocessing dataset...")
+        self.logger.info("Preprocessing training data...")
+        train_data, eval_data = self._preprocess_data(input_filepath=input_filepath,
+                                                      eval_filepath=eval_filepath,
+                                                      dataclass_args=dataclass_args,
+                                                      file_type="text")
 
-            dataset = load_dataset("text", data_files={"train": input_filepath})
-            if dataclass_args.line_by_line:
-                tokenized_dataset = self._preprocess_line_by_line(self.tokenizer, dataset, dataclass_args.preprocessing_processes)
-            else:
-                tokenized_dataset = preprocess_concatenate(self.tokenizer, dataset, dataclass_args.preprocessing_processes, True)
-        else:
-            self.logger.info("Loading dataset from %s...", dataclass_args.load_preprocessed_data_path)
-            tokenized_dataset = load_dataset("json", data_files={"train": dataclass_args.load_preprocessed_data_path}, field='train')
-
-        if dataclass_args.save_preprocessed_data:
-            if dataclass_args.load_preprocessed_data:
-                self.logger.warning("Both save_preprocessed_data and load_data are enabled,")
-
-            self.logger.info("Saving training dataset to %s...", dataclass_args.save_preprocessed_data_path)
-
-            self._generate_json(dataclass_args.save_preprocessed_data_path, tokenized_dataset["train"], "train")
 
         data_collator = DataCollatorForLanguageModeling(tokenizer=self.tokenizer,
                                                         mlm_probability=dataclass_args.mlm_probability)
         self.logger.info("Training...")
 
-        self._run_train(tokenized_dataset['train'], dataclass_args, data_collator)
+        self._run_train(train_data, eval_data, dataclass_args, data_collator)
 
 
     def eval(self, input_filepath, dataclass_args: WPEvalArgs):
@@ -84,10 +89,9 @@ class WPTrainer(HappyTrainer):
         """
         dataset = load_dataset("text", data_files={"eval": input_filepath})
 
-        if dataclass_args.line_by_line:
-            tokenized_dataset = self._preprocess_line_by_line(self.tokenizer, dataset, dataclass_args.preprocessing_processes)
-        else:
-            tokenized_dataset = preprocess_concatenate(self.tokenizer, dataset, dataclass_args.preprocessing_processes, True)
+        self.line_by_line = dataclass_args.line_by_line
+
+        tokenized_dataset = self._tok_function(dataset, dataclass_args)
 
 
         data_collator = DataCollatorForLanguageModeling(tokenizer=self.tokenizer,
@@ -101,42 +105,3 @@ class WPTrainer(HappyTrainer):
         raise NotImplementedError()
 
 
-    def _preprocess_line_by_line(self, tokenizer, dataset, preprocessing_processes):
-        """
-        :param tokenizer: tokenizer for a transformer model
-        :param datasets: a datasets.Dataset object
-        :param preprocessing_processes: number of processes to use for pre-processing
-        :return:
-        """
-
-        def tokenize_function(example):
-            return tokenizer(example["text"],
-                             add_special_tokens=True, truncation=True,)
-
-        tokenized_dataset = dataset.map(tokenize_function, batched=True,
-                                          num_proc=preprocessing_processes,
-                                          remove_columns=["text"])
-        return tokenized_dataset
-
-
-    def _generate_json(self, json_path, dataset, name):
-        """
-        :param json_path: A path to a json file that will be created/overwritten
-        :param dataset: A list of dictionaries that contain the keys "attention_mask," "input_ids" and "labels"
-        :param name: A string to specify if the written data is for "Train" or "Eval"
-        :return: None
-        """
-        data = {}
-        data[name] = []
-        data = {
-            name: [
-                {
-                    'attention_mask': case['attention_mask'],
-                    'input_ids': case['input_ids'],
-                }
-                for case in dataset
-            ]
-        }
-
-        with open(json_path, 'w') as outfile:
-            json.dump(data, outfile)

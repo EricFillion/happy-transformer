@@ -65,7 +65,7 @@ class HappyWordPrediction(HappyTransformer):
             for answer in answers
         ]
 
-    def train(self, input_filepath, args=ARGS_WP_TRAIN):
+    def train(self, input_filepath: str, eval_filepath: str = "", args=ARGS_WP_TRAIN):
         if type(args) == dict:
             method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_WP_TRAIN,
                                                          input_dic_args=args,
@@ -75,7 +75,7 @@ class HappyWordPrediction(HappyTransformer):
         else:
             raise ValueError("Invalid args type. Use a WPTrainArgs object or a dictionary")
 
-        self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
+        self._trainer.train(input_filepath=input_filepath, eval_filepath=eval_filepath, dataclass_args=method_dataclass_args)
 
     def eval(self, input_filepath, args=ARGS_WP_EVAl) -> EvalResult:
         if type(args) == dict:
