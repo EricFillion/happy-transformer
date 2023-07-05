@@ -217,10 +217,6 @@ class HappyTrainer:
                 raise ValueError(
                     "As of version 2.5.0 preprocessed files are not longer saved as json files. Please provide a path to a folder.")
 
-            train_tok_data.save_to_disk("test_save_train/")
-            eval_tok_data.save_to_disk("test_save_eval/")
-            print("train_tok_data", train_tok_data)
-            print("eval_tok_data", eval_tok_data)
 
             combined_tok = DatasetDict({"train": train_tok_data, "eval": eval_tok_data})
             combined_tok.save_to_disk(dataclass_args.save_preprocessed_data_path)
