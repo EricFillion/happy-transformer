@@ -74,7 +74,7 @@ class HappyQuestionAnswering(HappyTransformer):
             for answer in answers
         ]
 
-    def train(self, input_filepath, eval_filepath: str= "",  args=QATrainArgs()):
+    def train(self, input_filepath, eval_filepath: str= "",  args: QATrainArgs =QATrainArgs()):
         """
         Trains the question answering model
 
@@ -86,18 +86,7 @@ class HappyQuestionAnswering(HappyTransformer):
 
         return: None
         """
-
-        if type(args) == dict:
-            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_QA_TRAIN,
-                                                                input_dic_args=args,
-                                                                method_dataclass_args=QATrainArgs)
-        elif type(args) == QATrainArgs:
-            method_dataclass_args = args
-        else:
-            raise ValueError("Invalid args type. Use a QATrainArgs object or a dictionary")
-
-
-        self._trainer.train(input_filepath=input_filepath, eval_filepath=eval_filepath, dataclass_args=method_dataclass_args)
+        super(HappyQuestionAnswering, self).train(input_filepath, args, eval_filepath)
 
     def eval(self, input_filepath, args=QAEvalArgs()) -> EvalResult:
         """
@@ -112,16 +101,7 @@ class HappyQuestionAnswering(HappyTransformer):
         return: A dictionary that contains a key called "eval_loss"
 
         """
-        if type(args) == dict:
-            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_QA_EVAl,
-                                                                input_dic_args=args,
-                                                                method_dataclass_args=QAEvalArgs)
-        elif type(args) == QAEvalArgs:
-            method_dataclass_args = args
-        else:
-            raise ValueError("Invalid args type. Use a QAEvalArgs object or a dictionary")
-
-        return self._trainer.eval(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
+        return super(HappyQuestionAnswering, self).eval(input_filepath, args)
 
 
     def test(self, input_filepath, args=QATestArgs()):

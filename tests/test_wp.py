@@ -2,8 +2,6 @@ from pytest import approx
 
 from happytransformer import (
     HappyWordPrediction,
-    ARGS_WP_TRAIN,
-    ARGS_WP_EVAl,
     WPTrainArgs,
     WPEvalArgs
 )
@@ -90,11 +88,13 @@ def test_wp_eval_some_settings():
     Test to see what happens when only a subset of the potential settings are used
     :return:
     """
-    args = {'line_by_line': True,
-            }
+    args = {'line_by_line': True}
+
     happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
-    result = happy_wp.eval("../data/wp/train-eval.txt", args)
-    assert type(result.loss) == float
+
+    with pytest.raises(ValueError):
+        result = happy_wp.eval("../data/wp/train-eval.txt", args)
+
 
 
 def test_wp_save_load_train():
@@ -128,11 +128,12 @@ def test_wp_train_eval_with_dic():
     train_args = {'learning_rate': 0.01, 'line_by_line': True, "num_train_epochs": 1}
 
     # dictionaries are no longer supported so we expect a ValueError
-    happy_wp.train("../data/wp/train-eval.txt" , args=train_args)
+    with pytest.raises(ValueError):
+        happy_wp.train("../data/wp/train-eval.txt" , args=train_args)
 
     eval_args = {'line_by_line': True}
-
-    after_result = happy_wp.eval("../data/wp/train-eval.txt", args=eval_args)
+    with pytest.raises(ValueError):
+        after_result = happy_wp.eval("../data/wp/train-eval.txt", args=eval_args)
 
 
 def test_wp_train_eval_with_dataclass():

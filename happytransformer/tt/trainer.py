@@ -132,7 +132,9 @@ class TTTrainer(HappyTrainer):
                 save_strategy="no",
                 per_device_train_batch_size=dataclass_args.batch_size,
                 fp16=dataclass_args.fp16,
-                gradient_accumulation_steps=dataclass_args.gas)
+                gradient_accumulation_steps=dataclass_args.gas,
+                use_mps_device=True if self.device.type == "mps" else False
+            )
 
             trainer = Seq2SeqTrainer(
                 model=self.model,
@@ -170,6 +172,7 @@ class TTTrainer(HappyTrainer):
                 seed=42,
                 report_to=["none"],
                 per_device_eval_batch_size=dataclass_args.batch_size,
+                use_mps_device=True if self.device.type == "mps" else False
             )
 
             trainer = Seq2SeqTrainer(
@@ -178,6 +181,7 @@ class TTTrainer(HappyTrainer):
                 eval_dataset=tokenized_dataset['eval'],
                 tokenizer=self.tokenizer,
                 data_collator=data_collator,
+
             )
             result = trainer.evaluate()
             return EvalResult(loss=result["eval_loss"])

@@ -53,6 +53,7 @@ class HappyTrainer:
         self.device = device
         self.logger = logger
 
+
     def train(self, input_filepath, eval_filepath, args):
         """
         :param input_filepath: A string to file location for training.
@@ -95,7 +96,7 @@ class HappyTrainer:
         :param output_path: A string to a temporary directory
         :return: A TrainingArguments object
         """
-        if self.device != "cuda":
+        if self.device.type != "cuda":
             if dataclass_args.fp16:
                 ValueError("fp16 is only available when CUDA/ a GPU is being used. ")
 
@@ -119,11 +120,12 @@ class HappyTrainer:
             report_to=["none"],
             save_strategy="no",
             # todo enable after supporting eval dataset
-            #evaluation_strategy="steps",
-            #eval_steps=eval_steps,
+            evaluation_strategy="steps",
+            eval_steps=eval_steps,
             per_device_train_batch_size=dataclass_args.batch_size,
             fp16=dataclass_args.fp16,
-            gradient_accumulation_steps=dataclass_args.gas
+            gradient_accumulation_steps=dataclass_args.gas,
+            use_mps_device= True if self.device.type == "mps" else False
         )
 
 
@@ -160,8 +162,7 @@ class HappyTrainer:
             )
             return trainer.evaluate()
 
-    @staticmethod
-    def _get_eval_args(output_path, dataclass_args):
+    def _get_eval_args(self, output_path, dataclass_args):
         """
         :param output_path: A string to a temporary directory
         :return: A TrainingArguments object
@@ -171,7 +172,7 @@ class HappyTrainer:
             seed=42,
             report_to=['none'],
             per_device_eval_batch_size=dataclass_args.batch_size,
-
+            use_mps_device=True if self.device.type == "mps" else False
         )
 
     def _tok_function(self, raw_dataset, dataclass_args: TrainArgs):
@@ -179,7 +180,6 @@ class HappyTrainer:
 
     def _preprocess_data(self, input_filepath, eval_filepath, file_type, dataclass_args: TrainArgs):
         """
-
         :param input_filepath: A path to a training file.
         :param eval_filepath:  A path to an evaluating file. Or "" if not evaluating file is provided.
         :param file_type: The type of file: csv, text etc
@@ -234,7 +234,7 @@ def action_step(ape, batch_size, gas, data_len, num_gpus) -> int:
     :param gas: Gradient accumulation steps
     :param data_len: Number of cases within the  training data
     :param num_gpus: Number of GPUs
-    :return: The numbner
+    :return:
     """
     epoch_step_len = data_len / (batch_size * gas * num_gpus)
 

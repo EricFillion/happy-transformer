@@ -8,6 +8,7 @@ import logging
 import torch
 from transformers import  AutoTokenizer, AutoConfig
 from happytransformer.happy_trainer import  TrainArgs
+from happytransformer.fine_tuning_util import create_args_dataclass
 
 class HappyTransformer():
     """
@@ -40,17 +41,23 @@ class HappyTransformer():
             handlers=[handler]
         )
 
-        self._device = torch.device(
-            "cuda" if torch.cuda.is_available()
-            else "cpu"
-        )
+        self._device = None
 
-        if self._device == 'cuda':
+        if torch.backends.mps.is_available():
+            if torch.backends.mps.is_built():
+                self._device = torch.device("mps")
+        if torch.cuda.is_available():
+            self._device = "cuda"
+        if not self._device:
+            self._device = "cpu"
+
+        if self._device != 'cpu':
             self.model.to(self._device)
+
         self.logger.info("Using model: %s", self._device)
 
 
-    def train(self, input_filepath: str , eval_filepath: str,  args: TrainArgs):
+    def train(self, input_filepath: str ,  args: TrainArgs, eval_filepath: str = "", ):
         """
         Trains a model
         :param input_filepath: A string that contains a path to a file that contains training data.
@@ -58,7 +65,14 @@ class HappyTransformer():
         :param args: A TrainArgs() child class such as GENTrainArgs()
         :return: None
         """
-        raise NotImplementedError()
+        if type(args) == dict:
+            raise ValueError("Dictionary training arguments are no longer supported as of Happy Transformer version 2.5.0.")
+
+
+        self._trainer.train(input_filepath=input_filepath, eval_filepath=eval_filepath,
+                            dataclass_args=args)
+
+
 
     def eval(self, input_filepath, args):
         """
@@ -68,7 +82,11 @@ class HappyTransformer():
         :param args: settings in the form of a dictionary
         :return: correct percentage
         """
-        raise NotImplementedError()
+        if type(args) == dict:
+            raise ValueError("Dictionary evaluating arguments are no longer supported as of Happy Transformer version 2.5.0.")
+
+        return self._trainer.eval(input_filepath=input_filepath, dataclass_args=args)
+
 
     def test(self, input_filepath, args):
         """

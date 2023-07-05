@@ -30,6 +30,8 @@ class HappyNextSentence(HappyTransformer):
         """
 
         encoded = self.tokenizer(sentence_a, sentence_b, return_tensors='pt')
+        encoded.to(self._device)
+
         with torch.no_grad():
             scores = self.model(encoded['input_ids'], token_type_ids=encoded['token_type_ids']).logits[0]
 

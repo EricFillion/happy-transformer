@@ -2,12 +2,11 @@ import torch
 
 from happytransformer import (
     HappyGeneration,
-    ARGS_GEN_TRAIN,
-    ARGS_GEN_EVAl,
     GENSettings,
     GENTrainArgs,
     GENEvalArgs
 )
+import pytest
 
 from tests.shared_tests import run_save_load
 
@@ -160,12 +159,12 @@ def test_wp_train_eval_with_dic():
     happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     train_args = {'learning_rate': 0.01,  "num_train_epochs": 1}
 
-
-    happy_gen.train("../data/gen/train-eval.txt" , args=train_args)
+    with pytest.raises(ValueError):
+        happy_gen.train("../data/gen/train-eval.txt" , args=train_args)
     eval_args = {}
 
-    result = happy_gen.eval("../data/gen/train-eval.txt", args=eval_args)
-    assert type(result.loss) == float
+    with pytest.raises(ValueError):
+        result = happy_gen.eval("../data/gen/train-eval.txt", args=eval_args)
 
 
 def test_gen_train_eval_with_dataclass():

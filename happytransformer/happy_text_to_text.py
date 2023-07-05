@@ -95,7 +95,7 @@ class HappyTextToText(HappyTransformer):
                                 )
         return TextToTextResult(text=output[0]['generated_text'])
 
-    def train(self, input_filepath, eval_filepath: str = "", args=TTTrainArgs()):
+    def train(self, input_filepath, eval_filepath: str = "", args: TTTrainArgs=TTTrainArgs()):
         """
         Trains the text-to-text model
         input_filepath: a string that contains the location of a csv file
@@ -103,7 +103,7 @@ class HappyTextToText(HappyTransformer):
         args: A TTTrainArgs() object
         return: None
         """
-        self._trainer.train(input_filepath=input_filepath, eval_filepath=eval_filepath, dataclass_args=args)
+        super(HappyTextToText, self).train(input_filepath, args, eval_filepath)
 
     def eval(self, input_filepath, args=TTEvalArgs()):
         """
@@ -116,9 +116,7 @@ class HappyTextToText(HappyTransformer):
         return: an EvalResult() object
         """
 
-        result = self._trainer.eval(input_filepath=input_filepath, dataclass_args=args)
-        return result
-
+        return super(HappyTextToText, self).eval(input_filepath, args)
 
     def test(self, input_filepath, args=TTTestArgs):
         raise NotImplementedError("test() is currently not available")

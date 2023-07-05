@@ -13,7 +13,7 @@ from happytransformer import(
 from happytransformer.happy_text_classification import TextClassificationResult
 from tests.shared_tests import run_save_load
 from pytest import approx
-
+import pytest
 
 def test_classify_text():
     happy_tc = HappyTextClassification(model_type="DISTILBERT", model_name="distilbert-base-uncased-finetuned-sst-2-english")
@@ -97,12 +97,12 @@ def test_tc_with_dic():
         model_name="prajjwal1/bert-tiny")
     train_args = {'learning_rate': 0.01,  "num_train_epochs": 1}
 
-
-    happy_tc.train("../data/tc/train-eval.csv" , args=train_args)
+    with pytest.raises(ValueError):
+        happy_tc.train("../data/tc/train-eval.csv" , args=train_args)
 
     eval_args = {}
-
-    result_eval = happy_tc.eval("../data/tc/train-eval.csv", args=eval_args)
+    with pytest.raises(ValueError):
+        result_eval = happy_tc.eval("../data/tc/train-eval.csv", args=eval_args)
 
     test_args = {}
 
