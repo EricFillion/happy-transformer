@@ -54,7 +54,6 @@ class HappyGeneration(HappyTransformer):
             model = AutoModelForCausalLM.from_pretrained(model_name, use_auth_token=use_auth_token, from_tf=from_tf)
 
         super().__init__(model_type, model_name, model, use_auth_token=use_auth_token, load_path=load_path)
-        device_number = detect_cuda_device_number()
 
         self._pipeline = TextGenerationPipeline(model=self.model, tokenizer=self.tokenizer, device=self.device)
 
