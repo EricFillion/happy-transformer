@@ -48,7 +48,7 @@ class HappyTransformer():
                 self.device = torch.device("mps")
 
         if torch.cuda.is_available():
-            self.device = torch.device("cuda")
+            self.device = torch.device("cuda:0")
 
         if not self.device:
             self.device = torch.device("cpu")
