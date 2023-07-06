@@ -5,7 +5,6 @@ from transformers import TokenClassificationPipeline, AutoModelForTokenClassific
 
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.toc.trainer import TOCTrainer
-from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.adaptors import get_adaptor
 from happytransformer.toc import  ARGS_TOC_TRAIN, ARGS_TOC_EVAl, ARGS_TOC_TEST
 
@@ -37,11 +36,9 @@ class HappyTokenClassification(HappyTransformer):
 
         super().__init__(model_type, model_name, model, use_auth_token=use_auth_token, load_path=load_path)
 
-        device_number = detect_cuda_device_number()
+        self._pipeline = TokenClassificationPipeline(model=self.model, tokenizer=self.tokenizer, device=self.device)
 
-        self._pipeline = TokenClassificationPipeline(model=self.model, tokenizer=self.tokenizer, device=device_number)
-
-        self._trainer = TOCTrainer(self.model, model_type, self.tokenizer, self._device, self.logger)
+        self._trainer = TOCTrainer(self.model, model_type, self.tokenizer, self.device, self.logger)
 
     def classify_token(self, text: str) -> List[TokenClassificationResult]:
         """

@@ -30,7 +30,7 @@ class HappyNextSentence(HappyTransformer):
         """
 
         encoded = self.tokenizer(sentence_a, sentence_b, return_tensors='pt')
-        encoded.to(self._device)
+        encoded.to(self.device)
 
         with torch.no_grad():
             scores = self.model(encoded['input_ids'], token_type_ids=encoded['token_type_ids']).logits[0]
@@ -39,7 +39,7 @@ class HappyNextSentence(HappyTransformer):
         # probability that sentence B follows sentence A
         score = probabilities[0].item()
 
-        if self._device == 'cuda':
+        if self.device.type == 'cuda':
             torch.cuda.empty_cache()
 
         return score

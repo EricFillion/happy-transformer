@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from transformers import TextClassificationPipeline, AutoConfig, AutoModelForSequenceClassification
 
 from happytransformer.tc.trainer import TCTrainer, TCTrainArgs, TCEvalArgs, TCTestArgs
-from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.adaptors import get_adaptor
 from happytransformer.tc import ARGS_TC_TRAIN, ARGS_TC_EVAL, ARGS_TC_TEST
@@ -38,15 +37,14 @@ class HappyTextClassification(HappyTransformer):
 
         super().__init__(model_type, model_name, model, use_auth_token=use_auth_token, load_path=load_path)
 
-        device_number = detect_cuda_device_number()
         self._pipeline = TextClassificationPipeline(
             model=self.model, tokenizer=self.tokenizer,
-            device=device_number
+            device=self.device
         )
 
         self._trainer = TCTrainer(
             self.model, self.model_type,
-            self.tokenizer, self._device, self.logger
+            self.tokenizer, self.device, self.logger
         )
 
     def classify_text(self, text: str) -> TextClassificationResult:

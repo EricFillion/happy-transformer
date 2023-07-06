@@ -41,20 +41,22 @@ class HappyTransformer():
             handlers=[handler]
         )
 
-        self._device = None
+        self.device = None
 
         if torch.backends.mps.is_available():
             if torch.backends.mps.is_built():
-                self._device = torch.device("mps")
+                self.device = torch.device("mps")
+
         if torch.cuda.is_available():
-            self._device = "cuda"
-        if not self._device:
-            self._device = "cpu"
+            self.device = torch.device("cuda")
 
-        if self._device != 'cpu':
-            self.model.to(self._device)
+        if not self.device:
+            self.device = torch.device("cpu")
 
-        self.logger.info("Using model: %s", self._device)
+        if self.device.type != 'cpu':
+            self.model.to(self.device)
+
+        self.logger.info("Using model: %s", self.device)
 
 
     def train(self, input_filepath: str ,  args: TrainArgs, eval_filepath: str = "", ):

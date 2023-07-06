@@ -5,11 +5,9 @@ from transformers import FillMaskPipeline, AutoModelForMaskedLM, PretrainedConfi
 
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.wp.trainer import WPTrainer, WPTrainArgs, WPEvalArgs
-from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.adaptors import get_adaptor
 from happytransformer.wp import ARGS_WP_TRAIN, ARGS_WP_EVAl, ARGS_WP_TEST
 from happytransformer.happy_trainer import EvalResult
-from happytransformer.fine_tuning_util import create_args_dataclass
 
 @dataclass
 class WordPredictionResult:
@@ -34,11 +32,10 @@ class HappyWordPrediction(HappyTransformer):
 
         super().__init__(model_type, model_name, model, load_path=load_path, use_auth_token=use_auth_token)
 
-        device_number = detect_cuda_device_number()
 
-        self._pipeline = FillMaskPipeline(model=self.model, tokenizer=self.tokenizer, device=device_number)
+        self._pipeline = FillMaskPipeline(model=self.model, tokenizer=self.tokenizer, device=self.device)
 
-        self._trainer = WPTrainer(self.model, model_type, self.tokenizer, self._device, self.logger)
+        self._trainer = WPTrainer(self.model, model_type, self.tokenizer, self.device, self.logger)
 
     def predict_mask(self, text: str, targets: Optional[List[str]] = None, top_k: int = 1) -> List[WordPredictionResult]:
         """

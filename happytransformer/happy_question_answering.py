@@ -11,7 +11,6 @@ from happytransformer.qa.trainer import QATrainer, QATrainArgs, QAEvalArgs, QATe
 from happytransformer.happy_trainer import EvalResult
 from happytransformer.qa import ARGS_QA_TRAIN, ARGS_QA_EVAl, ARGS_QA_TEST
 
-from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.adaptors import get_adaptor
 from happytransformer.fine_tuning_util import create_args_dataclass
 
@@ -46,11 +45,10 @@ class HappyQuestionAnswering(HappyTransformer):
             model = AutoModelForQuestionAnswering.from_pretrained(model_name, use_auth_token=use_auth_token, from_tf=from_tf)
 
         super().__init__(model_type, model_name, model, use_auth_token=use_auth_token, load_path=load_path)
-        device_number = detect_cuda_device_number()
 
-        self._pipeline = QuestionAnsweringPipeline(model=self.model, tokenizer=self.tokenizer, device=device_number)
+        self._pipeline = QuestionAnsweringPipeline(model=self.model, tokenizer=self.tokenizer, device=self.device)
 
-        self._trainer = QATrainer(self.model, model_type, self.tokenizer, self._device, self.logger)
+        self._trainer = QATrainer(self.model, model_type, self.tokenizer, self.device, self.logger)
 
     def answer_question(self, context: str, question: str, top_k: int = 1) \
             -> List[QuestionAnsweringResult]:

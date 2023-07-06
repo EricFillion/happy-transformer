@@ -10,7 +10,6 @@ from happytransformer.adaptors import get_adaptor
 from happytransformer.gen import ARGS_GEN_TRAIN, ARGS_GEN_EVAl, ARGS_GEN_TEST
 from happytransformer.happy_trainer import EvalResult
 from happytransformer.fine_tuning_util import create_args_dataclass
-from happytransformer.cuda_detect import detect_cuda_device_number
 
 """
 The main settings that users will adjust when performing experiments
@@ -57,9 +56,9 @@ class HappyGeneration(HappyTransformer):
         super().__init__(model_type, model_name, model, use_auth_token=use_auth_token, load_path=load_path)
         device_number = detect_cuda_device_number()
 
-        self._pipeline = TextGenerationPipeline(model=self.model, tokenizer=self.tokenizer, device=device_number)
+        self._pipeline = TextGenerationPipeline(model=self.model, tokenizer=self.tokenizer, device=self.device)
 
-        self._trainer = GENTrainer(self.model, model_type, self.tokenizer, self._device, self.logger)
+        self._trainer = GENTrainer(self.model, model_type, self.tokenizer, self.device, self.logger)
 
     def __assert_default_text_is_val(self, text):
         """
