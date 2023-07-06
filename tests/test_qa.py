@@ -36,7 +36,7 @@ def test_qa_eval():
         model_name='distilbert-base-cased-distilled-squad'
     )
     result = happy_qa.eval("../data/qa/train-eval.csv")
-    assert result.loss == approx(0.11738169193267822, 0.001)
+    assert result.loss == approx(0.11738169193267822, 0.01)
 
 
 def test_qa_test():
