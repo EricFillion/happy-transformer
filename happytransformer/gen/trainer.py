@@ -67,7 +67,7 @@ class GENTrainer(HappyTrainer):
 
         else:
             self.logger.info("Loading dataset from %s...", dataclass_args.load_preprocessed_data_path)
-            tokenized_dataset = load_from_disk(dataclass_args.load_preprocessed_data_path)
+            tokenized_dataset = load_from_disk(dataclass_args.load_preprocessed_data_path +"/eval")
 
         if dataclass_args.save_preprocessed_data:
             if dataclass_args.load_preprocessed_data:
