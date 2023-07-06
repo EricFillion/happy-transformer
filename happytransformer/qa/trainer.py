@@ -223,59 +223,6 @@ class QATrainer(HappyTrainer):
         encodings.update({'start_positions': start_positions, 'end_positions': end_positions})
 
 
-    @staticmethod
-    def _generate_json(json_path, input_ids, attention_masks, start_positions, end_positions, name):
-        data = {}
-        data[name] = []
-        data = {
-            name: [
-                {
-                    'input_ids': input_id,
-                    'attention_mask': attention_mask,
-                    'start_positions': start_positions,
-                    'end_positions': end_positions
-
-                }
-                for input_id, attention_mask, start_position, end_position in zip(input_ids, attention_masks, start_positions, end_positions)
-            ]
-        }
-
-        with open(json_path, 'w') as outfile:
-            json.dump(data, outfile)
-
-
-    @staticmethod
-    def _get_preprocessed_data(filepath):
-        """
-        Used for Fetching preprocessed data)
-        :param filepath: a string that contains the location of the data
-        :return:
-        """
-
-        # dataset = load_dataset("csv", data_files={"train": filepath})
-        input_ids = []
-        attention_mask = []
-        start_positions = []
-        end_positions = []
-
-        with open(filepath) as json_file:
-            data = json.load(json_file)
-        json_file.close()
-
-        for case in data["train"]:
-            input_ids.append(case['input_ids'])
-            attention_mask.append(case['attention_mask'])
-            start_positions.append(case['start_positions'])
-            end_positions.append(case['end_positions'])
-
-        encodings = {
-            "input_ids": input_ids,
-            "attention_mask": attention_mask,
-            "start_positions": start_positions,
-            "end_positions": end_positions}
-
-        return encodings
-
 
 class QuestionAnsweringDataset(torch.utils.data.Dataset):
     """
