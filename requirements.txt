@@ -1,7 +1,7 @@
 torch>=1.0
 tqdm>=4.43
 transformers>=4.4.0
-pytest
+pytest>=7.4.0
 datasets>=1.6.0
 dataclasses; python_version<"3.7"
 sentencepiece
