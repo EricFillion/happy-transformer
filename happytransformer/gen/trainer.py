@@ -10,7 +10,7 @@ from transformers import default_data_collator
 from happytransformer.happy_trainer import HappyTrainer, EvalResult
 from happytransformer.fine_tuning_util import preprocess_concatenate
 from happytransformer.gen.default_args import ARGS_GEN_TRAIN, ARGS_GEN_EVAl
-from datasets import load_dataset
+from datasets import load_dataset, load_from_disk, DatasetDict
 from happytransformer.happy_trainer import TrainArgs
 
 @dataclass
@@ -67,19 +67,18 @@ class GENTrainer(HappyTrainer):
 
         else:
             self.logger.info("Loading dataset from %s...", dataclass_args.load_preprocessed_data_path)
-            tokenized_dataset = load_dataset("json", data_files={"eval": dataclass_args.load_preprocessed_data_path}, field='eval')
+            tokenized_dataset = load_from_disk(dataclass_args.load_preprocessed_data_path)
 
         if dataclass_args.save_preprocessed_data:
-            if dataclass_args. load_preprocessed_data:
+            if dataclass_args.load_preprocessed_data:
                 self.logger.warning("Both save_preprocessed_data and load_data are enabled.")
 
             self.logger.info("Saving evaluating dataset to %s...", dataclass_args.save_preprocessed_data_path)
-            #todo
-            #self._generate_json(dataclass_args.save_preprocessed_data_path, tokenized_dataset["eval"], "eval")
+            save_dataset = DatasetDict({"eval": tokenized_dataset})
+            save_dataset.save_to_disk(dataclass_args.save_preprocessed_data_path)
 
         self.logger.info("Evaluating...")
-
-        result = self._run_eval(tokenized_dataset['eval'], default_data_collator, dataclass_args)
+        result = self._run_eval(tokenized_dataset["eval"], default_data_collator, dataclass_args)
         return EvalResult(loss=result["eval_loss"])
 
     def test(self, input_filepath, solve, args):

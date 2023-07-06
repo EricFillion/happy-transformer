@@ -138,7 +138,7 @@ def test_gen_save_load_train():
 
 def test_gen_save_load_eval():
     happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
-    output_path = "data/wp-eval.txt"
+    output_path = "data/gen-train/eval/"
     data_path = "../data/gen/train-eval.txt"
     args = GENEvalArgs()
 
