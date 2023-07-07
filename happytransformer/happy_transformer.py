@@ -207,13 +207,6 @@ class HappyTransformer():
             if dataclass_args.fp16:
                 ValueError("fp16 is only available when CUDA/ a GPU is being used. ")
 
-        eval_steps = self.action_step(
-            ape=dataclass_args.eval_per_epoch,
-            batch_size=dataclass_args.batch_size,
-            gas=dataclass_args.gas,
-            data_len=data_len,
-            num_gpus= 1 # todo make this adjustable
-        )
         if self._type == "tt":
             arg_class = Seq2SeqTrainingArguments
         else:
@@ -229,10 +222,12 @@ class HappyTransformer():
             max_grad_norm=dataclass_args.max_grad_norm,
             num_train_epochs=dataclass_args.num_train_epochs,
             report_to=["none"],
-            save_strategy="no",
-            # todo enable after supporting eval dataset
-            evaluation_strategy="steps",
-            eval_steps=eval_steps,
+            save_strategy="steps" if dataclass_args.save_steps > 0 else "no",
+            save_steps=dataclass_args.save_steps,
+            evaluation_strategy="steps" if dataclass_args.eval_steps > 0 else "no",
+            eval_steps=dataclass_args.eval_steps,
+            logging_strategy="steps" if dataclass_args.log_steps > 0 else "no",
+            logging_steps = dataclass_args.log_steps,
             per_device_train_batch_size=dataclass_args.batch_size,
             fp16=dataclass_args.fp16,
             gradient_accumulation_steps=dataclass_args.gas,

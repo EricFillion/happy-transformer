@@ -2,6 +2,8 @@ from dataclasses import dataclass
 
 @dataclass
 class TrainArgs:
+    output_dir: str = "happy_output/"
+
     learning_rate: float = 5e-5
     num_train_epochs: int = 3.0
     batch_size: int = 1
@@ -12,8 +14,12 @@ class TrainArgs:
     adam_epsilon: float = 1e-8
     max_grad_norm:  float = 1.0
     fp16: bool = False
-    eval_per_epoch: int = 2
     eval_ratio: float = 0.1  #  if eval_filepath is not provided a portion of the training data will be used for evaluating.
+
+    save_steps: float = 0.0 #  if 0 no saving will be done
+    eval_steps: float = 2  # if 0 no evaluating will be done
+    log_steps: float = 0.0   # if 0 no saving will be done
+
     load_preprocessed_data: bool = False
     save_preprocessed_data: bool = False
     save_preprocessed_data_path: str = ""
