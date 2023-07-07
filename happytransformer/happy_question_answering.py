@@ -9,7 +9,8 @@ from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.qa.trainer import QATrainer, QATrainArgs, QAEvalArgs, QATestArgs
 from happytransformer.happy_trainer import EvalResult
 from happytransformer.qa import ARGS_QA_TRAIN, ARGS_QA_EVAl, ARGS_QA_TEST
-
+import csv
+from tqdm import tqdm
 from happytransformer.adaptors import get_adaptor
 from happytransformer.fine_tuning_util import create_args_dataclass
 
@@ -47,7 +48,6 @@ class HappyQuestionAnswering(HappyTransformer):
 
         self._pipeline = QuestionAnsweringPipeline(model=self.model, tokenizer=self.tokenizer, device=self.device)
 
-        self._trainer = QATrainer(self.model, model_type, self.tokenizer, self.device, self.logger)
 
         self._data_collator = DataCollatorWithPadding(self.tokenizer)
         self._t_data_file_type = "csv"
@@ -120,17 +120,25 @@ class HappyQuestionAnswering(HappyTransformer):
         contains the keys: "score", "start", "end" and "answer"
         """
         if type(args) == dict:
-            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_QA_TEST,
-                                                                input_dic_args=args,
-                                                                method_dataclass_args=QATestArgs)
-        elif type(args) == QATestArgs:
-            method_dataclass_args = args
-        else:
-            raise ValueError("Invalid args type. Use a QATestArgs object or a dictionary")
+            raise ValueError( "As of version 2.5.0 dictionary inputs are not acceptable. Please provide a QATestArgs. ")
 
 
-        return self._trainer.test(input_filepath=input_filepath, solve=self.answer_question, dataclass_args=method_dataclass_args)
+        if args.save_preprocessed_data:
+            self.logger.info("Saving preprocessed data is currently "
+                             "not available for question answering models. "
+                             "It will be added soon. ")
+        if args.load_preprocessed_data:
+            self.logger.info("Loading preprocessed data is currently "
+                             "not available for question answering models. "
+                             "It will be added soon. ")
 
+        contexts, questions = self._get_data(input_filepath, test_data=True)
+
+        return [
+            self.answer_question(context, question)[0]
+            for context, question in
+            tqdm(zip(contexts, questions))
+        ]
 
     def _tok_function(self, raw_dataset, dataclass_args: QATrainArgs):
 
@@ -175,3 +183,29 @@ class HappyQuestionAnswering(HappyTransformer):
         )
 
         return tok_dataset
+    @staticmethod
+    def _get_data(filepath, test_data=False):
+        """
+        Used to collect
+        :param filepath: a string that contains the location of the data
+        :return: if test_data = False contexts, questions, answers (all strings)
+        else: contexts, questions
+        """
+        contexts = []
+        questions = []
+        answers = []
+        with open(filepath, newline='', encoding="utf-8") as csv_file:
+            reader = csv.DictReader(csv_file)
+            for row in reader:
+                contexts.append(row['context'])
+                questions.append(row['question'])
+                if not test_data:
+                    answer = {}
+                    answer["answer_text"] = row['answer_text']
+                    answer["answer_start"] = int(row['answer_start'])
+                    answers.append(answer)
+        csv_file.close()
+
+        if not test_data:
+            return contexts, questions, answers
+        return contexts, questions

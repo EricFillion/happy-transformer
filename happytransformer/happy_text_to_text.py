@@ -57,8 +57,6 @@ class HappyTextToText(HappyTransformer):
         self._pipeline = Text2TextGenerationPipeline(model=self.model,
                                                      tokenizer=self.tokenizer, device=self.device)
 
-        self._trainer = TTTrainer(self.model, model_type, self.tokenizer, self.device, self.logger)
-
         self.__max_input_length = 1024
         self.__max_output_length = 1024
 

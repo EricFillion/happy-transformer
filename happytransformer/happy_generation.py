@@ -58,8 +58,6 @@ class HappyGeneration(HappyTransformer):
 
         self._pipeline = TextGenerationPipeline(model=self.model, tokenizer=self.tokenizer, device=self.device)
 
-        self._trainer = GENTrainer(self.model, model_type, self.tokenizer, self.device, self.logger)
-
         self._data_collator = default_data_collator
         self._t_data_file_type = "text"
 

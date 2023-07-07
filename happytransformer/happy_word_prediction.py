@@ -38,8 +38,6 @@ class HappyWordPrediction(HappyTransformer):
 
 
 
-        self._trainer = WPTrainer(self.model, model_type, self.tokenizer, self.device, self.logger)
-
         self._data_collator = DataCollatorForLanguageModeling(tokenizer=self.tokenizer,
                                                         mlm_probability=0.1  # todo modify
                                                         )

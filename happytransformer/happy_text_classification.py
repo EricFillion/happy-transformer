@@ -11,6 +11,8 @@ from happytransformer.adaptors import get_adaptor
 from happytransformer.tc import ARGS_TC_TRAIN, ARGS_TC_EVAL, ARGS_TC_TEST
 from happytransformer.happy_trainer import EvalResult
 from happytransformer.fine_tuning_util import create_args_dataclass
+from tqdm import tqdm
+import csv
 
 
 @dataclass
@@ -41,12 +43,6 @@ class HappyTextClassification(HappyTransformer):
             model=self.model, tokenizer=self.tokenizer,
             device=self.device
         )
-
-        self._trainer = TCTrainer(
-            self.model, self.model_type,
-            self.tokenizer, self.device, self.logger
-        )
-
 
         self._data_collator = DataCollatorWithPadding(self.tokenizer)
         self._t_data_file_type = "csv"
@@ -99,16 +95,14 @@ class HappyTextClassification(HappyTransformer):
         """
 
         if type(args) == dict:
-            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_TC_TEST,
-                                                          input_dic_args=args,
-                                                          method_dataclass_args=TCTestArgs)
-        elif type(args) == TCTestArgs:
-            method_dataclass_args = args
-        else:
-            raise ValueError("Invalid args type. Use a TCTestArgs() object or a dictionary")
+            raise ValueError("#todo")
 
-        return self._trainer.test(input_filepath=input_filepath, solve=self.classify_text, dataclass_args=method_dataclass_args)
+        contexts = self._get_data(input_filepath, test_data=True)
 
+        return [
+            self.classify_text(context)
+            for context in tqdm(contexts)
+        ]
 
     def _tok_function(self, raw_dataset, dataclass_args: TCTrainArgs):
 
@@ -126,3 +120,23 @@ class HappyTextClassification(HappyTransformer):
         )
 
         return tok_dataset
+
+    def _get_data(self, filepath, test_data=False):
+        """
+        Used for parsing data for training and evaluating (both contain labels)
+        :param filepath: a string that contains the location of the data
+        :return:
+        """
+        contexts = []
+        labels = []
+        with open(filepath, newline='', encoding="utf-8") as csv_file:
+            reader = csv.DictReader(csv_file)
+            for row in reader:
+                contexts.append(row['text'])
+                if not test_data:
+                    labels.append(int(row['label']))
+        csv_file.close()
+
+        if not test_data:
+            return contexts, labels
+        return contexts
