@@ -2,8 +2,7 @@ from dataclasses import dataclass
 
 @dataclass
 class TrainArgs:
-    output_dir: str = "happy_output/"
-
+    output_dir: str = "happy_transformer/"
     learning_rate: float = 5e-5
     num_train_epochs: int = 3.0
     batch_size: int = 1
@@ -18,7 +17,7 @@ class TrainArgs:
 
     save_steps: float = 0.0 #  if 0 no saving will be done
     eval_steps: float = 2  # if 0 no evaluating will be done
-    log_steps: float = 0.0   # if 0 no saving will be done
+    logging_steps: float = 0.0   # if 0 no saving will be done
 
     load_preprocessed_data: bool = False
     save_preprocessed_data: bool = False

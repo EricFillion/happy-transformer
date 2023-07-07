@@ -197,7 +197,7 @@ class HappyTransformer():
     def _tok_function(self, raw_dataset, dataclass_args: TrainArgs):
         raise NotImplementedError()
 
-    def _get_training_args(self, dataclass_args, output_path, data_len ):
+    def _get_training_args(self, dataclass_args ):
         """
         :param args: a dataclass of arguments for training
         :param output_path: A string to a temporary directory
@@ -213,7 +213,7 @@ class HappyTransformer():
             arg_class = TrainingArguments
 
         return arg_class(
-            output_dir=output_path,
+            output_dir=dataclass_args.output_dir,
             learning_rate=dataclass_args.learning_rate,
             weight_decay=dataclass_args.weight_decay,
             adam_beta1=dataclass_args.adam_beta1,
@@ -226,8 +226,8 @@ class HappyTransformer():
             save_steps=dataclass_args.save_steps,
             evaluation_strategy="steps" if dataclass_args.eval_steps > 0 else "no",
             eval_steps=dataclass_args.eval_steps,
-            logging_strategy="steps" if dataclass_args.log_steps > 0 else "no",
-            logging_steps = dataclass_args.log_steps,
+            logging_strategy="steps" if dataclass_args.logging_steps > 0 else "no",
+            logging_steps = dataclass_args.logging_steps,
             per_device_train_batch_size=dataclass_args.batch_size,
             fp16=dataclass_args.fp16,
             gradient_accumulation_steps=dataclass_args.gas,
@@ -241,23 +241,22 @@ class HappyTransformer():
         :param dataclass_args: a dataclass that contains settings
         :return: None
         """
-        with tempfile.TemporaryDirectory() as tmp_dir_name:
-            training_args = self._get_training_args(dataclass_args, tmp_dir_name, len(train_dataset))
+        training_args = self._get_training_args(dataclass_args)
 
-            if self._type == "tt":
-                train_class = Seq2SeqTrainer
-            else:
-                train_class = Trainer
+        if self._type == "tt":
+            train_class = Seq2SeqTrainer
+        else:
+            train_class = Trainer
 
-            trainer = train_class(
-                model=self.model,
-                args=training_args,
-                train_dataset=train_dataset,
-                eval_dataset=eval_dataset,
-                tokenizer=self.tokenizer,
-                data_collator=data_collator,
-            )
-            trainer.train()
+        trainer = train_class(
+            model=self.model,
+            args=training_args,
+            train_dataset=train_dataset,
+            eval_dataset=eval_dataset,
+            tokenizer=self.tokenizer,
+            data_collator=data_collator,
+        )
+        trainer.train()
 
     def _run_eval(self, dataset, data_collator, dataclass_args):
         """

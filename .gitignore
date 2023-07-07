@@ -4,21 +4,27 @@ examples/text_classification/train.csv
 examples/text_classification/eval.csv
 runs/
 .idea/
+tests/happy_transformer/
 
 examples/word_prediction/train.txt
 examples/word_prediction/eval.txt
+examples/word_prediction/happy_transformer/
 
 examples/text_classification/train.txt
 examples/text_classification/eval.txt
+examples/text_classification/happy_transformer/
 
 examples/question_answering/train.txt
 examples/question_answering/eval.txt
+examples/question_answering/happy_transformer/
 
 examples/generation/train.txt
 examples/generation/eval.txt
+examples/generation/happy_transformer/
 
 examples/text-to-text/train.csv
 examples/text-to-text/eval.csv
+examples/text-to-text/happy_transformer/
 
 main.py
 tests/model/
