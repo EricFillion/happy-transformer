@@ -1,5 +1,5 @@
 from datasets import load_dataset
-from happytransformer.happy_word_prediction import HappyWordPrediction
+from happytransformer.happy_word_prediction import HappyWordPrediction, WPTrainArgs
 
 
 def main():
@@ -24,7 +24,10 @@ def main():
 
     before_loss = happy_wp.eval(eval_csv_path)
 
-    happy_wp.train(train_csv_path)
+    args = WPTrainArgs(
+        #deepspeed="../deepspeed/ds_config.json"
+    )
+    happy_wp.train(train_csv_path, args=args)
 
     after_loss = happy_wp.eval(eval_csv_path)
 

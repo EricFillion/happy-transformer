@@ -18,8 +18,11 @@ def main():
     generate_csv("eval.csv", eval_dataset)
 
     before_loss = happy_tt.eval("eval.csv").loss
-
-    happy_tt.train("train.csv")
+    args = TTTrainArgs(
+                        num_train_epochs=1,
+                        # deepspeed="../deepspeed/ds_config.json"
+                       )
+    happy_tt.train("train.csv", args=args)
 
     after_text = happy_tt.generate_text(input_text).text
     after_loss = happy_tt.eval("eval.csv").loss

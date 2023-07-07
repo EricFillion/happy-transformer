@@ -1,6 +1,6 @@
 from datasets import load_dataset
 import csv
-from happytransformer.happy_question_answering import  HappyQuestionAnswering
+from happytransformer import  HappyQuestionAnswering, QATrainArgs
 
 
 def main():
@@ -16,7 +16,12 @@ def main():
 
     happy_qa = HappyQuestionAnswering(model_type="BERT", model_name="bert-base-uncased")
     before_loss = happy_qa.eval(eval_csv_path)
-    happy_qa.train(train_csv_path)
+
+    args = QATrainArgs(
+        # deepspeed="../deepspeed/ds_config.json"
+    )
+    happy_qa.train(train_csv_path, args=args)
+
     after_loss = happy_qa.eval(eval_csv_path)
 
     print("Before loss: ", before_loss.loss)

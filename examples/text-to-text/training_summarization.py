@@ -16,7 +16,11 @@ def main():
 
     before_result = happy_tt.eval("eval.csv")
 
-    args = TTTrainArgs(max_input_length=1024, max_output_length=128)
+    args = TTTrainArgs(max_input_length=1024,
+                       max_output_length=128,
+                       # deepspeed="../deepspeed/ds_config.json"
+
+                       )
 
     happy_tt.train("train.csv", args=args)
     after_text = happy_tt.generate_text("summarize: " + text)

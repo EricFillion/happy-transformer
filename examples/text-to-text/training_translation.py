@@ -17,7 +17,12 @@ def main():
     eval_args = TTTrainArgs(max_input_length=1024, max_output_length=1024)
     before_loss = happy_tt.eval("eval.csv", args=eval_args)
 
-    train_args = TTTrainArgs(num_train_epochs=1, max_input_length=1024, max_output_length=1024)
+    train_args = TTTrainArgs(
+                num_train_epochs=1,
+                max_input_length=1024,
+                max_output_length=1024,
+                # deepspeed="../deepspeed/ds_config.json"
+                )
     happy_tt.train("train.csv", args=train_args)
 
     after_text = happy_tt.generate_text("translate English to Persian: " + text)
