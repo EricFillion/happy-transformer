@@ -197,7 +197,7 @@ class HappyTransformer():
     def _tok_function(self, raw_dataset, dataclass_args: TrainArgs):
         raise NotImplementedError()
 
-    def _get_training_args(self, dataclass_args ):
+    def _get_training_args(self, dataclass_args):
         """
         :param args: a dataclass of arguments for training
         :param output_path: A string to a temporary directory
@@ -213,6 +213,7 @@ class HappyTransformer():
             arg_class = TrainingArguments
 
         return arg_class(
+            deepspeed=None if dataclass_args.deepspeed == "" else dataclass_args.deepspeed,
             output_dir=dataclass_args.output_dir,
             learning_rate=dataclass_args.learning_rate,
             weight_decay=dataclass_args.weight_decay,
