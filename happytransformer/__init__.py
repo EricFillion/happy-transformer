@@ -15,8 +15,6 @@ from happytransformer.args import (
 )
 
 # Legacy imports
-
-
 from happytransformer.legacy import (
     ARGS_GEN_TRAIN,
     ARGS_GEN_EVAl,
@@ -33,10 +31,5 @@ from happytransformer.legacy import (
     ARGS_WP_TRAIN,
     ARGS_WP_EVAl)
 
-
-
-from happytransformer.happy_generation import (
-    HappyGeneration, GENSettings
-)
 
 name = "happytransformer"
