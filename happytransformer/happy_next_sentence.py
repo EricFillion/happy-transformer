@@ -20,7 +20,6 @@ class HappyNextSentence(HappyTransformer):
 
         super().__init__(model_type, model_name, model, use_auth_token=use_auth_token, load_path=load_path)
         self._pipeline = None
-        self._trainer = None
 
         self._type = "ns"
 

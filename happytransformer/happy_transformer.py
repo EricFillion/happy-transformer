@@ -30,7 +30,6 @@ class HappyTransformer():
             self.tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=use_auth_token)
         self.model = model
         self.model.eval()
-        self._trainer = None  # initialized in child class
 
         # todo  change logging system
         self.logger = logging.getLogger(__name__)
