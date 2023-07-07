@@ -2,7 +2,6 @@ import torch
 from transformers import AutoModelForNextSentencePrediction
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.adaptors import get_adaptor
-from happytransformer.qa import ARGS_QA_TRAIN, ARGS_QA_EVAl, ARGS_QA_TEST
 
 class HappyNextSentence(HappyTransformer):
     """
@@ -46,11 +45,11 @@ class HappyNextSentence(HappyTransformer):
 
         return score
 
-    def train(self, input_filepath, eval_filepath: str= "",  args=ARGS_QA_TRAIN):
+    def train(self, input_filepath, eval_filepath: str= "",  args=None):
         raise NotImplementedError("train() is currently not available")
 
-    def eval(self, input_filepath, args=ARGS_QA_EVAl):
+    def eval(self, input_filepath, args=None):
         raise NotImplementedError("eval() is currently not available")
 
-    def test(self, input_filepath, args=ARGS_QA_TEST):
+    def test(self, input_filepath, args=None):
         raise NotImplementedError("test() is currently not available")

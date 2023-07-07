@@ -7,10 +7,10 @@ from dataclasses import dataclass
 from transformers import QuestionAnsweringPipeline, AutoModelForQuestionAnswering, DataCollatorWithPadding
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.args import QATrainArgs, QAEvalArgs, QATestArgs
-from happytransformer.happy_trainer import EvalResult
 import csv
 from tqdm import tqdm
 from happytransformer.adaptors import get_adaptor
+from happytransformer.fine_tuning_util import EvalResult
 
 @dataclass
 class QuestionAnsweringResult:

@@ -6,7 +6,7 @@ https://github.com/huggingface/transformers/blob/master/examples/pytorch/languag
 and
 https://github.com/huggingface/transformers/blob/master/examples/pytorch/language-modeling/run_clm.py
 """
-
+from dataclasses import dataclass
 
 def preprocess_concatenate(tokenizer, dataset, preprocessing_processes, mlm=True):
     """
@@ -78,3 +78,8 @@ def create_args_dataclass(default_dic_args, input_dic_args, method_dataclass_arg
     """
     settings_dic = {**default_dic_args, **input_dic_args}
     return method_dataclass_args(**settings_dic)
+
+
+@dataclass
+class EvalResult:
+    loss: float

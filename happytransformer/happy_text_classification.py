@@ -8,7 +8,8 @@ from transformers import TextClassificationPipeline, AutoConfig, AutoModelForSeq
 from happytransformer.args import TCTrainArgs, TCEvalArgs, TCTestArgs
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.adaptors import get_adaptor
-from happytransformer.happy_trainer import EvalResult
+from happytransformer.fine_tuning_util import EvalResult
+
 from tqdm import tqdm
 import csv
 

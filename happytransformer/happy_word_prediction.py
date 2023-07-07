@@ -2,12 +2,10 @@ from typing import List, Optional
 from dataclasses import dataclass
 
 from transformers import FillMaskPipeline, AutoModelForMaskedLM, PretrainedConfig, DataCollatorForLanguageModeling
-from happytransformer.fine_tuning_util import preprocess_concatenate
+from happytransformer.fine_tuning_util import preprocess_concatenate, EvalResult
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.args import WPTrainArgs, WPEvalArgs
 from happytransformer.adaptors import get_adaptor
-from happytransformer.wp import  ARGS_WP_TEST
-from happytransformer.happy_trainer import EvalResult
 from typing import Union
 
 @dataclass
@@ -76,7 +74,7 @@ class HappyWordPrediction(HappyTransformer):
         return super(HappyWordPrediction, self).eval(input_filepath, args)
 
 
-    def test(self, input_filepath, args=ARGS_WP_TEST):
+    def test(self, input_filepath, args=None):
         raise NotImplementedError("test() is currently not available")
 
     def _tok_function(self, raw_dataset, dataclass_args: Union[WPTrainArgs, WPEvalArgs]):

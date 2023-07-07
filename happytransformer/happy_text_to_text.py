@@ -7,6 +7,7 @@ from transformers import Text2TextGenerationPipeline, AutoModelForSeq2SeqLM, Dat
 
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.adaptors import get_adaptor
+from happytransformer.fine_tuning_util import EvalResult
 
 from happytransformer.args import TTTrainArgs, TTEvalArgs, TTTestArgs
 
@@ -109,7 +110,7 @@ class HappyTextToText(HappyTransformer):
         """
         super(HappyTextToText, self).train(input_filepath, args, eval_filepath)
 
-    def eval(self, input_filepath, args=TTEvalArgs()):
+    def eval(self, input_filepath, args=TTEvalArgs()) -> EvalResult:
         """
         Evaluated the text-to-text model
 

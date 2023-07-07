@@ -6,11 +6,12 @@ Contains shared variables and methods for these classes.
 """
 import logging
 from transformers import AutoTokenizer, TrainingArguments, Trainer, Seq2SeqTrainingArguments, Seq2SeqTrainer
-from happytransformer.happy_trainer import  TrainArgs, EvalResult
 import torch
 import tempfile
 import math
 from datasets import load_dataset, load_from_disk, DatasetDict
+from happytransformer.args import TrainArgs
+from happytransformer.fine_tuning_util import EvalResult
 
 class HappyTransformer():
     """
@@ -207,7 +208,7 @@ class HappyTransformer():
             if dataclass_args.fp16:
                 ValueError("fp16 is only available when CUDA/ a GPU is being used. ")
 
-        eval_steps = action_step(
+        eval_steps = self.action_step(
             ape=dataclass_args.eval_per_epoch,
             batch_size=dataclass_args.batch_size,
             gas=dataclass_args.gas,
@@ -292,17 +293,18 @@ class HappyTransformer():
             use_mps_device=True if self.device.type == "mps" else False
         )
 
-def action_step(ape, batch_size, gas, data_len, num_gpus) -> int:
-    """
-    :param ape: The number of actions per epoch (save, eval or log).
-    :param batch_size: The batch size.
-    :param gas: Gradient accumulation steps
-    :param data_len: Number of cases within the  training data
-    :param num_gpus: Number of GPUs
-    :return:
-    """
-    epoch_step_len = data_len / (batch_size * gas * num_gpus)
+    @staticmethod
+    def action_step(ape, batch_size, gas, data_len, num_gpus) -> int:
+        """
+        :param ape: The number of actions per epoch (save, eval or log).
+        :param batch_size: The batch size.
+        :param gas: Gradient accumulation steps
+        :param data_len: Number of cases within the  training data
+        :param num_gpus: Number of GPUs
+        :return:
+        """
+        epoch_step_len = data_len / (batch_size * gas * num_gpus)
 
-    action_step = math.ceil(epoch_step_len / ape)
+        action_step = math.ceil(epoch_step_len / ape)
 
-    return action_step
+        return action_step

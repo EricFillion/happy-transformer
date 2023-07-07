@@ -5,7 +5,6 @@ from transformers import TokenClassificationPipeline, AutoModelForTokenClassific
 
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.adaptors import get_adaptor
-from happytransformer.toc import  ARGS_TOC_TRAIN, ARGS_TOC_EVAl, ARGS_TOC_TEST
 
 
 @dataclass
@@ -61,11 +60,11 @@ class HappyTokenClassification(HappyTransformer):
         ]
 
 
-    def train(self, input_filepath, args=ARGS_TOC_TRAIN):
+    def train(self, input_filepath, eval_filepath, args=None):
         raise NotImplementedError("train() is currently not available")
 
-    def eval(self, input_filepath, args=ARGS_TOC_EVAl):
+    def eval(self, input_filepath, args=None):
         raise NotImplementedError("eval() is currently not available")
 
-    def test(self, input_filepath, args=ARGS_TOC_TEST):
+    def test(self, input_filepath, args=None):
         raise NotImplementedError("test() is currently not available")

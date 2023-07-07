@@ -7,9 +7,7 @@ from transformers import AutoModelForCausalLM, TextGenerationPipeline
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.args import GENTrainArgs, GENEvalArgs
 from happytransformer.adaptors import get_adaptor
-from happytransformer.gen import  ARGS_GEN_TEST
-from happytransformer.happy_trainer import EvalResult
-from happytransformer.fine_tuning_util import preprocess_concatenate
+from happytransformer.fine_tuning_util import preprocess_concatenate, EvalResult
 from transformers import default_data_collator
 
 """
@@ -136,7 +134,7 @@ class HappyGeneration(HappyTransformer):
         """
         return super(HappyGeneration, self).eval(input_filepath, args)
 
-    def test(self, input_filepath, args=ARGS_GEN_TEST):
+    def test(self, input_filepath, args=None):
         raise NotImplementedError("test() is currently not available")
 
     def _tok_function(self, raw_dataset, dataclass_args: GENTrainArgs):
