@@ -221,7 +221,7 @@ class HappyTransformer():
             adam_epsilon=dataclass_args.adam_epsilon,
             max_grad_norm=dataclass_args.max_grad_norm,
             num_train_epochs=dataclass_args.num_train_epochs,
-            report_to=["none"],
+            report_to=["none"] if len(dataclass_args.report_to) == 0 else dataclass_args.report_to,
             save_strategy="steps" if dataclass_args.save_steps > 0 else "no",
             save_steps=dataclass_args.save_steps,
             evaluation_strategy="steps" if dataclass_args.eval_steps > 0 else "no",

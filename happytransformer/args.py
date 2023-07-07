@@ -25,6 +25,7 @@ class TrainArgs:
     save_preprocessed_data_path: str = ""
     load_preprocessed_data_path: str = ""
     preprocessing_processes: int = 1
+    report_to: tuple = ()
 
 @dataclass
 class EvalArgs:
