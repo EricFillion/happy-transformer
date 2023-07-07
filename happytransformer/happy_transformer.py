@@ -6,7 +6,7 @@ Contains shared variables and methods for these classes.
 """
 import logging
 from transformers import  AutoTokenizer, AutoConfig
-from happytransformer.happy_trainer import  TrainArgs
+from happytransformer.happy_trainer import  TrainArgs, EvalResult
 import torch
 from datasets import load_dataset, load_from_disk, DatasetDict
 
@@ -74,10 +74,9 @@ class HappyTransformer():
         if type(args) == dict:
             raise ValueError("Dictionary training arguments are no longer supported as of Happy Transformer version 2.5.0.")
 
-        train_tok_data, eval_tok_data = self._preprocess_data(input_filepath=input_filepath,
+        train_tok_data, eval_tok_data = self._preprocess_data_train(input_filepath=input_filepath,
                                                               eval_filepath=eval_filepath,
-                                                              dataclass_args=args,
-                                                              file_type=self._t_data_file_type)
+                                                              dataclass_args=args)
 
         self._trainer._run_train(train_tok_data, eval_tok_data, args,  self._data_collator)
 
@@ -91,11 +90,17 @@ class HappyTransformer():
         :param args: settings in the form of a dictionary
         :return: correct percentage
         """
+
         if type(args) == dict:
-            raise ValueError("Dictionary evaluating arguments are no longer supported as of Happy Transformer version 2.5.0.")
+            raise ValueError(
+                "Dictionary evaluaging arguments are no longer supported as of Happy Transformer version 2.5.0.")
 
-        return self._trainer.eval(input_filepath=input_filepath, dataclass_args=args)
 
+        tokenized_dataset = self._preprocess_data_eval(input_filepath, args)
+
+        result = self._trainer._run_eval(tokenized_dataset, self._data_collator, args)
+
+        return EvalResult(loss=result["eval_loss"])
 
     def test(self, input_filepath, args):
         """
@@ -120,7 +125,7 @@ class HappyTransformer():
         self.model.save_pretrained(path)
         self.tokenizer.save_pretrained(path)
 
-    def _preprocess_data(self, input_filepath, eval_filepath, file_type, dataclass_args: TrainArgs):
+    def _preprocess_data_train(self, input_filepath, eval_filepath, dataclass_args: TrainArgs):
         """
         :param input_filepath: A path to a training file.
         :param eval_filepath:  A path to an evaluating file. Or "" if not evaluating file is provided.
@@ -131,13 +136,13 @@ class HappyTransformer():
 
         if not dataclass_args.load_preprocessed_data:
             if eval_filepath == "":
-                all_raw_data = load_dataset(file_type, data_files={"train": input_filepath}, split="train")
+                all_raw_data = load_dataset(self._t_data_file_type, data_files={"train": input_filepath}, split="train")
                 all_raw_data = all_raw_data.shuffle(seed=42)
                 split_text_data = all_raw_data.train_test_split(test_size=dataclass_args.eval_ratio)
                 train_tok_data = self._tok_function(split_text_data["train"], dataclass_args)
                 eval_tok_data = self._tok_function(split_text_data["test"], dataclass_args)
             else:
-                raw_data = load_dataset(file_type, data_files={"train": input_filepath, "eval": eval_filepath})
+                raw_data = load_dataset(self._t_data_file_type, data_files={"train": input_filepath, "eval": eval_filepath})
                 train_tok_data = self._tok_function(raw_data["train"], dataclass_args)
                 eval_tok_data = self._tok_function( raw_data["eval"], dataclass_args)
         else:
@@ -165,6 +170,26 @@ class HappyTransformer():
 
         return train_tok_data, eval_tok_data
 
+
+    def _preprocess_data_eval(self, input_filepath, args: TrainArgs):
+        if not args.load_preprocessed_data:
+            self.logger.info("Preprocessing dataset...")
+            datasets = load_dataset(self._t_data_file_type, data_files={"eval": input_filepath})
+            tokenized_dataset = self._tok_function(datasets["eval"], args)
+
+        else:
+            self.logger.info("Loading dataset from %s...", args.load_preprocessed_data_path)
+            tokenized_dataset = load_from_disk(args.load_preprocessed_data_path +"/eval")
+
+        if args.save_preprocessed_data:
+            if args.load_preprocessed_data:
+                self.logger.warning("Both save_preprocessed_data and load_data are enabled.")
+
+            self.logger.info("Saving evaluating dataset to %s...", args.save_preprocessed_data_path)
+            save_dataset = DatasetDict({"eval": tokenized_dataset})
+            save_dataset.save_to_disk(args.save_preprocessed_data_path)
+
+        return tokenized_dataset
 
     def _tok_function(self, raw_dataset, dataclass_args: TrainArgs):
         raise NotImplementedError()

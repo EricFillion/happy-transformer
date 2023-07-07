@@ -44,7 +44,7 @@ class HappyNextSentence(HappyTransformer):
 
         return score
 
-    def train(self, input_filepath, args=ARGS_QA_TRAIN):
+    def train(self, input_filepath, eval_filepath: str= "",  args=ARGS_QA_TRAIN):
         raise NotImplementedError("train() is currently not available")
 
     def eval(self, input_filepath, args=ARGS_QA_EVAl):

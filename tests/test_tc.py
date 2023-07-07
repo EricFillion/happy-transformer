@@ -138,7 +138,7 @@ def test_tc_save_load_train():
 
 def test_tc_save_load_eval():
     happy_wp = HappyTextClassification(model_type="DISTILBERT", model_name="distilbert-base-uncased-finetuned-sst-2-english")
-    output_path = "data/tc-train.json"
+    output_path = "data/tc-eval/"
     data_path = "../data/tc/train-eval.csv"
     args = TCEvalArgs()
 
