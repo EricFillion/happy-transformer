@@ -5,9 +5,9 @@ from dataclasses import dataclass
 from typing import List
 from transformers import AutoModelForCausalLM, TextGenerationPipeline
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.gen.trainer import GENTrainer, GENTrainArgs, GENEvalArgs
+from happytransformer.args import GENTrainArgs, GENEvalArgs
 from happytransformer.adaptors import get_adaptor
-from happytransformer.gen import ARGS_GEN_TRAIN, ARGS_GEN_EVAl, ARGS_GEN_TEST
+from happytransformer.gen import  ARGS_GEN_TEST
 from happytransformer.happy_trainer import EvalResult
 from happytransformer.fine_tuning_util import preprocess_concatenate
 from transformers import default_data_collator

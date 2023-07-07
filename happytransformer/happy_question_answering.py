@@ -6,13 +6,11 @@ from typing import List
 from dataclasses import dataclass
 from transformers import QuestionAnsweringPipeline, AutoModelForQuestionAnswering, DataCollatorWithPadding
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.qa.trainer import QATrainer, QATrainArgs, QAEvalArgs, QATestArgs
+from happytransformer.args import QATrainArgs, QAEvalArgs, QATestArgs
 from happytransformer.happy_trainer import EvalResult
-from happytransformer.qa import ARGS_QA_TRAIN, ARGS_QA_EVAl, ARGS_QA_TEST
 import csv
 from tqdm import tqdm
 from happytransformer.adaptors import get_adaptor
-from happytransformer.fine_tuning_util import create_args_dataclass
 
 @dataclass
 class QuestionAnsweringResult:

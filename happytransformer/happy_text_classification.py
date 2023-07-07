@@ -5,12 +5,10 @@ from dataclasses import dataclass
 
 from transformers import TextClassificationPipeline, AutoConfig, AutoModelForSequenceClassification, DataCollatorWithPadding
 
-from happytransformer.tc.trainer import TCTrainer, TCTrainArgs, TCEvalArgs, TCTestArgs
+from happytransformer.args import TCTrainArgs, TCEvalArgs, TCTestArgs
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.adaptors import get_adaptor
-from happytransformer.tc import ARGS_TC_TRAIN, ARGS_TC_EVAL, ARGS_TC_TEST
 from happytransformer.happy_trainer import EvalResult
-from happytransformer.fine_tuning_util import create_args_dataclass
 from tqdm import tqdm
 import csv
 

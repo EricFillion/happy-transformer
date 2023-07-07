@@ -4,9 +4,9 @@ from dataclasses import dataclass
 from transformers import FillMaskPipeline, AutoModelForMaskedLM, PretrainedConfig, DataCollatorForLanguageModeling
 from happytransformer.fine_tuning_util import preprocess_concatenate
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.wp.trainer import WPTrainer, WPTrainArgs, WPEvalArgs
+from happytransformer.args import WPTrainArgs, WPEvalArgs
 from happytransformer.adaptors import get_adaptor
-from happytransformer.wp import ARGS_WP_TRAIN, ARGS_WP_EVAl, ARGS_WP_TEST
+from happytransformer.wp import  ARGS_WP_TEST
 from happytransformer.happy_trainer import EvalResult
 from typing import Union
 

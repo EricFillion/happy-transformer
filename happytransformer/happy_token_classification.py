@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from transformers import TokenClassificationPipeline, AutoModelForTokenClassification
 
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.toc.trainer import TOCTrainer
 from happytransformer.adaptors import get_adaptor
 from happytransformer.toc import  ARGS_TOC_TRAIN, ARGS_TOC_EVAl, ARGS_TOC_TEST
 

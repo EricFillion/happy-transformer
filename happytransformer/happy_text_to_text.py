@@ -6,9 +6,9 @@ from dataclasses import dataclass
 from transformers import Text2TextGenerationPipeline, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq
 
 from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.tt.trainer import TTTrainer
 from happytransformer.adaptors import get_adaptor
-from happytransformer.tt.trainer import TTTrainArgs, TTEvalArgs, TTTestArgs
+
+from happytransformer.args import TTTrainArgs, TTEvalArgs, TTTestArgs
 
 from typing import Union
 

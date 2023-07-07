@@ -1,13 +1,11 @@
 """
 Parent class for training classes, such as TCTrainer and QATrainer
 """
-import torch
 from dataclasses import dataclass
 import tempfile
 from transformers import TrainingArguments, Trainer, Seq2SeqTrainingArguments, Seq2SeqTrainer
 import math
 from datasets import load_dataset, load_from_disk, DatasetDict
-from happytransformer.fine_tuning_util import preprocess_concatenate
 
 @dataclass
 class EvalResult:
