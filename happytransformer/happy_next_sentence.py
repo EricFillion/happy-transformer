@@ -23,6 +23,8 @@ class HappyNextSentence(HappyTransformer):
         self._pipeline = None
         self._trainer = None
 
+        self._type = "ns"
+
     def predict_next_sentence(self, sentence_a: str, sentence_b: str) -> float:
         """
         Predict the probability that sentence_b follows sentence_a.

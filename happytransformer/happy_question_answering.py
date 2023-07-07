@@ -52,6 +52,8 @@ class HappyQuestionAnswering(HappyTransformer):
         self._data_collator = DataCollatorWithPadding(self.tokenizer)
         self._t_data_file_type = "csv"
 
+        self._type = "qa"
+
     def answer_question(self, context: str, question: str, top_k: int = 1) \
             -> List[QuestionAnsweringResult]:
         """

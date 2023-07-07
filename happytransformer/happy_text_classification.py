@@ -50,6 +50,7 @@ class HappyTextClassification(HappyTransformer):
 
         self._data_collator = DataCollatorWithPadding(self.tokenizer)
         self._t_data_file_type = "csv"
+        self._type = "tc"
 
 
     def classify_text(self, text: str) -> TextClassificationResult:

@@ -64,6 +64,8 @@ class HappyTextToText(HappyTransformer):
 
         self._data_collator = DataCollatorForSeq2Seq(self.tokenizer, model=self.model)
         self._t_data_file_type = "csv"
+        self._type = "tt"
+
 
     def __assert_default_text_is_val(self, text):
         """

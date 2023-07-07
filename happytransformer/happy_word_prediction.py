@@ -44,6 +44,7 @@ class HappyWordPrediction(HappyTransformer):
                                                         mlm_probability=0.1  # todo modify
                                                         )
         self._t_data_file_type = "text"
+        self._type = "wp"
 
     def predict_mask(self, text: str, targets: Optional[List[str]] = None, top_k: int = 1) -> List[WordPredictionResult]:
         """

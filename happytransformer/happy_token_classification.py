@@ -39,6 +39,7 @@ class HappyTokenClassification(HappyTransformer):
         self._pipeline = TokenClassificationPipeline(model=self.model, tokenizer=self.tokenizer, device=self.device)
 
         self._trainer = TOCTrainer(self.model, model_type, self.tokenizer, self.device, self.logger)
+        self._type = "tok"
 
     def classify_token(self, text: str) -> List[TokenClassificationResult]:
         """

@@ -5,9 +5,11 @@ and HappyNextSentencePrediction called HappyTransformer
 Contains shared variables and methods for these classes.
 """
 import logging
-from transformers import  AutoTokenizer, AutoConfig
+from transformers import AutoTokenizer, TrainingArguments, Trainer, Seq2SeqTrainingArguments, Seq2SeqTrainer
 from happytransformer.happy_trainer import  TrainArgs, EvalResult
 import torch
+import tempfile
+import math
 from datasets import load_dataset, load_from_disk, DatasetDict
 
 class HappyTransformer():
@@ -61,6 +63,7 @@ class HappyTransformer():
         # Set within the child classes.
         self._data_collator = None
         self._t_data_file_type = None
+        self._type = None
 
 
     def train(self, input_filepath: str ,  args: TrainArgs, eval_filepath: str = "", ):
@@ -78,7 +81,7 @@ class HappyTransformer():
                                                               eval_filepath=eval_filepath,
                                                               dataclass_args=args)
 
-        self._trainer._run_train(train_tok_data, eval_tok_data, args,  self._data_collator)
+        self._run_train(train_tok_data, eval_tok_data, args,  self._data_collator)
 
 
 
@@ -98,7 +101,7 @@ class HappyTransformer():
 
         tokenized_dataset = self._preprocess_data_eval(input_filepath, args)
 
-        result = self._trainer._run_eval(tokenized_dataset, self._data_collator, args)
+        result = self._run_eval(tokenized_dataset, self._data_collator, args)
 
         return EvalResult(loss=result["eval_loss"])
 
@@ -193,3 +196,113 @@ class HappyTransformer():
 
     def _tok_function(self, raw_dataset, dataclass_args: TrainArgs):
         raise NotImplementedError()
+
+    def _get_training_args(self, dataclass_args, output_path, data_len ):
+        """
+        :param args: a dataclass of arguments for training
+        :param output_path: A string to a temporary directory
+        :return: A TrainingArguments object
+        """
+        if self.device.type != "cuda":
+            if dataclass_args.fp16:
+                ValueError("fp16 is only available when CUDA/ a GPU is being used. ")
+
+        eval_steps = action_step(
+            ape=dataclass_args.eval_per_epoch,
+            batch_size=dataclass_args.batch_size,
+            gas=dataclass_args.gas,
+            data_len=data_len,
+            num_gpus= 1 # todo make this adjustable
+        )
+        if self._type == "tt":
+            arg_class = Seq2SeqTrainingArguments
+        else:
+            arg_class = TrainingArguments
+
+        return arg_class(
+            output_dir=output_path,
+            learning_rate=dataclass_args.learning_rate,
+            weight_decay=dataclass_args.weight_decay,
+            adam_beta1=dataclass_args.adam_beta1,
+            adam_beta2=dataclass_args.adam_beta2,
+            adam_epsilon=dataclass_args.adam_epsilon,
+            max_grad_norm=dataclass_args.max_grad_norm,
+            num_train_epochs=dataclass_args.num_train_epochs,
+            report_to=["none"],
+            save_strategy="no",
+            # todo enable after supporting eval dataset
+            evaluation_strategy="steps",
+            eval_steps=eval_steps,
+            per_device_train_batch_size=dataclass_args.batch_size,
+            fp16=dataclass_args.fp16,
+            gradient_accumulation_steps=dataclass_args.gas,
+            use_mps_device= True if self.device.type == "mps" else False
+        )
+
+
+    def _run_train(self, train_dataset, eval_dataset, dataclass_args, data_collator):
+        """
+        :param dataset: a child of torch.utils.data.Dataset
+        :param dataclass_args: a dataclass that contains settings
+        :return: None
+        """
+        with tempfile.TemporaryDirectory() as tmp_dir_name:
+            training_args = self._get_training_args(dataclass_args, tmp_dir_name, len(train_dataset))
+
+            if self._type == "tt":
+                train_class = Seq2SeqTrainer
+            else:
+                train_class = Trainer
+
+            trainer = train_class(
+                model=self.model,
+                args=training_args,
+                train_dataset=train_dataset,
+                eval_dataset=eval_dataset,
+                tokenizer=self.tokenizer,
+                data_collator=data_collator,
+            )
+            trainer.train()
+
+    def _run_eval(self, dataset, data_collator, dataclass_args):
+        """
+        :param dataset: a child of torch.utils.data.Dataset
+        :return: None
+        """
+        with tempfile.TemporaryDirectory() as tmp_dir_name:
+            eval_args = self._get_eval_args(tmp_dir_name, dataclass_args)
+            trainer = Trainer(
+                model=self.model,
+                args=eval_args,
+                eval_dataset=dataset,
+                data_collator=data_collator
+            )
+            return trainer.evaluate()
+
+    def _get_eval_args(self, output_path, dataclass_args):
+        """
+        :param output_path: A string to a temporary directory
+        :return: A TrainingArguments object
+        """
+        return TrainingArguments(
+            output_dir=output_path,
+            seed=42,
+            report_to=['none'],
+            per_device_eval_batch_size=dataclass_args.batch_size,
+            use_mps_device=True if self.device.type == "mps" else False
+        )
+
+def action_step(ape, batch_size, gas, data_len, num_gpus) -> int:
+    """
+    :param ape: The number of actions per epoch (save, eval or log).
+    :param batch_size: The batch size.
+    :param gas: Gradient accumulation steps
+    :param data_len: Number of cases within the  training data
+    :param num_gpus: Number of GPUs
+    :return:
+    """
+    epoch_step_len = data_len / (batch_size * gas * num_gpus)
+
+    action_step = math.ceil(epoch_step_len / ape)
+
+    return action_step

@@ -63,6 +63,8 @@ class HappyGeneration(HappyTransformer):
         self._data_collator = default_data_collator
         self._t_data_file_type = "text"
 
+        self._type = "gen"
+
     def __assert_default_text_is_val(self, text):
         """
         Ensures the input's text input is valid.
