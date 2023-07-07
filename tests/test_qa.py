@@ -89,9 +89,8 @@ def test_qa_with_dic():
         result_eval = happy_qa.eval("../data/qa/train-eval.csv", args=eval_args)
 
     test_args = {}
-
-    result_test = happy_qa.test("../data/qa/test.csv", args=test_args)
-    assert type(result_test[0].answer) == str
+    with pytest.raises(ValueError):
+        result_test = happy_qa.test("../data/qa/test.csv", args=test_args)
 
 def test_tc_with_dataclass():
 

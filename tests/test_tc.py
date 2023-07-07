@@ -105,8 +105,8 @@ def test_tc_with_dic():
         result_eval = happy_tc.eval("../data/tc/train-eval.csv", args=eval_args)
 
     test_args = {}
-
-    result_test = happy_tc.test("../data/tc/test.csv", args=test_args)
+    with pytest.raises(ValueError):
+        result_test = happy_tc.test("../data/tc/test.csv", args=test_args)
 
 
 def test_tc_with_dataclass():
