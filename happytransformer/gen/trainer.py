@@ -39,20 +39,6 @@ class GENTrainer(HappyTrainer):
     Trainer class for HappyWordPrediction
     """
 
-    def train(self, input_filepath, eval_filepath, dataclass_args: GENTrainArgs):
-        """
-        :param input_filepath: A file path to a text file that contains nothing but training data
-        :param dataclass_args: A GENTrainArgs() object
-        :return: None
-        """
-        train_tok_data, eval_tok_data = self._preprocess_data(input_filepath=input_filepath,
-                                                              eval_filepath=eval_filepath,
-                                                              dataclass_args=dataclass_args,
-                                                              file_type="text")
-        self.logger.info("Training...")
-
-        self._run_train(train_tok_data, eval_tok_data, dataclass_args, default_data_collator)
-
     def eval(self, input_filepath, dataclass_args: GENEvalArgs):
         """
         :param input_filepath: A file path to a text file that contains nothing but evaluating data
@@ -84,5 +70,3 @@ class GENTrainer(HappyTrainer):
     def test(self, input_filepath, solve, args):
         raise NotImplementedError()
 
-    def _tok_function(self, raw_dataset, dataclass_args: GENTrainArgs):
-        return preprocess_concatenate(tokenizer=self.tokenizer, dataset=raw_dataset, preprocessing_processes=dataclass_args.preprocessing_processes, mlm=False)

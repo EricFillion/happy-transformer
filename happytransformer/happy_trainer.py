@@ -4,9 +4,10 @@ Parent class for training classes, such as TCTrainer and QATrainer
 import torch
 from dataclasses import dataclass
 import tempfile
-from transformers import TrainingArguments, Trainer
+from transformers import TrainingArguments, Trainer, Seq2SeqTrainingArguments, Seq2SeqTrainer
 import math
 from datasets import load_dataset, load_from_disk, DatasetDict
+from happytransformer.fine_tuning_util import preprocess_concatenate
 
 @dataclass
 class EvalResult:
@@ -42,16 +43,20 @@ class TrainArgs:
     fp16: bool = False
     eval_per_epoch: int = 2
     eval_ratio: float = 0.1  #  if eval_filepath is not provided a portion of the training data will be used for evaluating.
-
+    load_preprocessed_data: bool = False
+    save_preprocessed_data: bool = False
+    save_preprocessed_data_path: str = ""
+    load_preprocessed_data_path: str = ""
 
 
 class HappyTrainer:
-    def __init__(self, model, model_type, tokenizer, device, logger):
+    def __init__(self, model, model_type, tokenizer, device, logger, text_to_text=False):
         self.model = model
         self.model_type = model_type
         self.tokenizer = tokenizer
         self.device = device
         self.logger = logger
+        self.text_to_text = text_to_text
 
 
     def train(self, input_filepath, eval_filepath, args):
@@ -107,8 +112,12 @@ class HappyTrainer:
             data_len=data_len,
             num_gpus= 1 # todo make this adjustable
         )
+        if self.text_to_text:
+            arg_class = Seq2SeqTrainingArguments
+        else:
+            arg_class = TrainingArguments
 
-        return TrainingArguments(
+        return arg_class(
             output_dir=output_path,
             learning_rate=dataclass_args.learning_rate,
             weight_decay=dataclass_args.weight_decay,
@@ -137,7 +146,13 @@ class HappyTrainer:
         """
         with tempfile.TemporaryDirectory() as tmp_dir_name:
             training_args = self._get_training_args(dataclass_args, tmp_dir_name, len(train_dataset))
-            trainer = Trainer(
+
+            if self.text_to_text:
+                train_class = Seq2SeqTrainer
+            else:
+                train_class = Trainer
+
+            trainer = train_class(
                 model=self.model,
                 args=training_args,
                 train_dataset=train_dataset,

@@ -9,7 +9,8 @@ from happytransformer.gen.trainer import GENTrainer, GENTrainArgs, GENEvalArgs
 from happytransformer.adaptors import get_adaptor
 from happytransformer.gen import ARGS_GEN_TRAIN, ARGS_GEN_EVAl, ARGS_GEN_TEST
 from happytransformer.happy_trainer import EvalResult
-from happytransformer.fine_tuning_util import create_args_dataclass
+from happytransformer.fine_tuning_util import preprocess_concatenate
+from transformers import default_data_collator
 
 """
 The main settings that users will adjust when performing experiments
@@ -58,6 +59,9 @@ class HappyGeneration(HappyTransformer):
         self._pipeline = TextGenerationPipeline(model=self.model, tokenizer=self.tokenizer, device=self.device)
 
         self._trainer = GENTrainer(self.model, model_type, self.tokenizer, self.device, self.logger)
+
+        self._data_collator = default_data_collator
+        self._t_data_file_type = "text"
 
     def __assert_default_text_is_val(self, text):
         """
@@ -134,3 +138,8 @@ class HappyGeneration(HappyTransformer):
 
     def test(self, input_filepath, args=ARGS_GEN_TEST):
         raise NotImplementedError("test() is currently not available")
+
+    def _tok_function(self, raw_dataset, dataclass_args: GENTrainArgs):
+        return preprocess_concatenate(tokenizer=self.tokenizer, dataset=raw_dataset,
+                                      preprocessing_processes=dataclass_args.preprocessing_processes, mlm=False)
+

@@ -64,16 +64,6 @@ class TCTrainer(HappyTrainer):
         return tok_dataset
 
 
-    def train(self, input_filepath, eval_filepath, dataclass_args: TCTrainArgs):
-
-        train_data, eval_data = self._preprocess_data(input_filepath=input_filepath,
-                                                      eval_filepath=eval_filepath,
-                                                      dataclass_args=dataclass_args,
-                                                      file_type="csv")
-
-        data_collator = DataCollatorWithPadding(self.tokenizer)
-        self._run_train(train_data, eval_data, dataclass_args, data_collator)
-
     def eval(self, input_filepath, dataclass_args: TCEvalArgs):
         if not dataclass_args.load_preprocessed_data:
             self.logger.info("Preprocessing dataset...")

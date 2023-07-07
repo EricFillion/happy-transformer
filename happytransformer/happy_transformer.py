@@ -5,10 +5,10 @@ and HappyNextSentencePrediction called HappyTransformer
 Contains shared variables and methods for these classes.
 """
 import logging
-import torch
 from transformers import  AutoTokenizer, AutoConfig
 from happytransformer.happy_trainer import  TrainArgs
-from happytransformer.fine_tuning_util import create_args_dataclass
+import torch
+from datasets import load_dataset, load_from_disk, DatasetDict
 
 class HappyTransformer():
     """
@@ -58,6 +58,10 @@ class HappyTransformer():
 
         self.logger.info("Using model: %s", self.device)
 
+        # Set within the child classes.
+        self._data_collator = None
+        self._t_data_file_type = None
+
 
     def train(self, input_filepath: str ,  args: TrainArgs, eval_filepath: str = "", ):
         """
@@ -70,9 +74,12 @@ class HappyTransformer():
         if type(args) == dict:
             raise ValueError("Dictionary training arguments are no longer supported as of Happy Transformer version 2.5.0.")
 
+        train_tok_data, eval_tok_data = self._preprocess_data(input_filepath=input_filepath,
+                                                              eval_filepath=eval_filepath,
+                                                              dataclass_args=args,
+                                                              file_type=self._t_data_file_type)
 
-        self._trainer.train(input_filepath=input_filepath, eval_filepath=eval_filepath,
-                            dataclass_args=args)
+        self._trainer._run_train(train_tok_data, eval_tok_data, args,  self._data_collator)
 
 
 
@@ -113,3 +120,51 @@ class HappyTransformer():
         self.model.save_pretrained(path)
         self.tokenizer.save_pretrained(path)
 
+    def _preprocess_data(self, input_filepath, eval_filepath, file_type, dataclass_args: TrainArgs):
+        """
+        :param input_filepath: A path to a training file.
+        :param eval_filepath:  A path to an evaluating file. Or "" if not evaluating file is provided.
+        :param file_type: The type of file: csv, text etc
+        :param dataclass_args: A TrainArgs child class.
+        :return:
+        """
+
+        if not dataclass_args.load_preprocessed_data:
+            if eval_filepath == "":
+                all_raw_data = load_dataset(file_type, data_files={"train": input_filepath}, split="train")
+                all_raw_data = all_raw_data.shuffle(seed=42)
+                split_text_data = all_raw_data.train_test_split(test_size=dataclass_args.eval_ratio)
+                train_tok_data = self._tok_function(split_text_data["train"], dataclass_args)
+                eval_tok_data = self._tok_function(split_text_data["test"], dataclass_args)
+            else:
+                raw_data = load_dataset(file_type, data_files={"train": input_filepath, "eval": eval_filepath})
+                train_tok_data = self._tok_function(raw_data["train"], dataclass_args)
+                eval_tok_data = self._tok_function( raw_data["eval"], dataclass_args)
+        else:
+            if dataclass_args.save_preprocessed_data_path.endswith(".json"):
+                raise ValueError(
+                    "As of version 2.5.0 preprocessed files are not longer saved as json files. Please preprocess your data again")
+
+            self.logger.info("Loading dataset from %s...", dataclass_args.load_preprocessed_data_path)
+            tok_data = load_from_disk(dataclass_args.load_preprocessed_data_path)
+            train_tok_data = tok_data["train"]
+            eval_tok_data = tok_data["eval"]
+
+        if dataclass_args.save_preprocessed_data:
+
+            if dataclass_args.load_preprocessed_data:
+                self.logger.warning("Both save_preprocessed_data and load_data are enabled,")
+
+            if dataclass_args.save_preprocessed_data_path.endswith(".json"):
+                raise ValueError(
+                    "As of version 2.5.0 preprocessed files are not longer saved as json files. Please provide a path to a folder.")
+
+
+            combined_tok = DatasetDict({"train": train_tok_data, "eval": eval_tok_data})
+            combined_tok.save_to_disk(dataclass_args.save_preprocessed_data_path)
+
+        return train_tok_data, eval_tok_data
+
+
+    def _tok_function(self, raw_dataset, dataclass_args: TrainArgs):
+        raise NotImplementedError()

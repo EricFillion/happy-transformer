@@ -3,7 +3,7 @@ Contains a class called HappyTextClassification that performs text classificatio
 """
 from dataclasses import dataclass
 
-from transformers import TextClassificationPipeline, AutoConfig, AutoModelForSequenceClassification
+from transformers import TextClassificationPipeline, AutoConfig, AutoModelForSequenceClassification, DataCollatorWithPadding
 
 from happytransformer.tc.trainer import TCTrainer, TCTrainArgs, TCEvalArgs, TCTestArgs
 from happytransformer.happy_transformer import HappyTransformer
@@ -46,6 +46,11 @@ class HappyTextClassification(HappyTransformer):
             self.model, self.model_type,
             self.tokenizer, self.device, self.logger
         )
+
+
+        self._data_collator = DataCollatorWithPadding(self.tokenizer)
+        self._t_data_file_type = "csv"
+
 
     def classify_text(self, text: str) -> TextClassificationResult:
         """
@@ -102,3 +107,21 @@ class HappyTextClassification(HappyTransformer):
             raise ValueError("Invalid args type. Use a TCTestArgs() object or a dictionary")
 
         return self._trainer.test(input_filepath=input_filepath, solve=self.classify_text, dataclass_args=method_dataclass_args)
+
+
+    def _tok_function(self, raw_dataset, dataclass_args: TCTrainArgs):
+
+        def __preprocess_function(case):
+            result = self.tokenizer(case["text"], truncation=True, padding=True)
+            result["labels"] = case["label"]
+            return result
+
+        tok_dataset = raw_dataset.map(
+            __preprocess_function,
+            batched=True,
+            num_proc=1,
+            remove_columns=["text"],
+            desc="Tokenizing data"
+        )
+
+        return tok_dataset

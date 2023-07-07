@@ -1,13 +1,14 @@
 from typing import List, Optional
 from dataclasses import dataclass
 
-from transformers import FillMaskPipeline, AutoModelForMaskedLM, PretrainedConfig
-
+from transformers import FillMaskPipeline, AutoModelForMaskedLM, PretrainedConfig, DataCollatorForLanguageModeling
+from happytransformer.fine_tuning_util import preprocess_concatenate
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.wp.trainer import WPTrainer, WPTrainArgs, WPEvalArgs
 from happytransformer.adaptors import get_adaptor
 from happytransformer.wp import ARGS_WP_TRAIN, ARGS_WP_EVAl, ARGS_WP_TEST
 from happytransformer.happy_trainer import EvalResult
+from typing import Union
 
 @dataclass
 class WordPredictionResult:
@@ -35,7 +36,14 @@ class HappyWordPrediction(HappyTransformer):
 
         self._pipeline = FillMaskPipeline(model=self.model, tokenizer=self.tokenizer, device=self.device)
 
+
+
         self._trainer = WPTrainer(self.model, model_type, self.tokenizer, self.device, self.logger)
+
+        self._data_collator = DataCollatorForLanguageModeling(tokenizer=self.tokenizer,
+                                                        mlm_probability=0.1  # todo modify
+                                                        )
+        self._t_data_file_type = "text"
 
     def predict_mask(self, text: str, targets: Optional[List[str]] = None, top_k: int = 1) -> List[WordPredictionResult]:
         """
@@ -71,3 +79,17 @@ class HappyWordPrediction(HappyTransformer):
 
     def test(self, input_filepath, args=ARGS_WP_TEST):
         raise NotImplementedError("test() is currently not available")
+
+    def _tok_function(self, raw_dataset, dataclass_args: Union[WPTrainArgs, WPEvalArgs]):
+        if not dataclass_args.line_by_line:
+            return preprocess_concatenate(tokenizer=self.tokenizer, dataset=raw_dataset,
+                                      preprocessing_processes=dataclass_args.preprocessing_processes, mlm=True)
+        else:
+            def tokenize_function(example):
+                return self.tokenizer(example["text"],
+                                 add_special_tokens=True, truncation=True)
+
+            tokenized_dataset = raw_dataset.map(tokenize_function, batched=True,
+                                            num_proc=dataclass_args.preprocessing_processes,
+                                            remove_columns=["text"])
+            return tokenized_dataset

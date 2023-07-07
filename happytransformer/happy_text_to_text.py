@@ -3,13 +3,14 @@ Contains a class called HappyTextToText which performs text to text generation
 """
 from dataclasses import dataclass
 
-from transformers import Text2TextGenerationPipeline, AutoModelForSeq2SeqLM
+from transformers import Text2TextGenerationPipeline, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq
 
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.tt.trainer import TTTrainer
 from happytransformer.adaptors import get_adaptor
 from happytransformer.tt.trainer import TTTrainArgs, TTEvalArgs, TTTestArgs
 
+from typing import Union
 
 @dataclass
 class TextToTextResult:
@@ -58,6 +59,11 @@ class HappyTextToText(HappyTransformer):
 
         self._trainer = TTTrainer(self.model, model_type, self.tokenizer, self.device, self.logger)
 
+        self.__max_input_length = 1024
+        self.__max_output_length = 1024
+
+        self._data_collator = DataCollatorForSeq2Seq(self.tokenizer, model=self.model)
+        self._t_data_file_type = "csv"
 
     def __assert_default_text_is_val(self, text):
         """
@@ -118,3 +124,32 @@ class HappyTextToText(HappyTransformer):
 
     def test(self, input_filepath, args=TTTestArgs):
         raise NotImplementedError("test() is currently not available")
+
+
+    def _tok_function(self, raw_dataset, dataclass_args: Union[TTTrainArgs, TTEvalArgs]):
+
+        self.__max_input_length = dataclass_args.max_input_length
+        self.__max_output_length = dataclass_args.max_output_length
+
+        def __preprocess_function(examples):
+            """
+            :param examples:
+            :return:
+            """
+            model_inputs = self.tokenizer(examples["input"], max_length=self.__max_input_length, truncation=True)
+
+            # Setup the tokenizer for targets
+            with self.tokenizer.as_target_tokenizer():
+                labels = self.tokenizer(examples["target"], max_length=self.__max_output_length, truncation=True)
+
+            model_inputs["labels"] = labels["input_ids"]
+            return model_inputs
+
+        tok_dataset = raw_dataset.map(
+            __preprocess_function,
+            batched=True,
+            num_proc=dataclass_args.preprocessing_processes,
+            remove_columns=["input", "target"],
+        )
+
+        return tok_dataset

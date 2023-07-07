@@ -4,8 +4,7 @@ Contains the HappyQuestionAnswering class.
 """
 from typing import List
 from dataclasses import dataclass
-from transformers import QuestionAnsweringPipeline, AutoModelForQuestionAnswering
-
+from transformers import QuestionAnsweringPipeline, AutoModelForQuestionAnswering, DataCollatorWithPadding
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.qa.trainer import QATrainer, QATrainArgs, QAEvalArgs, QATestArgs
 from happytransformer.happy_trainer import EvalResult
@@ -49,6 +48,9 @@ class HappyQuestionAnswering(HappyTransformer):
         self._pipeline = QuestionAnsweringPipeline(model=self.model, tokenizer=self.tokenizer, device=self.device)
 
         self._trainer = QATrainer(self.model, model_type, self.tokenizer, self.device, self.logger)
+
+        self._data_collator = DataCollatorWithPadding(self.tokenizer)
+        self._t_data_file_type = "csv"
 
     def answer_question(self, context: str, question: str, top_k: int = 1) \
             -> List[QuestionAnsweringResult]:
@@ -126,3 +128,48 @@ class HappyQuestionAnswering(HappyTransformer):
 
 
         return self._trainer.test(input_filepath=input_filepath, solve=self.answer_question, dataclass_args=method_dataclass_args)
+
+
+    def _tok_function(self, raw_dataset, dataclass_args: QATrainArgs):
+
+        def __preprocess_function(case):
+            print(case)
+            case["answer_start"] = int(case['answer_start'])
+            gold_text = case['answer_text']
+            start_idx = case['answer_start']
+            end_idx = start_idx + len(gold_text)
+
+            # todo (maybe): strip answer['text'] (remove white space from start and end)
+            # sometimes squad answers are off by a character or two – fix this
+            if case["context"][start_idx:end_idx] == gold_text:
+                case['answer_end'] = end_idx
+            elif case["context"][start_idx - 1:end_idx - 1] == gold_text:
+                case["context"]['answer_start'] = start_idx - 1
+                case["context"]['answer_end'] = end_idx - 1
+            elif case[start_idx - 2:end_idx - 2] == gold_text:
+                case["context"]['answer_start'] = start_idx - 2
+                case["context"]['answer_end'] = end_idx - 2
+
+            encodings = self.tokenizer(case["context"], case["question"], truncation=True, padding=True)
+
+            start_position = encodings.char_to_token(case['answer_start'])
+            end_position =  encodings.char_to_token(case['answer_end'] - 1)
+            if start_position is None:
+                start_position = self.tokenizer.model_max_length
+            if end_position is None:
+                end_position = self.tokenizer.model_max_length
+
+            encodings.update({'start_positions': start_position, 'end_positions': end_position})
+
+            return encodings
+
+
+        tok_dataset = raw_dataset.map(
+            __preprocess_function,
+            batched=False,
+            num_proc=1,
+            remove_columns=["context", "question", "answer_text", "answer_start"],
+            desc="Tokenizing data"
+        )
+
+        return tok_dataset
