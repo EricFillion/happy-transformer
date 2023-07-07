@@ -22,7 +22,7 @@ def main():
 
     # uncomment the deepspeed parameter to use Deepspeed
     args = GENTrainArgs(
-        # deepspeed="deepspeed/ds_config/json"
+        # deepspeed="../deepspeed/ds_config/json"
     )
 
     happy_gen.train(train_txt_path, args=args)
