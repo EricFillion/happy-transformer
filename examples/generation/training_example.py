@@ -1,5 +1,5 @@
 from datasets import load_dataset
-from happytransformer.happy_generation import HappyGeneration
+from happytransformer import HappyGeneration, GENTrainArgs
 
 
 def main():
@@ -20,7 +20,12 @@ def main():
 
     before_loss = happy_gen.eval(eval_txt_path)
 
-    happy_gen.train(train_txt_path)
+    # uncomment the deepspeed parameter to use Deepspeed
+    args = GENTrainArgs(
+        # deepspeed="deepspeed/ds_config/json"
+    )
+
+    happy_gen.train(train_txt_path, args=args)
 
     after_loss = happy_gen.eval(eval_txt_path)
 
