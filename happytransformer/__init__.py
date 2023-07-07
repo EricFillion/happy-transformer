@@ -6,11 +6,6 @@ from happytransformer.happy_token_classification import HappyTokenClassification
 from happytransformer.happy_generation import HappyGeneration, GENSettings
 from happytransformer.happy_text_to_text import HappyTextToText, TTSettings
 
-from happytransformer.gen.default_args import ARGS_GEN_TRAIN, ARGS_GEN_EVAl
-from happytransformer.qa.default_args import ARGS_QA_TRAIN, ARGS_QA_EVAl, ARGS_QA_TEST
-from happytransformer.tc.default_args import ARGS_TC_TRAIN, ARGS_TC_EVAL, ARGS_TC_TEST
-from happytransformer.wp.default_args import ARGS_WP_TRAIN, ARGS_WP_EVAl
-
 from happytransformer.args import (
     GENTrainArgs, GENEvalArgs,
     QATestArgs, QAEvalArgs, QATrainArgs,
@@ -18,6 +13,25 @@ from happytransformer.args import (
     WPTrainArgs, WPEvalArgs,
     TTTrainArgs, TTEvalArgs
 )
+
+# Legacy imports
+
+
+from happytransformer.legacy import (
+    ARGS_GEN_TRAIN,
+    ARGS_GEN_EVAl,
+    ARGS_QA_TRAIN,
+    ARGS_QA_EVAl,
+    ARGS_QA_TEST,
+    ARGS_SP_TRAIN,
+    ARGS_TC_TRAIN,
+    ARGS_TC_EVAL,
+    ARGS_TC_TEST,
+    ARGS_TOC_TRAIN,
+    ARGS_TOC_EVAl,
+    ARGS_TOC_TEST,
+    ARGS_WP_TRAIN,
+    ARGS_WP_EVAl)
 
 
 
