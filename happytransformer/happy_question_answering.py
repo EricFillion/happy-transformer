@@ -24,7 +24,7 @@ class HappyQuestionAnswering(HappyTransformer):
     def __init__(self, model_type="DISTILBERT",
                  model_name="distilbert-base-cased-distilled-squad", 
                  load_path: str = "",
-                 use_auth_token: str = None, from_tf=False):
+                 use_auth_token: str = None):
         
         self.adaptor = get_adaptor(model_type)
         model_class = AutoModelForQuestionAnswering

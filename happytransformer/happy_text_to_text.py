@@ -27,7 +27,7 @@ class HappyTextToText(HappyTransformer):
     """
     A user facing class for text to text generation
     """
-    def __init__(self, model_type: str = "T5", model_name: str = "t5-small", load_path: str = "", use_auth_token: str = None, from_tf=False):
+    def __init__(self, model_type: str = "T5", model_name: str = "t5-small", load_path: str = "", use_auth_token: str = None):
 
         self.adaptor = get_adaptor(model_type)
         model_class = AutoModelForSeq2SeqLM
