@@ -302,3 +302,9 @@ class HappyTransformer():
         action_step = math.ceil(epoch_step_len / ape)
 
         return action_step
+
+    def push_to_hub(self, repo_name, private=True):
+        self.logger.info("Pushing model...")
+        self.model.push_to_hub(repo_name, private=private)
+        self.logger.info("Pushing tokenizer...")
+        self.tokenizer.push_to_hub(repo_name, private=private)
