@@ -1,6 +1,3 @@
-"""
-Contains the HappyGeneration class
-"""
 from dataclasses import dataclass
 from typing import List
 from transformers import AutoModelForCausalLM, TextGenerationPipeline
@@ -10,11 +7,6 @@ from happytransformer.adaptors import get_adaptor
 from happytransformer.fine_tuning_util import preprocess_concatenate, EvalResult
 from transformers import default_data_collator
 
-"""
-The main settings that users will adjust when performing experiments
-
-The values for full_settings are the same as the default values above except for min and max length. 
-"""
 @dataclass
 class GENSettings:
     min_length: int = 10
@@ -34,14 +26,6 @@ class GenerationResult:
 
 
 class HappyGeneration(HappyTransformer):
-    """
-    This class is a user facing class that allows users to generate text using
-    text generation Transformer models.
-
-    The purpose of this class is to be lightweight and easy
-    to understand and to offload complex tasks to
-    other classes.
-    """
     def __init__(self, model_type: str = "GPT2", model_name: str = "gpt2", 
                  load_path: str = "", use_auth_token: str = None):
 
@@ -62,12 +46,6 @@ class HappyGeneration(HappyTransformer):
 
 
     def __assert_default_text_is_val(self, text):
-        """
-        Ensures the input's text input is valid.
-        Raises a Value Error if the text input is not valid.
-        :param text: The value the user inputs for the "text" parameter
-        """
-
         if not isinstance(text, str):
             raise ValueError("The text input must be a string")
         if not text:
@@ -75,12 +53,6 @@ class HappyGeneration(HappyTransformer):
 
 
     def generate_text(self, text: str, args: GENSettings=GENSettings()) -> GenerationResult:
-        """
-        :param text: starting text that the model uses as a prompt to continue it.
-        :param args: A GENSettings object
-        :return: A GenerationResult() object
-        """
-
         self.__assert_default_text_is_val(text)
         input_ids = self.tokenizer.encode(text, return_tensors="pt")
         adjusted_min_length = args.min_length + len(input_ids[0])
@@ -106,32 +78,13 @@ class HappyGeneration(HappyTransformer):
 
 
     def __post_process_generated_text(self, result, text):
-        """
-        A method for processing the output of the model. More features will be added later.
-        :param result: result the output of the model after being decoded
-        :param text:  the original input to generate_text
-        :return: returns to text after going through post-processing. Removes starting text
-        """
-
         return result[len(text):]
 
 
     def train(self, input_filepath: str, eval_filepath: str ="", args: GENTrainArgs =GENTrainArgs()):
-        """
-        :param input_filepath: A file path to a text file that contains training data. This data will also be used for evaluating if
-        eval_filepath is not provided.
-        :param eval_filepath: A file path to a text file that contains evaluating data.
-        :param args: either a GENTrainArgs() object or a dictionary that contains all of the same keys as ARGS_GEN_TRAIN
-        :return: None
-        """
         super(HappyGeneration, self).train(input_filepath, args, eval_filepath)
 
     def eval(self, input_filepath: str, args: GENEvalArgs =GENEvalArgs()) -> EvalResult:
-        """
-        :param input_filepath:a file path to a text file that contains nothing but evaluating data
-        :param args: either a GENEvalArgs() object or a dictionary that contains all of the same keys as ARGS_GEN_EVAl
-        :return: None
-        """
         return super(HappyGeneration, self).eval(input_filepath, args)
 
     def test(self, input_filepath, args=None):

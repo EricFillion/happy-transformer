@@ -1,9 +1,3 @@
-"""
-Contains the parent class to HappyTextClassification, HappyWordPrediction, HappyQuestionAnswering
-and HappyNextSentencePrediction called HappyTransformer
-
-Contains shared variables and methods for these classes.
-"""
 import logging
 from transformers import AutoTokenizer, TrainingArguments, Trainer, Seq2SeqTrainingArguments, Seq2SeqTrainer, AutoConfig
 import torch
@@ -15,11 +9,6 @@ from happytransformer.fine_tuning_util import EvalResult
 from typing import Union
 
 class HappyTransformer():
-    """
-    Parent class to HappyTextClassification, HappyWordPrediction, HappyQuestionAnswering
-    and HappyNextSentencePrediction.
-
-    """
     _model_class = None
 
     def __init__(self, model_type, model_name, load_path="", use_auth_token: Union[str, bool] = None):
@@ -64,13 +53,6 @@ class HappyTransformer():
         self._type = None
 
     def train(self, input_filepath: str ,  args: TrainArgs, eval_filepath: str = "", ):
-        """
-        Trains a model
-        :param input_filepath: A string that contains a path to a file that contains training data.
-        :param input_filepath: A  string that contains a path to a file that contains eval data.
-        :param args: A TrainArgs() child class such as GENTrainArgs()
-        :return: None
-        """
         if type(args) == dict:
             raise ValueError("Dictionary training arguments are no longer supported as of Happy Transformer version 2.5.0.")
 
@@ -83,14 +65,6 @@ class HappyTransformer():
 
 
     def eval(self, input_filepath, args):
-        """
-        Evaluates the model. Determines how well the model performs on a given dataset
-        :param input_filepath: a string that contains a path to a
-         csv file that contains evaluating data
-        :param args: settings in the form of a dictionary
-        :return: correct percentage
-        """
-
         if type(args) == dict:
             raise ValueError(
                 "Dictionary evaluaging arguments are no longer supported as of Happy Transformer version 2.5.0.")
@@ -103,36 +77,13 @@ class HappyTransformer():
         return EvalResult(loss=result["eval_loss"])
 
     def test(self, input_filepath, args):
-        """
-        Used to generate predictions for a given dataset.
-        The dataset may not be labelled.
-        :param args: settings in the form of a dictionary
-
-        :param input_filepath: a string that contains a path to
-        a csv file that contains testing data
-
-        """
         raise NotImplementedError()
 
     def save(self, path):
-        """
-        Saves both the model, tokenizer and various configuration/settings files
-        to a given path
-
-        :param path: string:  a path to a directory
-        :return:
-        """
         self.model.save_pretrained(path)
         self.tokenizer.save_pretrained(path)
 
     def _preprocess_data_train(self, input_filepath, eval_filepath, dataclass_args: TrainArgs):
-        """
-        :param input_filepath: A path to a training file.
-        :param eval_filepath:  A path to an evaluating file. Or "" if not evaluating file is provided.
-        :param file_type: The type of file: csv, text etc
-        :param dataclass_args: A TrainArgs child class.
-        :return:
-        """
 
         if not dataclass_args.load_preprocessed_data:
             if eval_filepath == "":
@@ -195,11 +146,6 @@ class HappyTransformer():
         raise NotImplementedError()
 
     def _get_training_args(self, dataclass_args):
-        """
-        :param args: a dataclass of arguments for training
-        :param output_path: A string to a temporary directory
-        :return: A TrainingArguments object
-        """
         if self.device.type != "cuda":
             if dataclass_args.fp16:
                 ValueError("fp16 is only available when CUDA/ a GPU is being used. ")
@@ -257,10 +203,6 @@ class HappyTransformer():
         trainer.train()
 
     def _run_eval(self, dataset, data_collator, dataclass_args):
-        """
-        :param dataset: a child of torch.utils.data.Dataset
-        :return: None
-        """
         with tempfile.TemporaryDirectory() as tmp_dir_name:
             eval_args = self._get_eval_args(tmp_dir_name, dataclass_args)
             trainer = Trainer(
@@ -272,10 +214,6 @@ class HappyTransformer():
             return trainer.evaluate()
 
     def _get_eval_args(self, output_path, dataclass_args):
-        """
-        :param output_path: A string to a temporary directory
-        :return: A TrainingArguments object
-        """
         return TrainingArguments(
             output_dir=output_path,
             seed=42,
@@ -286,14 +224,6 @@ class HappyTransformer():
 
     @staticmethod
     def action_step(ape, batch_size, gas, data_len, num_gpus) -> int:
-        """
-        :param ape: The number of actions per epoch (save, eval or log).
-        :param batch_size: The batch size.
-        :param gas: Gradient accumulation steps
-        :param data_len: Number of cases within the  training data
-        :param num_gpus: Number of GPUs
-        :return:
-        """
         epoch_step_len = data_len / (batch_size * gas * num_gpus)
 
         action_step = math.ceil(epoch_step_len / ape)

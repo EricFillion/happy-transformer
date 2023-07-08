@@ -21,15 +21,6 @@ class QuestionAnsweringResult:
 
 
 class HappyQuestionAnswering(HappyTransformer):
-    """
-    This class is a user facing class that allows users to solve question answering problems using
-    a transformer QA models. These models are able to answer a question given context for the
-    question by selecting a span within the context that answers the question.
-
-    The purpose of this class is to be lightweight and easy
-    to understand and to offload complex tasks to
-    other classes.
-    """
     def __init__(self, model_type="DISTILBERT",
                  model_name="distilbert-base-cased-distilled-squad", 
                  load_path: str = "",
@@ -50,12 +41,6 @@ class HappyQuestionAnswering(HappyTransformer):
 
     def answer_question(self, context: str, question: str, top_k: int = 1) \
             -> List[QuestionAnsweringResult]:
-        """
-        Find the answers to a question.
-        The answer MUST be contained somewhere within the context for this to work.
-        top_k describes the number of answers to return.
-        """
-
         pipeline_output = self._pipeline(context=context, question=question, topk=top_k)
         # transformers returns a single dictionary when top_k ==1.
         # Our convention however is to have constant output format
@@ -71,48 +56,14 @@ class HappyQuestionAnswering(HappyTransformer):
         ]
 
     def train(self, input_filepath, eval_filepath: str= "",  args: QATrainArgs =QATrainArgs()):
-        """
-        Trains the question answering model
-
-        input_filepath: a string that contains the location of a csv file
-        for training. Contains the following header values: context,
-        question, answer_text, answer_start
-
-        args: Either a QATrainArgs() object or a dictionary that contains all of the same keys as ARGS_QA_TRAIN
-
-        return: None
-        """
         super(HappyQuestionAnswering, self).train(input_filepath, args, eval_filepath)
 
     def eval(self, input_filepath, args=QAEvalArgs()) -> EvalResult:
-        """
-        Trains the question answering model
 
-        input_filepath: a string that contains the location of a csv file
-        for training. Contains the following header values:
-        context, question, answer_text, answer_start
-
-        args: Either a QAEvalArgs() object or a dictionary that contains all of the same keys as ARGS_QA_EVAl
-
-        return: A dictionary that contains a key called "eval_loss"
-
-        """
         return super(HappyQuestionAnswering, self).eval(input_filepath, args)
 
 
     def test(self, input_filepath, args=QATestArgs()):
-        """
-        Tests the question answering model. Used to obtain results
-
-        input_filepath: a string that contains the location of a csv file
-        for training. Contains the following header values:
-        context, question
-
-        args: Either a QATestArgs() object or a dictionary that contains all of the same keys as ARGS_QA_TEST
-
-        return: A list of dictionaries. Each dictionary
-        contains the keys: "score", "start", "end" and "answer"
-        """
         if type(args) == dict:
             raise ValueError( "As of version 2.5.0 dictionary inputs are not acceptable. Please provide a QATestArgs. ")
 
@@ -177,14 +128,9 @@ class HappyQuestionAnswering(HappyTransformer):
         )
 
         return tok_dataset
+
     @staticmethod
     def _get_data(filepath, test_data=False):
-        """
-        Used to collect
-        :param filepath: a string that contains the location of the data
-        :return: if test_data = False contexts, questions, answers (all strings)
-        else: contexts, questions
-        """
         contexts = []
         questions = []
         answers = []

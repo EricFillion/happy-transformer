@@ -18,9 +18,6 @@ class TokenClassificationResult:
 
 
 class HappyTokenClassification(HappyTransformer):
-    """
-    A user facing class for token classification
-    """
     def __init__(
         self, model_type: str = "BERT", model_name: str = "dslim/bert-base-NER", load_path: str = "", use_auth_token: str = None, from_tf=False):
 

@@ -4,9 +4,6 @@ from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.adaptors import get_adaptor
 
 class HappyNextSentence(HappyTransformer):
-    """
-    A user facing class for next sentence prediction
-    """
     def __init__(self, model_type="BERT",
                  model_name="bert-base-uncased", 
                  load_path: str = "", 
@@ -21,11 +18,6 @@ class HappyNextSentence(HappyTransformer):
         self._type = "ns"
 
     def predict_next_sentence(self, sentence_a: str, sentence_b: str) -> float:
-        """
-        Predict the probability that sentence_b follows sentence_a.
-        Higher probabilities indicate more coherent sentence pairs.
-        """
-
         encoded = self.tokenizer(sentence_a, sentence_b, return_tensors='pt')
         encoded.to(self.device)
 

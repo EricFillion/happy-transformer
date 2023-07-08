@@ -1,25 +1,15 @@
 """
-Contains functions that are shared amongst the children of the HappyTrainer class.
-
 Based on
 https://github.com/huggingface/transformers/blob/master/examples/pytorch/language-modeling/run_mlm.py
 and
 https://github.com/huggingface/transformers/blob/master/examples/pytorch/language-modeling/run_clm.py
 """
+
 from dataclasses import dataclass
 
 def preprocess_concatenate(tokenizer, dataset, preprocessing_processes, mlm=True):
-    """
-    :param tokenizer: tokenizer for a transformer model
-    :param dataset: a datasets.Dataset object
-    :param preprocessing_processes:
-    :param mlm:
-
-    :return:
-    """
 
     max_input_length = tokenizer.model_max_length
-
 
     def tokenize_function(example):
         texts = example["text"]

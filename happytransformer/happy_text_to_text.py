@@ -1,32 +1,17 @@
-"""
-Contains a class called HappyTextToText which performs text to text generation
-"""
 from dataclasses import dataclass
-
 from transformers import Text2TextGenerationPipeline, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq
-
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.adaptors import get_adaptor
 from happytransformer.fine_tuning_util import EvalResult
-
 from happytransformer.args import TTTrainArgs, TTEvalArgs, TTTestArgs
-
 from typing import Union
 
 @dataclass
 class TextToTextResult:
-    """
-    Returned when HappyTextToText.generate() is called
-    """
     text: str
 
 @dataclass
 class TTSettings:
-    """
-    Used to adjust the text generation algorithm that's used when
-    HappyTextToText.generate() is called 
-
-    """
     min_length: int = 10
     max_length: int = 50
     do_sample: bool = False
@@ -62,12 +47,6 @@ class HappyTextToText(HappyTransformer):
 
 
     def __assert_default_text_is_val(self, text):
-        """
-        Ensures the input's text input is valid.
-        Raises a Value Error if the text input is not valid.
-        :param text: The value the user inputs for the "text" parameter
-        """
-
         if not isinstance(text, str):
             raise ValueError("The text input must be a string")
         if not text:
@@ -76,11 +55,6 @@ class HappyTextToText(HappyTransformer):
 
     def generate_text(self, text: str,
                       args: TTSettings = TTSettings()) -> TextToTextResult:
-        """
-        :param text: starting text that the model uses as a prompt to continue it.
-        :param args: A TTSettings object
-        :return: A TextToTextResult() object
-        """
         self.__assert_default_text_is_val(text)
 
         output = self._pipeline(text, min_length=args.min_length,
@@ -96,26 +70,9 @@ class HappyTextToText(HappyTransformer):
         return TextToTextResult(text=output[0]['generated_text'])
 
     def train(self, input_filepath, eval_filepath: str = "", args: TTTrainArgs=TTTrainArgs()):
-        """
-        Trains the text-to-text model
-        input_filepath: a string that contains the location of a csv file
-        for training. Contains the following header values: text_1, text_2
-        args: A TTTrainArgs() object
-        return: None
-        """
         super(HappyTextToText, self).train(input_filepath, args, eval_filepath)
 
     def eval(self, input_filepath, args=TTEvalArgs()) -> EvalResult:
-        """
-        Evaluated the text-to-text model
-
-        input_filepath: a string that contains the location of a csv file
-        for training. Contains the following header values: text_1, text_2
-
-        args: A TTEvalArgs() object
-        return: an EvalResult() object
-        """
-
         return super(HappyTextToText, self).eval(input_filepath, args)
 
     def test(self, input_filepath, args=TTTestArgs):
@@ -128,10 +85,6 @@ class HappyTextToText(HappyTransformer):
         self.__max_output_length = dataclass_args.max_output_length
 
         def __preprocess_function(examples):
-            """
-            :param examples:
-            :return:
-            """
             model_inputs = self.tokenizer(examples["input"], max_length=self.__max_input_length, truncation=True)
 
             # Setup the tokenizer for targets
