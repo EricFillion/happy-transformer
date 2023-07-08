@@ -24,18 +24,13 @@ class HappyTransformer():
 
     def __init__(self, model_type, model_name, load_path="", use_auth_token: Union[str, bool] = None):
 
-        self.model_type = model_type  # BERT, #DISTILBERT, ROBERTA, ALBERT etc
-        self.model_name = model_name
+        self.logger = logging.getLogger(__name__)
 
         if load_path != "":
-            self._load_model(load_path)
-            self._load_tokenizer(load_path)
+            self._init_model(model_type, load_path, use_auth_token)
         else:
-            self._load_model(model_name, use_auth_token=use_auth_token)
-            self._load_tokenizer(model_name, use_auth_token=use_auth_token)
+            self._init_model(model_type, model_name, use_auth_token)
 
-
-        self.logger = logging.getLogger(__name__)
 
         handler = logging.StreamHandler()
         handler.addFilter(logging.Filter('happytransformer'))
@@ -311,12 +306,9 @@ class HappyTransformer():
         self.logger.info("Pushing tokenizer...")
         self.tokenizer.push_to_hub(repo_name, private=private)
 
-
-    def _load_model(self, model_name, use_auth_token=False):
-        self.model = self._model_class.from_pretrained(model_name, use_auth_token=use_auth_token)
-        self.model.eval()
-
-    def _load_tokenizer(self, model_name, use_auth_token=False):
+    def _init_model(self, model_type, model_name, use_auth_token):
+        self.model_type = model_type
+        self.model_name = model_name
+        self.config = AutoConfig.from_pretrained(model_name, use_auth_token=use_auth_token)
+        self.model = self._model_class.from_pretrained(model_name, config=self.config, use_auth_token=use_auth_token)
         self.tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=use_auth_token)
-
-

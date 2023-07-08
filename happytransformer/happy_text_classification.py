@@ -133,9 +133,3 @@ class HappyTextClassification(HappyTransformer):
         if not test_data:
             return contexts, labels
         return contexts
-
-
-    def _load_model(self, model_name, use_auth_token=False):
-        config = AutoConfig.from_pretrained(model_name, num_labels=self._num_labels)
-        self.model = self._model_class.from_pretrained(model_name, config= config, use_auth_token=use_auth_token)
-        self.model.eval()
