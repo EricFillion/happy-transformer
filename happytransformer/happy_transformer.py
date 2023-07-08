@@ -1,5 +1,5 @@
 import logging
-from transformers import AutoTokenizer, TrainingArguments, Trainer, Seq2SeqTrainingArguments, Seq2SeqTrainer, AutoConfig
+from transformers import AutoTokenizer, TrainingArguments, Trainer, Seq2SeqTrainingArguments, Seq2SeqTrainer, AutoConfig, AutoModel
 import torch
 import tempfile
 import math
@@ -9,11 +9,12 @@ from happytransformer.fine_tuning_util import EvalResult
 from typing import Union
 
 class HappyTransformer():
-    _model_class = None
 
-    def __init__(self, model_type, model_name, load_path="", use_auth_token: Union[str, bool] = None):
+    def __init__(self, model_type, model_name, model_class: AutoModel, load_path="", use_auth_token: Union[str, bool] = None):
 
         self.logger = logging.getLogger(__name__)
+
+        self._model_class = model_class
 
         if load_path != "":
             self._init_model(model_type, load_path, use_auth_token)

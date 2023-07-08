@@ -17,10 +17,10 @@ class HappyTextClassification(HappyTransformer):
     def __init__(self, model_type="DISTILBERT",
                  model_name="distilbert-base-uncased", num_labels: int = 2, load_path: str = "", use_auth_token: str = None, from_tf=False):
         self.adaptor = get_adaptor(model_type)
-        self._model_class = AutoModelForSequenceClassification
+        model_class = AutoModelForSequenceClassification
         self._num_labels = num_labels
 
-        super().__init__(model_type, model_name, use_auth_token=use_auth_token, load_path=load_path)
+        super().__init__(model_type, model_name, model_class, use_auth_token=use_auth_token, load_path=load_path)
 
         self._pipeline = TextClassificationPipeline(
             model=self.model, tokenizer=self.tokenizer,

@@ -10,9 +10,9 @@ class HappyNextSentence(HappyTransformer):
                  use_auth_token: str = None, from_tf=False):
 
         self.adaptor = get_adaptor(model_type)
-        self._model_class = AutoModelForNextSentencePrediction
+        model_class = AutoModelForNextSentencePrediction
 
-        super().__init__(model_type, model_name, use_auth_token=use_auth_token, load_path=load_path)
+        super().__init__(model_type, model_name, model_class, use_auth_token=use_auth_token, load_path=load_path)
         self._pipeline = None
 
         self._type = "ns"

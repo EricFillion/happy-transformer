@@ -22,10 +22,10 @@ class HappyWordPrediction(HappyTransformer):
             load_path: str ="", use_auth_token: str = None):
 
         self.adaptor = get_adaptor(model_type)
-        self._model_class = AutoModelForMaskedLM
+        model_class = AutoModelForMaskedLM
 
 
-        super().__init__(model_type, model_name, load_path=load_path, use_auth_token=use_auth_token)
+        super().__init__(model_type, model_name, model_class, load_path=load_path, use_auth_token=use_auth_token)
 
 
         self._pipeline = FillMaskPipeline(model=self.model, tokenizer=self.tokenizer, device=self.device)

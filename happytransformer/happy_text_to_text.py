@@ -30,9 +30,9 @@ class HappyTextToText(HappyTransformer):
     def __init__(self, model_type: str = "T5", model_name: str = "t5-small", load_path: str = "", use_auth_token: str = None, from_tf=False):
 
         self.adaptor = get_adaptor(model_type)
-        self._model_class = AutoModelForSeq2SeqLM
+        model_class = AutoModelForSeq2SeqLM
 
-        super().__init__(model_type, model_name, use_auth_token=use_auth_token, load_path=load_path)
+        super().__init__(model_type, model_name, model_class, use_auth_token=use_auth_token, load_path=load_path)
 
 
         self._pipeline = Text2TextGenerationPipeline(model=self.model,

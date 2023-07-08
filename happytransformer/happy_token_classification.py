@@ -22,9 +22,9 @@ class HappyTokenClassification(HappyTransformer):
         self, model_type: str = "BERT", model_name: str = "dslim/bert-base-NER", load_path: str = "", use_auth_token: str = None, from_tf=False):
 
         self.adaptor = get_adaptor(model_type)
-        self._model_class = AutoModelForTokenClassification
+        model_class = AutoModelForTokenClassification
 
-        super().__init__(model_type, model_name, use_auth_token=use_auth_token, load_path=load_path)
+        super().__init__(model_type, model_name, model_class, use_auth_token=use_auth_token, load_path=load_path)
 
         self._pipeline = TokenClassificationPipeline(model=self.model, tokenizer=self.tokenizer, device=self.device)
 
