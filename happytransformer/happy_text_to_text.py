@@ -79,10 +79,10 @@ class HappyTextToText(HappyTransformer):
         raise NotImplementedError("test() is currently not available")
 
 
-    def _tok_function(self, raw_dataset, dataclass_args: Union[TTTrainArgs, TTEvalArgs]):
+    def _tok_function(self, raw_dataset, args: Union[TTTrainArgs, TTEvalArgs]):
 
-        self.__max_input_length = dataclass_args.max_input_length
-        self.__max_output_length = dataclass_args.max_output_length
+        self.__max_input_length = args.max_input_length
+        self.__max_output_length = args.max_output_length
 
         def __preprocess_function(examples):
             model_inputs = self.tokenizer(examples["input"], max_length=self.__max_input_length, truncation=True)
@@ -97,7 +97,7 @@ class HappyTextToText(HappyTransformer):
         tok_dataset = raw_dataset.map(
             __preprocess_function,
             batched=True,
-            num_proc=dataclass_args.preprocessing_processes,
+            num_proc=args.preprocessing_processes,
             remove_columns=["input", "target"],
         )
 

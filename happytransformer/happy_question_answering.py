@@ -85,7 +85,7 @@ class HappyQuestionAnswering(HappyTransformer):
             tqdm(zip(contexts, questions))
         ]
 
-    def _tok_function(self, raw_dataset, dataclass_args: QATrainArgs):
+    def _tok_function(self, raw_dataset, args: QATrainArgs):
 
         def __preprocess_function(case):
             print(case)

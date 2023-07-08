@@ -73,16 +73,16 @@ class HappyWordPrediction(HappyTransformer):
     def test(self, input_filepath, args=None):
         raise NotImplementedError("test() is currently not available")
 
-    def _tok_function(self, raw_dataset, dataclass_args: Union[WPTrainArgs, WPEvalArgs]):
-        if not dataclass_args.line_by_line:
+    def _tok_function(self, raw_dataset, args: Union[WPTrainArgs, WPEvalArgs]):
+        if not args.line_by_line:
             return preprocess_concatenate(tokenizer=self.tokenizer, dataset=raw_dataset,
-                                      preprocessing_processes=dataclass_args.preprocessing_processes, mlm=True)
+                                      preprocessing_processes=args.preprocessing_processes, mlm=True)
         else:
             def tokenize_function(example):
                 return self.tokenizer(example["text"],
                                  add_special_tokens=True, truncation=True)
 
             tokenized_dataset = raw_dataset.map(tokenize_function, batched=True,
-                                            num_proc=dataclass_args.preprocessing_processes,
+                                            num_proc=args.preprocessing_processes,
                                             remove_columns=["text"])
             return tokenized_dataset

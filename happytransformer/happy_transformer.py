@@ -59,7 +59,7 @@ class HappyTransformer():
 
         train_tok_data, eval_tok_data = self._preprocess_data_train(input_filepath=input_filepath,
                                                               eval_filepath=eval_filepath,
-                                                              dataclass_args=args)
+                                                              args=args)
 
         self._run_train(train_tok_data, eval_tok_data, args,  self._data_collator)
 
@@ -84,41 +84,41 @@ class HappyTransformer():
         self.model.save_pretrained(path)
         self.tokenizer.save_pretrained(path)
 
-    def _preprocess_data_train(self, input_filepath, eval_filepath, dataclass_args: TrainArgs):
+    def _preprocess_data_train(self, input_filepath, eval_filepath, args: TrainArgs):
 
-        if not dataclass_args.load_preprocessed_data:
+        if not args.load_preprocessed_data:
             if eval_filepath == "":
                 all_raw_data = load_dataset(self._t_data_file_type, data_files={"train": input_filepath}, split="train")
                 all_raw_data = all_raw_data.shuffle(seed=42)
-                split_text_data = all_raw_data.train_test_split(test_size=dataclass_args.eval_ratio)
-                train_tok_data = self._tok_function(split_text_data["train"], dataclass_args)
-                eval_tok_data = self._tok_function(split_text_data["test"], dataclass_args)
+                split_text_data = all_raw_data.train_test_split(test_size=args.eval_ratio)
+                train_tok_data = self._tok_function(split_text_data["train"], args)
+                eval_tok_data = self._tok_function(split_text_data["test"], args)
             else:
                 raw_data = load_dataset(self._t_data_file_type, data_files={"train": input_filepath, "eval": eval_filepath})
-                train_tok_data = self._tok_function(raw_data["train"], dataclass_args)
-                eval_tok_data = self._tok_function( raw_data["eval"], dataclass_args)
+                train_tok_data = self._tok_function(raw_data["train"], args)
+                eval_tok_data = self._tok_function( raw_data["eval"], args)
         else:
-            if dataclass_args.save_preprocessed_data_path.endswith(".json"):
+            if args.save_preprocessed_data_path.endswith(".json"):
                 raise ValueError(
                     "As of version 2.5.0 preprocessed files are not longer saved as json files. Please preprocess your data again")
 
-            self.logger.info("Loading dataset from %s...", dataclass_args.load_preprocessed_data_path)
-            tok_data = load_from_disk(dataclass_args.load_preprocessed_data_path)
+            self.logger.info("Loading dataset from %s...", args.load_preprocessed_data_path)
+            tok_data = load_from_disk(args.load_preprocessed_data_path)
             train_tok_data = tok_data["train"]
             eval_tok_data = tok_data["eval"]
 
-        if dataclass_args.save_preprocessed_data:
+        if args.save_preprocessed_data:
 
-            if dataclass_args.load_preprocessed_data:
+            if args.load_preprocessed_data:
                 self.logger.warning("Both save_preprocessed_data and load_data are enabled,")
 
-            if dataclass_args.save_preprocessed_data_path.endswith(".json"):
+            if args.save_preprocessed_data_path.endswith(".json"):
                 raise ValueError(
                     "As of version 2.5.0 preprocessed files are not longer saved as json files. Please provide a path to a folder.")
 
 
             combined_tok = DatasetDict({"train": train_tok_data, "eval": eval_tok_data})
-            combined_tok.save_to_disk(dataclass_args.save_preprocessed_data_path)
+            combined_tok.save_to_disk(args.save_preprocessed_data_path)
 
         return train_tok_data, eval_tok_data
 
@@ -143,12 +143,12 @@ class HappyTransformer():
 
         return tokenized_dataset
 
-    def _tok_function(self, raw_dataset, dataclass_args: TrainArgs):
+    def _tok_function(self, raw_dataset, args: TrainArgs):
         raise NotImplementedError()
 
-    def _get_training_args(self, dataclass_args):
+    def _get_training_args(self, args):
         if self.device.type != "cuda":
-            if dataclass_args.fp16:
+            if args.fp16:
                 ValueError("fp16 is only available when CUDA/ a GPU is being used. ")
 
         if self._type == "tt":
@@ -157,36 +157,36 @@ class HappyTransformer():
             arg_class = TrainingArguments
 
         return arg_class(
-            deepspeed=None if dataclass_args.deepspeed == "" else dataclass_args.deepspeed,
-            output_dir=dataclass_args.output_dir,
-            learning_rate=dataclass_args.learning_rate,
-            weight_decay=dataclass_args.weight_decay,
-            adam_beta1=dataclass_args.adam_beta1,
-            adam_beta2=dataclass_args.adam_beta2,
-            adam_epsilon=dataclass_args.adam_epsilon,
-            max_grad_norm=dataclass_args.max_grad_norm,
-            num_train_epochs=dataclass_args.num_train_epochs,
-            report_to=["none"] if len(dataclass_args.report_to) == 0 else dataclass_args.report_to,
-            save_strategy="steps" if dataclass_args.save_steps > 0 else "no",
-            save_steps=dataclass_args.save_steps,
-            evaluation_strategy="steps" if dataclass_args.eval_steps > 0 else "no",
-            eval_steps=dataclass_args.eval_steps,
-            logging_strategy="steps" if dataclass_args.logging_steps > 0 else "no",
-            logging_steps = dataclass_args.logging_steps,
-            per_device_train_batch_size=dataclass_args.batch_size,
-            fp16=dataclass_args.fp16,
-            gradient_accumulation_steps=dataclass_args.gas,
+            deepspeed=None if args.deepspeed == "" else args.deepspeed,
+            output_dir=args.output_dir,
+            learning_rate=args.learning_rate,
+            weight_decay=args.weight_decay,
+            adam_beta1=args.adam_beta1,
+            adam_beta2=args.adam_beta2,
+            adam_epsilon=args.adam_epsilon,
+            max_grad_norm=args.max_grad_norm,
+            num_train_epochs=args.num_train_epochs,
+            report_to=["none"] if len(args.report_to) == 0 else args.report_to,
+            save_strategy="steps" if args.save_steps > 0 else "no",
+            save_steps=args.save_steps,
+            evaluation_strategy="steps" if args.eval_steps > 0 else "no",
+            eval_steps=args.eval_steps,
+            logging_strategy="steps" if args.logging_steps > 0 else "no",
+            logging_steps = args.logging_steps,
+            per_device_train_batch_size=args.batch_size,
+            fp16=args.fp16,
+            gradient_accumulation_steps=args.gas,
             use_mps_device= True if self.device.type == "mps" else False
         )
 
 
-    def _run_train(self, train_dataset, eval_dataset, dataclass_args, data_collator):
+    def _run_train(self, train_dataset, eval_dataset, args, data_collator):
         """
         :param dataset: a child of torch.utils.data.Dataset
-        :param dataclass_args: a dataclass that contains settings
+        :param args: a dataclass that contains settings
         :return: None
         """
-        training_args = self._get_training_args(dataclass_args)
+        training_args = self._get_training_args(args)
 
         if self._type == "tt":
             train_class = Seq2SeqTrainer
@@ -203,9 +203,9 @@ class HappyTransformer():
         )
         trainer.train()
 
-    def _run_eval(self, dataset, data_collator, dataclass_args):
+    def _run_eval(self, dataset, data_collator, args):
         with tempfile.TemporaryDirectory() as tmp_dir_name:
-            eval_args = self._get_eval_args(tmp_dir_name, dataclass_args)
+            eval_args = self._get_eval_args(tmp_dir_name, args)
             trainer = Trainer(
                 model=self.model,
                 args=eval_args,
@@ -214,12 +214,12 @@ class HappyTransformer():
             )
             return trainer.evaluate()
 
-    def _get_eval_args(self, output_path, dataclass_args):
+    def _get_eval_args(self, output_path, args):
         return TrainingArguments(
             output_dir=output_path,
             seed=42,
             report_to=['none'],
-            per_device_eval_batch_size=dataclass_args.batch_size,
+            per_device_eval_batch_size=args.batch_size,
             use_mps_device=True if self.device.type == "mps" else False
         )
 

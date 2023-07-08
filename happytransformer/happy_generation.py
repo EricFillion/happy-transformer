@@ -90,7 +90,7 @@ class HappyGeneration(HappyTransformer):
     def test(self, input_filepath, args=None):
         raise NotImplementedError("test() is currently not available")
 
-    def _tok_function(self, raw_dataset, dataclass_args: GENTrainArgs):
+    def _tok_function(self, raw_dataset, args: GENTrainArgs):
         return preprocess_concatenate(tokenizer=self.tokenizer, dataset=raw_dataset,
-                                      preprocessing_processes=dataclass_args.preprocessing_processes, mlm=False)
+                                      preprocessing_processes=args.preprocessing_processes, mlm=False)
 

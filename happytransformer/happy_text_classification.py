@@ -61,7 +61,7 @@ class HappyTextClassification(HappyTransformer):
             for context in tqdm(contexts)
         ]
 
-    def _tok_function(self, raw_dataset, dataclass_args: TCTrainArgs):
+    def _tok_function(self, raw_dataset, args: TCTrainArgs):
 
         def __preprocess_function(case):
             result = self.tokenizer(case["text"], truncation=True, padding=True)
