@@ -5,13 +5,14 @@ and HappyNextSentencePrediction called HappyTransformer
 Contains shared variables and methods for these classes.
 """
 import logging
-from transformers import AutoTokenizer, TrainingArguments, Trainer, Seq2SeqTrainingArguments, Seq2SeqTrainer
+from transformers import AutoTokenizer, TrainingArguments, Trainer, Seq2SeqTrainingArguments, Seq2SeqTrainer, AutoConfig
 import torch
 import tempfile
 import math
 from datasets import load_dataset, load_from_disk, DatasetDict
 from happytransformer.args import TrainArgs
 from happytransformer.fine_tuning_util import EvalResult
+from typing import Union
 
 class HappyTransformer():
     """
@@ -19,19 +20,21 @@ class HappyTransformer():
     and HappyNextSentencePrediction.
 
     """
+    _model_class = None
 
-    def __init__(self, model_type, model_name, model, load_path="", use_auth_token: str = None):
+    def __init__(self, model_type, model_name, load_path="", use_auth_token: Union[str, bool] = None):
+
         self.model_type = model_type  # BERT, #DISTILBERT, ROBERTA, ALBERT etc
         self.model_name = model_name
 
         if load_path != "":
-            self.tokenizer = AutoTokenizer.from_pretrained(load_path)
+            self._load_model(load_path)
+            self._load_tokenizer(load_path)
         else:
-            self.tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=use_auth_token)
-        self.model = model
-        self.model.eval()
+            self._load_model(model_name, use_auth_token=use_auth_token)
+            self._load_tokenizer(model_name, use_auth_token=use_auth_token)
 
-        # todo  change logging system
+
         self.logger = logging.getLogger(__name__)
 
         handler = logging.StreamHandler()
@@ -64,7 +67,6 @@ class HappyTransformer():
         self._data_collator = None
         self._t_data_file_type = None
         self._type = None
-
 
     def train(self, input_filepath: str ,  args: TrainArgs, eval_filepath: str = "", ):
         """
@@ -308,3 +310,13 @@ class HappyTransformer():
         self.model.push_to_hub(repo_name, private=private)
         self.logger.info("Pushing tokenizer...")
         self.tokenizer.push_to_hub(repo_name, private=private)
+
+
+    def _load_model(self, model_name, use_auth_token=False):
+        self.model = self._model_class.from_pretrained(model_name, use_auth_token=use_auth_token)
+        self.model.eval()
+
+    def _load_tokenizer(self, model_name, use_auth_token=False):
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=use_auth_token)
+
+

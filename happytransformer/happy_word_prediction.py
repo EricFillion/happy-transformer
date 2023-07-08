@@ -19,17 +19,13 @@ class HappyWordPrediction(HappyTransformer):
     """
     def __init__(
             self, model_type: str = "DISTILBERT", model_name: str = "distilbert-base-uncased",
-            load_path: str ="", use_auth_token: str = None, from_tf=False):
-
+            load_path: str ="", use_auth_token: str = None):
 
         self.adaptor = get_adaptor(model_type)
+        self._model_class = AutoModelForMaskedLM
 
-        if load_path != "":
-            model = AutoModelForMaskedLM.from_pretrained(load_path, from_tf=from_tf)
-        else:
-            model = AutoModelForMaskedLM.from_pretrained(model_name, use_auth_token=use_auth_token, from_tf=from_tf)
 
-        super().__init__(model_type, model_name, model, load_path=load_path, use_auth_token=use_auth_token)
+        super().__init__(model_type, model_name, load_path=load_path, use_auth_token=use_auth_token)
 
 
         self._pipeline = FillMaskPipeline(model=self.model, tokenizer=self.tokenizer, device=self.device)

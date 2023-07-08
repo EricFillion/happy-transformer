@@ -27,16 +27,10 @@ class HappyTextClassification(HappyTransformer):
     def __init__(self, model_type="DISTILBERT",
                  model_name="distilbert-base-uncased", num_labels: int = 2, load_path: str = "", use_auth_token: str = None, from_tf=False):
         self.adaptor = get_adaptor(model_type)
+        self._model_class = AutoModelForSequenceClassification
+        self._num_labels = num_labels
 
-        config = AutoConfig.from_pretrained(model_name, num_labels=num_labels)
-
-        if load_path != "":
-            model = AutoModelForSequenceClassification.from_pretrained(load_path, config=config, from_tf=from_tf)
-        else:
-            model = AutoModelForSequenceClassification.from_pretrained(model_name, config=config, use_auth_token=use_auth_token, from_tf=from_tf)
-
-
-        super().__init__(model_type, model_name, model, use_auth_token=use_auth_token, load_path=load_path)
+        super().__init__(model_type, model_name, use_auth_token=use_auth_token, load_path=load_path)
 
         self._pipeline = TextClassificationPipeline(
             model=self.model, tokenizer=self.tokenizer,
@@ -139,3 +133,9 @@ class HappyTextClassification(HappyTransformer):
         if not test_data:
             return contexts, labels
         return contexts
+
+
+    def _load_model(self, model_name, use_auth_token=False):
+        config = AutoConfig.from_pretrained(model_name, num_labels=self._num_labels)
+        self.model = self._model_class.from_pretrained(model_name, config= config, use_auth_token=use_auth_token)
+        self.model.eval()
