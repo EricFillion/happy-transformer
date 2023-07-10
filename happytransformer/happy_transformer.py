@@ -1,5 +1,5 @@
 import logging
-from transformers import AutoTokenizer, TrainingArguments, Trainer, Seq2SeqTrainingArguments, Seq2SeqTrainer, AutoConfig, AutoModel
+from transformers import AutoTokenizer, TrainingArguments, Trainer, Seq2SeqTrainingArguments, Seq2SeqTrainer, AutoConfig, AutoModel, PretrainedConfig, PreTrainedTokenizer, PreTrainedModel
 import torch
 import tempfile
 from datasets import load_dataset, load_from_disk, DatasetDict
@@ -9,18 +9,43 @@ from typing import Union
 
 class HappyTransformer():
 
-    def __init__(self, model_type, model_name, model_class: AutoModel, load_path="", use_auth_token: Union[str, bool] = None):
+    def __init__(self, model_type: str, model_name: str, model_class: AutoModel, load_path="", use_auth_token: Union[str, bool] = None, device: str = "auto"):
 
-        self.logger = logging.getLogger(__name__)
-
+        self.logger = self._get_logger()
+        self.model_type = model_type
+        self.model_name = model_name
+        self.use_auth_token = use_auth_token
         self._model_class = model_class
 
+        # Sets self.model and self.tokenizer if load_model is True
         if load_path != "":
-            self._init_model(model_type, load_path, use_auth_token)
+            self.config, self.tokenizer, self.model = self._get_model_components(load_path)
         else:
-            self._init_model(model_type, model_name, use_auth_token)
+            self.config, self.tokenizer, self.model = self._get_model_components(self.model_name)
 
+        if self.device == "auto":
+            # self._to_auto_device() moves self.model to self.device
+            self.device = self.to_auto_device()
+        else:
+            self.device = device
 
+        self.logger.info("Using device: %s", self.device)
+
+        # Set within the child classes.
+        self._data_collator = None
+        self._t_data_file_type = None
+        self._type = None
+
+    ######## Helper __init__ methods ########
+    def _get_model_components(self, model_name_path):
+        config = AutoConfig.from_pretrained(model_name_path, use_auth_token=self.use_auth_token)
+        model = self._model_class.from_pretrained(model_name_path, config=config, use_auth_token=self.use_auth_token)
+        tokenizer = AutoTokenizer.from_pretrained(model_name_path, use_auth_token=self.use_auth_token)
+
+        return config, model, tokenizer
+
+    def _get_logger(self) :
+        logger = logging.getLogger(__name__)
         handler = logging.StreamHandler()
         handler.addFilter(logging.Filter('happytransformer'))
         logging.basicConfig(
@@ -29,28 +54,23 @@ class HappyTransformer():
             level=logging.INFO,
             handlers=[handler]
         )
+        return logger
 
-        self.device = None
 
+    def to_auto_device(self):
+        device = None
         if torch.backends.mps.is_available():
             if torch.backends.mps.is_built():
-                self.device = torch.device("mps")
+                device = torch.device("mps")
 
         if torch.cuda.is_available():
-            self.device = torch.device("cuda:0")
+            device = torch.device("cuda:0")
 
-        if not self.device:
-            self.device = torch.device("cpu")
+        if not device:
+            device = torch.device("cpu")
 
-        if self.device.type != 'cpu':
-            self.model.to(self.device)
-
-        self.logger.info("Using model: %s", self.device)
-
-        # Set within the child classes.
-        self._data_collator = None
-        self._t_data_file_type = None
-        self._type = None
+        self.model.to(device)
+        return device
 
     def train(self, input_filepath: str ,  args: TrainArgs, eval_filepath: str = "", ):
         if type(args) == dict:
@@ -67,7 +87,7 @@ class HappyTransformer():
     def eval(self, input_filepath, args):
         if type(args) == dict:
             raise ValueError(
-                "Dictionary evaluaging arguments are no longer supported as of Happy Transformer version 2.5.0.")
+                "Dictionary evaluating arguments are no longer supported as of Happy Transformer version 2.5.0.")
 
 
         tokenized_dataset = self._preprocess_data_eval(input_filepath, args)
@@ -229,9 +249,6 @@ class HappyTransformer():
         self.logger.info("Pushing tokenizer...")
         self.tokenizer.push_to_hub(repo_name, private=private)
 
-    def _init_model(self, model_type: str, model_name: str, use_auth_token: Union[bool, str]):
-        self.model_type = model_type
-        self.model_name = model_name
-        self.config = AutoConfig.from_pretrained(model_name, use_auth_token=use_auth_token)
-        self.model = self._model_class.from_pretrained(model_name, config=self.config, use_auth_token=use_auth_token)
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=use_auth_token)
+
+
+
