@@ -12,6 +12,7 @@ from tqdm import tqdm
 from happytransformer.adaptors import get_adaptor
 from happytransformer.fine_tuning_util import EvalResult
 from typing import Union
+from datasets import Dataset
 
 @dataclass
 class QuestionAnsweringResult:
@@ -86,7 +87,7 @@ class HappyQuestionAnswering(HappyTransformer):
             tqdm(zip(contexts, questions))
         ]
 
-    def _tok_function(self, raw_dataset, args: QATrainArgs):
+    def _tok_function(self, raw_dataset, args: QATrainArgs) -> Dataset:
 
         def __preprocess_function(case):
             print(case)

@@ -1,11 +1,12 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Union
 from transformers import AutoModelForCausalLM, TextGenerationPipeline
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.args import GENTrainArgs, GENEvalArgs
 from happytransformer.adaptors import get_adaptor
 from happytransformer.fine_tuning_util import tok_text_gen_mlm, EvalResult
 from transformers import default_data_collator
+from datasets import Dataset
 
 @dataclass
 class GENSettings:
@@ -90,7 +91,7 @@ class HappyGeneration(HappyTransformer):
     def test(self, input_filepath, args=None):
         raise NotImplementedError("test() is currently not available")
 
-    def _tok_function(self, raw_dataset, args: GENTrainArgs):
+    def _tok_function(self, raw_dataset, args: GENTrainArgs) -> Dataset:
         return tok_text_gen_mlm(tokenizer=self.tokenizer, dataset=raw_dataset,
                                       preprocessing_processes=args.preprocessing_processes, mlm=False)
 

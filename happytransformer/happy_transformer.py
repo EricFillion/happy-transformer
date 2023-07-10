@@ -6,6 +6,7 @@ from datasets import load_dataset, load_from_disk, DatasetDict
 from happytransformer.args import TrainArgs, EvalArgs
 from happytransformer.fine_tuning_util import EvalResult
 from typing import Union
+from datasets import Dataset
 
 class HappyTransformer():
 
@@ -35,6 +36,10 @@ class HappyTransformer():
         self._data_collator = None
         self._t_data_file_type = None
         self._type = None
+
+    ######## Children of
+    def _tok_function(self, raw_dataset, args: TrainArgs) -> Dataset:
+        raise NotImplementedError()
 
     ######## Helper __init__ methods ########
     def _get_model_components(self, model_name_path):
@@ -103,6 +108,7 @@ class HappyTransformer():
         self.model.save_pretrained(path)
         self.tokenizer.save_pretrained(path)
 
+    ######## Data Preprocessing ########
     def _preprocess_data_train(self, input_filepath, eval_filepath, args: TrainArgs):
 
         if not args.load_preprocessed_data:
@@ -162,8 +168,7 @@ class HappyTransformer():
 
         return tokenized_dataset
 
-    def _tok_function(self, raw_dataset, args: TrainArgs):
-        raise NotImplementedError()
+
 
     def _get_training_args(self, args):
         if self.device.type != "cuda":

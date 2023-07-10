@@ -7,7 +7,7 @@ from happytransformer.fine_tuning_util import EvalResult
 from tqdm import tqdm
 import csv
 from typing import Union
-
+from datasets import Dataset
 
 @dataclass
 class TextClassificationResult:
@@ -62,7 +62,7 @@ class HappyTextClassification(HappyTransformer):
             for context in tqdm(contexts)
         ]
 
-    def _tok_function(self, raw_dataset, args: TCTrainArgs):
+    def _tok_function(self, raw_dataset, args: TCTrainArgs) -> Dataset:
 
         def __preprocess_function(case):
             result = self.tokenizer(case["text"], truncation=True, padding=True)

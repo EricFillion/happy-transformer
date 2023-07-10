@@ -5,6 +5,7 @@ from happytransformer.adaptors import get_adaptor
 from happytransformer.fine_tuning_util import EvalResult
 from happytransformer.args import TTTrainArgs, TTEvalArgs, TTTestArgs
 from typing import Union
+from datasets import Dataset
 
 @dataclass
 class TextToTextResult:
@@ -79,7 +80,7 @@ class HappyTextToText(HappyTransformer):
         raise NotImplementedError("test() is currently not available")
 
 
-    def _tok_function(self, raw_dataset, args: Union[TTTrainArgs, TTEvalArgs]):
+    def _tok_function(self, raw_dataset, args: Union[TTTrainArgs, TTEvalArgs]) -> Dataset:
 
         self.__max_input_length = args.max_input_length
         self.__max_output_length = args.max_output_length
