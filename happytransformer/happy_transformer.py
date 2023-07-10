@@ -2,9 +2,8 @@ import logging
 from transformers import AutoTokenizer, TrainingArguments, Trainer, Seq2SeqTrainingArguments, Seq2SeqTrainer, AutoConfig, AutoModel
 import torch
 import tempfile
-import math
 from datasets import load_dataset, load_from_disk, DatasetDict
-from happytransformer.args import TrainArgs
+from happytransformer.args import TrainArgs, EvalArgs
 from happytransformer.fine_tuning_util import EvalResult
 from typing import Union
 
@@ -214,7 +213,7 @@ class HappyTransformer():
             )
             return trainer.evaluate()
 
-    def _get_eval_args(self, output_path, args):
+    def _get_eval_args(self, output_path: str, args: EvalArgs) -> TrainingArguments:
         return TrainingArguments(
             output_dir=output_path,
             seed=42,
@@ -223,13 +222,6 @@ class HappyTransformer():
             use_mps_device=True if self.device.type == "mps" else False
         )
 
-    @staticmethod
-    def action_step(ape, batch_size, gas, data_len, num_gpus) -> int:
-        epoch_step_len = data_len / (batch_size * gas * num_gpus)
-
-        action_step = math.ceil(epoch_step_len / ape)
-
-        return action_step
 
     def push_to_hub(self, repo_name, private=True):
         self.logger.info("Pushing model...")
@@ -237,7 +229,7 @@ class HappyTransformer():
         self.logger.info("Pushing tokenizer...")
         self.tokenizer.push_to_hub(repo_name, private=private)
 
-    def _init_model(self, model_type, model_name, use_auth_token):
+    def _init_model(self, model_type: str, model_name: str, use_auth_token: Union[bool, str]):
         self.model_type = model_type
         self.model_name = model_name
         self.config = AutoConfig.from_pretrained(model_name, use_auth_token=use_auth_token)

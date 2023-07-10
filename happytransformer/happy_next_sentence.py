@@ -2,12 +2,13 @@ import torch
 from transformers import AutoModelForNextSentencePrediction
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.adaptors import get_adaptor
+from typing import Union
 
 class HappyNextSentence(HappyTransformer):
     def __init__(self, model_type="BERT",
                  model_name="bert-base-uncased", 
                  load_path: str = "", 
-                 use_auth_token: str = None):
+                 use_auth_token:  Union[bool, str]  = None):
 
         self.adaptor = get_adaptor(model_type)
         model_class = AutoModelForNextSentencePrediction

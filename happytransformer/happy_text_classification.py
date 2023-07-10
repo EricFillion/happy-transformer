@@ -6,6 +6,7 @@ from happytransformer.adaptors import get_adaptor
 from happytransformer.fine_tuning_util import EvalResult
 from tqdm import tqdm
 import csv
+from typing import Union
 
 
 @dataclass
@@ -15,7 +16,7 @@ class TextClassificationResult:
 
 class HappyTextClassification(HappyTransformer):
     def __init__(self, model_type="DISTILBERT",
-                 model_name="distilbert-base-uncased", num_labels: int = 2, load_path: str = "", use_auth_token: str = None):
+                 model_name="distilbert-base-uncased", num_labels: int = 2, load_path: str = "", use_auth_token: Union[bool, str] = None):
         self.adaptor = get_adaptor(model_type)
         model_class = AutoModelForSequenceClassification
         self._num_labels = num_labels

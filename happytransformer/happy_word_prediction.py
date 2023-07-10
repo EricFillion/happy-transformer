@@ -19,7 +19,7 @@ class HappyWordPrediction(HappyTransformer):
     """
     def __init__(
             self, model_type: str = "DISTILBERT", model_name: str = "distilbert-base-uncased",
-            load_path: str ="", use_auth_token: str = None):
+            load_path: str ="", use_auth_token: Union[bool, str] = None):
 
         self.adaptor = get_adaptor(model_type)
         model_class = AutoModelForMaskedLM

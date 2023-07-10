@@ -27,7 +27,7 @@ class GenerationResult:
 
 class HappyGeneration(HappyTransformer):
     def __init__(self, model_type: str = "GPT2", model_name: str = "gpt2", 
-                 load_path: str = "", use_auth_token: str = None):
+                 load_path: str = "", use_auth_token:  Union[bool, str]  = None):
 
         self.adaptor = get_adaptor(model_type)
         model_class = AutoModelForCausalLM

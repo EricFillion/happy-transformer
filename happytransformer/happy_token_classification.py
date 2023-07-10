@@ -5,7 +5,7 @@ from transformers import TokenClassificationPipeline, AutoModelForTokenClassific
 
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.adaptors import get_adaptor
-
+from typing import Union
 
 @dataclass
 class TokenClassificationResult:
@@ -19,7 +19,7 @@ class TokenClassificationResult:
 
 class HappyTokenClassification(HappyTransformer):
     def __init__(
-        self, model_type: str = "BERT", model_name: str = "dslim/bert-base-NER", load_path: str = "", use_auth_token: str = None):
+        self, model_type: str = "BERT", model_name: str = "dslim/bert-base-NER", load_path: str = "", use_auth_token: Union[bool, str] = None):
 
         self.adaptor = get_adaptor(model_type)
         model_class = AutoModelForTokenClassification

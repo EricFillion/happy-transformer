@@ -6,8 +6,12 @@ https://github.com/huggingface/transformers/blob/master/examples/pytorch/languag
 """
 
 from dataclasses import dataclass
+from transformers import PreTrainedTokenizer
+from datasets import Dataset
 
-def preprocess_concatenate(tokenizer, dataset, preprocessing_processes, mlm=True):
+# Used for text gen and mlm fine-tuning.
+#todo rename
+def preprocess_concatenate(tokenizer: PreTrainedTokenizer, dataset: Dataset, preprocessing_processes: int =1, mlm=True):
 
     max_input_length = tokenizer.model_max_length
 

@@ -11,6 +11,7 @@ import csv
 from tqdm import tqdm
 from happytransformer.adaptors import get_adaptor
 from happytransformer.fine_tuning_util import EvalResult
+from typing import Union
 
 @dataclass
 class QuestionAnsweringResult:
@@ -24,7 +25,7 @@ class HappyQuestionAnswering(HappyTransformer):
     def __init__(self, model_type="DISTILBERT",
                  model_name="distilbert-base-cased-distilled-squad", 
                  load_path: str = "",
-                 use_auth_token: str = None):
+                 use_auth_token: Union[bool, str] = None):
         
         self.adaptor = get_adaptor(model_type)
         model_class = AutoModelForQuestionAnswering
