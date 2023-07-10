@@ -2,7 +2,7 @@ from typing import List, Optional
 from dataclasses import dataclass
 
 from transformers import FillMaskPipeline, AutoModelForMaskedLM, PretrainedConfig, DataCollatorForLanguageModeling
-from happytransformer.fine_tuning_util import preprocess_concatenate, EvalResult
+from happytransformer.fine_tuning_util import tok_text_gen_mlm, EvalResult
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.args import WPTrainArgs, WPEvalArgs
 from happytransformer.adaptors import get_adaptor
@@ -75,7 +75,7 @@ class HappyWordPrediction(HappyTransformer):
 
     def _tok_function(self, raw_dataset, args: Union[WPTrainArgs, WPEvalArgs]):
         if not args.line_by_line:
-            return preprocess_concatenate(tokenizer=self.tokenizer, dataset=raw_dataset,
+            return tok_text_gen_mlm(tokenizer=self.tokenizer, dataset=raw_dataset,
                                       preprocessing_processes=args.preprocessing_processes, mlm=True)
         else:
             def tokenize_function(example):

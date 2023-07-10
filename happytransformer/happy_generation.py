@@ -4,7 +4,7 @@ from transformers import AutoModelForCausalLM, TextGenerationPipeline
 from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.args import GENTrainArgs, GENEvalArgs
 from happytransformer.adaptors import get_adaptor
-from happytransformer.fine_tuning_util import preprocess_concatenate, EvalResult
+from happytransformer.fine_tuning_util import tok_text_gen_mlm, EvalResult
 from transformers import default_data_collator
 
 @dataclass
@@ -91,6 +91,6 @@ class HappyGeneration(HappyTransformer):
         raise NotImplementedError("test() is currently not available")
 
     def _tok_function(self, raw_dataset, args: GENTrainArgs):
-        return preprocess_concatenate(tokenizer=self.tokenizer, dataset=raw_dataset,
+        return tok_text_gen_mlm(tokenizer=self.tokenizer, dataset=raw_dataset,
                                       preprocessing_processes=args.preprocessing_processes, mlm=False)
 
