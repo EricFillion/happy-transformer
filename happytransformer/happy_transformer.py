@@ -33,7 +33,7 @@ class HappyTransformer():
         else:
             self.config, self.tokenizer, self.model = self._get_model_components(self.model_name)
 
-        if self.device == "auto":
+        if device == "auto":
             # self._to_auto_device() moves self.model to self.device
             self.device = self.to_auto_device()
         else:
