@@ -25,8 +25,11 @@ class TrainArgs:
     load_preprocessed_data_path: str = ""
     preprocessing_processes: int = 1
     report_to: tuple = ()
-    run_name: str = "Happy Transformer"
     deepspeed: str = ""
+
+    # Currently used to create a project and run ID for wandb
+    project_name: str = "happy-transformer"
+    run_name: str = "test-run"
 
 @dataclass
 class EvalArgs:

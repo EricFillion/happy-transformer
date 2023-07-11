@@ -1,4 +1,5 @@
 import logging
+import os
 import tempfile
 from typing import Union
 
@@ -210,7 +211,7 @@ class HappyTransformer():
             fp16=args.fp16,
             gradient_accumulation_steps=args.gas,
             use_mps_device= True if self.device.type == "mps" else False,
-            run_name=args.run_name
+            run_name=args.run_name,
         )
 
 
@@ -221,6 +222,8 @@ class HappyTransformer():
         :return: None
         """
         training_args = self._get_training_args(args)
+
+        os.environ["WANDB_PROJECT"] = args.project_name
 
         if self._type == "tt":
             train_class = Seq2SeqTrainer
