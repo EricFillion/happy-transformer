@@ -25,6 +25,7 @@ class TrainArgs:
     load_preprocessed_data_path: str = ""
     preprocessing_processes: int = 1
     report_to: tuple = ()
+    run_name: str = "Happy Transformer"
     deepspeed: str = ""
 
 @dataclass

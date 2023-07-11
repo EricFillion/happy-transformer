@@ -209,7 +209,8 @@ class HappyTransformer():
             per_device_train_batch_size=args.batch_size,
             fp16=args.fp16,
             gradient_accumulation_steps=args.gas,
-            use_mps_device= True if self.device.type == "mps" else False
+            use_mps_device= True if self.device.type == "mps" else False,
+            run_name=args.run_name
         )
 
 
