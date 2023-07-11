@@ -7,7 +7,6 @@
 # Happy Transformer 
 **Documentation and news: [happytransformer.com](http://happytransformer.com)**
 
-New Course: Create a text generation web app. Also learn how to fine-tune GPT-Neo [link](https://www.udemy.com/course/nlp-text-generation-python-web-app/?couponCode=LAUNCH)
 
 
 Join our Discord server: [![Support Server](https://img.shields.io/discord/839263772312862740.svg?label=Discord&logo=Discord&colorB=7289da&style=?style=flat-square&logo=appveyor)](https://discord.gg/psVwe3wfTb)
@@ -16,7 +15,7 @@ Join our Discord server: [![Support Server](https://img.shields.io/discord/83926
 
 ![HappyTransformer](logo.png)
 
-Happy Transformer is an package built on top of [Hugging Face's transformer library](https://huggingface.co/transformers/) that makes it easy to utilize state-of-the-art NLP models. 
+Happy Transformer is built on top of [Hugging Face's transformer library](https://huggingface.co/transformers/) and makes it easy to fine-tune state-of-the-art NLP models. 
 
 ## Features 
   
@@ -48,6 +47,9 @@ print(result[0].token)  # am
 ## Maintainers
 - [Eric Fillion](https://github.com/ericfillion)  Lead Maintainer
 - [Ted Brownlow](https://github.com/ted537) Maintainer
+
+## Courses 
+[Create a text generation web app. Also learn how to fine-tune GPT-Neo](https://www.udemy.com/course/nlp-text-generation-python-web-app/?couponCode=LAUNCH)
 
 ## Tutorials 
 [Text generation with training (GPT-Neo)](https://youtu.be/GzHJ3NUVtV4)
