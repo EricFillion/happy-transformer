@@ -11,7 +11,6 @@ from datasets import Dataset
 from transformers import PreTrainedTokenizer
 
 # Used for text gen and mlm fine-tuning.
-#todo rename
 def tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, preprocessing_processes: int =1, mlm=True):
 
     max_input_length = tokenizer.model_max_length
