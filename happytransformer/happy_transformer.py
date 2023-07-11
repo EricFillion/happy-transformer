@@ -56,7 +56,7 @@ class HappyTransformer():
         model = self._model_class.from_pretrained(model_name_path, config=config, use_auth_token=self.use_auth_token)
         tokenizer = AutoTokenizer.from_pretrained(model_name_path, use_auth_token=self.use_auth_token)
 
-        return config, model, tokenizer
+        return config, tokenizer, model
 
     def _get_logger(self) :
         logger = logging.getLogger(__name__)
