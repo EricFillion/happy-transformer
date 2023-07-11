@@ -6,11 +6,8 @@ from happytransformer import(
     HappyTextClassification,
     TCTrainArgs,
     TCEvalArgs,
-    TCTestArgs,
-    ARGS_TC_TRAIN,
-    ARGS_TC_EVAL
+    TCTestArgs
 )
-from happytransformer.happy_text_classification import TextClassificationResult
 from tests.shared_tests import run_save_load
 from pytest import approx
 import pytest
