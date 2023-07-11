@@ -54,7 +54,7 @@ class HappyQuestionAnswering(HappyTransformer):
             for answer in answers
         ]
 
-    def train(self, input_filepath, eval_filepath: str= "",  args: QATrainArgs =QATrainArgs()):
+    def train(self, input_filepath, args: QATrainArgs =QATrainArgs(), eval_filepath: str = ""):
         super(HappyQuestionAnswering, self).train(input_filepath, args, eval_filepath)
 
     def eval(self, input_filepath, args=QAEvalArgs()) -> EvalResult:

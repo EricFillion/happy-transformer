@@ -51,7 +51,7 @@ class HappyTokenClassification(HappyTransformer):
         ]
 
 
-    def train(self, input_filepath, eval_filepath, args=None):
+    def train(self, input_filepath, args=None, eval_filepath: str = ""):
         raise NotImplementedError("train() is currently not available")
 
     def eval(self, input_filepath, args=None):

@@ -72,7 +72,7 @@ class HappyTextToText(HappyTransformer):
                                 )
         return TextToTextResult(text=output[0]['generated_text'])
 
-    def train(self, input_filepath, eval_filepath: str = "", args: TTTrainArgs=TTTrainArgs()):
+    def train(self, input_filepath, args: TTTrainArgs=TTTrainArgs(),  eval_filepath: str = ""):
         super(HappyTextToText, self).train(input_filepath, args, eval_filepath)
 
     def eval(self, input_filepath, args=TTEvalArgs()) -> EvalResult:

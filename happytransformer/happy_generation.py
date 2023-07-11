@@ -83,7 +83,7 @@ class HappyGeneration(HappyTransformer):
         return result[len(text):]
 
 
-    def train(self, input_filepath: str, eval_filepath: str ="", args: GENTrainArgs =GENTrainArgs()):
+    def train(self, input_filepath: str,  args: GENTrainArgs =GENTrainArgs(), eval_filepath: str =""):
         super(HappyGeneration, self).train(input_filepath, args, eval_filepath)
 
     def eval(self, input_filepath: str, args: GENEvalArgs =GENEvalArgs()) -> EvalResult:

@@ -65,7 +65,7 @@ class HappyWordPrediction(HappyTransformer):
             for answer in answers
         ]
 
-    def train(self, input_filepath: str, eval_filepath: str = "", args: WPTrainArgs =WPTrainArgs()):
+    def train(self, input_filepath: str,  args: WPTrainArgs =WPTrainArgs(), eval_filepath: str = ""):
         super(HappyWordPrediction, self).train(input_filepath, args, eval_filepath)
 
     def eval(self, input_filepath, args: WPEvalArgs = WPEvalArgs()) -> EvalResult:

@@ -45,7 +45,7 @@ class HappyTextClassification(HappyTransformer):
 
         return TextClassificationResult(label=first_result["label"], score=first_result["score"])
 
-    def train(self, input_filepath: str, eval_filepath: str = "", args: TCTrainArgs =TCTrainArgs()):
+    def train(self, input_filepath: str, args: TCTrainArgs =TCTrainArgs(), eval_filepath: str = ""):
         super(HappyTextClassification, self).train(input_filepath, args, eval_filepath)
 
 
