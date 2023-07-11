@@ -1,8 +1,10 @@
+from typing import Union
+
 import torch
 from transformers import AutoModelForNextSentencePrediction
-from happytransformer.happy_transformer import HappyTransformer
+
 from happytransformer.adaptors import get_adaptor
-from typing import Union
+from happytransformer.happy_transformer import HappyTransformer
 
 class HappyNextSentence(HappyTransformer):
     def __init__(self, model_type="BERT",

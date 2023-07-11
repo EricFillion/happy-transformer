@@ -1,18 +1,15 @@
-"""
-Contains the HappyQuestionAnswering class.
-
-"""
-from typing import List
-from dataclasses import dataclass
-from transformers import QuestionAnsweringPipeline, AutoModelForQuestionAnswering, DataCollatorWithPadding
-from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.args import QATrainArgs, QAEvalArgs, QATestArgs
 import csv
-from tqdm import tqdm
-from happytransformer.adaptors import get_adaptor
-from happytransformer.fine_tuning_util import EvalResult
-from typing import Union
+from dataclasses import dataclass
+from typing import List, Union
+
 from datasets import Dataset
+from transformers import AutoModelForQuestionAnswering, DataCollatorWithPadding, QuestionAnsweringPipeline
+from tqdm import tqdm
+
+from happytransformer.adaptors import get_adaptor
+from happytransformer.args import QAEvalArgs, QATestArgs, QATrainArgs
+from happytransformer.fine_tuning_util import EvalResult
+from happytransformer.happy_transformer import HappyTransformer
 
 @dataclass
 class QuestionAnsweringResult:

@@ -1,11 +1,13 @@
 from dataclasses import dataclass
-from transformers import Text2TextGenerationPipeline, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq
-from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.adaptors import get_adaptor
-from happytransformer.fine_tuning_util import EvalResult
-from happytransformer.args import TTTrainArgs, TTEvalArgs, TTTestArgs
 from typing import Union
+
 from datasets import Dataset
+from transformers import AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq, Text2TextGenerationPipeline
+
+from happytransformer.adaptors import get_adaptor
+from happytransformer.args import TTEvalArgs, TTTestArgs, TTTrainArgs
+from happytransformer.fine_tuning_util import EvalResult
+from happytransformer.happy_transformer import HappyTransformer
 
 @dataclass
 class TextToTextResult:

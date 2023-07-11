@@ -1,12 +1,13 @@
 from dataclasses import dataclass
 from typing import List, Union
-from transformers import AutoModelForCausalLM, TextGenerationPipeline
-from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.args import GENTrainArgs, GENEvalArgs
-from happytransformer.adaptors import get_adaptor
-from happytransformer.fine_tuning_util import tok_text_gen_mlm, EvalResult
-from transformers import default_data_collator
+
 from datasets import Dataset
+from transformers import AutoModelForCausalLM, default_data_collator, TextGenerationPipeline
+
+from happytransformer.adaptors import get_adaptor
+from happytransformer.args import GENEvalArgs, GENTrainArgs
+from happytransformer.fine_tuning_util import EvalResult, tok_text_gen_mlm
+from happytransformer.happy_transformer import HappyTransformer
 
 @dataclass
 class GENSettings:

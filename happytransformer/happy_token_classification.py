@@ -1,11 +1,10 @@
-from typing import List, Optional
 from dataclasses import dataclass
+from typing import List, Union
 
-from transformers import TokenClassificationPipeline, AutoModelForTokenClassification
+from transformers import AutoModelForTokenClassification, TokenClassificationPipeline
 
-from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.adaptors import get_adaptor
-from typing import Union
+from happytransformer.happy_transformer import HappyTransformer
 
 @dataclass
 class TokenClassificationResult:

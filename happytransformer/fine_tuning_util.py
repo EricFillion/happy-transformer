@@ -6,8 +6,9 @@ https://github.com/huggingface/transformers/blob/master/examples/pytorch/languag
 """
 
 from dataclasses import dataclass
-from transformers import PreTrainedTokenizer
+
 from datasets import Dataset
+from transformers import PreTrainedTokenizer
 
 # Used for text gen and mlm fine-tuning.
 #todo rename

@@ -1,13 +1,15 @@
-from dataclasses import dataclass
-from transformers import TextClassificationPipeline, AutoConfig, AutoModelForSequenceClassification, DataCollatorWithPadding
-from happytransformer.args import TCTrainArgs, TCEvalArgs, TCTestArgs
-from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.adaptors import get_adaptor
-from happytransformer.fine_tuning_util import EvalResult
-from tqdm import tqdm
 import csv
 from typing import Union
+
+from dataclasses import dataclass
 from datasets import Dataset
+from tqdm import tqdm
+from transformers import AutoModelForSequenceClassification, DataCollatorWithPadding, TextClassificationPipeline
+
+from happytransformer.adaptors import get_adaptor
+from happytransformer.args import TCEvalArgs, TCTestArgs, TCTrainArgs
+from happytransformer.fine_tuning_util import EvalResult
+from happytransformer.happy_transformer import HappyTransformer
 
 @dataclass
 class TextClassificationResult:

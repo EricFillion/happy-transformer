@@ -1,12 +1,13 @@
-from typing import List, Optional
 from dataclasses import dataclass
 from datasets import Dataset
-from transformers import FillMaskPipeline, AutoModelForMaskedLM, PretrainedConfig, DataCollatorForLanguageModeling
-from happytransformer.fine_tuning_util import tok_text_gen_mlm, EvalResult
-from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.args import WPTrainArgs, WPEvalArgs
+from typing import List, Optional, Union
+
+from transformers import AutoModelForMaskedLM, DataCollatorForLanguageModeling, FillMaskPipeline
+
 from happytransformer.adaptors import get_adaptor
-from typing import Union
+from happytransformer.args import WPEvalArgs, WPTrainArgs
+from happytransformer.fine_tuning_util import EvalResult, tok_text_gen_mlm
+from happytransformer.happy_transformer import HappyTransformer
 
 
 @dataclass
