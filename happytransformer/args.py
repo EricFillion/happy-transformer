@@ -4,7 +4,7 @@ from dataclasses import dataclass
 class TrainArgs:
     output_dir: str = "happy_transformer/"
     learning_rate: float = 5e-5
-    num_train_epochs: int = 1.0
+    num_train_epochs: int = 3.0
     batch_size: int = 1
     gas: int = 1
     weight_decay: float = 0
