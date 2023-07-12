@@ -91,6 +91,10 @@ class HappyTransformer():
         if type(args) == dict:
             raise ValueError("Dictionary training arguments are no longer supported as of Happy Transformer version 2.5.0.")
 
+        if args.eval_ratio <= 0 and eval_filepath == "":
+            raise ValueError("Please please the TrainArgs.eval_ratio  argument greater than 0  or supply an eval_path")
+
+
         train_tok_data, eval_tok_data = self._preprocess_data_train(input_filepath=input_filepath,
                                                               eval_filepath=eval_filepath,
                                                               args=args)
@@ -122,30 +126,34 @@ class HappyTransformer():
     def _preprocess_data_train(self, input_filepath, eval_filepath, args: TrainArgs):
 
         if not args.load_preprocessed_data:
+            # We are loading raw data
             if eval_filepath == "":
+                # eval_filepath was not provided so we use a portion of the training data for evaluating
                 all_raw_data = load_dataset(self._t_data_file_type, data_files={"train": input_filepath}, split="train")
+                # Shuffle data
                 all_raw_data = all_raw_data.shuffle(seed=42)
+                # Split according to args.eval_ratio
                 split_text_data = all_raw_data.train_test_split(test_size=args.eval_ratio)
                 train_tok_data = self._tok_function(split_text_data["train"], args)
                 eval_tok_data = self._tok_function(split_text_data["test"], args)
             else:
+                # Eval path has been provided so we can load the evaluating data directly.
                 raw_data = load_dataset(self._t_data_file_type, data_files={"train": input_filepath, "eval": eval_filepath})
                 train_tok_data = self._tok_function(raw_data["train"], args)
-                eval_tok_data = self._tok_function( raw_data["eval"], args)
+                eval_tok_data = self._tok_function(raw_data["eval"], args)
         else:
             if args.save_preprocessed_data_path.endswith(".json"):
                 raise ValueError(
                     "As of version 2.5.0 preprocessed files are not longer saved as json files. Please preprocess your data again")
 
-            self.logger.info("Loading dataset from %s...", args.load_preprocessed_data_path)
+            if eval_filepath != "":
+                self.logger.warning(f"Eval data will be fetched from {args.load_preprocessed_data_path} and not {eval_filepath}")
+
             tok_data = load_from_disk(args.load_preprocessed_data_path)
             train_tok_data = tok_data["train"]
             eval_tok_data = tok_data["eval"]
 
         if args.save_preprocessed_data:
-
-            if args.load_preprocessed_data:
-                self.logger.warning("Both save_preprocessed_data and load_data are enabled,")
 
             if args.save_preprocessed_data_path.endswith(".json"):
                 raise ValueError(
