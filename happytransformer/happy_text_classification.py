@@ -75,7 +75,7 @@ class HappyTextClassification(HappyTransformer):
             __preprocess_function,
             batched=True,
             num_proc=1,
-            remove_columns=["text"],
+            remove_columns=["text", "label"],
             desc="Tokenizing data"
         )
 
