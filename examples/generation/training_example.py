@@ -25,7 +25,7 @@ def main():
         # deepspeed="../deepspeed/ds_config.json"
     )
 
-    happy_gen.train(train_txt_path, args=args)
+    happy_gen.train(train_txt_path, args=args, eval_filepath=eval_txt_path)
 
     after_loss = happy_gen.eval(eval_txt_path)
 
