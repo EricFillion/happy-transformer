@@ -4,6 +4,9 @@ from datasets import load_dataset
 
 def main():
     happy_tt = HappyTextToText("T5", "t5-base")
+    train_csv_path = "train.csv"
+    eval_csv_path = "eval.csv"
+
     # source ; https://en.wikipedia.org/wiki/Transformer_(machine_learning_model)
     text = "A transformer is a deep learning model that adopts the mechanism of attention, differentially weighing the significance of each part of the input data. It is used primarily in the field of natural language processing (NLP)"
     before_text = happy_tt.generate_text("summarize: "+ text)
@@ -11,10 +14,10 @@ def main():
     train_dataset = load_dataset("xsum", split='train[0:1999]')
     eval_dataset = load_dataset("xsum", split='validation[0:499]')
 
-    generate_csv("train.csv", train_dataset)
-    generate_csv("eval.csv", eval_dataset)
+    generate_csv(train_csv_path, train_dataset)
+    generate_csv(eval_csv_path, eval_dataset)
 
-    before_result = happy_tt.eval("eval.csv")
+    before_result = happy_tt.eval(eval_csv_path)
 
     args = TTTrainArgs(max_input_length=1024,
                        max_output_length=128,
@@ -22,9 +25,9 @@ def main():
 
                        )
 
-    happy_tt.train("train.csv", args=args)
+    happy_tt.train(train_csv_path, args=args)
     after_text = happy_tt.generate_text("summarize: " + text)
-    after_result = happy_tt.eval("eval.csv")
+    after_result = happy_tt.eval(eval_csv_path)
 
     print("before result:", before_result)
     print("after result:", after_result)

@@ -20,7 +20,7 @@ def main():
     args = QATrainArgs(
         # deepspeed="../deepspeed/ds_config.json"
     )
-    happy_qa.train(train_csv_path, args=args)
+    happy_qa.train(train_csv_path, args=args, eval_filepath=eval_csv_path)
 
     after_loss = happy_qa.eval(eval_csv_path)
 

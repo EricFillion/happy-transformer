@@ -27,7 +27,7 @@ def main():
     args = WPTrainArgs(
         #deepspeed="../deepspeed/ds_config.json"
     )
-    happy_wp.train(train_csv_path, args=args)
+    happy_wp.train(train_csv_path, args=args, eval_filepath=eval_csv_path)
 
     after_loss = happy_wp.eval(eval_csv_path)
 

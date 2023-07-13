@@ -17,7 +17,7 @@ def main():
 
     before_loss = happy_tc.eval(eval_csv_path)
     args = TCTrainArgs(deepspeed="../deepspeed/ds_config.json")
-    happy_tc.train(train_csv_path, args=args)
+    happy_tc.train(train_csv_path, args=args, eval_filepath=eval_csv_path)
 
     after_loss = happy_tc.eval(eval_csv_path)
 
