@@ -147,3 +147,13 @@ def test_wp_train_eval_with_dataclass():
 
     after_result = happy_wp.eval("../data/wp/train-eval.txt", args=eval_args)
 
+def test_wp_csv():
+    data_path = "../data/wp/train-eval.csv"
+    happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
+    before_result = happy_wp.eval(data_path)
+    print("before_result", before_result)
+    happy_wp.train(data_path)
+    after_result = happy_wp.eval(data_path)
+    print("after_result", after_result)
+
+    assert after_result.loss < before_result.loss
