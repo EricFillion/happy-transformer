@@ -45,7 +45,7 @@ class HappyTextToText(HappyTransformer):
         self.__max_output_length = 1024
 
         self._data_collator = DataCollatorForSeq2Seq(self.tokenizer, model=self.model)
-        self._t_data_file_type = "csv"
+        self._t_data_file_type = ["csv"]
         self._type = "tt"
 
 
@@ -82,7 +82,7 @@ class HappyTextToText(HappyTransformer):
         raise NotImplementedError("test() is currently not available")
 
 
-    def _tok_function(self, raw_dataset, args: Union[TTTrainArgs, TTEvalArgs]) -> Dataset:
+    def _tok_function(self, raw_dataset, args: Union[TTTrainArgs, TTEvalArgs], file_type: str) -> Dataset:
 
         self.__max_input_length = args.max_input_length
         self.__max_output_length = args.max_output_length

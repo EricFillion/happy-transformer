@@ -31,7 +31,7 @@ class HappyTextClassification(HappyTransformer):
         )
 
         self._data_collator = DataCollatorWithPadding(self.tokenizer)
-        self._t_data_file_type = "csv"
+        self._t_data_file_type = ["csv"]
         self._type = "tc"
 
 
@@ -64,7 +64,7 @@ class HappyTextClassification(HappyTransformer):
             for context in tqdm(contexts)
         ]
 
-    def _tok_function(self, raw_dataset, args: TCTrainArgs) -> Dataset:
+    def _tok_function(self, raw_dataset, args: TCTrainArgs, file_type: str) -> Dataset:
 
         def __preprocess_function(case):
             result = self.tokenizer(case["text"], truncation=True, padding=True)

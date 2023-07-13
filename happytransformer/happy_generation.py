@@ -6,7 +6,7 @@ from transformers import AutoModelForCausalLM, default_data_collator, TextGenera
 
 from happytransformer.adaptors import get_adaptor
 from happytransformer.args import GENEvalArgs, GENTrainArgs
-from happytransformer.fine_tuning_util import EvalResult, tok_text_gen_mlm
+from happytransformer.fine_tuning_util import csv_tok_text_gen_mlm, EvalResult, tok_text_gen_mlm
 from happytransformer.happy_transformer import HappyTransformer
 
 @dataclass
@@ -39,7 +39,8 @@ class HappyGeneration(HappyTransformer):
         self._pipeline = TextGenerationPipeline(model=self.model, tokenizer=self.tokenizer, device=self.device)
 
         self._data_collator = default_data_collator
-        self._t_data_file_type = "text"
+
+        self._t_data_file_type = ["text", "csv"]
 
         self._type = "gen"
 
@@ -92,7 +93,13 @@ class HappyGeneration(HappyTransformer):
     def test(self, input_filepath, args=None):
         raise NotImplementedError("test() is currently not available")
 
-    def _tok_function(self, raw_dataset, args: GENTrainArgs) -> Dataset:
-        return tok_text_gen_mlm(tokenizer=self.tokenizer, dataset=raw_dataset,
-                                      preprocessing_processes=args.preprocessing_processes, mlm=False)
+    def _tok_function(self, raw_dataset: Dataset, args: GENTrainArgs, file_type: str) -> Dataset:
+
+        if file_type == "text":
+            return tok_text_gen_mlm(tokenizer=self.tokenizer, dataset=raw_dataset,
+                                          preprocessing_processes=args.preprocessing_processes, mlm=False)
+        else:
+            return csv_tok_text_gen_mlm(tokenizer=self.tokenizer, dataset=raw_dataset,
+                                          preprocessing_processes=args.preprocessing_processes, mlm=False)
+
 

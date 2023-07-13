@@ -34,7 +34,7 @@ class HappyQuestionAnswering(HappyTransformer):
 
 
         self._data_collator = DataCollatorWithPadding(self.tokenizer)
-        self._t_data_file_type = "csv"
+        self._t_data_file_type = ["csv"]
 
         self._type = "qa"
 
@@ -84,7 +84,7 @@ class HappyQuestionAnswering(HappyTransformer):
             tqdm(zip(contexts, questions))
         ]
 
-    def _tok_function(self, raw_dataset, args: QATrainArgs) -> Dataset:
+    def _tok_function(self, raw_dataset, args: QATrainArgs, file_type: str) -> Dataset:
 
         def __preprocess_function(case):
             print(case)

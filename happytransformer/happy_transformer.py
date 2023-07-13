@@ -48,7 +48,7 @@ class HappyTransformer():
         self._type = None
 
     ######## Children of
-    def _tok_function(self, raw_dataset, args: TrainArgs) -> Dataset:
+    def _tok_function(self, raw_dataset, args: TrainArgs, format: str) -> Dataset:
         raise NotImplementedError()
 
     ######## Helper __init__ methods ########
@@ -94,7 +94,6 @@ class HappyTransformer():
         if args.eval_ratio <= 0 and eval_filepath == "":
             raise ValueError("Please please the TrainArgs.eval_ratio  argument greater than 0  or supply an eval_path")
 
-
         train_tok_data, eval_tok_data = self._preprocess_data_train(input_filepath=input_filepath,
                                                               eval_filepath=eval_filepath,
                                                               args=args)
@@ -113,6 +112,8 @@ class HappyTransformer():
 
         result = self._run_eval(tokenized_dataset, self._data_collator, args)
 
+        print("RESULT", result)
+
         return EvalResult(loss=result["eval_loss"])
 
     def test(self, input_filepath, args):
@@ -128,19 +129,27 @@ class HappyTransformer():
         if not args.load_preprocessed_data:
             # We are loading raw data
             if eval_filepath == "":
+
                 # eval_filepath was not provided so we use a portion of the training data for evaluating
-                all_raw_data = load_dataset(self._t_data_file_type, data_files={"train": input_filepath}, split="train")
+                file_type = self._check_file_type(input_filepath)
+                all_raw_data = load_dataset(file_type, data_files={"train": input_filepath}, split="train")
                 # Shuffle data
                 all_raw_data = all_raw_data.shuffle(seed=42)
                 # Split according to args.eval_ratio
                 split_text_data = all_raw_data.train_test_split(test_size=args.eval_ratio)
-                train_tok_data = self._tok_function(split_text_data["train"], args)
-                eval_tok_data = self._tok_function(split_text_data["test"], args)
+                train_tok_data = self._tok_function(split_text_data["train"], args, file_type)
+                eval_tok_data = self._tok_function(split_text_data["test"], args, file_type)
             else:
                 # Eval path has been provided so we can load the evaluating data directly.
-                raw_data = load_dataset(self._t_data_file_type, data_files={"train": input_filepath, "eval": eval_filepath})
-                train_tok_data = self._tok_function(raw_data["train"], args)
-                eval_tok_data = self._tok_function(raw_data["eval"], args)
+                train_file_type = self._check_file_type(input_filepath)
+                eval_file_type = self._check_file_type(input_filepath)
+
+                if train_file_type != eval_file_type:
+                    raise ValueError("Train file-type must be the same as the eval file-type")
+
+                raw_data = load_dataset(train_file_type, data_files={"train": input_filepath, "eval": eval_filepath})
+                train_tok_data = self._tok_function(raw_data["train"], args, train_file_type)
+                eval_tok_data = self._tok_function(raw_data["eval"], args, train_file_type)
         else:
             if args.save_preprocessed_data_path.endswith(".json"):
                 raise ValueError(
@@ -169,8 +178,9 @@ class HappyTransformer():
     def _preprocess_data_eval(self, input_filepath, args: TrainArgs):
         if not args.load_preprocessed_data:
             self.logger.info("Preprocessing dataset...")
-            datasets = load_dataset(self._t_data_file_type, data_files={"eval": input_filepath})
-            tokenized_dataset = self._tok_function(datasets["eval"], args)
+            eval_file_type = self._check_file_type(input_filepath)
+            datasets = load_dataset(eval_file_type, data_files={"eval": input_filepath})
+            tokenized_dataset = self._tok_function(datasets["eval"], args, eval_file_type)
 
         else:
             self.logger.info("Loading dataset from %s...", args.load_preprocessed_data_path)
@@ -276,5 +286,16 @@ class HappyTransformer():
         self.tokenizer.push_to_hub(repo_name, private=private)
 
 
+    def _check_file_type(self, file_path):
+        split_path = os.path.splitext(file_path)
 
+        file_extension = split_path[1]
 
+        # maps the suffix of the file-path to the name that Hugging Face's  load_dataset function uses
+        ending_map = {".txt": "text", ".csv": "csv"}
+        ending = ending_map[file_extension]
+
+        if ending not in self._t_data_file_type:
+            ValueError(f"Invalid file type for {file_path}.")
+
+        return ending

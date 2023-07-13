@@ -6,7 +6,7 @@ from transformers import AutoModelForMaskedLM, DataCollatorForLanguageModeling, 
 
 from happytransformer.adaptors import get_adaptor
 from happytransformer.args import WPEvalArgs, WPTrainArgs
-from happytransformer.fine_tuning_util import EvalResult, tok_text_gen_mlm
+from happytransformer.fine_tuning_util import tok_text_gen_mlm, EvalResult, tok_text_gen_mlm
 from happytransformer.happy_transformer import HappyTransformer
 
 
@@ -37,7 +37,7 @@ class HappyWordPrediction(HappyTransformer):
         self._data_collator = DataCollatorForLanguageModeling(tokenizer=self.tokenizer,
                                                         mlm_probability=0.1  # todo modify
                                                         )
-        self._t_data_file_type = "text"
+        self._t_data_file_type = ["text"]
         self._type = "wp"
 
     def predict_mask(self, text: str, targets: Optional[List[str]] = None, top_k: int = 1) -> List[WordPredictionResult]:
@@ -75,16 +75,21 @@ class HappyWordPrediction(HappyTransformer):
     def test(self, input_filepath, args=None):
         raise NotImplementedError("test() is currently not available")
 
-    def _tok_function(self, raw_dataset, args: Union[WPTrainArgs, WPEvalArgs]) -> Dataset:
-        if not args.line_by_line:
-            return tok_text_gen_mlm(tokenizer=self.tokenizer, dataset=raw_dataset,
-                                      preprocessing_processes=args.preprocessing_processes, mlm=True)
-        else:
-            def tokenize_function(example):
-                return self.tokenizer(example["text"],
-                                 add_special_tokens=True, truncation=True)
+    def _tok_function(self, raw_dataset, args: Union[WPTrainArgs, WPEvalArgs], file_type: str) -> Dataset:
 
-            tokenized_dataset = raw_dataset.map(tokenize_function, batched=True,
-                                            num_proc=args.preprocessing_processes,
-                                            remove_columns=["text"])
-            return tokenized_dataset
+        if file_type == "text":
+            if not args.line_by_line:
+                return tok_text_gen_mlm(tokenizer=self.tokenizer, dataset=raw_dataset,
+                                          preprocessing_processes=args.preprocessing_processes, mlm=True)
+            else:
+                def tokenize_function(example):
+                    return self.tokenizer(example["text"],
+                                     add_special_tokens=True, truncation=True)
+
+                tokenized_dataset = raw_dataset.map(tokenize_function, batched=True,
+                                                num_proc=args.preprocessing_processes,
+                                                remove_columns=["text"])
+                return tokenized_dataset
+        else:
+            return tok_text_gen_mlm(tokenizer=self.tokenizer, dataset=raw_dataset,
+                             preprocessing_processes=args.preprocessing_processes, mlm=True)

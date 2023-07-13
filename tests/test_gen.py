@@ -187,3 +187,13 @@ def test_generate_after_train_eval():
     output = happy_gen.generate_text("Artificial intelligence is ")
     assert type(output.text) == str
 
+def test_gen_csv():
+    data_path = "../data/gen/train-eval.csv"
+    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
+    before_result = happy_gen.eval(data_path)
+    print("before_result", before_result)
+    happy_gen.train(data_path)
+    after_result = happy_gen.eval(data_path)
+    print("after_result", after_result)
+
+    assert after_result.loss < before_result.loss

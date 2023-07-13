@@ -11,7 +11,7 @@ from datasets import Dataset
 from transformers import PreTrainedTokenizer
 
 # Used for text gen and mlm fine-tuning.
-def tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, preprocessing_processes: int =1, mlm=True):
+def tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, preprocessing_processes: int =1, mlm=True) -> Dataset:
 
     max_input_length = tokenizer.model_max_length
 
@@ -55,6 +55,22 @@ def tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, preproces
 
     return tokenized_dataset
 
+
+def csv_tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, preprocessing_processes: int =1, mlm=True, padding=False, max_length=512, truncation=False) -> Dataset:
+
+    def tokenize_function(example):
+        texts = example["text"]
+        toks = tokenizer(texts, padding=padding, truncation=truncation, max_length=max_length)
+        if not mlm:
+            toks["labels"] = toks["input_ids"]
+        return toks
+
+    dataset= dataset.map(tokenize_function,
+                batched=True,
+                num_proc=preprocessing_processes,
+                remove_columns=["text"])
+
+    return dataset
 
 @dataclass
 class EvalResult:
