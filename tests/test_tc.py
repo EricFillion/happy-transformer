@@ -63,7 +63,7 @@ def test_tc_train_effectiveness():
     assert after_loss < before_loss
 
 #todo investigate why this passes locally but fails on GitHub actions
-""" 
+
 def test_tc_train_effectiveness_multi():
     
     happy_tc = HappyTextClassification(
@@ -75,7 +75,7 @@ def test_tc_train_effectiveness_multi():
     happy_tc.train("../data/tc/train-eval-multi.csv")
     after_loss = happy_tc.eval("../data/tc/train-eval-multi.csv").loss
     assert after_loss < before_loss
-"""
+
 
 
 #TODO investigate why with some models the labels change after is saved and loaded
