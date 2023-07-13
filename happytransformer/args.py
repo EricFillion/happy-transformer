@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Union
 
 @dataclass
 class TrainArgs:
@@ -50,11 +51,15 @@ class TestArgs:
 # GEN
 @dataclass
 class GENTrainArgs(TrainArgs):
-    pass
+    padding: Union[str, bool]= False
+    truncation: Union[str, bool] = False
+    max_length: Union[str, int] = "maximum"
 
 @dataclass
 class GENEvalArgs(EvalArgs):
-    pass
+    padding: Union[str, bool] = False
+    truncation: Union[str, bool] = False
+    max_length: Union[str, int] = "maximum"
 
 # QA
 @dataclass
@@ -87,11 +92,17 @@ class TCTestArgs(TestArgs):
 class WPTrainArgs(TrainArgs):
     mlm_probability: float = 0.1
     line_by_line: bool = False
+    padding: Union[str, bool]= False
+    truncation: Union[str, bool] = False
+    max_length: Union[str, int] = "maximum"
 
 @dataclass
 class WPEvalArgs(EvalArgs):
     mlm_probability: float = 0.1
     line_by_line: bool = False
+    padding: Union[str, bool]= False
+    truncation: Union[str, bool] = False
+    max_length: Union[str, int] = "maximum"
 
 @dataclass
 class WPTestArgs(TestArgs):

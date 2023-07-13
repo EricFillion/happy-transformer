@@ -57,10 +57,14 @@ def tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, preproces
 
 
 def csv_tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, preprocessing_processes: int =1, mlm=True, padding=False, max_length=512, truncation=False) -> Dataset:
+    if max_length == "maximum":
+        max_input_length = tokenizer.model_max_length
+    else:
+        max_input_length= max_length
 
     def tokenize_function(example):
         texts = example["text"]
-        toks = tokenizer(texts, padding=padding, truncation=truncation, max_length=max_length)
+        toks = tokenizer(texts, padding=padding, truncation=truncation, max_length=max_input_length)
         if not mlm:
             toks["labels"] = toks["input_ids"]
         return toks

@@ -91,5 +91,11 @@ class HappyWordPrediction(HappyTransformer):
                                                 remove_columns=["text"])
                 return tokenized_dataset
         else:
-            return csv_tok_text_gen_mlm(tokenizer=self.tokenizer, dataset=raw_dataset,
-                                          preprocessing_processes=args.preprocessing_processes, mlm=False)
+            return csv_tok_text_gen_mlm(tokenizer=self.tokenizer,
+                                        dataset=raw_dataset,
+                                        preprocessing_processes=args.preprocessing_processes,
+                                        mlm=False,
+                                        padding=args.padding,
+                                        truncation=args.truncation,
+                                        max_length=args.max_length
+                                        )
