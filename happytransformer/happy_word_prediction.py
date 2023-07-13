@@ -6,7 +6,7 @@ from transformers import AutoModelForMaskedLM, DataCollatorForLanguageModeling, 
 
 from happytransformer.adaptors import get_adaptor
 from happytransformer.args import WPEvalArgs, WPTrainArgs
-from happytransformer.fine_tuning_util import tok_text_gen_mlm, EvalResult, tok_text_gen_mlm
+from happytransformer.fine_tuning_util import EvalResult, tok_text_gen_mlm, csv_tok_text_gen_mlm
 from happytransformer.happy_transformer import HappyTransformer
 
 
@@ -37,7 +37,7 @@ class HappyWordPrediction(HappyTransformer):
         self._data_collator = DataCollatorForLanguageModeling(tokenizer=self.tokenizer,
                                                         mlm_probability=0.1  # todo modify
                                                         )
-        self._t_data_file_type = ["text"]
+        self._t_data_file_type = ["text", "csv"]
         self._type = "wp"
 
     def predict_mask(self, text: str, targets: Optional[List[str]] = None, top_k: int = 1) -> List[WordPredictionResult]:
@@ -91,5 +91,5 @@ class HappyWordPrediction(HappyTransformer):
                                                 remove_columns=["text"])
                 return tokenized_dataset
         else:
-            return tok_text_gen_mlm(tokenizer=self.tokenizer, dataset=raw_dataset,
-                             preprocessing_processes=args.preprocessing_processes, mlm=True)
+            return csv_tok_text_gen_mlm(tokenizer=self.tokenizer, dataset=raw_dataset,
+                                          preprocessing_processes=args.preprocessing_processes, mlm=False)
