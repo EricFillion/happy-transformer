@@ -140,6 +140,8 @@ class HappyTransformer():
                 all_raw_data = all_raw_data.shuffle(seed=42)
                 # Split according to args.eval_ratio
                 split_text_data = all_raw_data.train_test_split(test_size=args.eval_ratio)
+                self.logger.info("Tokenizing training data...")
+
                 train_tok_data = self._tok_function(split_text_data["train"], args, file_type)
                 eval_tok_data = self._tok_function(split_text_data["test"], args, file_type)
             else:
@@ -151,7 +153,11 @@ class HappyTransformer():
                     raise ValueError("Train file-type must be the same as the eval file-type")
 
                 raw_data = load_dataset(train_file_type, data_files={"train": input_filepath, "eval": eval_filepath})
+
+                # todo combine logic below with above tokenizing logic
+                self.logger.info("Tokenizing training data...")
                 train_tok_data = self._tok_function(raw_data["train"], args, train_file_type)
+                self.logger.info("Tokenizing eval data...")
                 eval_tok_data = self._tok_function(raw_data["eval"], args, train_file_type)
         else:
             if args.save_preprocessed_data_path.endswith(".json"):
