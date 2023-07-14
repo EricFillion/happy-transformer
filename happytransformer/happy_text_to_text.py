@@ -91,8 +91,7 @@ class HappyTextToText(HappyTransformer):
             model_inputs = self.tokenizer(examples["input"], max_length=self.__max_input_length, truncation=True)
 
             # Setup the tokenizer for targets
-            with self.tokenizer.as_target_tokenizer():
-                labels = self.tokenizer(examples["target"], max_length=self.__max_output_length, truncation=True)
+            labels = self.tokenizer(examples["target"], max_length=self.__max_output_length, truncation=True)
 
             model_inputs["labels"] = labels["input_ids"]
             return model_inputs
