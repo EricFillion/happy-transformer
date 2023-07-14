@@ -42,6 +42,9 @@ class HappyTransformer():
 
         self.logger.info("Using device: %s", self.device)
 
+        if self.tokenizer.pad_token is None and self.tokenizer.eos_token is not None:
+            self.tokenizer.pad_token = self.tokenizer.eos_token
+
         # Set within the child classes.
         self._data_collator = None
         self._t_data_file_type = None
