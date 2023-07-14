@@ -4,14 +4,14 @@ from happytransformer import HappyGeneration, GENTrainArgs
 
 
 def main():
-    train_txt_path = "train.csv"
-    eval_txt_path = "eval.csv"
+    train_csv_path = "train.csv"
+    eval_csv_path = "eval.csv"
 
-    train_dataset = load_dataset('billsum', split='train[0:1999]')
-    eval_dataset = load_dataset('billsum', split='test[0:499]')
+    train_dataset = load_dataset('billsum', split='train[0:100]')
+    eval_dataset = load_dataset('billsum', split='test[0:50]')
 
-    generate_csv(train_txt_path, train_dataset)
-    generate_csv(eval_txt_path, eval_dataset)
+    generate_csv(train_csv_path, train_dataset)
+    generate_csv(eval_csv_path, eval_dataset)
 
     happy_gen = HappyGeneration(model_type="GPT2", model_name="gpt2")
     starter_texts = ["Authorizes", "Allows", "Prevents", "Restricts"]
@@ -19,16 +19,17 @@ def main():
     print("Examples Before Training: ")
     produce_examples(starter_texts, happy_gen)
 
-    before_loss = happy_gen.eval(eval_txt_path)
+    before_loss = happy_gen.eval(eval_csv_path)
 
     # uncomment the deepspeed parameter to use Deepspeed
     args = GENTrainArgs(
+        padding=True,
         # deepspeed="../deepspeed/ds_config.json"
     )
 
-    happy_gen.train(train_txt_path, args=args, eval_filepath=eval_txt_path)
+    happy_gen.train(train_csv_path, args=args, eval_filepath=eval_csv_path)
 
-    after_loss = happy_gen.eval(eval_txt_path)
+    after_loss = happy_gen.eval(eval_csv_path)
 
     print("Before loss: ", before_loss.loss)
     print("After loss: ", after_loss.loss, end="\n\n")
