@@ -18,8 +18,8 @@ examples/question_answering/train.txt
 examples/question_answering/eval.txt
 examples/question_answering/happy_transformer/
 
-examples/generation/train.txt
-examples/generation/eval.txt
+examples/generation/train.csv
+examples/generation/eval.csv
 examples/generation/happy_transformer/
 
 examples/text-to-text/train.csv
