@@ -40,7 +40,7 @@ class HappyQuestionAnswering(HappyTransformer):
 
     def answer_question(self, context: str, question: str, top_k: int = 1) \
             -> List[QuestionAnsweringResult]:
-        pipeline_output = self._pipeline(context=context, question=question, topk=top_k)
+        pipeline_output = self._pipeline(context=context, question=question, top_k=top_k)
         # transformers returns a single dictionary when top_k ==1.
         # Our convention however is to have constant output format
         answers = [pipeline_output] if top_k == 1 else pipeline_output
