@@ -18,7 +18,8 @@ def main():
     before_loss = happy_qa.eval(eval_csv_path)
 
     args = QATrainArgs(
-        # deepspeed="../deepspeed/ds_config.json"
+        # deepspeed="../deepspeed/ds_config.json",
+        # report_to = tuple(['wandb'])
     )
     happy_qa.train(train_csv_path, args=args, eval_filepath=eval_csv_path)
 

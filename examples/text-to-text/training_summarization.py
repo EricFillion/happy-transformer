@@ -22,7 +22,7 @@ def main():
     args = TTTrainArgs(max_input_length=1024,
                        max_output_length=128,
                        # deepspeed="../deepspeed/ds_config.json"
-
+                       # report_to = tuple(['wandb'])
                        )
 
     happy_tt.train(train_csv_path, args=args)

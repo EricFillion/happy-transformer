@@ -16,7 +16,9 @@ def main():
     happy_tc = HappyTextClassification(model_type="BERT", model_name="bert-base-uncased", num_labels=28)
 
     before_loss = happy_tc.eval(eval_csv_path)
-    args = TCTrainArgs(deepspeed="../deepspeed/ds_config.json")
+    args = TCTrainArgs(deepspeed="../deepspeed/ds_config.json",
+                       # report_to = tuple(['wandb'])
+                       )
     happy_tc.train(train_csv_path, args=args, eval_filepath=eval_csv_path)
 
     after_loss = happy_tc.eval(eval_csv_path)

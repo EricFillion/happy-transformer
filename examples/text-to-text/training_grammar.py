@@ -22,8 +22,9 @@ def main():
     before_loss = happy_tt.eval(eval_csv_path).loss
     args = TTTrainArgs(
                         num_train_epochs=1,
-                        # deepspeed="../deepspeed/ds_config.json"
-                       )
+                        # deepspeed="../deepspeed/ds_config.json",
+                        # report_to = tuple(['wandb'])
+    )
     happy_tt.train(train_csv_path, args=args, eval_filepath=eval_csv_path)
 
     after_text = happy_tt.generate_text(input_text).text

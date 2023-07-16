@@ -1,16 +1,17 @@
+import csv
 from datasets import load_dataset
 from happytransformer.happy_word_prediction import HappyWordPrediction, WPTrainArgs
 
 
 def main():
-    train_csv_path = "train.txt"
-    eval_csv_path = "eval.txt"
+    train_csv_path = "train.csv"
+    eval_csv_path = "eval.csv"
 
     train_dataset = load_dataset('billsum', split='train[0:1999]')
     eval_dataset = load_dataset('billsum', split='test[0:499]')
 
-    generate_txt_file(train_csv_path, train_dataset)
-    generate_txt_file(eval_csv_path, eval_dataset)
+    generate_csv(train_csv_path, train_dataset)
+    generate_csv(eval_csv_path, eval_dataset)
 
     happy_wp = HappyWordPrediction(model_type="DISTILBERT", model_name="distilbert-base-uncased")
 
@@ -25,7 +26,9 @@ def main():
     before_loss = happy_wp.eval(eval_csv_path)
 
     args = WPTrainArgs(
-        #deepspeed="../deepspeed/ds_config.json"
+        #deepspeed="../deepspeed/ds_config.json",
+        # report_to = tuple(['wandb'])
+
     )
     happy_wp.train(train_csv_path, args=args, eval_filepath=eval_csv_path)
 
@@ -38,11 +41,13 @@ def main():
     produce_examples(starter_texts, happy_wp)
 
 
-def generate_txt_file(csv_path, dataset):
-    with open(csv_path, 'w', newline='') as text_fule:
+def generate_csv(csv_path, dataset):
+    with open(csv_path, 'w', newline='') as csvfile:
+        writter = csv.writer(csvfile)
+        writter.writerow(["text"])
         for case in dataset:
             text = case["summary"]
-            text_fule.write(text + "\n")
+            writter.writerow([text])
 
 
 def produce_examples(starter_texts, happy_wp):
