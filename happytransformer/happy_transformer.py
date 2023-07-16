@@ -286,7 +286,8 @@ class HappyTransformer():
             seed=42,
             report_to=['none'],
             per_device_eval_batch_size=args.batch_size,
-            use_mps_device=True if self.device.type == "mps" else False
+            use_mps_device=True if self.device.type == "mps" else False,
+            deepspeed=None if args.deepspeed == "" else args.deepspeed
         )
 
 

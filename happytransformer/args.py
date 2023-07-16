@@ -40,6 +40,7 @@ class EvalArgs:
     load_preprocessed_data_path: str = ""
     batch_size: int = 1
     preprocessing_processes: int = 1
+    deepspeed: str = ""
 
 @dataclass
 class TestArgs:
