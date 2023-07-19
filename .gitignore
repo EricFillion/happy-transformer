@@ -20,6 +20,7 @@ examples/question_answering/happy_transformer/
 
 examples/generation/train.csv
 examples/generation/eval.csv
+examples/generation/tok-data/
 examples/generation/happy_transformer/
 
 examples/text-to-text/train.csv
