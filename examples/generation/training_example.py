@@ -7,8 +7,8 @@ def main():
     train_csv_path = "train.csv"
     eval_csv_path = "eval.csv"
 
-    train_dataset = load_dataset('billsum', split='train[0:100]')
-    eval_dataset = load_dataset('billsum', split='test[0:50]')
+    train_dataset = load_dataset('billsum', split='train[0:1999]')
+    eval_dataset = load_dataset('billsum', split='test[0:1999]')
 
     generate_csv(train_csv_path, train_dataset)
     generate_csv(eval_csv_path, eval_dataset)
