@@ -26,6 +26,11 @@ def main():
         padding=True,
         # deepspeed="../deepspeed/ds_config.json",
         # report_to = tuple(['wandb'])
+        save_preprocessed_data=True,
+        save_preprocessed_data_path="/tok-data/",
+        # enable the code below to reused preprocesses data for your second run
+        # load_preprocessed_data=True,
+        # save_preprocessed_data_path="/tok-data/"
     )
 
     happy_gen.train(train_csv_path, args=args, eval_filepath=eval_csv_path)
