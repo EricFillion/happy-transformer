@@ -80,7 +80,7 @@ class HappyWordPrediction(HappyTransformer):
         if file_type == "text":
             if not args.line_by_line:
                 return tok_text_gen_mlm(tokenizer=self.tokenizer, dataset=raw_dataset,
-                                          preprocessing_processes=args.preprocessing_processes, mlm=True)
+                                          preprocessing_processes=args.preprocessing_processes, mlm=True, max_length=args.max_length)
             else:
                 def tokenize_function(example):
                     return self.tokenizer(example["text"],

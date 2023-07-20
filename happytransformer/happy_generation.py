@@ -97,7 +97,7 @@ class HappyGeneration(HappyTransformer):
 
         if file_type == "text":
             return tok_text_gen_mlm(tokenizer=self.tokenizer, dataset=raw_dataset,
-                                          preprocessing_processes=args.preprocessing_processes, mlm=False)
+                                          preprocessing_processes=args.preprocessing_processes, mlm=False, max_length=args.max_length)
         else:
             return csv_tok_text_gen_mlm(tokenizer=self.tokenizer, dataset=raw_dataset,
                                         preprocessing_processes=args.preprocessing_processes,
