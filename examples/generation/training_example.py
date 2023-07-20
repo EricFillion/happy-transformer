@@ -8,7 +8,7 @@ def main():
     eval_csv_path = "eval.csv"
 
     train_dataset = load_dataset('billsum', split='train[0:1999]')
-    eval_dataset = load_dataset('billsum', split='test[0:1999]')
+    eval_dataset = load_dataset('billsum', split='test[0:199]')
 
     generate_csv(train_csv_path, train_dataset)
     generate_csv(eval_csv_path, eval_dataset)
@@ -23,14 +23,14 @@ def main():
 
     # uncomment the deepspeed parameter to use Deepspeed
     args = GENTrainArgs(
-        padding=True,
-        # deepspeed="../deepspeed/ds_config.json",
-        # report_to = tuple(['wandb'])
         save_preprocessed_data=True,
         save_preprocessed_data_path="/tok-data/",
+        # deepspeed="../deepspeed/ds_config.json",
+        # report_to = tuple(['wandb']),
+
         # enable the code below to reused preprocesses data for your second run
         # load_preprocessed_data=True,
-        # save_preprocessed_data_path="/tok-data/"
+        # load_preprocessed_data_path="/tok-data/"
     )
 
     happy_gen.train(train_csv_path, args=args, eval_filepath=eval_csv_path)
