@@ -93,18 +93,15 @@ class HappyGeneration(HappyTransformer):
     def test(self, input_filepath, args=None):
         raise NotImplementedError("test() is currently not available")
 
-    def _tok_function(self, raw_dataset: Dataset, args: GENTrainArgs, file_type: str) -> Dataset:
+    def _tok_function(self, raw_dataset: Dataset, args: Union[GENTrainArgs, GENEvalArgs], file_type: str) -> Dataset:
 
         if file_type == "text":
-            return tok_text_gen_mlm(tokenizer=self.tokenizer, dataset=raw_dataset,
-                                          preprocessing_processes=args.preprocessing_processes, mlm=False, max_length=args.max_length)
+            return tok_text_gen_mlm(tokenizer=self.tokenizer, dataset=raw_dataset,  args=args,
+                                          preprocessing_processes=args.preprocessing_processes, mlm=False)
         else:
-            return csv_tok_text_gen_mlm(tokenizer=self.tokenizer, dataset=raw_dataset,
+            return csv_tok_text_gen_mlm(tokenizer=self.tokenizer, dataset=raw_dataset, args=args,
                                         preprocessing_processes=args.preprocessing_processes,
                                         mlm=False,
-                                        padding=args.padding,
-                                        truncation=args.truncation,
-                                        max_length=args.max_length
                                         )
 
 

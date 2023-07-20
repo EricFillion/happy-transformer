@@ -6,17 +6,20 @@ https://github.com/huggingface/transformers/blob/master/examples/pytorch/languag
 """
 
 from dataclasses import dataclass
+from typing import Union
 
 from datasets import Dataset
 from transformers import PreTrainedTokenizer
 
+from happytransformer.args import GENTrainArgs, WPTrainArgs, GENEvalArgs, WPEvalArgs
+
 # Used for text gen and mlm fine-tuning.
-def tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, preprocessing_processes: int =1, mlm=True,  max_length=512) -> Dataset:
+def tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, args: Union[GENTrainArgs, WPTrainArgs, GENEvalArgs, WPEvalArgs], preprocessing_processes: int =1, mlm: bool=True) -> Dataset:
     #todo set to args.max_length
-    if max_length == "maximum":
+    if args.max_length is None:
         max_input_length = tokenizer.model_max_length
     else:
-        max_input_length= max_length
+        max_input_length= args.max_length
 
     def tokenize_function(example):
         texts = example["text"]
@@ -59,15 +62,15 @@ def tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, preproces
     return tokenized_dataset
 
 
-def csv_tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, preprocessing_processes: int =1, mlm=True, padding=False, max_length=512, truncation=False) -> Dataset:
-    if max_length == "maximum":
+def csv_tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, args: Union[GENTrainArgs, WPTrainArgs, GENEvalArgs, WPEvalArgs], preprocessing_processes: int =1, mlm=True) -> Dataset:
+    if args.max_length is None:
         max_input_length = tokenizer.model_max_length
     else:
-        max_input_length= max_length
+        max_input_length = args.max_length
 
     def tokenize_function(example):
         texts = example["text"]
-        toks = tokenizer(texts, padding=padding, truncation=truncation, max_length=max_input_length)
+        toks = tokenizer(texts, padding=args.padding, truncation=args.truncation, max_length=max_input_length)
         if not mlm:
             toks["labels"] = toks["input_ids"]
         return toks

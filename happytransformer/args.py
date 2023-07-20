@@ -54,13 +54,13 @@ class TestArgs:
 class GENTrainArgs(TrainArgs):
     padding: Union[str, bool]= False
     truncation: Union[str, bool] = False
-    max_length: Union[str, int] = "maximum"
+    max_length: Union[None, int] = None
 
 @dataclass
 class GENEvalArgs(EvalArgs):
     padding: Union[str, bool] = False
     truncation: Union[str, bool] = False
-    max_length: Union[str, int] = "maximum"
+    max_length: Union[None, int] = None
 
 # QA
 @dataclass
@@ -95,7 +95,7 @@ class WPTrainArgs(TrainArgs):
     line_by_line: bool = False
     padding: Union[str, bool]= False
     truncation: Union[str, bool] = False
-    max_length: Union[str, int] = "maximum"
+    max_length: Union[None, int] = None
 
 @dataclass
 class WPEvalArgs(EvalArgs):
@@ -103,7 +103,7 @@ class WPEvalArgs(EvalArgs):
     line_by_line: bool = False
     padding: Union[str, bool]= False
     truncation: Union[str, bool] = False
-    max_length: Union[str, int] = "maximum"
+    max_length: Union[None, int] = None
 
 @dataclass
 class WPTestArgs(TestArgs):
