@@ -53,7 +53,11 @@ class HappyTransformer():
         raise NotImplementedError()
 
     ######## Helper __init__ methods ########
+
     def _get_model_components(self, model_name_path):
+        # HappyTextClassification is the only class that overwrites
+        # this as we need to specify number of labels.
+
         config = AutoConfig.from_pretrained(model_name_path, use_auth_token=self.use_auth_token)
         model = self._model_class.from_pretrained(model_name_path, config=config, use_auth_token=self.use_auth_token)
         tokenizer = AutoTokenizer.from_pretrained(model_name_path, use_auth_token=self.use_auth_token)

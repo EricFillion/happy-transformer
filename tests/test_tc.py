@@ -69,8 +69,8 @@ def test_tc_train_effectiveness_multi():
     happy_tc = HappyTextClassification(
         model_type="BERT",
         model_name="prajjwal1/bert-tiny",
-        num_labels=3
-    )
+        num_labels=3 )
+
     before_loss = happy_tc.eval("../data/tc/train-eval-multi.csv").loss
     happy_tc.train("../data/tc/train-eval-multi.csv")
     after_loss = happy_tc.eval("../data/tc/train-eval-multi.csv").loss
@@ -81,7 +81,7 @@ def test_tc_train_effectiveness_multi():
 #TODO investigate why with some models the labels change after is saved and loaded
 def test_tc_save():
     happy = HappyTextClassification(model_type="DISTILBERT",
-        model_name="distilbert-base-uncased", num_labels=2)
+        model_name="distilbert-base-uncased", num_labels=3)
     happy.save("model/")
     result_before = happy.classify_text("What a great movie")
 

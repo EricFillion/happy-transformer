@@ -4,7 +4,7 @@ from typing import Union
 from dataclasses import dataclass
 from datasets import Dataset
 from tqdm import tqdm
-from transformers import AutoModelForSequenceClassification, DataCollatorWithPadding, TextClassificationPipeline
+from transformers import AutoConfig, AutoModelForSequenceClassification, AutoTokenizer, DataCollatorWithPadding, TextClassificationPipeline
 
 from happytransformer.adaptors import get_adaptor
 from happytransformer.args import TCEvalArgs, TCTestArgs, TCTrainArgs
@@ -19,9 +19,10 @@ class TextClassificationResult:
 class HappyTextClassification(HappyTransformer):
     def __init__(self, model_type="DISTILBERT",
                  model_name="distilbert-base-uncased", num_labels: int = 2, load_path: str = "", use_auth_token: Union[bool, str] = None):
+
+        self._num_labels = num_labels
         self.adaptor = get_adaptor(model_type)
         model_class = AutoModelForSequenceClassification
-        self._num_labels = num_labels
 
         super().__init__(model_type, model_name, model_class, use_auth_token=use_auth_token, load_path=load_path)
 
@@ -95,3 +96,12 @@ class HappyTextClassification(HappyTransformer):
         if not test_data:
             return contexts, labels
         return contexts
+
+    def _get_model_components(self, model_name_path):
+        # HappyTextClassification is the only class that overwrites
+        # this as we need to specify number of labels.
+        config = AutoConfig.from_pretrained(model_name_path, use_auth_token=self.use_auth_token,  num_labels=self._num_labels)
+        model = self._model_class.from_pretrained(model_name_path, config=config, use_auth_token=self.use_auth_token)
+        tokenizer = AutoTokenizer.from_pretrained(model_name_path, use_auth_token=self.use_auth_token)
+
+        return config, tokenizer, model
