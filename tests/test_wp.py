@@ -60,26 +60,26 @@ def test_wp_targets():
 
 def test_wp_train_default():
     happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
-    happy_wp.train("../data/wp/train-eval.txt")
+    happy_wp.train("../data/wp/train-eval.txt", args = WPTrainArgs(max_length=512))
 
 def test_wp_train_line_by_line():
     happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
-    happy_wp.train("../data/wp/train-eval.txt", args=WPTrainArgs(line_by_line=True))
+    happy_wp.train("../data/wp/train-eval.txt", args=WPTrainArgs(line_by_line=True, max_length=512))
 
 
 
 def test_wp_eval_basic():
     happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
-    result = happy_wp.eval("../data/wp/train-eval.txt")
+    result = happy_wp.eval("../data/wp/train-eval.txt", args=WPEvalArgs(max_length=512))
     assert type(result.loss) == float
 
 def test_wp_train_effectiveness_multi():
     happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
 
-    before_result = happy_wp.eval("../data/wp/train-eval.txt")
+    before_result = happy_wp.eval("../data/wp/train-eval.txt", args=WPEvalArgs(max_length=512))
 
-    happy_wp.train("../data/wp/train-eval.txt")
-    after_result = happy_wp.eval("../data/wp/train-eval.txt")
+    happy_wp.train("../data/wp/train-eval.txt", args=WPTrainArgs(max_length=512))
+    after_result = happy_wp.eval("../data/wp/train-eval.txt", args=WPEvalArgs(max_length=512))
 
     assert after_result.loss < before_result.loss
 
@@ -88,7 +88,7 @@ def test_wp_eval_some_settings():
     Test to see what happens when only a subset of the potential settings are used
     :return:
     """
-    args = {'line_by_line': True}
+    args = {'line_by_line': True, "max_length": 512}
 
     happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
 
@@ -101,14 +101,14 @@ def test_wp_save_load_train():
     happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
     output_path = "data/wp-train/"
     data_path = "../data/wp/train-eval.txt"
-    args = WPTrainArgs(line_by_line=True)
+    args = WPTrainArgs(line_by_line=True, max_length=512)
     run_save_load(happy_wp, output_path, args, data_path, "train")
 
 def test_wp_save_load_eval():
     happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
     output_path = "data/wp-eval.json"
     data_path = "../data/wp/train-eval.txt"
-    args = WPEvalArgs(line_by_line=True)
+    args = WPEvalArgs(line_by_line=True, max_length=512)
     run_save_load(happy_wp, output_path, args, data_path, "eval")
 
 def test_wp_save():
@@ -125,7 +125,7 @@ def test_wp_save():
 def test_wp_train_eval_with_dic():
 
     happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
-    train_args = {'learning_rate': 0.01, 'line_by_line': True, "num_train_epochs": 1}
+    train_args = {'learning_rate': 0.01, 'line_by_line': True, "num_train_epochs": 1, "max_length": 512}
 
     # dictionaries are no longer supported so we expect a ValueError
     with pytest.raises(ValueError):
@@ -139,11 +139,11 @@ def test_wp_train_eval_with_dic():
 def test_wp_train_eval_with_dataclass():
 
     happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
-    train_args = WPTrainArgs(learning_rate=0.01, line_by_line=True, num_train_epochs=1)
+    train_args = WPTrainArgs(learning_rate=0.01, line_by_line=True, num_train_epochs=1, max_length=512)
 
     happy_wp.train("../data/wp/train-eval.txt" , args=train_args)
 
-    eval_args = WPEvalArgs(line_by_line=True)
+    eval_args = WPEvalArgs(line_by_line=True, max_length=512)
 
     after_result = happy_wp.eval("../data/wp/train-eval.txt", args=eval_args)
 
