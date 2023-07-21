@@ -95,5 +95,5 @@ class HappyWordPrediction(HappyTransformer):
                                         dataset=raw_dataset,
                                         args=args,
                                         preprocessing_processes=args.preprocessing_processes,
-                                        mlm=False,
+                                        mlm=True
                                         )

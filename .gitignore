@@ -6,8 +6,8 @@ runs/
 .idea/
 tests/happy_transformer/
 
-examples/word_prediction/train.txt
-examples/word_prediction/eval.txt
+examples/word_prediction/train.csv
+examples/word_prediction/eval.csv
 examples/word_prediction/happy_transformer/
 
 examples/text_classification/train.txt
