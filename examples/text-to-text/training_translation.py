@@ -20,7 +20,6 @@ def main():
     before_loss = happy_tt.eval(eval_csv_path, args=eval_args)
 
     train_args = TTTrainArgs(
-                num_train_epochs=1,
                 max_input_length=1024,
                 max_output_length=1024,
                 # deepspeed="../deepspeed/ds_config.json"

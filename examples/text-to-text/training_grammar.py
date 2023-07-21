@@ -21,7 +21,6 @@ def main():
 
     before_loss = happy_tt.eval(eval_csv_path).loss
     args = TTTrainArgs(
-                        num_train_epochs=1,
                         # deepspeed="../deepspeed/ds_config.json",
                         # report_to = tuple(['wandb'])
     )
