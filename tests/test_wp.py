@@ -150,10 +150,10 @@ def test_wp_train_eval_with_dataclass():
 def test_wp_csv():
     data_path = "../data/wp/train-eval.csv"
     happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
-    before_result = happy_wp.eval(data_path)
+    before_result = happy_wp.eval(data_path, args=WPEvalArgs(max_length=512))
     print("before_result", before_result)
-    happy_wp.train(data_path)
-    after_result = happy_wp.eval(data_path)
+    happy_wp.train(data_path, args=WPTrainArgs(max_length=512))
+    after_result = happy_wp.eval(data_path, args=WPEvalArgs(max_length=512))
     print("after_result", after_result)
 
     assert after_result.loss < before_result.loss
