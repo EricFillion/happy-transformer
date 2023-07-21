@@ -20,7 +20,7 @@ from happytransformer.fine_tuning_util import EvalResult
 
 class HappyTransformer():
 
-    def __init__(self, model_type: str, model_name: str, model_class: AutoModel, load_path="", use_auth_token: Union[str, bool] = None, device: str = "auto"):
+    def __init__(self, model_type: str, model_name: str, model_class: AutoModel, load_path="", use_auth_token: Union[str, bool] = None):
 
         self.logger = self._get_logger()
         self.model_type = model_type
@@ -34,11 +34,7 @@ class HappyTransformer():
         else:
             self.config, self.tokenizer, self.model = self._get_model_components(self.model_name)
 
-        if device == "auto":
-            # self._to_auto_device() moves self.model to self.device
-            self.device = self.to_auto_device()
-        else:
-            self.device = device
+        self.device = self.to_auto_device()
 
         self.logger.info("Using device: %s", self.device)
 
