@@ -18,7 +18,7 @@ class TrainArgs:
 
     save_steps: float = 0.0 #  if 0 no saving will be done
     eval_steps: float = 0.1  # if 0 no evaluating will be done
-    logging_steps: float = 0.0   # if 0 no saving will be done
+    logging_steps: float = 0.1   # if 0 no saving will be done
 
     load_preprocessed_data: bool = False
     save_preprocessed_data: bool = False
