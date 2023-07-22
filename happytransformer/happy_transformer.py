@@ -16,7 +16,7 @@ from transformers import (
     )
 
 from happytransformer.args import EvalArgs, TrainArgs
-from happytransformer.fine_tuning_util import EvalResult
+from happytransformer.fine_tuning_util import DEFAULT_DS_SETTINGS, EvalResult
 
 class HappyTransformer():
 
@@ -217,8 +217,10 @@ class HappyTransformer():
         else:
             arg_class = TrainingArguments
 
+        deepspeed = self.__get_deepspeed_config(args)
+
         return arg_class(
-            deepspeed=None if args.deepspeed == "" else args.deepspeed,
+            deepspeed=deepspeed,
             output_dir=args.output_dir,
             learning_rate=args.learning_rate,
             weight_decay=args.weight_decay,
@@ -285,13 +287,15 @@ class HappyTransformer():
             return trainer.evaluate()
 
     def _get_eval_args(self, output_path: str, args: EvalArgs) -> TrainingArguments:
+        deepspeed = self.__get_deepspeed_config(args)
+
         return TrainingArguments(
             output_dir=output_path,
             seed=42,
             report_to=['none'],
             per_device_eval_batch_size=args.batch_size,
             use_mps_device=True if self.device.type == "mps" else False,
-            deepspeed=None if args.deepspeed == "" else args.deepspeed
+            deepspeed=deepspeed
         )
 
 
@@ -315,3 +319,15 @@ class HappyTransformer():
             ValueError(f"Invalid file type for {file_path}.")
 
         return ending
+
+    def __get_deepspeed_config(self, args: Union[TrainArgs, EvalArgs]):
+        # args.deepspeed is False when disabled. True when default settings. String when path to custom settings.
+        if isinstance(args.deepspeed, str):
+            deepspeed = args.deepspeed
+        else:
+            if args.deepspeed:
+                deepspeed = DEFAULT_DS_SETTINGS
+            else:
+                deepspeed = None
+
+        return deepspeed

@@ -26,7 +26,7 @@ class TrainArgs:
     load_preprocessed_data_path: str = ""
     preprocessing_processes: int = 1
     report_to: tuple = ()
-    deepspeed: str = ""
+    deepspeed: Union[bool, str] = False
 
     # Currently used to create a project and run ID for wandb
     project_name: str = "happy-transformer"
@@ -40,7 +40,7 @@ class EvalArgs:
     load_preprocessed_data_path: str = ""
     batch_size: int = 1
     preprocessing_processes: int = 1
-    deepspeed: str = ""
+    deepspeed: Union[bool, str] = False
 
 @dataclass
 class TestArgs:
