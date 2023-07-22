@@ -117,8 +117,6 @@ class HappyTransformer():
 
         result = self._run_eval(tokenized_dataset, self._data_collator, args)
 
-        print("RESULT", result)
-
         return EvalResult(loss=result["eval_loss"])
 
     def test(self, input_filepath, args):
