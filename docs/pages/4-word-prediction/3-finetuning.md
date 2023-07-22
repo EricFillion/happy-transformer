@@ -27,30 +27,33 @@ inputs:
 
 #### Table 4.1
 
-| Parameter                     | Default             |
-|-------------------------------|---------------------|
-| learning_rate                 | 5e-5                |
-| num_train_epochs              | 3                   |
-| batch_size                    | 1                   |
-| weight_decay                  | 0                   |
-| adam_beta1                    | 0.9                 |
-| adam_beta2                    | 0.999               |
-| adam_epsilon                  | 1e-8                |
-| max_grad_norm                 | 1.0                 |
-| save_preprocessed_data        | False               |
-| save_preprocessed_data_path   | ""                  |
-| load_preprocessed_data        | False               |
-| load_preprocessed_data_path   | ""                  |
-| preprocessing_processes       | 1                   |
-| mlm_probability               | 0.15                |
-| line-by-line                  | False               |
-| fp16                          | False               |
-| eval_ratio                    | 0.1                 |
-| save_steps                    | 0.0                 |
-| eval_steps                    | 0.1                 |
-| logging_steps                 | 0.1                 |
-| gradient_accumulation_steps   | 1                   |
-| output_dir                    | "happy_transformer" |
+| Parameter                    | Default             |
+|------------------------------|---------------------|
+| learning_rate                | 5e-5                |
+| num_train_epochs             | 3                   |
+| batch_size                   | 1                   |
+| weight_decay                 | 0                   |
+| adam_beta1                   | 0.9                 |
+| adam_beta2                   | 0.999               |
+| adam_epsilon                 | 1e-8                |
+| max_grad_norm                | 1.0                 |
+| save_preprocessed_data       | False               |
+| save_preprocessed_data_path  | ""                  |
+| load_preprocessed_data       | False               |
+| load_preprocessed_data_path  | ""                  |
+| preprocessing_processes      | 1                   |
+| mlm_probability              | 0.15                |
+| line-by-line                 | False               |
+| fp16                         | False               |
+| eval_ratio                   | 0.1                 |
+| save_steps                   | 0.0                 |
+| eval_steps                   | 0.1                 |
+| logging_steps                | 0.1                 |
+| gradient_accumulation_steps  | 1                   |
+| output_dir                   | "happy_transformer" |
+| padding                      | "max_length"        |
+| truncation                   | True                |
+| max_length                   | None                |
 
 Information about the learning parameters can be found [here](/learning-parameters/)
 
@@ -63,6 +66,7 @@ mlm_probability: The probability of masking a token.
 line-by-line: If False, training data is concatenated and then divided into sections that are the length of the model's input size, other than the last input which may be shorter. 
               If True, each input contains the text from a single line within the training data. The text may be truncated if the line is too long (eg BERT's max input size is 512 tokens). 
 
+padding/truncation/max_length (experimental): See this [table](https://huggingface.co/docs/transformers/pad_truncation) to learn more.  We may modify or remove these parameters in future releases.
 
 #### Example 4.4:
 ```python
@@ -80,14 +84,17 @@ Input:
  
 #### Table 4.2
 
-| Parameter                     |Default|
-|-------------------------------|-------|
-| save_preprocessed_data        | False |
-| save_preprocessed_data_path   | ""    |
-| load_preprocessed_data        | False |
-| load_preprocessed_data_path   | ""    |
-| preprocessing_processes       | 1     |
-| line-by-line                  | False |
+| Parameter                   | Default      |
+|-----------------------------|--------------|
+| save_preprocessed_data      | False        |
+| save_preprocessed_data_path | ""           |
+| load_preprocessed_data      | False        |
+| load_preprocessed_data_path | ""           |
+| preprocessing_processes     | 1            |
+| line-by-line                | False        |
+| padding                     | "max_length" |
+| truncation                  | True         |
+| max_length                  | None         |
 
 See the explanations under Table 4.0 for more information 
 

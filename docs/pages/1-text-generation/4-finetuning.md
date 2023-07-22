@@ -50,6 +50,9 @@ inputs:
 | logging_steps               | 0.1                 |
 | gradient_accumulation_steps | 1                   |
 | output_dir                  | "happy_transformer" |
+| padding                     | "max_length"        |
+| truncation                  | True                |
+| max_length                  | None                |
 
 
 Information about the learning parameters can be found [here](/learning-parameters/)
@@ -58,6 +61,7 @@ Information about saving/loading preprocessed data can be found [here](/save-loa
 
 preprocessing_processes: Number of processes used for preprocessing. We recommend 1-4. 
 
+padding/truncation/max_length (experimental): See this [table](https://huggingface.co/docs/transformers/pad_truncation) to learn more. We may modify or remove these parameters in future releases. 
 
 
 #### Example 1.3:
@@ -77,13 +81,16 @@ Input:
 
 #### Table 1.2
 
-| Parameter                     |Default|
-|-------------------------------|-------|
-| save_preprocessed_data        | False |
-| save_preprocessed_data_path   | ""    |
-| load_preprocessed_data        | False |
-| load_preprocessed_data_path   | ""    |
-| preprocessing_processes       | 1     |
+| Parameter                     | Default      |
+|-------------------------------|--------------|
+| save_preprocessed_data        | False        |
+| save_preprocessed_data_path   | ""           |
+| load_preprocessed_data        | False        |
+| load_preprocessed_data_path   | ""           |
+| preprocessing_processes       | 1            |
+| padding                       | "max_length" |
+| truncation                    | True         |
+| max_length                    | None         |
 
 See the explanations under Table 1.1 for more information 
 
