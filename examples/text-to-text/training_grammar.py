@@ -1,5 +1,5 @@
 import csv
-from happytransformer.happy_text_to_text import HappyTextToText, TTEvalArgs, TTTrainArgs
+from happytransformer.happy_text_to_text import HappyTextToText, TTTrainArgs
 from datasets import load_dataset
 
 def main():
@@ -18,9 +18,6 @@ def main():
 
     generate_csv("train.csv", train_dataset)
     generate_csv("eval.csv", eval_dataset)
-    eval_args = TTEvalArgs(
-        #deepspeed = True
-    )
 
     before_loss = happy_tt.eval(eval_csv_path, args=eval_args).loss
     train_args = TTTrainArgs(
@@ -30,10 +27,7 @@ def main():
     happy_tt.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
 
     after_text = happy_tt.generate_text(input_text).text
-    after_loss = happy_tt.eval(eval_csv_path, args=eval_args).loss
 
-    print("before loss:", before_loss)
-    print("after loss:", after_loss)
     print("------------------------------------")
 
     print("input text:", input_text)

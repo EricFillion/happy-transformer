@@ -16,11 +16,6 @@ def main():
     generate_csv(train_csv_path, train_dataset)
     generate_csv(eval_csv_path, eval_dataset)
 
-    eval_args = TTTrainArgs(max_input_length=1024, max_output_length=1024,
-                            # deepspeed=False
-                            )
-    before_loss = happy_tt.eval(eval_csv_path, args=eval_args)
-
     train_args = TTTrainArgs(
                 max_input_length=1024,
                 max_output_length=1024,
@@ -30,11 +25,6 @@ def main():
     happy_tt.train(train_csv_path, args=train_args)
 
     after_text = happy_tt.generate_text("translate English to Persian: " + text)
-
-    after_loss = happy_tt.eval(eval_csv_path, args=eval_args)
-
-    print("before loss:", before_loss)
-    print("after loss:", after_loss)
 
     print("before text:", before_text)
     print("after text:", after_text)

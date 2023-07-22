@@ -1,6 +1,6 @@
 import csv
 from datasets import load_dataset
-from happytransformer import HappyGeneration, GENEvalArgs,  GENTrainArgs
+from happytransformer import HappyGeneration,  GENTrainArgs
 
 
 def main():
@@ -20,22 +20,15 @@ def main():
     produce_examples(starter_texts, happy_gen)
     # uncomment the deepspeed parameter to use Deepspeed
 
-    eval_args = GENEvalArgs(
-        # deepspeed=True
-    )
-    before_loss = happy_gen.eval(eval_csv_path, args=eval_args)
 
     train_args = GENTrainArgs(
-        # deepspeed=True,
+        # deepspeed="True",
         # report_to = tuple(['wandb']),
     )
 
     happy_gen.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
 
     after_loss = happy_gen.eval(eval_csv_path, args=eval_args)
-
-    print("Before loss: ", before_loss.loss)
-    print("After loss: ", after_loss.loss, end="\n\n")
 
     print("Examples After Training: ")
     produce_examples(starter_texts, happy_gen)

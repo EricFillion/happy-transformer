@@ -14,10 +14,6 @@ def main():
     generate_csv(eval_csv_path, eval_dataset)
 
     happy_tc = HappyTextClassification(model_type="BERT", model_name="bert-base-uncased", num_labels=28)
-    eval_args = TCEvalArgs(
-        # deepspeed=True
-    )
-    before_loss = happy_tc.eval(eval_csv_path, args=eval_args)
 
     train_args = TCTrainArgs(
                        #deepspeed=True,
@@ -26,10 +22,6 @@ def main():
 
     happy_tc.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
 
-    after_loss = happy_tc.eval(eval_csv_path, args=eval_args)
-
-    print("Before loss: ", before_loss.loss)
-    print("After loss: ", after_loss.loss)
 
 
 def generate_csv(csv_path, dataset):

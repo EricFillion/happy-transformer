@@ -14,9 +14,7 @@ def main():
     generate_csv(eval_csv_path, eval_dataset)
 
     happy_wp = HappyWordPrediction(model_type="DISTILBERT", model_name="distilbert-base-uncased")
-    eval_args = WPEvalArgs(
-        #deepspeed=True
-    )
+
     starter_texts = ["Authorizes [MASK] for community use",
                      "Allows for [MASK] to be used at gatherings of over 50 people.",
                      "Prevents children under 18 years old from buying [MASK]",
@@ -25,19 +23,12 @@ def main():
     print("Examples Before Training: ")
     produce_examples(starter_texts, happy_wp)
 
-    before_loss = happy_wp.eval(eval_csv_path, args=eval_args)
-
     train_args = WPTrainArgs(
         #deepspeed=True,
         # report_to = tuple(['wandb'])
 
     )
     happy_wp.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
-
-    after_loss = happy_wp.eval(eval_csv_path, args=eval_args)
-
-    print("Before loss: ", before_loss.loss)
-    print("After loss: ", after_loss.loss, end="\n\n")
 
     print("Examples After Training: ")
     produce_examples(starter_texts, happy_wp)
