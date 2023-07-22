@@ -17,17 +17,26 @@ Join our Discord server: [![Support Server](https://img.shields.io/discord/83926
 
 Happy Transformer is built on top of [Hugging Face's transformer library](https://huggingface.co/transformers/) and makes it easy to fine-tune state-of-the-art NLP models. 
 
-## Features 
+## 2.5.0 New Features 
+1. Deepspeed for training 
+2. Apple's MPS for training and inference 
+3. WandB to track training runs 
+4. Data supplied for training is automatically split into portions for training and evaluating
+5. Pushing Models directly to Hugging Face's Model Hub
+
+
+
+## Tasks 
   
-| Public Methods                     | Basic Usage  | Training   |
-|------------------------------------|--------------|------------|
-| Text Generation                    | ✔            | ✔          |
-| Text Classification                | ✔            | ✔          | 
-| Word Prediction                    | ✔            | ✔          |
-| Question Answering                 | ✔            | ✔          | 
-| Text-to-Text                       | ✔            | ✔          | 
-| Next Sentence Prediction           | ✔            |            | 
-| Token Classification               | ✔            |            | 
+| Tasks                    | Inference | Training   |
+|--------------------------|-----------|------------|
+| Text Generation          | ✔         | ✔          |
+| Text Classification      | ✔         | ✔          | 
+| Word Prediction          | ✔         | ✔          |
+| Question Answering       | ✔         | ✔          | 
+| Text-to-Text             | ✔         | ✔          | 
+| Next Sentence Prediction | ✔         |            | 
+| Token Classification     | ✔         |            | 
 
 ## Quick Start
 ```sh
@@ -48,8 +57,6 @@ print(result[0].token)  # am
 - [Eric Fillion](https://github.com/ericfillion)  Lead Maintainer
 - [Ted Brownlow](https://github.com/ted537) Maintainer
 
-## Courses 
-[Create a text generation web app. Also learn how to fine-tune GPT-Neo](https://www.udemy.com/course/nlp-text-generation-python-web-app/?couponCode=LAUNCH)
 
 ## Tutorials 
 [Text generation with training (GPT-Neo)](https://youtu.be/GzHJ3NUVtV4)
