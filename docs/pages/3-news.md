@@ -17,6 +17,7 @@ nav_order: 4
 - Apple's MPS chips can be used for inference and fine-tuning.
 - CSV files are supported for training/evaluating text generation and word prediction models. This makes it easy to isolate cases. 
 - Push models to Hugging Face's Hub with one command. 
+- Enable saving models periodically during training.
 
 Breaking changes:
 - Preprocesses data is now saved in the Hugging Face's Dataset format rather than in JSON format.
