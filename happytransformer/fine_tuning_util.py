@@ -87,7 +87,42 @@ class EvalResult:
     loss: float
 
 
-DEFAULT_DS_SETTINGS = {
+ZERO_2_SETTINGS = {
+    "zero_optimization": {
+        "stage": 2,
+        "allgather_partitions": True,
+        "allgather_bucket_size": 2e8,
+        "overlap_comm": True,
+        "reduce_scatter": True,
+        "reduce_bucket_size": "auto",
+        "contiguous_gradients": True
+    },
+
+    "fp16": {
+        "enabled": "auto",
+        "loss_scale": 0,
+        "loss_scale_window": 1000,
+        "initial_scale_power": 16,
+        "hysteresis": 2,
+        "min_loss_scale": 1
+    },
+    "scheduler": {
+        "type": "WarmupLR",
+        "params": {
+            "warmup_min_lr": "auto",
+            "warmup_max_lr": "auto",
+            "warmup_num_steps": "auto"
+        }
+    },
+    "gradient_accumulation_steps": "auto",
+    "gradient_clipping": "auto",
+    "steps_per_print": 32,
+    "train_batch_size": "auto",
+    "train_micro_batch_size_per_gpu": "auto",
+    "wall_clock_breakdown": False
+}
+
+ZERO_3_SETTINGS = {
     "zero_optimization": {
         "stage": 3,
         "offload_optimizer": {
@@ -131,6 +166,7 @@ DEFAULT_DS_SETTINGS = {
     "train_micro_batch_size_per_gpu": "auto",
     "wall_clock_breakdown": False
 }
+
 
 class FistStep(TrainerCallback):
     def on_step_begin(self, args, state, control, **kwargs):

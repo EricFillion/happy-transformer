@@ -16,7 +16,7 @@ from transformers import (
     )
 
 from happytransformer.args import EvalArgs, TrainArgs
-from happytransformer.fine_tuning_util import DEFAULT_DS_SETTINGS, EvalResult, FistStep
+from happytransformer.fine_tuning_util import EvalResult, FistStep, ZERO_2_SETTINGS, ZERO_3_SETTINGS
 
 class HappyTransformer():
 
@@ -324,10 +324,15 @@ class HappyTransformer():
     def __get_deepspeed_config(self, args: Union[TrainArgs, EvalArgs]):
         # args.deepspeed is False when disabled. True when default settings. String when path to custom settings.
         if isinstance(args.deepspeed, str):
-            deepspeed = args.deepspeed
+            if args.deepspeed == "ZERO-2":
+                deepspeed = ZERO_2_SETTINGS
+            elif args.deepspeed == "ZERO-2":
+                deepspeed = ZERO_3_SETTINGS
+            else:
+                deepspeed = args.deepspeed
         else:
             if args.deepspeed:
-                deepspeed = DEFAULT_DS_SETTINGS
+                deepspeed = ZERO_3_SETTINGS
             else:
                 deepspeed = None
 
