@@ -1,5 +1,5 @@
 import csv
-from happytransformer.happy_text_to_text import HappyTextToText, TTTrainArgs
+from happytransformer.happy_text_to_text import HappyTextToText, TTEvalArgs, TTTrainArgs
 from datasets import load_dataset
 
 def main():
@@ -16,13 +16,15 @@ def main():
     generate_csv(train_csv_path, train_dataset)
     generate_csv(eval_csv_path, eval_dataset)
 
-    eval_args = TTTrainArgs(max_input_length=1024, max_output_length=1024)
+    eval_args = TTTrainArgs(max_input_length=1024, max_output_length=1024,
+                            # deepspeed=False
+                            )
     before_loss = happy_tt.eval(eval_csv_path, args=eval_args)
 
     train_args = TTTrainArgs(
                 max_input_length=1024,
                 max_output_length=1024,
-                # deepspeed="../deepspeed/ds_config.json"
+                # deepspeed=True,
                 # report_to = tuple(['wandb'])
     )
     happy_tt.train(train_csv_path, args=train_args)

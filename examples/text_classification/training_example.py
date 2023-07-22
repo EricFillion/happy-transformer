@@ -1,6 +1,6 @@
 from datasets import load_dataset
 import csv
-from happytransformer import  HappyTextClassification, TCTrainArgs
+from happytransformer import  HappyTextClassification, TCEvalArgs, TCTrainArgs
 
 
 def main():
@@ -14,17 +14,19 @@ def main():
     generate_csv(eval_csv_path, eval_dataset)
 
     happy_tc = HappyTextClassification(model_type="BERT", model_name="bert-base-uncased", num_labels=28)
+    eval_args = TCEvalArgs(
+        # deepspeed=True
+    )
+    before_loss = happy_tc.eval(eval_csv_path, args=eval_args)
 
-    before_loss = happy_tc.eval(eval_csv_path)
-
-    args = TCTrainArgs(
-                       #deepspeed="../deepspeed/ds_config.json",
+    train_args = TCTrainArgs(
+                       #deepspeed=True,
                        # report_to = tuple(['wandb'])
                        )
 
-    happy_tc.train(train_csv_path, args=args, eval_filepath=eval_csv_path)
+    happy_tc.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
 
-    after_loss = happy_tc.eval(eval_csv_path)
+    after_loss = happy_tc.eval(eval_csv_path, args=eval_args)
 
     print("Before loss: ", before_loss.loss)
     print("After loss: ", after_loss.loss)
