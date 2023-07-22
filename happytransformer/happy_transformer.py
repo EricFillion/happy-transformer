@@ -254,6 +254,9 @@ class HappyTransformer():
 
         os.environ["WANDB_PROJECT"] = args.project_name
 
+        if self._type == "wp":
+            self._data_collator.mlm_probability = args.mlm_probability
+
         if self._type == "tt":
             train_class = Seq2SeqTrainer
         else:
@@ -270,6 +273,9 @@ class HappyTransformer():
         trainer.train()
 
     def _run_eval(self, dataset, data_collator, args):
+        if self._type == "wp":
+            self._data_collator.mlm_probability = args.mlm_probability
+
         with tempfile.TemporaryDirectory() as tmp_dir_name:
             eval_args = self._get_eval_args(tmp_dir_name, args)
             trainer = Trainer(

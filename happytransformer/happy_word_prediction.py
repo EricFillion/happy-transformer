@@ -32,11 +32,9 @@ class HappyWordPrediction(HappyTransformer):
 
         self._pipeline = FillMaskPipeline(model=self.model, tokenizer=self.tokenizer, device=self.device)
 
-
-
+        # mlm_probability is modified to the train args value within HappyTransformer._run_eval() and HappyTransformer._run_eval()
         self._data_collator = DataCollatorForLanguageModeling(tokenizer=self.tokenizer,
-                                                        mlm_probability=0.1  # todo modify
-                                                        )
+                                                        mlm_probability=0.1)
         self._t_data_file_type = ["text", "csv"]
         self._type = "wp"
 
