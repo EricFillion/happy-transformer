@@ -23,6 +23,7 @@ inputs:
 
 1. text (string): text to be classified 
 2. label (int): the corresponding label. Must be greater than or equal to 0
+3. eval_filepath (string): By default, an evaluating dataset will be generated from the supplied training data. But, you may provide a filepath to a CSV file as described for input_filepath to use standalone evaluating data. 
 
 | text                          | label |
 |-------------------------------|-------|

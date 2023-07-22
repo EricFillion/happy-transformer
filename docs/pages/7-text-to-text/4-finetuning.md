@@ -17,6 +17,7 @@ HappyTextToText contains two methods for training
 inputs: 
 1. input_filepath (string): a path file to a csv file as shown in table 7.1
 2. args (TTTrainArgs): a dataclass with the same fields types as shown in Table 7.2. 
+3. eval_filepath (string): By default, an evaluating dataset will be generated from the supplied training data. But, you may provide a filepath to a CSV file as described for input_filepath to use standalone evaluating data. 
 
 
 #### Table 7.1

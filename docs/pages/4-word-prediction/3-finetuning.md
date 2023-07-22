@@ -16,10 +16,16 @@ HappyWordPrediction contains two methods for training
 
 inputs: 
 1. input_filepath (string): a path file to a text file that contains nothing but text to train the model with
-2. args (WPTrainArgs): a dataclass with the same fields types as shown in table 3.0. 
-
+2. args (WPTrainArgs): a dataclass with the same fields types as shown in table 4.1. 
+3. eval_filepath (string): By default, an evaluating dataset will be generated from the supplied training data. But, you may provide a filepath to a text of CSV file as described for input_filepath to use standalone evaluating data. 
 
 #### Table 4.0
+| text                           |
+|--------------------------------|
+| This is a training case.       | 
+| This is another training case  | 
+
+#### Table 4.1
 
 | Parameter                    | Default |
 |------------------------------|---------|
@@ -69,9 +75,9 @@ happy_wp.train("../../data/wp/train-eval.txt", args=args)
 ### eval()
 Input:
 1. input_filepath (string): a path file to text file with just text to evaluate 
-2. args (WPEvalArgs): a dataclass with the fields shown in Table 4.1
+2. args (WPEvalArgs): a dataclass with the fields shown in Table 4.2
  
-#### Table 4.1
+#### Table 4.2
 
 | Parameter                     |Default|
 |-------------------------------|-------|

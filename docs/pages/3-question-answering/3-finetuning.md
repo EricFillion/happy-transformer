@@ -18,6 +18,7 @@ HappyQuestionAnswering contains three methods for training
 inputs: 
 1. input_filepath (string): a path file to a csv file as described in table 3.0
 2. args (QATrainArgs): a dataclass of type QATrainArgs which contains the fields shown in table 3.1
+3. eval_filepath (string): By default, an evaluating dataset will be generated from the supplied training data. But, you may provide a filepath to a CSV file as described for input_filepath to use standalone evaluating data. 
 
 
 #### Table 3.0
