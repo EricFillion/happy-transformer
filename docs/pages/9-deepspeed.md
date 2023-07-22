@@ -19,54 +19,37 @@ cd DeepSpeed
 DS_BUILD_UTILS=1 pip install .
 
 ```
-### TrainArgs
 
-To use Deepspeed set your TrainArgs's deepspeed parameter to a path to a Deepspeed file as described [here](https://huggingface.co/docs/transformers/main_classes/deepspeed).
+## Arguments
+To use Deepspeed set your TrainArgs's or EvalArg's __deepspeed__ parameter to a path to a Deepspeed file as described [here](https://huggingface.co/docs/transformers/main_classes/deepspeed). Below are options for what you may supply to the __deepspeed__ parameter.
+
+
+| Value           | Type | Meaning                                                                                            |
+|-----------------|------|----------------------------------------------------------------------------------------------------|
+| False (default) | bool | DeepSpeed will not be used.                                                                        |
+| True            | bool | The default Deepspeed Settings (ZERO-3 as of right now) is  used.                                  |
+| "ZERO-2"        | str  | ZERO-2 is used used.                                                                               |
+| "ZERO-3"        | str  | ZERO-3 is used used.                                                                               |
+| "path-to-json"  | str  | You may provide a path to a JSON file with the format as described [here](https://huggingface.co/docs/transformers/main_classes/deepspeed) to use custom settings |
 
 
 ```python
-from happytransformer import GENTrainArgs
+from happytransformer import GENTrainArgs, GENEvalArgs
 
-args = GENTrainArgs(deepspeed="path-to-ds-file.json",
-                    )
-```
+train_args = GENTrainArgs(deepspeed=True)
 
-### Deepspeed File Example
-
-```json
-{
-    "zero_optimization": {
-        "stage": 2,
-        "allgather_partitions": true,
-        "allgather_bucket_size": 2e8,
-        "overlap_comm": true,
-        "reduce_scatter": true,
-        "reduce_bucket_size": "auto",
-        "contiguous_gradients": true
-    },
-
-    "fp16": {
-        "enabled": "auto",
-        "loss_scale": 0,
-        "loss_scale_window": 1000,
-        "initial_scale_power": 16,
-        "hysteresis": 2,
-        "min_loss_scale": 1
-    },
-    "scheduler": {
-        "type": "WarmupLR",
-        "params": {
-            "warmup_min_lr": "auto",
-            "warmup_max_lr": "auto",
-            "warmup_num_steps": "auto"
-        }
-    },
-    "gradient_accumulation_steps": "auto",
-    "gradient_clipping": "auto",
-    "steps_per_print": 32,
-    "train_batch_size": "auto",
-    "train_micro_batch_size_per_gpu": "auto",
-    "wall_clock_breakdown": false
-}
+eval_args = GENEvalArgs(deepspeed=True)
 
 ```
+
+## Script
+
+You __MUST__ run the code from a script for Deepspeed to work as intended. Use the command "deepspeed" instead of "python3" to run the script. Supply the flag "num_gpus" to specify the number of Nvidia GPUs you would like to use.
+
+```python
+
+deepspeed --num_gpus=2 train.py
+
+```
+
+
