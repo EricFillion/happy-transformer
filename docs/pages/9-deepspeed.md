@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Deepspeed Training
-permalink: /deepspeed-training/
+permalink: /deepspeed/
 nav_order: 16
 ---
 
