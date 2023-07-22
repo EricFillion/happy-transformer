@@ -7,6 +7,21 @@ nav_order: 4
 ---
 ## News: 
 
+### July 22nd, 2023 
+
+**Version 2.5.0!**
+- Deepspeed is now supported for fine-tuning. 
+- Apple's MPS backend is now automatically used for both training and fine-tuning if detected. 
+- Evaluating data is now used during fine-tuning to track the fine-tuning progress. 
+- WandB can now be used to log the results from fine-tuning. 
+- Apple's MPS chips can be used for inference and fine-tuning.
+- CSV files are supported for training/evaluating text generation and word prediction models. This makes it easy to isolate cases. 
+- Push models to Hugging Face's Hub with one command. 
+
+Breaking changes:
+- Preprocesses data is now saved in the Hugging Face's Dataset format rather than in JSON format.
+- Dictionary argument inputs for training and evaluating are no longer supported 
+
 ### November 19th, 2021
 **Introducing Version 2.4.0!**
 - We added the ability to enable half-precision training, which decreases train time and memory consumption.
