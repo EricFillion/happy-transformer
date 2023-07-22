@@ -97,7 +97,7 @@ class HappyTransformer():
             raise ValueError("Dictionary training arguments are no longer supported as of Happy Transformer version 2.5.0.")
 
         if args.eval_ratio <= 0 and eval_filepath == "":
-            raise ValueError("Please please the TrainArgs.eval_ratio  argument greater than 0  or supply an eval_path")
+            raise ValueError("Please set TrainArgs.eval_ratio to greater than 0  or supply an eval_path")
 
         train_tok_data, eval_tok_data = self._preprocess_data_train(input_filepath=input_filepath,
                                                               eval_filepath=eval_filepath,
