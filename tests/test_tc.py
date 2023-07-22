@@ -8,7 +8,7 @@ from happytransformer import(
     TCEvalArgs,
     TCTestArgs
 )
-from tests.shared_tests import run_save_load
+from tests.run_save_load import run_save_load
 from pytest import approx
 import pytest
 

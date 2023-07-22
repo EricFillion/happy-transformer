@@ -8,7 +8,7 @@ from happytransformer import (
 )
 import pytest
 
-from tests.shared_tests import run_save_load
+from tests.run_save_load import run_save_load
 
 def test_default_simple():
     happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")

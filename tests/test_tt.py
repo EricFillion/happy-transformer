@@ -1,6 +1,6 @@
 import torch
 from happytransformer import HappyTextToText, TTSettings, TTTrainArgs, TTEvalArgs
-from tests.shared_tests import run_save_load
+from tests.run_save_load import run_save_load
 
 def test_default_simple():
     happy_tt = HappyTextToText("T5", "t5-small")

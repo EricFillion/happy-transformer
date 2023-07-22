@@ -6,7 +6,7 @@ from happytransformer import (
     WPEvalArgs
 )
 from happytransformer.happy_word_prediction import WordPredictionResult
-from tests.shared_tests import run_save_load
+from tests.run_save_load import run_save_load
 import pytest
 
 def test_wp_basic():
