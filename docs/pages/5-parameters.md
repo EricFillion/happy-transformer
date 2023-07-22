@@ -35,3 +35,5 @@ save_steps: Ratio of total train step before saving occurs.
 eval_steps: Ratio of total train step before evaluating occurs. 
 
 logging_steps: Ratio of total train step before logging occurs. 
+
+output_dir: An output directory where models will be saved to if save_steps is enabled. Other features that leverage this directory may be added in the future. 

@@ -31,25 +31,26 @@ Contains two columns with the following header values: input and target
 
 #### Table 7.2
 
-| Parameter                   | Default |
-|-----------------------------|---------|
-| learning_rate               | 5e-5    |
-| num_train_epochs            | 3       |
-| batch_size                  | 1       |
-| weight_decay                | 0       |
-| adam_beta1                  | 0.9     |
-| adam_beta2                  | 0.999   |
-| adam_epsilon                | 1e-8    |
-| max_grad_norm               | 1.0     |
-| preprocessing_processes     | 1       |
-| max_input_length            | 1024    |
-| max_output_length           | 1024    |
-| fp16                        | False   |
-| eval_ratio                  | 0.1     |
-| save_steps                  | 0.0     |
-| eval_steps                  | 0.1     |
-| logging_steps               | 0.1     |
-| gradient_accumulation_steps | 1       |
+| Parameter                    | Default             |
+|------------------------------|---------------------|
+| learning_rate                | 5e-5                |
+| num_train_epochs             | 3                   |
+| batch_size                   | 1                   |
+| weight_decay                 | 0                   |
+| adam_beta1                   | 0.9                 |
+| adam_beta2                   | 0.999               |
+| adam_epsilon                 | 1e-8                |
+| max_grad_norm                | 1.0                 |
+| preprocessing_processes      | 1                   |
+| max_input_length             | 1024                |
+| max_output_length            | 1024                |
+| fp16                         | False               |
+| eval_ratio                   | 0.1                 |
+| save_steps                   | 0.0                 |
+| eval_steps                   | 0.1                 |
+| logging_steps                | 0.1                 |
+| gradient_accumulation_steps  | 1                   |
+| output_dir                   | "happy_transformer" |
 
 
 Information about the learning parameters can be found [here](/learning-parameters/)
