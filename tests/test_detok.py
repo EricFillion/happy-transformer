@@ -24,12 +24,11 @@ def test_gen_csv_decode():
             lines.append(row["text"])
 
     for case in tok_data["train"]["input_ids"]:
-        print(case)
-        detok_case = happy_gen.tokenizer.decode(case)
+        detok_case = happy_gen.tokenizer.decode(case, skip_special_tokens=True)
         assert detok_case in lines
 
     for case in tok_data["eval"]["input_ids"]:
-        detok_case = happy_gen.tokenizer.decode(case)
+        detok_case = happy_gen.tokenizer.decode(case, skip_special_tokens=True)
         assert detok_case in lines
 
 
@@ -52,7 +51,6 @@ def test_gen_text_decode():
         file_contents = text_file.read() + "\n"
 
     for case in tok_data["train"]["input_ids"]:
-        print(case)
         detok_case = happy_gen.tokenizer.decode(case)
         assert detok_case == file_contents
 
