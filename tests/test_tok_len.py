@@ -68,7 +68,7 @@ def test_batch_size_gen():
 
 
 def test_batch_size_wp():
-    happy_wp = HappyWordPrediction('BERT', 'prajjwal1/bert-tiny')
+    happy_wp = HappyWordPrediction('BERT', 'bert-base-uncased')
 
     train_data = "../data/wp/train-eval.csv"
 
