@@ -9,23 +9,28 @@ tests/happy_transformer/
 examples/word_prediction/train.csv
 examples/word_prediction/eval.csv
 examples/word_prediction/happy_transformer/
+examples/word_prediction/wandb/
 
 examples/text_classification/train.txt
 examples/text_classification/eval.txt
 examples/text_classification/happy_transformer/
+examples/text_classification/wandb/
 
 examples/question_answering/train.txt
 examples/question_answering/eval.txt
 examples/question_answering/happy_transformer/
+examples/question_answering/wandb/
 
 examples/generation/train.csv
 examples/generation/eval.csv
 examples/generation/tok-data/
 examples/generation/happy_transformer/
+examples/generation/wandb/
 
 examples/text-to-text/train.csv
 examples/text-to-text/eval.csv
 examples/text-to-text/happy_transformer/
+examples/text-to-text/wandb/
 
 main.py
 tests/model/
