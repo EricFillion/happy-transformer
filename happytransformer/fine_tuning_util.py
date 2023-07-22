@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from typing import Union
 
 from datasets import Dataset
-from transformers import PreTrainedTokenizer
+from transformers import PreTrainedTokenizer, TrainerCallback
 
 from happytransformer.args import GENTrainArgs, WPTrainArgs, GENEvalArgs, WPEvalArgs
 
@@ -106,7 +106,7 @@ DEFAULT_DS_SETTINGS = {
         "stage3_param_persistence_threshold": "auto",
         "stage3_max_live_parameters": 1e9,
         "stage3_max_reuse_distance": 1e9,
-        "stage3_gather_16bit_weights_on_model_save": true
+        "stage3_gather_16bit_weights_on_model_save": True
     },
     "fp16": {
         "enabled": "auto",
@@ -131,3 +131,10 @@ DEFAULT_DS_SETTINGS = {
     "train_micro_batch_size_per_gpu": "auto",
     "wall_clock_breakdown": False
 }
+
+class FistStep(TrainerCallback):
+    def on_step_begin(self, args, state, control, **kwargs):
+        if state.global_step == 0:
+            control.should_log = True
+            control.should_evaluate = True
+

@@ -16,7 +16,7 @@ from transformers import (
     )
 
 from happytransformer.args import EvalArgs, TrainArgs
-from happytransformer.fine_tuning_util import DEFAULT_DS_SETTINGS, EvalResult
+from happytransformer.fine_tuning_util import DEFAULT_DS_SETTINGS, EvalResult, FistStep
 
 class HappyTransformer():
 
@@ -270,6 +270,7 @@ class HappyTransformer():
             tokenizer=self.tokenizer,
             data_collator=data_collator,
         )
+        trainer.add_callback(FistStep())
         trainer.train()
 
     def _run_eval(self, dataset, data_collator, args):
@@ -331,3 +332,5 @@ class HappyTransformer():
                 deepspeed = None
 
         return deepspeed
+
+
