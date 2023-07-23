@@ -16,6 +16,8 @@ def main():
     happy_wp = HappyWordPrediction(model_type="DISTILBERT", model_name="distilbert-base-uncased")
 
     train_args = WPTrainArgs(
+        learning_rate=1e-5,
+        num_train_epochs=1,
         # report_to = ('wandb'),
         # project_name = "happy-transformer-examples",
         # run_name = "word-prediction",

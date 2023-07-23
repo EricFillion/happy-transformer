@@ -14,6 +14,8 @@ def main():
     generate_csv(eval_csv_path, eval_dataset)
 
     train_args = TTTrainArgs(
+                learning_rate=1e-5,
+                num_train_epochs=1,
                 max_input_length=1024,
                 max_output_length=1024,
                 # report_to = ('wandb'),

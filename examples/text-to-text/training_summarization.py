@@ -13,7 +13,10 @@ def main():
     generate_csv(train_csv_path, train_dataset)
     generate_csv(eval_csv_path, eval_dataset)
 
-    train_args = TTTrainArgs(max_input_length=1024,
+    train_args = TTTrainArgs(
+                       num_train_epochs=1,
+                       learning_rate=1e-5,
+                       max_input_length=1024,
                        max_output_length=128,
                        # report_to = ('wandb'),
                        # project_name = "happy-transformer-examples",

@@ -16,6 +16,8 @@ def main():
     happy_tc = HappyTextClassification(model_type="BERT", model_name="bert-base-uncased", num_labels=28)
 
     train_args = TCTrainArgs(
+                       learning_rate=1e-5,
+                       num_train_epochs=1,
                        # report_to = ('wandb'),
                        # project_name = "happy-transformer-examples",
                        # run_name = "text-classification",
