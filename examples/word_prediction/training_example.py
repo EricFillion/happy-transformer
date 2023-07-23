@@ -18,7 +18,7 @@ def main():
     train_args = WPTrainArgs(
         # report_to = ('wandb'),
         # project_name = "happy-transformer-examples",
-        # run_name = "text-generation",
+        # run_name = "word-prediction",
         # deepspeed="ZERO-2"
     )
 

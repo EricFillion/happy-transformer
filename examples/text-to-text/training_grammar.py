@@ -21,7 +21,7 @@ def main():
     train_args = TTTrainArgs(
                         # report_to = ('wandb'),
                         # project_name = "happy-transformer-examples",
-                        # run_name = "text-generation",
+                        # run_name = "grammar-correction",
                         # deepspeed="ZERO-2"
     )
 

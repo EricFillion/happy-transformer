@@ -18,7 +18,7 @@ def main():
     train_args = TCTrainArgs(
                        # report_to = ('wandb'),
                        # project_name = "happy-transformer-examples",
-                       # run_name = "text-generation",
+                       # run_name = "text-classification",
                        # deepspeed="ZERO-2"
     )
 

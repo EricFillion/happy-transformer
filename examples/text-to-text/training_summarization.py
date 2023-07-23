@@ -17,7 +17,7 @@ def main():
                        max_output_length=128,
                        # report_to = ('wandb'),
                        # project_name = "happy-transformer-examples",
-                       # run_name = "text-generation",
+                       # run_name = "summarization",
                        # deepspeed="ZERO-2"
                     )
 
