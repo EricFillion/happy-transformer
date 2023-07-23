@@ -29,8 +29,6 @@ def main():
 
     # happy_tt.push_to_hub("EricFillion/grammar-example)
 
-    # Do not perform inference (happy_tt.generate_text()) in a Deepspeed script
-
 
 def generate_csv(csv_path, dataset):
     with open(csv_path, 'w', newline='') as csvfile:

@@ -28,8 +28,6 @@ def main():
 
     # happy_qa.push_to_hub("EricFillion/question-answering-example)
 
-    # Do not perform inference (happy_qa.answer_question()) in a Deepspeed script
-
 
 def generate_csv(csv_path, dataset):
     with open(csv_path, 'w', newline='') as csvfile:

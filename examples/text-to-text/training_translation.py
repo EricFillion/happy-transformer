@@ -26,9 +26,6 @@ def main():
 
     # happy_tt.push_to_hub("EricFillion/translation-examples)
 
-    # Do not perform inference (happy_tt.generate_text()) in a Deepspeed script
-
-
 
 
 def generate_csv(csv_path, dataset):

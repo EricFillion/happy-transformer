@@ -26,9 +26,6 @@ def main():
 
     # happy_wp.push_to_hub("EricFillion/wp-example)
 
-    # Do not perform inference (happy_wp.predict_mask()) in a Deepspeed script
-
-
 
 def generate_csv(csv_path, dataset):
     with open(csv_path, 'w', newline='') as csvfile:
