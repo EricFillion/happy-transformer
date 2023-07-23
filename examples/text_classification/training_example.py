@@ -16,7 +16,7 @@ def main():
     happy_tc = HappyTextClassification(model_type="BERT", model_name="bert-base-uncased", num_labels=28)
 
     train_args = TCTrainArgs(
-                       #deepspeed=True,
+                       #deepspeed="ZERO-2",
                        # report_to = tuple(['wandb'])
                        )
 

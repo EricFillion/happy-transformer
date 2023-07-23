@@ -22,7 +22,7 @@ def main():
 
 
     train_args = GENTrainArgs(
-        # deepspeed="True",
+        # deepspeed="ZERO-2",
         # report_to = tuple(['wandb']),
     )
 
