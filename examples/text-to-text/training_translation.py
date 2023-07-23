@@ -20,7 +20,7 @@ def main():
                 max_input_length=1024,
                 max_output_length=1024,
                 # deepspeed="ZERO-2",
-                # report_to = tuple(['wandb'])
+                # report_to = ('wandb')
     )
     happy_tt.train(train_csv_path, args=train_args)
 

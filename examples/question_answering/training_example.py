@@ -19,7 +19,7 @@ def main():
 
     train_args = QATrainArgs(
         # deepspeed="ZERO-2",
-        # report_to = tuple(['wandb'])
+        # report_to = ('wandb')
     )
     happy_qa.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
 

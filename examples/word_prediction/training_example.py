@@ -25,7 +25,7 @@ def main():
 
     train_args = WPTrainArgs(
         #deepspeed=True,
-        # report_to = tuple(['wandb'])
+        # report_to = ('wandb')
 
     )
     happy_wp.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
