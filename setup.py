@@ -9,7 +9,7 @@ readme = (current_location / "README.md").read_text()
 setup(
     name = 'happytransformer',
     packages = find_packages(),
-    version = '2.4.1',
+    version = '2.5.0',
     license='Apache 2.0',
     description = "Happy Transformer is an API built on top of Hugging Face's Transformer library that makes it easy to utilize state-of-the-art NLP models.",
     long_description= readme,
@@ -28,7 +28,6 @@ setup(
             'sentencepiece',
             'protobuf',
             'accelerate>=0.20.1'
-
     ],
     classifiers=[
         'Intended Audience :: Developers',
