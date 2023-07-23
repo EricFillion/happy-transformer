@@ -19,7 +19,6 @@ def main():
     generate_csv("train.csv", train_dataset)
     generate_csv("eval.csv", eval_dataset)
 
-    before_loss = happy_tt.eval(eval_csv_path, args=eval_args).loss
     train_args = TTTrainArgs(
                         # deepspeed="ZERO-2",
                         # report_to = tuple(['wandb'])
