@@ -6,9 +6,6 @@ def main():
     train_csv_path = "train.csv"
     eval_csv_path = "eval.csv"
     happy_tt = HappyTextToText("MT5", "google/mt5-base")
-    text = "Hello, I like to eat apples."
-    # Google translate translation: سلام من عاشق خوردن سیب هستم.
-    before_text = happy_tt.generate_text("translate English to Persian: " + text)
 
     train_dataset = load_dataset("persiannlp/parsinlu_translation_en_fa", split='train[0:3999]')
     eval_dataset = load_dataset("persiannlp/parsinlu_translation_en_fa", split='validation[0:399]')
@@ -24,12 +21,10 @@ def main():
                 # run_name = "text-generation",
                 # deepspeed="ZERO-2"
     )
+
     happy_tt.train(train_csv_path, args=train_args)
 
-    after_text = happy_tt.generate_text("translate English to Persian: " + text)
 
-    print("before text:", before_text)
-    print("after text:", after_text)
 
 
 def generate_csv(csv_path, dataset):

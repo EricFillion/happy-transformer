@@ -4,8 +4,7 @@ from datasets import load_dataset
 
 def main():
     happy_tt = HappyTextToText("T5", "t5-base")
-    input_text = "grammar: This sentences had bad grammars and spelling. "
-    before_text = happy_tt.generate_text(input_text).text
+
     train_csv_path = "train.csv"
     eval_csv_path = "eval.csv"
 
@@ -25,15 +24,9 @@ def main():
                         # run_name = "text-generation",
                         # deepspeed="ZERO-2"
     )
+
     happy_tt.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
 
-    after_text = happy_tt.generate_text(input_text).text
-
-    print("------------------------------------")
-
-    print("input text:", input_text)
-    print("before text:", before_text)
-    print("after text:", after_text)
 
 
 def generate_csv(csv_path, dataset):
