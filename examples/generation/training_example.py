@@ -22,8 +22,11 @@ def main():
 
 
     train_args = GENTrainArgs(
-        # deepspeed="ZERO-2",
         # report_to = ('wandb'),
+        # project_name = "happy-transformer-examples",
+        # run_name = "text-generation",
+        # deepspeed="ZERO-2"
+
     )
 
     happy_gen.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)

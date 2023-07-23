@@ -16,9 +16,11 @@ def main():
     happy_tc = HappyTextClassification(model_type="BERT", model_name="bert-base-uncased", num_labels=28)
 
     train_args = TCTrainArgs(
-                       # deepspeed="ZERO-2",
-                       # report_to = ('wandb')
-                       )
+                       # report_to = ('wandb'),
+                       # project_name = "happy-transformer-test",
+                       # run_name = "text-generation",
+                       # deepspeed="ZERO-2"
+    )
 
     happy_tc.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
 

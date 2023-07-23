@@ -24,9 +24,10 @@ def main():
     produce_examples(starter_texts, happy_wp)
 
     train_args = WPTrainArgs(
-        #deepspeed=True,
-        # report_to = ('wandb')
-
+        # report_to = ('wandb'),
+        # project_name = "happy-transformer-test",
+        # run_name = "text-generation",
+        # deepspeed=True
     )
     happy_wp.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
 

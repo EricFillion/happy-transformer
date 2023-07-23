@@ -20,8 +20,10 @@ def main():
     generate_csv("eval.csv", eval_dataset)
 
     train_args = TTTrainArgs(
-                        # deepspeed="ZERO-2",
-                        # report_to = ('wandb')
+                        # report_to = ('wandb'),
+                        # project_name = "happy-transformer-test",
+                        # run_name = "text-generation",
+                        # deepspeed="ZERO-2"
     )
     happy_tt.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
 

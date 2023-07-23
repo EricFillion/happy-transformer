@@ -19,8 +19,10 @@ def main():
     train_args = TTTrainArgs(
                 max_input_length=1024,
                 max_output_length=1024,
-                # deepspeed="ZERO-2",
-                # report_to = ('wandb')
+                # report_to = ('wandb'),
+                # project_name = "happy-transformer-test",
+                # run_name = "text-generation",
+                # deepspeed="ZERO-2"
     )
     happy_tt.train(train_csv_path, args=train_args)
 
