@@ -14,26 +14,15 @@ def main():
     generate_csv(eval_csv_path, eval_dataset)
 
     happy_gen = HappyGeneration(model_type="GPT2", model_name="gpt2")
-    starter_texts = ["Authorizes", "Allows", "Prevents", "Restricts"]
-
-    print("Examples Before Training: ")
-    produce_examples(starter_texts, happy_gen)
-    # uncomment the deepspeed parameter to use Deepspeed
-
 
     train_args = GENTrainArgs(
         # report_to = ('wandb'),
         # project_name = "happy-transformer-examples",
         # run_name = "text-generation",
         # deepspeed="ZERO-2"
-
     )
 
     happy_gen.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
-
-
-    print("Examples After Training: ")
-    produce_examples(starter_texts, happy_gen)
 
 
 def generate_csv(csv_path, dataset):
@@ -44,11 +33,6 @@ def generate_csv(csv_path, dataset):
         for case in dataset:
             text = case["summary"]
             writter.writerow([text])
-
-def produce_examples(starter_texts, happy_gen):
-    for start in starter_texts:
-        output = happy_gen.generate_text(start)
-        print(start, output.text)
 
 
 if __name__ == "__main__":
