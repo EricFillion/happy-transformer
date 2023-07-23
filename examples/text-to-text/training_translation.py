@@ -17,12 +17,16 @@ def main():
                 max_input_length=1024,
                 max_output_length=1024,
                 # report_to = ('wandb'),
-                # project_name = "happy-transformer-test",
+                # project_name = "happy-transformer-examples",
                 # run_name = "text-generation",
                 # deepspeed="ZERO-2"
     )
 
     happy_tt.train(train_csv_path, args=train_args)
+
+    # happy_tt.push_to_hub("EricFillion/translation-examples)
+
+    # Do not perform inference (happy_tt.generate_text()) in a Deepspeed script
 
 
 

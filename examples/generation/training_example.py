@@ -24,6 +24,10 @@ def main():
 
     happy_gen.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
 
+    # happy_gen.push_to_hub("EricFillion/text-generation-example)
+
+    # Do not perform inference (happy_gen.generate_text()) in a Deepspeed script
+
 
 def generate_csv(csv_path, dataset):
     with open(csv_path, 'w', newline='') as csvfile:

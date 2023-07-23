@@ -20,13 +20,16 @@ def main():
 
     train_args = TTTrainArgs(
                         # report_to = ('wandb'),
-                        # project_name = "happy-transformer-test",
+                        # project_name = "happy-transformer-examples",
                         # run_name = "text-generation",
                         # deepspeed="ZERO-2"
     )
 
     happy_tt.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
 
+    # happy_tt.push_to_hub("EricFillion/grammar-example)
+
+    # Do not perform inference (happy_tt.generate_text()) in a Deepspeed script
 
 
 def generate_csv(csv_path, dataset):

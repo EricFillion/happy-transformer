@@ -17,12 +17,16 @@ def main():
 
     train_args = WPTrainArgs(
         # report_to = ('wandb'),
-        # project_name = "happy-transformer-test",
+        # project_name = "happy-transformer-examples",
         # run_name = "text-generation",
         # deepspeed="ZERO-2"
     )
 
     happy_wp.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
+
+    # happy_wp.push_to_hub("EricFillion/wp-example)
+
+    # Do not perform inference (happy_wp.predict_mask()) in a Deepspeed script
 
 
 
