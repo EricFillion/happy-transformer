@@ -321,7 +321,7 @@ class HappyTransformer():
 
         return ending
 
-    def __get_deepspeed_config(self, args: Union[TrainArgs, EvalArgs]):
+    def __get_deepspeed_config(self, args: Union[TrainArgs, EvalArgs], train: bool = True):
         # args.deepspeed is False when disabled. True when default settings. String when path to custom settings.
         if isinstance(args.deepspeed, str):
             if args.deepspeed == "ZERO-2":
@@ -331,10 +331,7 @@ class HappyTransformer():
             else:
                 deepspeed = args.deepspeed
         else:
-            if args.deepspeed:
-                deepspeed = ZERO_3_SETTINGS
-            else:
-                deepspeed = None
+            deepspeed = None
 
         return deepspeed
 
