@@ -28,7 +28,6 @@ def main():
 
     happy_gen.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
 
-    after_loss = happy_gen.eval(eval_csv_path, args=eval_args)
 
     print("Examples After Training: ")
     produce_examples(starter_texts, happy_gen)
