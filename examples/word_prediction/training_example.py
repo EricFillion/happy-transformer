@@ -15,24 +15,15 @@ def main():
 
     happy_wp = HappyWordPrediction(model_type="DISTILBERT", model_name="distilbert-base-uncased")
 
-    starter_texts = ["Authorizes [MASK] for community use",
-                     "Allows for [MASK] to be used at gatherings of over 50 people.",
-                     "Prevents children under 18 years old from buying [MASK]",
-                     "Restricts [MASK] from being sold"]
-
-    print("Examples Before Training: ")
-    produce_examples(starter_texts, happy_wp)
-
     train_args = WPTrainArgs(
         # report_to = ('wandb'),
         # project_name = "happy-transformer-test",
         # run_name = "text-generation",
-        # deepspeed=True
+        # deepspeed="ZERO-2"
     )
+
     happy_wp.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
 
-    print("Examples After Training: ")
-    produce_examples(starter_texts, happy_wp)
 
 
 def generate_csv(csv_path, dataset):
@@ -42,12 +33,6 @@ def generate_csv(csv_path, dataset):
         for case in dataset:
             text = case["summary"]
             writter.writerow([text])
-
-
-def produce_examples(starter_texts, happy_wp):
-    for start in starter_texts:
-        output = happy_wp.predict_mask(start)
-        print(start, "Output: ", output[0].token)
 
 
 if __name__ == "__main__":
