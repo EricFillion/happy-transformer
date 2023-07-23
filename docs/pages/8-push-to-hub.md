@@ -7,7 +7,13 @@ nav_order: 15
 ## Pushing To Hugging Face's Model Hub
 
 
-All Happy Transformer objects can be pushed to Hugging Face's [Model Hub](https://huggingface.co/). 
+All Happy Transformer objects can be pushed to Hugging Face's [Model Hub](https://huggingface.co/).
+
+First log into Hugging Face 
+
+```bash
+huggingface-cli login
+```
 
 ```python
 from happytransformer import HappyGeneration
