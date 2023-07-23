@@ -109,6 +109,8 @@ ZERO_2_SETTINGS = {
     "scheduler": {
         "type": "WarmupDecayLR",
         "params": {
+            "last_batch_iteration": -1,
+            "total_num_steps": "auto",
             "warmup_min_lr": 0,
             "warmup_max_lr": "auto",
             "warmup_num_steps": "auto"
@@ -154,6 +156,8 @@ ZERO_3_SETTINGS = {
     "scheduler": {
         "type": "WarmupDecayLR",
         "params": {
+            "last_batch_iteration": -1,
+            "total_num_steps": "auto",
             "warmup_min_lr": 0,
             "warmup_max_lr": "auto",
             "warmup_num_steps": "auto"
