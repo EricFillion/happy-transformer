@@ -26,7 +26,7 @@ def main():
 
     happy_gen.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
 
-    # happy_gen.push_to_hub("EricFillion/text-generation-example)
+    # happy_gen.push_to_hub("EricFillion/text-generation-example")
 
 
 def generate_csv(csv_path, dataset):

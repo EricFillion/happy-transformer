@@ -29,7 +29,7 @@ def main():
 
     happy_tt.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
 
-    # happy_tt.push_to_hub("EricFillion/grammar-example)
+    # happy_tt.push_to_hub("EricFillion/grammar-example")
 
 
 def generate_csv(csv_path, dataset):

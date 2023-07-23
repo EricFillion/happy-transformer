@@ -26,7 +26,7 @@ def main():
 
     happy_tc.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
 
-    # happy_tc.push_to_hub("EricFillion/grammar-example)
+    # happy_tc.push_to_hub("EricFillion/grammar-example")
 
     # Do not perform inference (happy_tt.generate_text()) in a Deepspeed script
 

@@ -26,7 +26,7 @@ def main():
 
     happy_tt.train(train_csv_path, args=train_args)
 
-    # happy_tt.push_to_hub("EricFillion/summary-example)
+    # happy_tt.push_to_hub("EricFillion/summary-example")
 
 def generate_csv(csv_path, dataset):
     with open(csv_path, 'w', newline='') as csvfile:
