@@ -107,9 +107,9 @@ ZERO_2_SETTINGS = {
         "min_loss_scale": 1
     },
     "scheduler": {
-        "type": "WarmupLR",
+        "type": "WarmupDecayLR",
         "params": {
-            "warmup_min_lr": "auto",
+            "warmup_min_lr": 0,
             "warmup_max_lr": "auto",
             "warmup_num_steps": "auto"
         }
@@ -152,9 +152,9 @@ ZERO_3_SETTINGS = {
         "min_loss_scale": 1
     },
     "scheduler": {
-        "type": "WarmupLR",
+        "type": "WarmupDecayLR",
         "params": {
-            "warmup_min_lr": "auto",
+            "warmup_min_lr": 0,
             "warmup_max_lr": "auto",
             "warmup_num_steps": "auto"
         }
