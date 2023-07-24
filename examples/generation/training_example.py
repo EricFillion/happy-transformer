@@ -4,14 +4,14 @@ from happytransformer import HappyGeneration,  GENTrainArgs
 
 
 def main():
-    train_csv_path = "train.csv"
-    eval_csv_path = "eval.csv"
+    train_csv_path = "train.txt"
+    eval_csv_path = "eval.txt"
 
     train_dataset = load_dataset('billsum', split='train[0:1999]')
     eval_dataset = load_dataset('billsum', split='test[0:199]')
 
-    generate_csv(train_csv_path, train_dataset)
-    generate_csv(eval_csv_path, eval_dataset)
+    generate_txt(train_csv_path, train_dataset)
+    generate_txt(eval_csv_path, eval_dataset)
 
     happy_gen = HappyGeneration(model_type="GPT2", model_name="gpt2")
 
@@ -29,14 +29,11 @@ def main():
     # happy_gen.push_to_hub("EricFillion/text-generation-example")
 
 
-def generate_csv(csv_path, dataset):
-    with open(csv_path, 'w', newline='') as csvfile:
-        writter = csv.writer(csvfile)
-        writter.writerow(["text"])
-
+def generate_txt(txt_path, dataset):
+    with open(txt_path, 'w', newline='') as text_file:
         for case in dataset:
             text = case["summary"]
-            writter.writerow([text])
+            text_file.write(text + "\n")
 
 
 if __name__ == "__main__":
