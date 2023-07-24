@@ -28,7 +28,7 @@ def main():
     )
     happy_qa.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
 
-    # happy_qa.push_to_hub("EricFillion/question-answering-example")
+    happy_qa.save("finetuned-model/")
 
 
 def generate_csv(csv_path, dataset):

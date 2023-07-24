@@ -26,7 +26,7 @@ def main():
 
     happy_wp.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
 
-    # happy_wp.push_to_hub("EricFillion/wp-example")
+    happy_wp.save("finetuned-model/")
 
 
 def generate_csv(csv_path, dataset):

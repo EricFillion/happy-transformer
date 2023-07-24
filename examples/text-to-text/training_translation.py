@@ -26,7 +26,7 @@ def main():
 
     happy_tt.train(train_csv_path, args=train_args)
 
-    # happy_tt.push_to_hub("EricFillion/translation-examples")
+    happy_tt.save("finetuned-model/")
 
 
 
