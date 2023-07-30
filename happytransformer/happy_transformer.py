@@ -217,7 +217,7 @@ class HappyTransformer():
         else:
             arg_class = TrainingArguments
 
-        deepspeed = self.__get_deepspeed_config(args)
+        deepspeed = self.__get_deepspeed_config(args, True)
 
         return arg_class(
             deepspeed=deepspeed,
@@ -288,7 +288,7 @@ class HappyTransformer():
             return trainer.evaluate()
 
     def _get_eval_args(self, output_path: str, args: EvalArgs) -> TrainingArguments:
-        deepspeed = self.__get_deepspeed_config(args)
+        deepspeed = self.__get_deepspeed_config(args, False)
 
         return TrainingArguments(
             output_dir=output_path,
@@ -322,9 +322,11 @@ class HappyTransformer():
         return ending
 
     def __get_deepspeed_config(self, args: Union[TrainArgs, EvalArgs], train: bool = True):
-        # args.deepspeed is False when disabled. True when default settings. String when path to custom settings.
+
         if isinstance(args.deepspeed, str):
             if args.deepspeed == "ZERO-2":
+                if not train:
+                    raise ValueError("Use ZERO-3 or a path to custom DeepSpeed settings for evaluating")
                 deepspeed = ZERO_2_SETTINGS
             elif args.deepspeed == "ZERO-3":
                 deepspeed = ZERO_3_SETTINGS
