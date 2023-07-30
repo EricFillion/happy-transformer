@@ -1,6 +1,6 @@
 import csv
 from datasets import load_dataset
-from happytransformer.happy_word_prediction import HappyWordPrediction, WPEvalArgs, WPTrainArgs
+from happytransformer.happy_word_prediction import HappyWordPrediction, WPTrainArgs
 
 
 def main():

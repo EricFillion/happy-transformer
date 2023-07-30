@@ -1,5 +1,5 @@
 import csv
-from happytransformer.happy_text_to_text import HappyTextToText, TTEvalArgs, TTTrainArgs
+from happytransformer.happy_text_to_text import HappyTextToText, TTTrainArgs
 from datasets import load_dataset
 
 def main():

@@ -1,6 +1,6 @@
 from datasets import load_dataset
 import csv
-from happytransformer import  HappyTextClassification, TCEvalArgs, TCTrainArgs
+from happytransformer import  HappyTextClassification, TCTrainArgs
 
 
 def main():
