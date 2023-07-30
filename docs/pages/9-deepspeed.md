@@ -33,7 +33,7 @@ To use Deepspeed set your TrainArgs's or EvalArg's __deepspeed__ parameter to a 
 | "path-to-json"  | str  | You may provide a path to a JSON file with the format as described [here](https://huggingface.co/docs/transformers/main_classes/deepspeed) to use custom settings |
 
 EvalArgs:
-ZERO-2 is not compatible with DeepSpeed.
+ZERO-2 is not compatible with evaluating.
 
 | Value           | Type | Meaning                                                                                            |
 |-----------------|------|----------------------------------------------------------------------------------------------------|

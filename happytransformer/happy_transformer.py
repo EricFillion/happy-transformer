@@ -326,7 +326,7 @@ class HappyTransformer():
         if isinstance(args.deepspeed, str):
             if args.deepspeed == "ZERO-2":
                 deepspeed = ZERO_2_SETTINGS
-            elif args.deepspeed == "ZERO-2":
+            elif args.deepspeed == "ZERO-3":
                 deepspeed = ZERO_3_SETTINGS
             else:
                 deepspeed = args.deepspeed
