@@ -53,7 +53,7 @@ eval_args = GENEvalArgs(deepspeed="ZERO-3")
 
 ## Script
 
-You __MUST__ run the code from a script for Deepspeed to work as intended. Use the command "deepspeed" instead of "python3" to run the script. Supply the flag "num_gpus" to specify the number of Nvidia GPUs you would like to use.
+You __MUST__ run the code from a script for Deeppeed to work as intended. Use the command "deepspeed" instead of "python3" to run the script. Supply the flag "num_gpus" to specify the number of Nvidia GPUs you would like to use.
 
 ```python
 
