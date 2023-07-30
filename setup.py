@@ -27,7 +27,8 @@ setup(
             'dataclasses; python_version < "3.7"',
             'sentencepiece',
             'protobuf',
-            'accelerate>=0.20.1'
+            'accelerate>=0.20.1',
+            'tokenizers>=0.13.3'
     ],
     classifiers=[
         'Intended Audience :: Developers',

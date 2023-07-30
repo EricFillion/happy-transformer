@@ -7,3 +7,4 @@ datasets>=2.13.1
 dataclasses; python_version<"3.7"
 sentencepiece
 protobuf
+tokenizers>=0.13.3
