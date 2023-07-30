@@ -4,14 +4,14 @@ from happytransformer.happy_word_prediction import HappyWordPrediction, WPTrainA
 
 
 def main():
-    train_csv_path = "train.csv"
-    eval_csv_path = "eval.csv"
+    train_txt_path = "train.txt"
+    eval_txt_path = "eval.txt"
 
     train_dataset = load_dataset('billsum', split='train[0:1999]')
     eval_dataset = load_dataset('billsum', split='test[0:199]')
 
-    generate_csv(train_csv_path, train_dataset)
-    generate_csv(eval_csv_path, eval_dataset)
+    generate_txt_file(train_txt_path, train_dataset)
+    generate_txt_file(eval_txt_path, eval_dataset)
 
     happy_wp = HappyWordPrediction(model_type="DISTILBERT", model_name="distilbert-base-uncased")
 
@@ -24,18 +24,17 @@ def main():
         # deepspeed="ZERO-2"
     )
 
-    happy_wp.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
+    happy_wp.train(train_txt_path, args=train_args, eval_filepath=eval_txt_path)
 
     happy_wp.save("finetuned-model/")
 
 
-def generate_csv(csv_path, dataset):
-    with open(csv_path, 'w', newline='') as csvfile:
-        writter = csv.writer(csvfile)
-        writter.writerow(["text"])
+def generate_txt_file(csv_path, dataset):
+    with open(csv_path, 'w', newline='') as text_fule:
         for case in dataset:
             text = case["summary"]
-            writter.writerow([text])
+            text_fule.write(text + "\n")
+
 
 
 if __name__ == "__main__":
