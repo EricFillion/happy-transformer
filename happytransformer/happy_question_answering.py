@@ -87,7 +87,6 @@ class HappyQuestionAnswering(HappyTransformer):
     def _tok_function(self, raw_dataset, args: QATrainArgs, file_type: str) -> Dataset:
 
         def __preprocess_function(case):
-            print(case)
             case["answer_start"] = int(case['answer_start'])
             gold_text = case['answer_text']
             start_idx = case['answer_start']
