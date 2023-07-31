@@ -59,6 +59,30 @@ def test_gen_text_decode():
         assert detok_case == file_contents
 
 
+def test_gen_text_len():
+    MAX_LEN = 2
+    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
+
+    train_data = "../data/gen/train-eval.txt"
+    save_path = "data/gen/decode-test/"
+
+    args = GENTrainArgs(num_train_epochs=1,
+                                           eval_ratio=0,
+                                           save_preprocessed_data=True,
+                                           save_preprocessed_data_path=save_path,
+                                            max_length=MAX_LEN)
+
+    happy_gen.train(train_data, args=args, eval_filepath=train_data)
+
+    tok_data = load_from_disk(save_path)
+
+
+    for case in tok_data["train"]["input_ids"]:
+        assert len(case) == MAX_LEN
+
+    for case in tok_data["eval"]["input_ids"]:
+        assert len(case) == MAX_LEN
+
 def test_tt_decode():
     happy_tt = HappyTextToText("T5", "t5-small")
 
