@@ -237,6 +237,7 @@ class HappyTransformer():
             logging_strategy="steps" if args.logging_steps > 0 else "no",
             logging_steps = args.logging_steps,
             per_device_train_batch_size=args.batch_size,
+            per_device_eval_batch_size=args.batch_size,
             fp16=args.fp16,
             gradient_accumulation_steps=args.gradient_accumulation_steps,
             use_mps_device= True if self.device.type == "mps" else False,
