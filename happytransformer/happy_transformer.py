@@ -313,7 +313,7 @@ class HappyTransformer():
         )
 
 
-    def push_to_hub(self, repo_name, private=True):
+    def push(self, repo_name, private=True):
         self.logger.info("Pushing model...")
         self.model.push_to_hub(repo_name, private=private)
 
