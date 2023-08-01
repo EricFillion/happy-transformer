@@ -261,6 +261,7 @@ class HappyTransformer():
         if not self._on_device and not args.deepspeed:
                 self.logger.info(f"Moving model to {self.device}")
                 self.model.to(self.device)
+                self._on_device = True
 
         training_args = self._get_training_args(args)
 
