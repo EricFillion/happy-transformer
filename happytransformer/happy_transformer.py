@@ -349,6 +349,6 @@ class HappyTransformer():
 
     def _load_pipeline(self):
 
-        if self._pipeline_class is not None and  self._pipeline is not None:
+        if self._pipeline_class is not  None and  self._pipeline is None:
             self._pipeline = self._pipeline_class(model=self.model, tokenizer=self.tokenizer, device=self.device)
 
