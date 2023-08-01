@@ -37,9 +37,7 @@ class HappyTextToText(HappyTransformer):
 
         super().__init__(model_type, model_name, model_class, use_auth_token=use_auth_token, load_path=load_path)
 
-
-        self._pipeline = Text2TextGenerationPipeline(model=self.model,
-                                                     tokenizer=self.tokenizer, device=self.device)
+        self._pipeline_class = Text2TextGenerationPipeline
 
         self.__max_input_length = 1024
         self.__max_output_length = 1024
@@ -58,6 +56,10 @@ class HappyTextToText(HappyTransformer):
 
     def generate_text(self, text: str,
                       args: TTSettings = TTSettings()) -> TextToTextResult:
+
+        # loads pipeline if it hasn't been loaded already.
+        self._load_pipeline()
+
         self.__assert_default_text_is_val(text)
 
         output = self._pipeline(text, min_length=args.min_length,

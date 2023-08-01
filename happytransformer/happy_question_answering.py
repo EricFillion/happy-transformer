@@ -30,16 +30,20 @@ class HappyQuestionAnswering(HappyTransformer):
 
         super().__init__(model_type, model_name, model_class,  use_auth_token=use_auth_token, load_path=load_path)
 
-        self._pipeline = QuestionAnsweringPipeline(model=self.model, tokenizer=self.tokenizer, device=self.device)
-
+        self._pipeline_class = QuestionAnsweringPipeline
 
         self._data_collator = DataCollatorWithPadding(self.tokenizer)
+
         self._t_data_file_type = ["csv"]
 
         self._type = "qa"
 
     def answer_question(self, context: str, question: str, top_k: int = 1) \
             -> List[QuestionAnsweringResult]:
+
+        # loads pipeline if it hasn't been loaded already.
+        self._load_pipeline()
+
         pipeline_output = self._pipeline(context=context, question=question, top_k=top_k)
         # transformers returns a single dictionary when top_k ==1.
         # Our convention however is to have constant output format

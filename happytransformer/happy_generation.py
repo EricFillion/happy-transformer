@@ -36,13 +36,13 @@ class HappyGeneration(HappyTransformer):
 
         super().__init__(model_type, model_name, model_class,  use_auth_token=use_auth_token, load_path=load_path)
 
-        self._pipeline = TextGenerationPipeline(model=self.model, tokenizer=self.tokenizer, device=self.device)
-
         self._data_collator = default_data_collator
 
         self._t_data_file_type = ["text", "csv"]
 
         self._type = "gen"
+
+        self._pipeline_class = TextGenerationPipeline
 
     def load_model(self):
         pass
@@ -56,6 +56,10 @@ class HappyGeneration(HappyTransformer):
 
 
     def generate_text(self, text: str, args: GENSettings=GENSettings()) -> GenerationResult:
+
+        # loads pipeline if it hasn't been loaded already.
+        self._load_pipeline()
+
         self.__assert_default_text_is_val(text)
         input_ids = self.tokenizer.encode(text, return_tensors="pt")
         adjusted_min_length = args.min_length + len(input_ids[0])

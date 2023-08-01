@@ -16,7 +16,8 @@ class HappyNextSentence(HappyTransformer):
         model_class = AutoModelForNextSentencePrediction
 
         super().__init__(model_type, model_name, model_class, use_auth_token=use_auth_token, load_path=load_path)
-        self._pipeline = None
+
+        self._pipeline_class = None  # we don't use a pipeline for inference
 
         self._type = "ns"
 

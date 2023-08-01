@@ -30,7 +30,7 @@ class HappyWordPrediction(HappyTransformer):
         super().__init__(model_type, model_name, model_class, load_path=load_path, use_auth_token=use_auth_token)
 
 
-        self._pipeline = FillMaskPipeline(model=self.model, tokenizer=self.tokenizer, device=self.device)
+        self._pipeline_class = FillMaskPipeline
 
         # mlm_probability is modified to the train args value within HappyTransformer._run_eval() and HappyTransformer._run_eval()
         self._data_collator = DataCollatorForLanguageModeling(tokenizer=self.tokenizer,
@@ -45,6 +45,11 @@ class HappyWordPrediction(HappyTransformer):
         top_k describes number of targets to return*
         *top_k does not apply if targets is supplied
         """
+
+        # loads pipeline if it hasn't been loaded already.
+        self._load_pipeline()
+
+
         if not isinstance(text, str):
             raise ValueError('the "text" argument must be a single string')
 

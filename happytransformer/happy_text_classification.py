@@ -26,10 +26,7 @@ class HappyTextClassification(HappyTransformer):
 
         super().__init__(model_type, model_name, model_class, use_auth_token=use_auth_token, load_path=load_path)
 
-        self._pipeline = TextClassificationPipeline(
-            model=self.model, tokenizer=self.tokenizer,
-            device=self.device
-        )
+        self._pipeline_class = TextClassificationPipeline
 
         self._data_collator = DataCollatorWithPadding(self.tokenizer)
         self._t_data_file_type = ["csv"]
@@ -37,6 +34,10 @@ class HappyTextClassification(HappyTransformer):
 
 
     def classify_text(self, text: str) -> TextClassificationResult:
+
+        # loads pipeline if it hasn't been loaded already.
+        self._load_pipeline()
+
         # Blocking allowing a for a list of strings
         if not isinstance(text, str):
             raise ValueError("the \"text\" argument must be a single string")

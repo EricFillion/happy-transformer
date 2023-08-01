@@ -25,15 +25,19 @@ class HappyTokenClassification(HappyTransformer):
 
         super().__init__(model_type, model_name, model_class, use_auth_token=use_auth_token, load_path=load_path)
 
-        self._pipeline = TokenClassificationPipeline(model=self.model, tokenizer=self.tokenizer, device=self.device)
-
         self._type = "tok"
+
+        self._pipeline_class = TokenClassificationPipeline
 
     def classify_token(self, text: str) -> List[TokenClassificationResult]:
         """
         :param text: Text that contains tokens to be classified
         :return:
         """
+
+        # loads pipeline if it hasn't been loaded already.
+        self._load_pipeline()
+
         if not isinstance(text, str):
             raise ValueError('the "text" argument must be a single string')
         results = self._pipeline(text)

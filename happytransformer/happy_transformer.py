@@ -47,6 +47,10 @@ class HappyTransformer():
         self._data_collator = None
         self._t_data_file_type = None
         self._type = None
+        self._pipeline_class = None
+
+        # Loaded in upon first time calling text generation.
+        self._pipeline = None
 
     ######## Children of
     def _tok_function(self, raw_dataset, args: TrainArgs, format: str) -> Dataset:
@@ -89,7 +93,7 @@ class HappyTransformer():
         if not device:
             device = torch.device("cpu")
 
-        self.model.to(device)
+        #  self.model.to(device)
         return device
 
     def train(self, input_filepath: str ,  args: TrainArgs, eval_filepath: str = "", ):
@@ -338,4 +342,10 @@ class HappyTransformer():
 
         return deepspeed
 
+
+
+    def _load_pipeline(self):
+
+        if self._pipeline_class is not None and  self._pipeline is not None:
+            self._pipeline = self._pipeline_class(model=self.model, tokenizer=self.tokenizer, device=self.device)
 
