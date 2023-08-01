@@ -52,6 +52,8 @@ class HappyTransformer():
         # Loaded in upon first time calling text generation.
         self._pipeline = None
 
+        self._on_device = False
+
     ######## Children of
     def _tok_function(self, raw_dataset, args: TrainArgs, format: str) -> Dataset:
         raise NotImplementedError()
@@ -93,7 +95,6 @@ class HappyTransformer():
         if not device:
             device = torch.device("cpu")
 
-        #  self.model.to(device)
         return device
 
     def train(self, input_filepath: str ,  args: TrainArgs, eval_filepath: str = "", ):
@@ -255,6 +256,12 @@ class HappyTransformer():
         :param args: a dataclass that contains settings
         :return: None
         """
+
+        # if model has not been moved to device and DeepSpeed is not being used
+        if not self._on_device and not args.deepspeed:
+                self.logger.info(f"Moving model to {self.device}")
+                self.model.to(self.device)
+
         training_args = self._get_training_args(args)
 
         os.environ["WANDB_PROJECT"] = args.project_name
@@ -349,6 +356,13 @@ class HappyTransformer():
 
     def _load_pipeline(self):
 
-        if self._pipeline_class is not  None and  self._pipeline is None:
+        if self._pipeline_class is not None and self._pipeline is None:
+
+            # if model has not been model has not been moved to device yet
+            if not self._on_device:
+                self.logger.info(f"Moving model to {self.device}")
+                self.model.to(self.device)
+
+            self.logger.info(f"Initializing a pipeline")
             self._pipeline = self._pipeline_class(model=self.model, tokenizer=self.tokenizer, device=self.device)
 
