@@ -308,9 +308,12 @@ class HappyTransformer():
     def push_to_hub(self, repo_name, private=True):
         self.logger.info("Pushing model...")
         self.model.push_to_hub(repo_name, private=private)
+
         self.logger.info("Pushing tokenizer...")
         self.tokenizer.push_to_hub(repo_name, private=private)
 
+        self.logger.info("Pushing config...")
+        self.config.push_to_hub(repo_name, private=private)
 
     def _check_file_type(self, file_path):
         split_path = os.path.splitext(file_path)
