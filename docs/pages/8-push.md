@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Pushing to Hugging Face's Hub
-permalink: /push-to-hub/
+permalink: /push/
 nav_order: 15
 ---
 ## Pushing To Hugging Face's Model Hub
@@ -20,7 +20,7 @@ from happytransformer import HappyGeneration
 # ---------------------------------------------------------
 happy_gen = HappyGeneration(model_type="GPT-NEO", model_name="EleutherAI/gpt-neo-125M")
 repo_name = "ericfillion/example"
-happy_gen.push_to_hub(repo_name, private=True)
+happy_gen.push(repo_name, private=True)
 
 ```
 
