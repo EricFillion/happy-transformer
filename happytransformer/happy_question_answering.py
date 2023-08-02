@@ -70,16 +70,6 @@ class HappyQuestionAnswering(HappyTransformer):
         if type(args) == dict:
             raise ValueError( "As of version 2.5.0 dictionary inputs are not acceptable. Please provide a QATestArgs. ")
 
-
-        if args.save_preprocessed_data:
-            self.logger.info("Saving preprocessed data is currently "
-                             "not available for question answering models. "
-                             "It will be added soon. ")
-        if args.load_preprocessed_data:
-            self.logger.info("Loading preprocessed data is currently "
-                             "not available for question answering models. "
-                             "It will be added soon. ")
-
         contexts, questions = self._get_data(input_filepath, test_data=True)
 
         return [
