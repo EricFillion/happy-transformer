@@ -33,7 +33,7 @@ class HappyTransformer():
 
         self.config, self.tokenizer, self.model = self._get_model_components(self.model_name, use_auth_token, trust_remote_code, model_class)
 
-        self.device = self.to_auto_device()
+        self.device = self.__get_device()
 
         self.logger.info("Using device: %s", self.device)
 
@@ -82,7 +82,7 @@ class HappyTransformer():
         return logger
 
 
-    def to_auto_device(self):
+    def __get_device(self):
         device = None
         if torch.backends.mps.is_available():
             if torch.backends.mps.is_built():
@@ -338,8 +338,6 @@ class HappyTransformer():
             deepspeed = None
 
         return deepspeed
-
-
 
     def _load_pipeline(self):
 
