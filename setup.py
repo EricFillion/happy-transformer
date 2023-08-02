@@ -22,13 +22,13 @@ setup(
     install_requires=[
             'torch>=1.0',
             'tqdm>=4.43',
-            'transformers>=4.30.1',
-            'datasets>=2.13.1',
+            'transformers>=4.30.1,<5.0.0',
+            'datasets>=2.13.1,<3.0.0',
             'dataclasses; python_version < "3.7"',
             'sentencepiece',
             'protobuf',
-            'accelerate>=0.20.1',
-            'tokenizers>=0.13.3',
+            'accelerate>=0.20.1,<1.0.0',
+            'tokenizers>=0.13.3,<1.0.0',
             'wandb'
     ],
     classifiers=[
