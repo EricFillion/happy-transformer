@@ -7,7 +7,6 @@ class TrainArgs:
     learning_rate: float = 5e-5
     num_train_epochs: float = 1.0
     batch_size: int = 1
-    gradient_accumulation_steps: int = 1
     weight_decay: float = 0
     fp16: bool = False
     eval_ratio: float = 0.1  #  if eval_filepath is not provided a portion of the training data will be used for evaluating.

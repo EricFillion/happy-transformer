@@ -44,7 +44,6 @@ Contains two columns with the following header values: input and target
 | save_steps                   | 0.0                 |
 | eval_steps                   | 0.1                 |
 | logging_steps                | 0.1                 |
-| gradient_accumulation_steps  | 1                   |
 | output_dir                   | "happy_transformer" |
 
 

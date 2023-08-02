@@ -56,7 +56,6 @@ Information about saving/loading preprocessed data can be found [here](/save-loa
 | save_steps                    | 0.0                 |
 | eval_steps                    | 0.1                 |
 | logging_steps                 | 0.1                 |
-| gradient_accumulation_steps   | 1                   |
 | output_dir                    | "happy_transformer" |
 
 Output: None
