@@ -70,7 +70,7 @@ def csv_tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, args:
 
     def tokenize_function(example):
         texts = example["text"]
-        toks = tokenizer(texts, padding=args.padding, truncation=args.truncation, max_length=max_input_length)
+        toks = tokenizer(texts, padding=True, truncation=True, max_length=max_input_length)
         if not mlm:
             toks["labels"] = toks["input_ids"]
         return toks
