@@ -29,12 +29,12 @@ class GenerationResult:
 
 class HappyGeneration(HappyTransformer):
     def __init__(self, model_type: str = "GPT2", model_name: str = "gpt2", 
-                 load_path: str = "", use_auth_token:  Union[bool, str]  = None):
+                 load_path: str = "", use_auth_token:  Union[bool, str]  = None, trust_remote_code: bool =False):
 
         self.adaptor = get_adaptor(model_type)
         model_class = AutoModelForCausalLM
 
-        super().__init__(model_type, model_name, model_class,  use_auth_token=use_auth_token, load_path=load_path)
+        super().__init__(model_type, model_name, model_class,  use_auth_token=use_auth_token, load_path=load_path, trust_remote_code=trust_remote_code)
 
         self._data_collator = default_data_collator
 

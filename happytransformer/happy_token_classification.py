@@ -18,12 +18,12 @@ class TokenClassificationResult:
 
 class HappyTokenClassification(HappyTransformer):
     def __init__(
-        self, model_type: str = "BERT", model_name: str = "dslim/bert-base-NER", load_path: str = "", use_auth_token: Union[bool, str] = None):
+        self, model_type: str = "BERT", model_name: str = "dslim/bert-base-NER", load_path: str = "", use_auth_token: Union[bool, str] = None, trust_remote_code: bool =False):
 
         self.adaptor = get_adaptor(model_type)
         model_class = AutoModelForTokenClassification
 
-        super().__init__(model_type, model_name, model_class, use_auth_token=use_auth_token, load_path=load_path)
+        super().__init__(model_type, model_name, model_class, use_auth_token=use_auth_token, load_path=load_path, trust_remote_code=trust_remote_code)
 
         self._type = "tok"
 

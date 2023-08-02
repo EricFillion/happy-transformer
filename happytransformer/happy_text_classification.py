@@ -18,13 +18,13 @@ class TextClassificationResult:
 
 class HappyTextClassification(HappyTransformer):
     def __init__(self, model_type="DISTILBERT",
-                 model_name="distilbert-base-uncased", num_labels: int = 2, load_path: str = "", use_auth_token: Union[bool, str] = None):
+                 model_name="distilbert-base-uncased", num_labels: int = 2, load_path: str = "", use_auth_token: Union[bool, str] = None,  trust_remote_code: bool=False):
 
         self._num_labels = num_labels
         self.adaptor = get_adaptor(model_type)
         model_class = AutoModelForSequenceClassification
 
-        super().__init__(model_type, model_name, model_class, use_auth_token=use_auth_token, load_path=load_path)
+        super().__init__(model_type, model_name, model_class, use_auth_token=use_auth_token, load_path=load_path, trust_remote_code=trust_remote_code)
 
         self._pipeline_class = TextClassificationPipeline
 

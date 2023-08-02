@@ -10,12 +10,14 @@ class HappyNextSentence(HappyTransformer):
     def __init__(self, model_type="BERT",
                  model_name="bert-base-uncased", 
                  load_path: str = "", 
-                 use_auth_token:  Union[bool, str]  = None):
+                 use_auth_token:  Union[bool, str]  = None,
+                 trust_remote_code: bool =False
+                 ):
 
         self.adaptor = get_adaptor(model_type)
         model_class = AutoModelForNextSentencePrediction
 
-        super().__init__(model_type, model_name, model_class, use_auth_token=use_auth_token, load_path=load_path)
+        super().__init__(model_type, model_name, model_class, use_auth_token=use_auth_token, load_path=load_path, trust_remote_code=trust_remote_code)
 
         self._pipeline_class = None  # we don't use a pipeline for inference
 

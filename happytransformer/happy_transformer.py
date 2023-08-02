@@ -20,20 +20,18 @@ from happytransformer.fine_tuning_util import EvalResult, FistStep, ZERO_2_SETTI
 
 class HappyTransformer():
 
-    def __init__(self, model_type: str, model_name: str, model_class: AutoModel, load_path="", use_auth_token: Union[str, bool] = None):
+    def __init__(self, model_type: str, model_name: str, model_class: AutoModel, load_path="", use_auth_token: Union[str, bool] = None, trust_remote_code: bool =False):
 
         self.logger = self._get_logger()
         self.model_type = model_type
         self.model_name = model_name
-        self.use_auth_token = use_auth_token
-        self._model_class = model_class
 
         # Sets self.model and self.tokenizer if load_model is True
         if load_path != "":
             self.logger.warning(f"load_path has been deprecated. Provide the load_path to the  model_name parameter instead {self.model_name}. load_path will be removed in a later version. For now, we'll load the model form the load_path provided.  ")
             self.model_name = load_path
 
-        self.config, self.tokenizer, self.model = self._get_model_components(self.model_name)
+        self.config, self.tokenizer, self.model = self._get_model_components(self.model_name, use_auth_token, trust_remote_code, model_class)
 
         self.device = self.to_auto_device()
 
@@ -61,13 +59,13 @@ class HappyTransformer():
 
     ######## Helper __init__ methods ########
 
-    def _get_model_components(self, model_name_path):
+    def _get_model_components(self, model_name_path,  use_auth_token, trust_remote_code, model_class):
         # HappyTextClassification is the only class that overwrites
         # this as we need to specify number of labels.
 
-        config = AutoConfig.from_pretrained(model_name_path, use_auth_token=self.use_auth_token)
-        model = self._model_class.from_pretrained(model_name_path, config=config, use_auth_token=self.use_auth_token)
-        tokenizer = AutoTokenizer.from_pretrained(model_name_path, use_auth_token=self.use_auth_token)
+        config = AutoConfig.from_pretrained(model_name_path, use_auth_token=use_auth_token, trust_remote_code=trust_remote_code)
+        model = model_class.from_pretrained(model_name_path, config=config, use_auth_token=use_auth_token, trust_remote_code=trust_remote_code)
+        tokenizer = AutoTokenizer.from_pretrained(model_name_path, use_auth_token=use_auth_token, trust_remote_code=trust_remote_code)
 
         return config, tokenizer, model
 

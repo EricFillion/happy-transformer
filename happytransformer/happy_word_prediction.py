@@ -21,13 +21,13 @@ class HappyWordPrediction(HappyTransformer):
     """
     def __init__(
             self, model_type: str = "DISTILBERT", model_name: str = "distilbert-base-uncased",
-            load_path: str ="", use_auth_token: Union[bool, str] = None):
+            load_path: str ="", use_auth_token: Union[bool, str] = None, trust_remote_code: bool =False):
 
         self.adaptor = get_adaptor(model_type)
         model_class = AutoModelForMaskedLM
 
 
-        super().__init__(model_type, model_name, model_class, load_path=load_path, use_auth_token=use_auth_token)
+        super().__init__(model_type, model_name, model_class, load_path=load_path, use_auth_token=use_auth_token, trust_remote_code=trust_remote_code)
 
 
         self._pipeline_class = FillMaskPipeline
