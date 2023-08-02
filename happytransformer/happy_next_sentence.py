@@ -24,6 +24,11 @@ class HappyNextSentence(HappyTransformer):
         self._type = "ns"
 
     def predict_next_sentence(self, sentence_a: str, sentence_b: str) -> float:
+
+        if not self._on_device:
+            self.model.to(self.device)
+            self._on_device= True
+
         encoded = self.tokenizer(sentence_a, sentence_b, return_tensors='pt')
         encoded.to(self.device)
 
