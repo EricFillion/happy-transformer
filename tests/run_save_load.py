@@ -12,7 +12,7 @@ def run_save_load(happy, output_path, args, data_path, run_type):
         ValueError("invalid run_type for run_save_load")
 
     args.save_path = False
-    args.load_path = True
+    args.load_path = output_path
 
     if run_type == "train":
         happy.train(data_path, args=args)
