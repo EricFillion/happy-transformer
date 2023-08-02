@@ -134,7 +134,7 @@ class HappyTransformer():
     ######## Data Preprocessing ########
     def _preprocess_data_train(self, input_filepath, eval_filepath, args: TrainArgs):
 
-        if not args.load_preprocessed_data:
+        if not args.load_path:
             # We are loading raw data
             if eval_filepath == "":
 
@@ -165,48 +165,39 @@ class HappyTransformer():
                 self.logger.info("Tokenizing eval data...")
                 eval_tok_data = self._tok_function(raw_data["eval"], args, train_file_type)
         else:
-            if args.save_preprocessed_data_path.endswith(".json"):
-                raise ValueError(
-                    "As of version 2.5.0 preprocessed files are not longer saved as json files. Please preprocess your data again")
-
             if eval_filepath != "":
-                self.logger.warning(f"Eval data will be fetched from {args.load_preprocessed_data_path} and not {eval_filepath}")
+                self.logger.warning(f"Eval data will be fetched from {args.load_path} and not {eval_filepath}")
 
-            tok_data = load_from_disk(args.load_preprocessed_data_path)
+            tok_data = load_from_disk(args.load_path)
             train_tok_data = tok_data["train"]
             eval_tok_data = tok_data["eval"]
 
-        if args.save_preprocessed_data:
-
-            if args.save_preprocessed_data_path.endswith(".json"):
-                raise ValueError(
-                    "As of version 2.5.0 preprocessed files are not longer saved as json files. Please provide a path to a folder.")
-
+        if args.save_path:
 
             combined_tok = DatasetDict({"train": train_tok_data, "eval": eval_tok_data})
-            combined_tok.save_to_disk(args.save_preprocessed_data_path)
+            combined_tok.save_to_disk(args.save_path)
 
         return train_tok_data, eval_tok_data
 
 
     def _preprocess_data_eval(self, input_filepath, args: TrainArgs):
-        if not args.load_preprocessed_data:
+        if not args.load_path:
             self.logger.info("Preprocessing dataset...")
             eval_file_type = self._check_file_type(input_filepath)
             datasets = load_dataset(eval_file_type, data_files={"eval": input_filepath})
             tokenized_dataset = self._tok_function(datasets["eval"], args, eval_file_type)
 
         else:
-            self.logger.info("Loading dataset from %s...", args.load_preprocessed_data_path)
-            tokenized_dataset = load_from_disk(args.load_preprocessed_data_path +"/eval")
+            self.logger.info("Loading dataset from %s...", args.load_path)
+            tokenized_dataset = load_from_disk(args.load_path +"/eval")
 
-        if args.save_preprocessed_data:
-            if args.load_preprocessed_data:
+        if args.save_path:
+            if args.load_path:
                 self.logger.warning("Both save_preprocessed_data and load_data are enabled.")
 
-            self.logger.info("Saving evaluating dataset to %s...", args.save_preprocessed_data_path)
+            self.logger.info("Saving evaluating dataset to %s...", args.save_steps)
             save_dataset = DatasetDict({"eval": tokenized_dataset})
-            save_dataset.save_to_disk(args.save_preprocessed_data_path)
+            save_dataset.save_to_disk(args.save_path)
 
         return tokenized_dataset
 

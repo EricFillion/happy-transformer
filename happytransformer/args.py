@@ -16,10 +16,9 @@ class TrainArgs:
     eval_steps: float = 0.1  # if 0 no evaluating will be done
     logging_steps: float = 0.1   # if 0 no saving will be done
 
-    load_preprocessed_data: bool = False
-    save_preprocessed_data: bool = False
-    save_preprocessed_data_path: str = ""
-    load_preprocessed_data_path: str = ""
+    save_path:  Union[bool, str] = False
+    load_path:  Union[bool, str] = False
+
     preprocessing_processes: int = 1
     report_to: tuple = ()
     deepspeed: Union[bool, str] = False
