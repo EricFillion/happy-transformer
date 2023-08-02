@@ -13,8 +13,7 @@ def test_len_padding_max():
                        padding="max_length",  # default
                        truncation=True,  # default
                        max_length=None, # default
-                       save_preprocessed_data=True,
-                       save_preprocessed_data_path=save_path)
+                       save_path=save_path)
 
     happy_gen.train(train_data, args=args)
 
@@ -37,9 +36,8 @@ def test_len_padding_value():
                        padding="max_length", # default
                        truncation=True,  # default
                        max_length=max_length,
-                       save_preprocessed_data=True, # default
                        batch_size=2,
-                       save_preprocessed_data_path=save_path)
+                       save_path=save_path)
 
     happy_gen.train(train_data, args=args)
 
