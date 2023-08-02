@@ -14,7 +14,7 @@ Initialize a HappyTokenClassification() object for token classification
  2. model_name(string): potential models can be found [here](https://huggingface.co/models?pipeline_tag=token-classification) 
  3. use_auth_token (string): Specify the authentication token to 
        [load private](https://huggingface.co/transformers/model_sharing.html) models. 
- 4. from_tf (bool): Set to True if you want to convert a TensorFlow model to PyTorch model.
+ 4. trust_remote_code (bool): Allow for custom Python files to be used from the model_name location.   
 
 #### Example 5.0:
 ```python
