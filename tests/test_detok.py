@@ -1,10 +1,9 @@
 import csv
-from happytransformer import HappyGeneration, HappyTextToText, HappyWordPrediction,  GENTrainArgs, TTTrainArgs, WPTrainArgs
+from happytransformer import HappyWordPrediction,  GENTrainArgs, TTTrainArgs, WPTrainArgs
 from datasets import load_from_disk
-
+from tests import happy_gen, happy_tt, happy_wp
 
 def test_gen_csv_decode():
-    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
 
     train_data = "../data/gen/train-eval.csv"
     save_path = "data/gen/decode-test/"
@@ -32,7 +31,6 @@ def test_gen_csv_decode():
 
 
 def test_gen_text_decode():
-    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
 
     train_data = "../data/gen/train-eval.txt"
     save_path = "data/gen/decode-test/"
@@ -59,7 +57,6 @@ def test_gen_text_decode():
 
 def test_gen_text_len():
     MAX_LEN = 2
-    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
 
     train_data = "../data/gen/train-eval.txt"
     save_path = "data/gen/decode-test/"
@@ -78,7 +75,6 @@ def test_gen_text_len():
         assert len(case) == MAX_LEN
 
 def test_tt_decode():
-    happy_tt = HappyTextToText("T5", "t5-small")
 
     train_data = "../data/tt/train-eval-grammar.csv"
     save_path = "data/tt/decode-test/"
@@ -112,16 +108,14 @@ def test_tt_decode():
 
 
 def test_wp_csv_decode():
-    happy_wp = HappyWordPrediction('BERT', 'bert-base-uncased')
-
+    happy =  HappyWordPrediction('BERT', 'bert-base-uncased')
     train_data = "../data/wp/train-eval.csv"
     save_path = "data/wp/decode-test/"
 
     args_max_len_truncation = WPTrainArgs(num_train_epochs=1,
-                                           save_path=save_path,
-                                           padding=False)
+                                           save_path=save_path)
 
-    happy_wp.train(train_data, args=args_max_len_truncation)
+    happy.train(train_data, args=args_max_len_truncation)
 
     tok_data = load_from_disk(save_path)
 
@@ -132,17 +126,17 @@ def test_wp_csv_decode():
             lines.append(row["text"])
 
     def clean_detok_case(detok_case):
-        detok_case = detok_case.replace("[CLS] line", "Line")
+        detok_case = detok_case.replace("line", "Line")
         detok_case = detok_case.replace(" : this", ": This")
-        detok_case = detok_case.replace(" [SEP]", "")
 
         return detok_case
+
     for case in tok_data["train"]["input_ids"]:
-        detok_case = happy_wp.tokenizer.decode(case, skip_special_tokens=False)
+        detok_case = happy_wp.tokenizer.decode(case, skip_special_tokens=True)
         detok_case = clean_detok_case(detok_case)
         assert detok_case in lines
 
     for case in tok_data["eval"]["input_ids"]:
-        detok_case = happy_wp.tokenizer.decode(case, skip_special_tokens=False)
+        detok_case = happy_wp.tokenizer.decode(case, skip_special_tokens=True)
         detok_case = clean_detok_case(detok_case)
         assert detok_case in lines

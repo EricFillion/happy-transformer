@@ -1,10 +1,7 @@
 import csv
 from happytransformer import HappyGeneration, HappyTextToText, HappyWordPrediction, GENTrainArgs, WPTrainArgs, TTTrainArgs
 from datasets import load_from_disk
-
-happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
-happy_wp = HappyWordPrediction("BERT", 'prajjwal1/bert-tiny')
-happy_tt = HappyTextToText("T5", "t5-small")
+from  tests import happy_gen, happy_wp, happy_tt
 
 
 def test_gen_len_max_len_trun():

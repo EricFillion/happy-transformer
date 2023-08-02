@@ -1,10 +1,10 @@
 import csv
-from happytransformer import HappyGeneration, HappyWordPrediction,  GENTrainArgs, WPTrainArgs
+from happytransformer import HappyWordPrediction,  GENTrainArgs, WPTrainArgs
 from datasets import load_from_disk
+from tests import happy_gen, happy_wp
 
 
 def test_len_padding_max():
-    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
 
     train_data = "../data/gen/train-eval.csv"
     save_path = "data/gen/decode-test/"
@@ -25,7 +25,6 @@ def test_len_padding_max():
 
 def test_len_padding_value():
     max_length = 5
-    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
 
     train_data = "../data/gen/train-eval.csv"
     save_path = "data/gen/decode-test/"
@@ -46,8 +45,6 @@ def test_len_padding_value():
 
 
 def test_batch_size_gen():
-    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
-
     train_data = "../data/gen/train-eval.csv"
     save_path = "data/gen/decode-test/"
 
@@ -62,8 +59,6 @@ def test_batch_size_gen():
 
 
 def test_batch_size_wp():
-    happy_wp = HappyWordPrediction('BERT', 'bert-base-uncased')
-
     train_data = "../data/wp/train-eval.csv"
 
     # Batching should work by default due to all inputs being the

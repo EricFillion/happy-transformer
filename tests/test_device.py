@@ -1,13 +1,13 @@
-from happytransformer import HappyGeneration, HappyTextToText, HappyWordPrediction,  GENTrainArgs, TTTrainArgs, WPTrainArgs
-
+from tests import happy_gen
+from happytransformer import HappyGeneration
 
 def test_pipeline_init():
-    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
-    assert happy_gen._pipeline is None
+    happy = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
+    assert happy._pipeline is None
 
-    assert not happy_gen._on_device
+    assert not happy._on_device
 
-    happy_gen.generate_text("Hello world ")
+    happy.generate_text("Hello world ")
 
-    assert happy_gen._pipeline is not None
-    assert happy_gen._on_device
+    assert happy._pipeline is not None
+    assert happy._on_device

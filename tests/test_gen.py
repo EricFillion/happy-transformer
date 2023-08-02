@@ -10,15 +10,15 @@ import pytest
 
 from tests.run_save_load import run_save_load
 
+from tests import happy_gen
+
 def test_default_simple():
-    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     args = GENSettings(min_length=5, max_length=5)
     output = happy_gen.generate_text("Artificial intelligence is ", args=args)
     assert type(output.text) == str
 
 
 def test_default_min_max_length():
-    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     args = GENSettings(min_length=5, max_length=5)
     output = happy_gen.generate_text("Artificial intelligence is ", args=args)
     tokens = happy_gen.tokenizer.encode(output.text, return_tensors="pt")
@@ -26,7 +26,6 @@ def test_default_min_max_length():
     assert length == 5
 
 def test_bad_words():
-    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     # Test single words
     args_test_word_single = GENSettings(bad_words=["new", "tool"])
     # result without bad_words:  "a new field of research that has been gaining momentum"
@@ -43,7 +42,6 @@ def test_bad_words():
 
 
 def test_top_p():
-    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     # Test small values
     args_small = GENSettings(top_p=0.01,  min_length=20, max_length=20)
     output_small = happy_gen.generate_text("Artificial intelligence is ", args=args_small)
@@ -61,8 +59,6 @@ def test_top_p():
 
 
 def test_all_methods():
-    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
-
     greedy_settings = GENSettings(min_length=5, max_length=5, no_repeat_ngram_size=2)
     output_greedy = happy_gen.generate_text(
         "Artificial intelligence is ",
@@ -106,23 +102,19 @@ def test_all_methods():
     print("top-p-sampling: ", output_top_p_sampling.text, end="\n\n")
 
 def test_gen_train_basic():
-    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     happy_gen.train("../data/gen/train-eval.txt")
 
 def test_gen_train_hp():
     # Can only be used if fp16 if CUDA is available
     if torch.cuda.is_available():
-        happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
         args = GENTrainArgs(fp16=True)
         happy_gen.train("../data/gen/train-eval.txt", args=args)
 
 def test_gen_eval_basic():
-    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     result = happy_gen.eval("../data/gen/train-eval.txt")
     assert type(result.loss) == float
 
 def test_gen_train_effectiveness_multi():
-    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     before_result = happy_gen.eval("../data/gen/train-eval.txt")
     happy_gen.train("../data/gen/train-eval.txt")
     after_result = happy_gen.eval("../data/gen/train-eval.txt")
@@ -130,14 +122,12 @@ def test_gen_train_effectiveness_multi():
     assert after_result.loss < before_result.loss
 
 def test_gen_save_load_train():
-    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     output_path = "data/gen-train/"
     data_path = "../data/gen/train-eval.txt"
     args = GENTrainArgs()
     run_save_load(happy_gen, output_path, args, data_path, "train")
 
 def test_gen_save_load_eval():
-    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     output_path = "data/gen-eval/eval/"
     data_path = "../data/gen/train-eval.txt"
     args = GENEvalArgs()
@@ -145,9 +135,8 @@ def test_gen_save_load_eval():
     run_save_load(happy_gen, output_path, args, data_path, "eval")
 
 def test_gen_save():
-    happy = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
-    happy.save("model/")
-    result_before = happy.generate_text("Natural language processing is")
+    happy_gen.save("model/")
+    result_before = happy_gen.generate_text("Natural language processing is")
 
     happy = HappyGeneration(model_name="model/")
     result_after = happy.generate_text("Natural language processing is")
@@ -155,8 +144,6 @@ def test_gen_save():
     assert result_before == result_after
 
 def test_wp_train_eval_with_dic():
-
-    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     train_args = {'learning_rate': 0.01,  "num_train_epochs": 1}
 
     with pytest.raises(ValueError):
@@ -168,8 +155,6 @@ def test_wp_train_eval_with_dic():
 
 
 def test_gen_train_eval_with_dataclass():
-
-    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     train_args = GENTrainArgs(learning_rate=0.01, num_train_epochs=1)
 
     happy_gen.train("../data/gen/train-eval.txt" , args=train_args)
@@ -181,7 +166,6 @@ def test_gen_train_eval_with_dataclass():
     assert type(after_result.loss) == float
 
 def test_generate_after_train_eval():
-    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     happy_gen.train("../data/gen/train-eval.txt")
     eval_result = happy_gen.eval("../data/gen/train-eval.txt")
     output = happy_gen.generate_text("Artificial intelligence is ")
@@ -189,7 +173,6 @@ def test_generate_after_train_eval():
 
 def test_gen_csv():
     data_path = "../data/gen/train-eval.csv"
-    happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     before_result = happy_gen.eval(data_path)
     print("before_result", before_result)
     happy_gen.train(data_path)
