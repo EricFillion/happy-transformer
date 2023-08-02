@@ -138,7 +138,6 @@ def test_wp_csv_decode():
 
         return detok_case
     for case in tok_data["train"]["input_ids"]:
-        print(case)
         detok_case = happy_wp.tokenizer.decode(case, skip_special_tokens=False)
         detok_case = clean_detok_case(detok_case)
         assert detok_case in lines
