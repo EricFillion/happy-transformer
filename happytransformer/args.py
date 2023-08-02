@@ -9,10 +9,6 @@ class TrainArgs:
     batch_size: int = 1
     gradient_accumulation_steps: int = 1
     weight_decay: float = 0
-    adam_beta1: float = 0.9
-    adam_beta2: float = 0.999
-    adam_epsilon: float = 1e-8
-    max_grad_norm:  float = 1.0
     fp16: bool = False
     eval_ratio: float = 0.1  #  if eval_filepath is not provided a portion of the training data will be used for evaluating.
 

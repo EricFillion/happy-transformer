@@ -14,14 +14,6 @@ num_train_epochs: The number of times the training data is iterated over.
 
 weight_decay: A type of regularization. It prevents weights from getting too large. Thus, preventing overfitting. 
 
-adam_beta1: The beta1 parameter for the Adam with weight decay optimizer. 
-
-adam_beta2: The beta2 parameter for the Adam with weight decay optimizer.
-
-adam_epsilon: The epsilon parameter for the Adam with weight decay optimizer.
-
-max_grad_norm: Used to prevent exploding gradients. Prevents the derivatives of the loss function from exceed the absolute value of "max_grad_norm". 
-
 batch_size: Number of training examples used per iteration 
 
 gradient_accumulation_steps: The number of batches that occur before the model weights are updated. 

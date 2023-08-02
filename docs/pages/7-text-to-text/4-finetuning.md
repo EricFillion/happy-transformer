@@ -36,11 +36,6 @@ Contains two columns with the following header values: input and target
 | learning_rate                | 5e-5                |
 | num_train_epochs             | 3                   |
 | batch_size                   | 1                   |
-| weight_decay                 | 0                   |
-| adam_beta1                   | 0.9                 |
-| adam_beta2                   | 0.999               |
-| adam_epsilon                 | 1e-8                |
-| max_grad_norm                | 1.0                 |
 | preprocessing_processes      | 1                   |
 | max_input_length             | 1024                |
 | max_output_length            | 1024                |

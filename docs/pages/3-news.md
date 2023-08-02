@@ -22,6 +22,7 @@ nav_order: 4
 Breaking changes:
 - Preprocesses data is now saved in the Hugging Face's Dataset format rather than in JSON format.
 - Dictionary argument inputs for training and evaluating are no longer supported 
+- Removed adam_beta1, adam_beta2, adam_epsilon and max_grad_norm learning parameters. 
 
 ### November 19th, 2021
 **Introducing Version 2.4.0!**

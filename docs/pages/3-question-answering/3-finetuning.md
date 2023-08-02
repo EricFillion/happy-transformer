@@ -47,10 +47,6 @@ Information about saving/loading preprocessed data can be found [here](/save-loa
 | num_train_epochs              | 3                   |
 | batch_size                    | 1                   |
 | weight_decay                  | 0                   |
-| adam_beta1                    | 0.9                 |
-| adam_beta2                    | 0.999               |
-| adam_epsilon                  | 1e-8                |
-| max_grad_norm                 | 1.0                 |
 | save_preprocessed_data        | False               |
 | save_preprocessed_data_path   | ""                  |
 | load_preprocessed_data        | False               |
