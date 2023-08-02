@@ -94,8 +94,9 @@ ZERO_2_SETTINGS = {
         "allgather_bucket_size": 2e8,
         "overlap_comm": True,
         "reduce_scatter": True,
-        "reduce_bucket_size": "auto",
-        "contiguous_gradients": True
+        "reduce_bucket_size": 5e8,
+        "contiguous_gradients": True,
+        'round_robin_gradients': True
     },
 
     "fp16": {
