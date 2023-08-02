@@ -195,7 +195,7 @@ class HappyTransformer():
             if args.load_path:
                 self.logger.warning("Both save_preprocessed_data and load_data are enabled.")
 
-            self.logger.info("Saving evaluating dataset to %s...", args.save_steps)
+            self.logger.info("Saving evaluating dataset to %s...", args.save_path)
             save_dataset = DatasetDict({"eval": tokenized_dataset})
             save_dataset.save_to_disk(args.save_path)
 
