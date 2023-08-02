@@ -23,6 +23,7 @@ Breaking changes:
 - Preprocesses data is now saved in the Hugging Face's Dataset format rather than in JSON format.
 - Dictionary argument inputs for training and evaluating are no longer supported 
 - Removed adam_beta1, adam_beta2, adam_epsilon and max_grad_norm learning parameters. 
+- Replaced save_preprocessed_data, save_preprocessed_data_path with a single parameter called save_path. Likewise for load_preprocessed_data and load_preprocessed_data_path being replaced by load_path. 
 
 ### November 19th, 2021
 **Introducing Version 2.4.0!**
