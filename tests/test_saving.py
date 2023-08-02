@@ -4,7 +4,7 @@ from tests import happy_tc
 
 def test_logging_and_saving():
 
-    args = TCTrainArgs(save_steps=0.5)
+    args = TCTrainArgs(save_steps=0.5, num_train_epochs=3)
 
     happy_tc.train("../data/tc/train-eval.csv", args=args)
 
