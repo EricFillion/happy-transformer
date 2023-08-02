@@ -65,7 +65,7 @@ def test_tt_save():
     happy_tt.save("model/")
     result_before = happy_tt.generate_text("translate English to French: Hello my name is Eric")
 
-    happy = HappyTextToText(load_path="model/")
+    happy = HappyTextToText(model_name="model/")
     result_after = happy.generate_text("translate English to French: Hello my name is Eric")
 
     assert result_before.text == result_after.text

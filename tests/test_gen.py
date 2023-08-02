@@ -149,7 +149,7 @@ def test_gen_save():
     happy.save("model/")
     result_before = happy.generate_text("Natural language processing is")
 
-    happy = HappyGeneration(load_path="model/")
+    happy = HappyGeneration(model_name="model/")
     result_after = happy.generate_text("Natural language processing is")
 
     assert result_before == result_after

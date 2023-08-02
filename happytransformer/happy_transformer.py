@@ -30,9 +30,10 @@ class HappyTransformer():
 
         # Sets self.model and self.tokenizer if load_model is True
         if load_path != "":
-            self.config, self.tokenizer, self.model = self._get_model_components(load_path)
-        else:
-            self.config, self.tokenizer, self.model = self._get_model_components(self.model_name)
+            self.logger.warning(f"load_path has been deprecated. Provide the load_path to the  model_name parameter instead {self.model_name}. load_path will be removed in a later version. For now, we'll load the model form the load_path provided.  ")
+            self.model_name = load_path
+
+        self.config, self.tokenizer, self.model = self._get_model_components(self.model_name)
 
         self.device = self.to_auto_device()
 

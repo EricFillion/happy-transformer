@@ -68,7 +68,7 @@ def test_qa_save():
     happy.save("model/")
     result_before = happy.answer_question("Natural language processing is a subfield of artificial surrounding creating models that understand language","What is natural language processing?")
 
-    happy = HappyQuestionAnswering(load_path="model/")
+    happy = HappyQuestionAnswering(model_name="model/")
     result_after = happy.answer_question("Natural language processing is a subfield of artificial surrounding creating models that understand language","What is natural language processing?")
 
     assert result_before[0].answer == result_after[0].answer

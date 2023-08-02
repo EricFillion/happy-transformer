@@ -26,7 +26,7 @@ def test_sp_save():
         "The Eiffel Tower is in Paris."
     )
 
-    happy = HappyNextSentence(load_path="model/")
+    happy = HappyNextSentence(model_name="model/")
     result_after = happy.predict_next_sentence(
         "How old are you?",
         "The Eiffel Tower is in Paris."

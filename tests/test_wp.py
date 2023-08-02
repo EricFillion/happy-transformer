@@ -116,7 +116,7 @@ def test_wp_save():
     happy.save("model/")
     result_before = happy.predict_mask("I think therefore I [MASK]")
 
-    happy = HappyWordPrediction(load_path="model/")
+    happy = HappyWordPrediction(model_name="model/")
     result_after = happy.predict_mask("I think therefore I [MASK]")
 
     assert result_before[0].token ==result_after[0].token

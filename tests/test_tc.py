@@ -85,7 +85,7 @@ def test_tc_save():
     happy.save("model/")
     result_before = happy.classify_text("What a great movie")
 
-    happy = HappyTextClassification(load_path="model/", num_labels=3)
+    happy = HappyTextClassification(model_name="model/", num_labels=3)
     result_after = happy.classify_text("What a great movie")
 
     assert result_before.label==result_after.label
