@@ -363,6 +363,7 @@ class HappyTransformer():
             if not self._on_device:
                 self.logger.info(f"Moving model to {self.device}")
                 self.model.to(self.device)
+                self._on_device = True
 
             self.logger.info(f"Initializing a pipeline")
             self._pipeline = self._pipeline_class(model=self.model, tokenizer=self.tokenizer, device=self.device)
