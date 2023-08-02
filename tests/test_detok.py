@@ -10,8 +10,7 @@ def test_gen_csv_decode():
     save_path = "data/gen/decode-test/"
 
     args_max_len_truncation = GENTrainArgs(num_train_epochs=1,
-                                           save_preprocessed_data=True,
-                                           save_preprocessed_data_path=save_path)
+                                           save_path=save_path)
 
     happy_gen.train(train_data, args=args_max_len_truncation)
 
@@ -40,8 +39,7 @@ def test_gen_text_decode():
 
     args = GENTrainArgs(num_train_epochs=1,
                                            eval_ratio=0,
-                                           save_preprocessed_data=True,
-                                           save_preprocessed_data_path=save_path)
+                                           save_path=save_path)
 
     happy_gen.train(train_data, args=args, eval_filepath=train_data)
 
@@ -66,11 +64,7 @@ def test_gen_text_len():
     train_data = "../data/gen/train-eval.txt"
     save_path = "data/gen/decode-test/"
 
-    args = GENTrainArgs(num_train_epochs=1,
-                                           eval_ratio=0,
-                                           save_preprocessed_data=True,
-                                           save_preprocessed_data_path=save_path,
-                                            max_length=MAX_LEN)
+    args = GENTrainArgs(num_train_epochs=1, eval_ratio=0, save_path=save_path, max_length=MAX_LEN)
 
     happy_gen.train(train_data, args=args, eval_filepath=train_data)
 
@@ -90,8 +84,7 @@ def test_tt_decode():
     save_path = "data/tt/decode-test/"
 
     args = TTTrainArgs(num_train_epochs=1,
-                       save_preprocessed_data=True,
-                       save_preprocessed_data_path=save_path,
+                       save_path=save_path,
                        max_input_length=1024,
                        max_output_length=1024)
 
@@ -125,8 +118,8 @@ def test_wp_csv_decode():
     save_path = "data/wp/decode-test/"
 
     args_max_len_truncation = WPTrainArgs(num_train_epochs=1,
-                                           save_preprocessed_data=True,
-                                           save_preprocessed_data_path=save_path, padding=False)
+                                           save_path=save_path,
+                                           padding=False)
 
     happy_wp.train(train_data, args=args_max_len_truncation)
 

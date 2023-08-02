@@ -34,11 +34,11 @@ def test_gen_eval_path():
 def test_gen_saved_data():
     happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
     save_path = "data/test/"
-    args_save = GENTrainArgs(eval_ratio=0.1, num_train_epochs=1, save_preprocessed_data=True, save_preprocessed_data_path=save_path)
+    args_save = GENTrainArgs(eval_ratio=0.1, num_train_epochs=1, save_path=save_path)
 
     happy_gen.train(DATA_PATH, args=args_save)
 
-    args_load = GENTrainArgs(num_train_epochs=1, load_preprocessed_data=True, load_preprocessed_data_path=save_path)
+    args_load = GENTrainArgs(num_train_epochs=1, load_path=save_path)
 
     happy_gen.train(DATA_PATH, args=args_load)
 
