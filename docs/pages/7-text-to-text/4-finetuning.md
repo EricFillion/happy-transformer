@@ -31,27 +31,29 @@ Contains two columns with the following header values: input and target
 
 #### Table 7.2
 
-| Parameter                    | Default             |
-|------------------------------|---------------------|
-| learning_rate                | 5e-5                |
-| num_train_epochs             | 1                   |
-| batch_size                   | 1                   |
-| preprocessing_processes      | 1                   |
-| max_input_length             | 1024                |
-| max_output_length            | 1024                |
-| fp16                         | False               |
-| eval_ratio                   | 0.1                 |
-| save_steps                   | 0.0                 |
-| eval_steps                   | 0.1                 |
-| logging_steps                | 0.1                 |
-| output_dir                   | "happy_transformer" |
+| Parameter                | Default             |
+|--------------------------|---------------------|
+| learning_rate            | 5e-5                |
+| num_train_epochs         | 1                   |
+| batch_size               | 1                   |
+| preprocessing_processes  | 1                   |
+| save_path                | ""                  |
+| load_path                | ""                  |
+| max_input_length         | None                |
+| max_output_length        | None                |
+| fp16                     | False               |
+| eval_ratio               | 0.1                 |
+| save_steps               | 0.0                 |
+| eval_steps               | 0.1                 |
+| logging_steps            | 0.1                 |
+| output_dir               | "happy_transformer" |
 
 
 Information about the learning parameters can be found [here](/learning-parameters/)
 
 
 preprocessing_processes: Number of processes used for preprocessing. We recommend 1-4. 
-max_input_length: The maximum number of tokens for the input. The rest get truncated.
+max_input_length: The maximum number of tokens for the input. The rest get truncated. By default the maximum number of tokens the model can handle is used. 
 max_output_length: Ditto, except for the output. 
 
 

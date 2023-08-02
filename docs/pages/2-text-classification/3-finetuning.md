@@ -37,22 +37,20 @@ inputs:
 Information about the learning parameters can be found [here](/learning-parameters/)
 Information about saving/loading preprocessed data can be found [here](/save-load-data/)
 
-| Parameter                    | Default             |
-|------------------------------|---------------------|
-| learning_rate                | 5e-5                |
-| num_train_epochs             | 1                   |
-| batch_size                   | 1                   |
-| weight_decay                 | 0                   |
-| save_preprocessed_data       | False               |
-| save_preprocessed_data_path  | ""                  |
-| load_preprocessed_data       | False               |
-| load_preprocessed_data_path  | ""                  |
-| fp16                         | False               |
-| eval_ratio                   | 0.1                 |
-| save_steps                   | 0.0                 |
-| eval_steps                   | 0.1                 |
-| logging_steps                | 0.1                 |
-| output_dir                   | "happy_transformer" |
+| Parameter                   | Default             |
+|-----------------------------|---------------------|
+| learning_rate               | 5e-5                |
+| num_train_epochs            | 1                   |
+| batch_size                  | 1                   |
+| weight_decay                | 0                   |
+| save_path                   | ""                  |
+| load_path                   | ""                  |
+| fp16                        | False               |
+| eval_ratio                  | 0.1                 |
+| save_steps                  | 0.0                 |
+| eval_steps                  | 0.1                 |
+| logging_steps               | 0.1                 |
+| output_dir                  | "happy_transformer" |
 
 Output: None
 

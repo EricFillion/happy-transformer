@@ -27,28 +27,26 @@ inputs:
 
 #### Table 4.1
 
-| Parameter                    | Default             |
-|------------------------------|---------------------|
-| learning_rate                | 5e-5                |
-| num_train_epochs             | 1                   |
-| batch_size                   | 1                   |
-| weight_decay                 | 0                   |
-| save_preprocessed_data       | False               |
-| save_preprocessed_data_path  | ""                  |
-| load_preprocessed_data       | False               |
-| load_preprocessed_data_path  | ""                  |
-| preprocessing_processes      | 1                   |
-| mlm_probability              | 0.15                |
-| line-by-line                 | False               |
-| fp16                         | False               |
-| eval_ratio                   | 0.1                 |
-| save_steps                   | 0.0                 |
-| eval_steps                   | 0.1                 |
-| logging_steps                | 0.1                 |
-| output_dir                   | "happy_transformer" |
-| padding                      | "max_length"        |
-| truncation                   | True                |
-| max_length                   | None                |
+| Parameter               | Default             |
+|-------------------------|---------------------|
+| learning_rate           | 5e-5                |
+| num_train_epochs        | 1                   |
+| batch_size              | 1                   |
+| weight_decay            | 0                   |
+| save_path               | ""                  |
+| load_path               | ""                  |
+| preprocessing_processes | 1                   |
+| mlm_probability         | 0.15                |
+| line-by-line            | False               |
+| fp16                    | False               |
+| eval_ratio              | 0.1                 |
+| save_steps              | 0.0                 |
+| eval_steps              | 0.1                 |
+| logging_steps           | 0.1                 |
+| output_dir              | "happy_transformer" |
+| padding                 | "max_length"        |
+| truncation              | True                |
+| max_length              | None                |
 
 Information about the learning parameters can be found [here](/learning-parameters/)
 
