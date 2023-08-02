@@ -34,7 +34,7 @@ Contains two columns with the following header values: input and target
 | Parameter                    | Default             |
 |------------------------------|---------------------|
 | learning_rate                | 5e-5                |
-| num_train_epochs             | 3                   |
+| num_train_epochs             | 1                   |
 | batch_size                   | 1                   |
 | preprocessing_processes      | 1                   |
 | max_input_length             | 1024                |

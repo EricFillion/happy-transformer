@@ -30,7 +30,7 @@ inputs:
 | Parameter                    | Default             |
 |------------------------------|---------------------|
 | learning_rate                | 5e-5                |
-| num_train_epochs             | 3                   |
+| num_train_epochs             | 1                   |
 | batch_size                   | 1                   |
 | weight_decay                 | 0                   |
 | save_preprocessed_data       | False               |
