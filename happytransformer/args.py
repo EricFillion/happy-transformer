@@ -33,6 +33,9 @@ class EvalArgs:
     preprocessing_processes: int = 1
     deepspeed: Union[bool, str] = False
 
+    save_path:  Union[bool, str] = False
+    load_path:  Union[bool, str] = False
+
 @dataclass
 class TestArgs:
    pass
