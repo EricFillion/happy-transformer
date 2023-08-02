@@ -46,8 +46,6 @@ inputs:
 | logging_steps               | 0.1                 |
 | gradient_accumulation_steps | 1                   |
 | output_dir                  | "happy_transformer" |
-| padding                     | "max_length"        |
-| truncation                  | True                |
 | max_length                  | None                |
 
 

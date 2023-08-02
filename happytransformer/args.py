@@ -43,14 +43,10 @@ class TestArgs:
 # GEN
 @dataclass
 class GENTrainArgs(TrainArgs):
-    padding: Union[str, bool]= "max_length"
-    truncation: Union[str, bool] = True
     max_length: Union[None, int] = None
 
 @dataclass
 class GENEvalArgs(EvalArgs):
-    padding: Union[str, bool] = "max_length"
-    truncation: Union[str, bool] = True
     max_length: Union[None, int] = None
 
 # QA
@@ -84,16 +80,12 @@ class TCTestArgs(TestArgs):
 class WPTrainArgs(TrainArgs):
     mlm_probability: float = 0.1
     line_by_line: bool = False
-    padding: Union[str, bool]=  "max_length"
-    truncation: Union[str, bool] = True
     max_length: Union[None, int] = None
 
 @dataclass
 class WPEvalArgs(EvalArgs):
     mlm_probability: float = 0.1
     line_by_line: bool = False
-    padding: Union[str, bool] = "max_length"
-    truncation: Union[str, bool] = True
     max_length: Union[None, int] = None
 
 @dataclass

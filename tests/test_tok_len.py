@@ -10,8 +10,6 @@ def test_len_padding_max():
     save_path = "data/gen/decode-test/"
 
     args= GENTrainArgs(num_train_epochs=1,
-                       padding="max_length",  # default
-                       truncation=True,  # default
                        max_length=None, # default
                        save_path=save_path)
 
@@ -33,8 +31,6 @@ def test_len_padding_value():
     save_path = "data/gen/decode-test/"
 
     args= GENTrainArgs(num_train_epochs=1,
-                       padding="max_length", # default
-                       truncation=True,  # default
                        max_length=max_length,
                        batch_size=2,
                        save_path=save_path)

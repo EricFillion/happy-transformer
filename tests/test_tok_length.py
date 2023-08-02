@@ -13,7 +13,6 @@ def test_gen_len_max_len_trun():
     max_length = 5
 
     args_max_len_truncation = GENTrainArgs(max_length=max_length,
-                        truncation=True,
                         num_train_epochs=1,
                         save_path=save_path)
 
@@ -37,8 +36,6 @@ def test_gen_len_max_len_pad():
     max_length = 32
 
     args_max_len_truncation = GENTrainArgs(max_length=max_length,
-                                           truncation=True,
-                                           padding="max_length",
                                            num_train_epochs=1,
                                            save_path=save_path)
 
@@ -62,7 +59,6 @@ def test_wp_len_max_len_trun():
     max_length = 5
 
     args_max_len_truncation = WPTrainArgs(max_length=max_length,
-                                           truncation=True,
                                            num_train_epochs=1,
                                            save_path=save_path)
 
@@ -85,11 +81,7 @@ def test_wp_len_max_len_pad():
     save_path = "data/wp/len-test/"
     max_length = 32
 
-    args_max_len_truncation = WPTrainArgs(max_length=max_length,
-                                           truncation=True,
-                                           padding="max_length",
-                                           num_train_epochs=1,
-                                           save_path=save_path)
+    args_max_len_truncation = WPTrainArgs(max_length=max_length, num_train_epochs=1, save_path=save_path)
 
     happy_wp.train(train_data, args=args_max_len_truncation)
 
