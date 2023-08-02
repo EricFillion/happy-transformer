@@ -28,7 +28,8 @@ setup(
             'sentencepiece',
             'protobuf',
             'accelerate>=0.20.1',
-            'tokenizers>=0.13.3'
+            'tokenizers>=0.13.3',
+            'wandb'
     ],
     classifiers=[
         'Intended Audience :: Developers',

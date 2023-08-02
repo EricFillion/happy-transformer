@@ -8,3 +8,4 @@ dataclasses; python_version<"3.7"
 sentencepiece
 protobuf
 tokenizers>=0.13.3
+wandb
