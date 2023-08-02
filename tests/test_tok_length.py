@@ -1,9 +1,10 @@
 import csv
-from happytransformer import HappyGeneration, HappyWordPrediction, GENTrainArgs, WPTrainArgs
+from happytransformer import HappyGeneration, HappyTextToText, HappyWordPrediction, GENTrainArgs, WPTrainArgs, TTTrainArgs
 from datasets import load_from_disk
 
 happy_gen = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
 happy_wp = HappyWordPrediction("BERT", 'prajjwal1/bert-tiny')
+happy_tt = HappyTextToText("T5", "t5-small")
 
 
 def test_gen_len_max_len_trun():
@@ -103,3 +104,37 @@ def test_wp_len_max_len_pad():
         print(case)
         assert len(case) == max_length
 
+
+def test_tt_len_max_len_trun():
+    train_data = "../data/tt/train-eval-grammar.csv"
+    save_path = "data/tt/len-test/"
+    max_input_length = 4
+    max_output_length = 2
+
+    args_max_len_truncation = TTTrainArgs(
+                        max_input_length=max_input_length,
+                        max_output_length=max_output_length,
+                        num_train_epochs=1,
+                        save_path=save_path)
+
+    happy_tt.train(train_data, args=args_max_len_truncation)
+
+    tok_data = load_from_disk(save_path)
+    print(tok_data)
+
+    for case in tok_data["train"]["input_ids"]:
+        print(case)
+        assert len(case) == max_input_length
+
+    for case in tok_data["eval"]["input_ids"]:
+        print(case)
+        assert len(case) == max_input_length
+
+
+    for case in tok_data["train"]["labels"]:
+        print(case)
+        assert len(case) == max_output_length
+
+    for case in tok_data["eval"]["labels"]:
+        print(case)
+        assert len(case) == max_output_length

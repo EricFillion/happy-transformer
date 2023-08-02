@@ -39,9 +39,6 @@ class HappyTextToText(HappyTransformer):
 
         self._pipeline_class = Text2TextGenerationPipeline
 
-        self.__max_input_length = 1024
-        self.__max_output_length = 1024
-
         self._data_collator = DataCollatorForSeq2Seq(self.tokenizer, model=self.model)
         self._t_data_file_type = ["csv"]
         self._type = "tt"
@@ -86,14 +83,21 @@ class HappyTextToText(HappyTransformer):
 
     def _tok_function(self, raw_dataset, args: Union[TTTrainArgs, TTEvalArgs], file_type: str) -> Dataset:
 
-        self.__max_input_length = args.max_input_length
-        self.__max_output_length = args.max_output_length
+        if not args.max_input_length:
+            max_input_length = self.tokenizer.model_max_length
+        else:
+            max_input_length = args.max_input_length
+
+        if not args.max_output_length:
+            max_output_length =  self.tokenizer.model_max_length
+        else:
+            max_output_length = args.max_output_length
 
         def __preprocess_function(examples):
-            model_inputs = self.tokenizer(examples["input"], max_length=self.__max_input_length, truncation=True)
+            model_inputs = self.tokenizer(examples["input"], max_length=max_input_length, truncation=True)
 
             # Setup the tokenizer for targets
-            labels = self.tokenizer(examples["target"], max_length=self.__max_output_length, truncation=True)
+            labels = self.tokenizer(examples["target"], max_length=max_output_length, truncation=True)
 
             model_inputs["labels"] = labels["input_ids"]
             return model_inputs

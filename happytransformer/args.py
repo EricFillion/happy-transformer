@@ -103,13 +103,13 @@ class WPTestArgs(TestArgs):
 # TT
 @dataclass
 class TTTrainArgs(TrainArgs):
-    max_input_length: int = 1024
-    max_output_length: int = 1024
+    max_input_length: Union[None, int] = None
+    max_output_length: Union[None, int] = None
 
 @dataclass
 class TTEvalArgs(EvalArgs):
-    max_input_length: int = 1024
-    max_output_length: int = 1024
+    max_input_length: Union[None, int] = None
+    max_output_length: Union[None, int] = None
 
 @dataclass
 class TTTestArgs(TestArgs):
