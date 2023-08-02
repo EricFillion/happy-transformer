@@ -29,20 +29,13 @@ class TrainArgs:
 
 @dataclass
 class EvalArgs:
-    save_preprocessed_data: bool = False
-    save_preprocessed_data_path: str = ""
-    load_preprocessed_data: bool = False
-    load_preprocessed_data_path: str = ""
     batch_size: int = 1
     preprocessing_processes: int = 1
     deepspeed: Union[bool, str] = False
 
 @dataclass
 class TestArgs:
-    save_preprocessed_data: bool = False
-    save_preprocessed_data_path: str = ""
-    load_preprocessed_data: bool = False
-    load_preprocessed_data_path: str = ""
+   pass
 
 # GEN
 @dataclass
