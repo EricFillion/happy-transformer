@@ -16,8 +16,6 @@ weight_decay: A type of regularization. It prevents weights from getting too lar
 
 batch_size: Number of training examples used per iteration 
 
-gradient_accumulation_steps: The number of batches that occur before the model weights are updated. 
-
 fp16: If true, enables half precision training which saves space by using 16 bits instead of 32 to store the model's weights. Only available when CUDA/a a GPU is being used.   
 
 eval_ratio: The ratio of data supplied to input_filepath that will be used for evaluating. If eval_filepath is supplied this argument is ignored and input_filepath is used only as train data. 

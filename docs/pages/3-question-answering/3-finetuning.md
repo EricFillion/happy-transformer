@@ -79,12 +79,10 @@ Information about saving/loading preprocessed data can be found [here](/save-loa
 
 #### Table 3.2
 
-| Parameter                     |Default|
-|-------------------------------|-------|
-| save_preprocessed_data        | False |
-| save_preprocessed_data_path   | ""    |
-| load_preprocessed_data        | False |
-| load_preprocessed_data_path   | ""    |
+| Parameter | Default |
+|-----------|---------|
+| save_path | ""      |
+| load_path | ""      |
 
 
 
@@ -127,8 +125,7 @@ Output: A list of named tuples with keys: "answer", "score", "start" and "end"
 from happytransformer import HappyQuestionAnswering, QATestArgs
 # --------------------------------------#
 happy_qa = HappyQuestionAnswering()
-args = QATestArgs() #  Using the default settings as an example
-result = happy_qa.test("../../data/qa/test.csv", args=args)
+result = happy_qa.test("../../data/qa/test.csv")
 print(type(result))
 print(result)  # [QuestionAnsweringResult(answer='October 31st', score=0.9939756989479065, start=0, end=12), QuestionAnsweringResult(answer='November 23rd', score=0.967872679233551, start=12, end=25)]
 print(result[0])  # QuestionAnsweringResult(answer='October 31st', score=0.9939756989479065, start=0, end=12)

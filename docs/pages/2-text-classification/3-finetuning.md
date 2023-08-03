@@ -81,8 +81,7 @@ from happytransformer import HappyTextClassification, TCEvalArgs
 happy_tc = HappyTextClassification(model_type="DISTILBERT",
                                    model_name="distilbert-base-uncased-finetuned-sst-2-english",
                                    num_labels=2)  # Don't forget to set num_labels!
-args = TCEvalArgs(save_preprocessed_data=False) # for demonstration -- not needed 
-result = happy_tc.eval("../../data/tc/train-eval.csv", args=args)
+result = happy_tc.eval("../../data/tc/train-eval.csv")
 print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
 print(result)  # EvalResult(eval_loss=0.007262040860950947)
 print(result.loss)  # 0.007262040860950947

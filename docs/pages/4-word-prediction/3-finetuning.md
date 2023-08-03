@@ -77,17 +77,14 @@ Input:
  
 #### Table 4.2
 
-| Parameter                   | Default      |
-|-----------------------------|--------------|
-| save_preprocessed_data      | False        |
-| save_preprocessed_data_path | ""           |
-| load_preprocessed_data      | False        |
-| load_preprocessed_data_path | ""           |
-| preprocessing_processes     | 1            |
-| line-by-line                | False        |
-| padding                     | "max_length" |
-| truncation                  | True         |
-| max_length                  | None         |
+| Parameter               | Default      |
+|-------------------------|--------------|
+| save_path               | ""           |
+| load_path               | ""           |
+| line-by-line            | False        |
+| padding                 | "max_length" |
+| truncation              | True         |
+| max_length              | None         |
 
 See the explanations under Table 4.0 for more information 
 

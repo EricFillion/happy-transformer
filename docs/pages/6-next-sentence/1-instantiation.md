@@ -25,5 +25,5 @@ from happytransformer import HappyNextSentence
 # --------------------------------------#
 happy_ns = HappyNextSentence("BERT", "bert-base-uncased")  # default 
 happy_ns_large = HappyNextSentence("BERT", "bert-large-uncased") 
-happy_ns_private = HappyNextSentence("BERT", "user-repo/bert-base-uncased", use_auth_token="123abc")
+happy_ns_private = HappyNextSentence("BERT", "ericfillion/bert-base-uncased", use_auth_token="123abc")
 ```

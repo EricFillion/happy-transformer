@@ -22,7 +22,7 @@ Happy Transformer is built on top of [Hugging Face's transformer library](https:
 2. Apple's MPS for training and inference 
 3. WandB to track training runs 
 4. Data supplied for training is automatically split into portions for training and evaluating
-5. Pushing Models directly to Hugging Face's Model Hub
+5. Push models directly to Hugging Face's Model Hub
 
 Read about the full 2.5.0 update including breaking changes [here](https://happytransformer.com/news/). 
 

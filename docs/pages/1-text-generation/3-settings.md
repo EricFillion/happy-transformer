@@ -7,12 +7,6 @@ permalink: /text-generation/settings/
 ---
 
 # Text Generation Settings
-
-By default a text generation algorithm called "greedy" is used.
-This algorithm simply picks the most likely next word. 
-However, there are more sophisticated ways to perform next generation as described in 
-this [article](https://huggingface.co/blog/how-to-generate) by Hugging Face. 
-
 A class called GENSettings() is used to control which algorithm is used and its settings. 
 It is passed to the "args" parameter for HappyGeneration.generate_text(). 
 

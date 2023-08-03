@@ -70,19 +70,14 @@ Input:
 
 #### Table 1.2
 
-| Parameter                     | Default      |
-|-------------------------------|--------------|
-| save_preprocessed_data        | False        |
-| save_preprocessed_data_path   | ""           |
-| load_preprocessed_data        | False        |
-| load_preprocessed_data_path   | ""           |
-| preprocessing_processes       | 1            |
-| padding                       | "max_length" |
-| truncation                    | True         |
-| max_length                    | None         |
+| Parameter               | Default      |
+|-------------------------|--------------|
+| save_path               | ""           |
+| load_path               | ""           |
+| preprocessing_processes | 1            |
+| max_length              | None         |
 
 See the explanations under Table 1.1 for more information 
-
 
 
 Output: An object with the field "loss"

@@ -24,7 +24,7 @@ class TrainArgs:
 
     # Currently used to create a project and run ID for wandb
     project_name: str = "happy-transformer"
-    run_name: str = "test-run"
+    run_name: str = "test"
 
 @dataclass
 class EvalArgs:

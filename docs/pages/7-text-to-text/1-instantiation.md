@@ -24,7 +24,7 @@ Initialize a HappyTextToText() object to perform text-to-text generation
 from happytransformer import HappyTextToText
 # --------------------------------------#
 happy_tt = HappyTextToText("T5", "t5-small")  # default
-happy_tt_private = HappyTextToText("T5", "user-repo/t5-small", use_auth_token="123abc")  # default
+happy_tt_private = HappyTextToText("T5", "ericfillion/t5-small", use_auth_token="123abc")  # default
 
 ```
 ## Tutorials 
