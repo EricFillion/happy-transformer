@@ -76,7 +76,7 @@ class HappyTextClassification(HappyTransformer):
         tok_dataset = raw_dataset.map(
             __preprocess_function,
             batched=True,
-            num_proc=1,
+            num_proc=args.preprocessing_processes,
             remove_columns=["text", "label"],
             desc="Tokenizing data"
         )

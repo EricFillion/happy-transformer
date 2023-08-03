@@ -116,7 +116,7 @@ class HappyQuestionAnswering(HappyTransformer):
         tok_dataset = raw_dataset.map(
             __preprocess_function,
             batched=False,
-            num_proc=1,
+            num_proc=args.preprocessing_processes,
             remove_columns=["context", "question", "answer_text", "answer_start"],
             desc="Tokenizing data"
         )
