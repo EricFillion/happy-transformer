@@ -74,11 +74,14 @@ def test_wp_eval_basic():
     result = happy_wp.eval("../data/wp/train-eval.txt", args=WPEvalArgs(max_length=512))
     assert type(result.loss) == float
 
-def test_wp_train_effectiveness_multi():
-    before_result = happy_wp.eval("../data/wp/train-eval.txt", args=WPEvalArgs(max_length=512))
+def test_wp_train_effectiveness():
+    happy = HappyWordPrediction('DISTILBERT', 'distilbert-base-uncased')
+    train_args = WPTrainArgs(max_length=512, num_train_epochs=3)
+    eval_args = WPEvalArgs(max_length=512)
+    before_result = happy.eval("../data/wp/train-eval.txt", args=eval_args)
 
-    happy_wp.train("../data/wp/train-eval.txt", args=WPTrainArgs(max_length=512))
-    after_result = happy_wp.eval("../data/wp/train-eval.txt", args=WPEvalArgs(max_length=512))
+    happy.train("../data/wp/train-eval.txt", args=train_args)
+    after_result = happy.eval("../data/wp/train-eval.txt", args=eval_args)
 
     assert after_result.loss < before_result.loss
 

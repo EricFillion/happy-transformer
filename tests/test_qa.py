@@ -46,8 +46,9 @@ def test_qa_train_effectiveness():
     """
     # use a non-fine-tuned model so we DEFINITELY get an improvement
     happy = HappyQuestionAnswering("BERT", "bert-base-uncased")
+    args = QATrainArgs(num_train_epochs=3)
     before_loss = happy.eval("../data/qa/train-eval.csv").loss
-    happy.train("../data/qa/train-eval.csv")
+    happy.train("../data/qa/train-eval.csv", args=args)
     after_loss = happy.eval("../data/qa/train-eval.csv").loss
 
     assert after_loss < before_loss

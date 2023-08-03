@@ -80,8 +80,10 @@ def test_tt_eval_simple():
     happy_tt.eval("../data/tt/train-eval-grammar.csv")
 
 def test_tt_eval_loss_decreases():
-    before_result = happy_tt.eval("../data/tt/train-eval-grammar.csv")
-    happy_tt.train("../data/tt/train-eval-grammar.csv")
+    happy = HappyTextToText("T5", "t5-small")
+    args = TTTrainArgs(num_train_epochs=3)
+    before_result = happy.eval("../data/tt/train-eval-grammar.csv")
+    happy.train("../data/tt/train-eval-grammar.csv", args=args)
     after_result = happy_tt.eval("../data/tt/train-eval-grammar.csv")
 
     assert before_result.loss > after_result.loss

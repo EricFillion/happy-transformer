@@ -114,10 +114,11 @@ def test_gen_eval_basic():
     result = happy_gen.eval("../data/gen/train-eval.txt")
     assert type(result.loss) == float
 
-def test_gen_train_effectiveness_multi():
-    before_result = happy_gen.eval("../data/gen/train-eval.txt")
-    happy_gen.train("../data/gen/train-eval.txt")
-    after_result = happy_gen.eval("../data/gen/train-eval.txt")
+def test_gen_train_effectiveness():
+    happy = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
+    before_result = happy.eval("../data/gen/train-eval.txt")
+    happy.train("../data/gen/train-eval.txt")
+    after_result = happy.eval("../data/gen/train-eval.txt")
 
     assert after_result.loss < before_result.loss
 
