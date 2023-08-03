@@ -98,7 +98,7 @@ class HappyTransformer():
 
     def train(self, input_filepath: str ,  args: TrainArgs, eval_filepath: str = "", ):
         if type(args) == dict:
-            raise ValueError("Dictionary training arguments are no longer supported as of Happy Transformer version 2.5.0.")
+            raise ValueError("Dictionary training arguments are no longer supported as of Happy Transformer version 3.0.0.")
 
         if args.eval_ratio <= 0 and eval_filepath == "":
             raise ValueError("Please set TrainArgs.eval_ratio to greater than 0  or supply an eval_path")
@@ -114,7 +114,7 @@ class HappyTransformer():
     def eval(self, input_filepath, args):
         if type(args) == dict:
             raise ValueError(
-                "Dictionary evaluating arguments are no longer supported as of Happy Transformer version 2.5.0.")
+                "Dictionary evaluating arguments are no longer supported as of Happy Transformer version 3.0.0.")
 
 
         tokenized_dataset = self._preprocess_data_eval(input_filepath, args)

@@ -17,14 +17,14 @@ Join our Discord server: [![Support Server](https://img.shields.io/discord/83926
 
 Happy Transformer is built on top of [Hugging Face's transformer library](https://huggingface.co/transformers/) and makes it easy to fine-tune state-of-the-art NLP models. 
 
-## 2.5.0 
+## 3.0.0 
 1. Deepspeed for training 
 2. Apple's MPS for training and inference 
 3. WandB to track training runs 
 4. Data supplied for training is automatically split into portions for training and evaluating
 5. Push models directly to Hugging Face's Model Hub
 
-Read about the full 2.5.0 update including breaking changes [here](https://happytransformer.com/news/). 
+Read about the full 3.0.0 update including breaking changes [here](https://happytransformer.com/news/). 
 
 
 ## Tasks 

@@ -9,7 +9,7 @@ nav_order: 4
 
 ### August x, 2023 
 
-**Version 2.5.0!**
+**Version 3.0.0!**
 - Deepspeed is now supported for fine-tuning. 
 - Apple's MPS backend is now automatically used for both training and fine-tuning if detected. 
 - Evaluating data is now used during fine-tuning to track the fine-tuning progress. 
