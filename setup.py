@@ -11,13 +11,13 @@ setup(
     packages = find_packages(exclude=("tests",)),
     version = '3.0.0',
     license='Apache 2.0',
-    description = "Happy Transformer is an API built on top of Hugging Face's Transformer library that makes it easy to utilize state-of-the-art NLP models.",
+    description = "Happy Transformer makes it easy to fine-tune and perform inference with state-of-the-art NLP models.",
     long_description= readme,
     long_description_content_type='text/markdown',
     author = "The Happy Transformer Development Team",
     author_email = 'happytransformer@gmail.com',
     url = 'https://github.com/EricFillion/happy-transformer',
-    keywords = ['bert', 'roberta', 'xlnet', "transformer", "happy", "HappyTransformer",  "classification",  "nlp", "nlu", "natural", "language", "processing", "understanding"],
+    keywords = ['bert', 'roberta', 'ai', "transformer", "happy", "HappyTransformer",  "classification",  "nlp", "nlu", "natural", "language", "processing", "understanding"],
 
     install_requires=[
             'torch>=1.0',
