@@ -18,7 +18,6 @@ class TrainArgs:
     save_path:  Union[bool, str] = False
     load_path:  Union[bool, str] = False
 
-    preprocessing_processes: int = 1
     report_to: tuple = ()
     deepspeed: Union[bool, str] = False
 
@@ -29,7 +28,6 @@ class TrainArgs:
 @dataclass
 class EvalArgs:
     batch_size: int = 1
-    preprocessing_processes: int = 1
     deepspeed: Union[bool, str] = False
 
     save_path:  Union[bool, str] = False

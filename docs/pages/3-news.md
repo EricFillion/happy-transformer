@@ -7,7 +7,7 @@ nav_order: 4
 ---
 ## News: 
 
-### July 22nd, 2023 
+### August x, 2023 
 
 **Version 2.5.0!**
 - Deepspeed is now supported for fine-tuning. 
@@ -25,6 +25,8 @@ Breaking changes:
 - Removed adam_beta1, adam_beta2, adam_epsilon and max_grad_norm learning parameters. 
 - Replaced save_preprocessed_data, save_preprocessed_data_path with a single parameter called save_path. Likewise for load_preprocessed_data and load_preprocessed_data_path being replaced by load_path. 
 - Removed support for dictionary settings for the args parameter for training and evaluating.
+- Removed the preprocessing_processes parameter for training and evaluation. 
+
 
 ### November 19th, 2021
 **Introducing Version 2.4.0!**

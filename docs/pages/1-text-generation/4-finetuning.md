@@ -36,7 +36,6 @@ inputs:
 | weight_decay                | 0                   |
 | save_path                   | ""                  |
 | load_path                   | ""                  |
-| preprocessing_processes     | 1                   |
 | fp16                        | False               |
 | eval_ratio                  | 0.1                 |
 | save_steps                  | 0.0                 |
@@ -49,8 +48,6 @@ inputs:
 Information about the learning parameters can be found [here](/learning-parameters/)
 
 Information about saving/loading preprocessed data can be found [here](/save-load-data/)
-
-preprocessing_processes: Number of processes used for preprocessing. We recommend 1-4. 
 
 
 #### Example 1.3:
@@ -74,7 +71,6 @@ Input:
 |-------------------------|--------------|
 | save_path               | ""           |
 | load_path               | ""           |
-| preprocessing_processes | 1            |
 | max_length              | None         |
 
 See the explanations under Table 1.1 for more information 

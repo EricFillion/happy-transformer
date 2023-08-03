@@ -105,7 +105,6 @@ class HappyTextToText(HappyTransformer):
         tok_dataset = raw_dataset.map(
             __preprocess_function,
             batched=True,
-            num_proc=args.preprocessing_processes,
             remove_columns=["input", "target"],
         )
 

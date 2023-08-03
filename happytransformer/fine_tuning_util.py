@@ -14,7 +14,7 @@ from transformers import PreTrainedTokenizer, TrainerCallback
 from happytransformer.args import GENTrainArgs, WPTrainArgs, GENEvalArgs, WPEvalArgs
 
 # Used for text gen and mlm fine-tuning.
-def tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, args: Union[GENTrainArgs, WPTrainArgs, GENEvalArgs, WPEvalArgs], preprocessing_processes: int =1, mlm: bool=True) -> Dataset:
+def tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, args: Union[GENTrainArgs, WPTrainArgs, GENEvalArgs, WPEvalArgs],  mlm: bool=True) -> Dataset:
     #todo set to args.max_length
     if args.max_length is None:
         max_input_length = tokenizer.model_max_length
@@ -28,7 +28,6 @@ def tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, args: Uni
         return tokenizer(texts)
 
     tokenized_dataset = dataset.map(tokenize_function, batched=True,
-                                      num_proc=preprocessing_processes,
                                       remove_columns=["text"])
 
     def group_texts(examples):
@@ -54,15 +53,13 @@ def tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, args: Uni
 
     tokenized_dataset = tokenized_dataset.map(
         group_texts,
-        batched=True,
-        num_proc=preprocessing_processes,
-    )
+        batched=True)
 
 
     return tokenized_dataset
 
 
-def csv_tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, args: Union[GENTrainArgs, WPTrainArgs, GENEvalArgs, WPEvalArgs], preprocessing_processes: int =1, mlm=True) -> Dataset:
+def csv_tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, args: Union[GENTrainArgs, WPTrainArgs, GENEvalArgs, WPEvalArgs],  mlm=True) -> Dataset:
     if args.max_length is None:
         max_input_length = tokenizer.model_max_length
     else:
@@ -77,7 +74,6 @@ def csv_tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, args:
 
     dataset= dataset.map(tokenize_function,
                 batched=True,
-                num_proc=preprocessing_processes,
                 remove_columns=["text"])
 
     return dataset
