@@ -6,20 +6,12 @@ from happytransformer.happy_token_classification import HappyTokenClassification
 from happytransformer.happy_generation import HappyGeneration, GENSettings
 from happytransformer.happy_text_to_text import HappyTextToText, TTSettings
 
-from happytransformer.gen.default_args import ARGS_GEN_TRAIN, ARGS_GEN_EVAl
-from happytransformer.qa.default_args import ARGS_QA_TRAIN, ARGS_QA_EVAl, ARGS_QA_TEST
-from happytransformer.tc.default_args import ARGS_TC_TRAIN, ARGS_TC_EVAL, ARGS_TC_TEST
-from happytransformer.wp.default_args import ARGS_WP_TRAIN, ARGS_WP_EVAl
-
-from happytransformer.gen.trainer import GENTrainArgs, GENEvalArgs
-from happytransformer.qa.trainer import QATestArgs, QAEvalArgs, QATrainArgs
-from happytransformer.tc.trainer import TCTrainArgs, TCEvalArgs, TCTestArgs
-from happytransformer.wp.trainer import WPTrainArgs, WPEvalArgs
-from happytransformer.tt.trainer import TTTrainArgs, TTEvalArgs
-
-
-from happytransformer.happy_generation import (
-    HappyGeneration, GENSettings
+from happytransformer.args import (
+    GENTrainArgs, GENEvalArgs,
+    QATestArgs, QAEvalArgs, QATrainArgs,
+    TCTrainArgs, TCEvalArgs, TCTestArgs,
+    WPTrainArgs, WPEvalArgs,
+    TTTrainArgs, TTEvalArgs
 )
 
 name = "happytransformer"

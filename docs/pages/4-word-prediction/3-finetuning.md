@@ -16,36 +16,38 @@ HappyWordPrediction contains two methods for training
 
 inputs: 
 1. input_filepath (string): a path file to a text file that contains nothing but text to train the model with
-2. args (WPTrainArgs): a dataclass with the same fields types as shown in table 3.0. 
-
+2. args (WPTrainArgs): a dataclass with the same fields types as shown in table 4.1. 
+3. eval_filepath (string): By default, an evaluating dataset will be generated from the supplied training data. But, you may provide a filepath to a text of CSV file as described for input_filepath to use standalone evaluating data. 
 
 #### Table 4.0
+| text                           |
+|--------------------------------|
+| This is a training case.       | 
+| This is another training case  | 
 
-| Parameter                     |Default|
-|-------------------------------|-------|
-| learning_rate                 | 5e-5  |
-| num_train_epochs              | 3     |
-| batch_size                    | 1     |
-| weight_decay                  | 0     |
-| adam_beta1                    | 0.9   |
-| adam_beta2                    | 0.999 |
-| adam_epsilon                  | 1e-8  |
-| max_grad_norm                 | 1.0   |
-| save_preprocessed_data        | False |
-| save_preprocessed_data_path   | ""    |
-| load_preprocessed_data        | False |
-| load_preprocessed_data_path   | ""    |
-| preprocessing_processes       | 1     |
-| mlm_probability               | 0.15  |
-| line-by-line                  | False |
-| fp16                          | False |
+#### Table 4.1
 
+| Parameter               | Default             |
+|-------------------------|---------------------|
+| learning_rate           | 5e-5                |
+| num_train_epochs        | 1                   |
+| batch_size              | 1                   |
+| weight_decay            | 0                   |
+| save_path               | ""                  |
+| load_path               | ""                  |
+| mlm_probability         | 0.15                |
+| line-by-line            | False               |
+| fp16                    | False               |
+| eval_ratio              | 0.1                 |
+| save_steps              | 0.0                 |
+| eval_steps              | 0.1                 |
+| logging_steps           | 0.1                 |
+| output_dir              | "happy_transformer" |
+| max_length              | None                |
 
 Information about the learning parameters can be found [here](/learning-parameters/)
 
 Information about saving/loading preprocessed data can be found [here](/save-load/)
-
-preprocessing_processes: Number of processes used for preprocessing. We recommend 1-4. 
 
 mlm_probability: The probability of masking a token.
 
@@ -65,18 +67,16 @@ happy_wp.train("../../data/wp/train-eval.txt", args=args)
 ### eval()
 Input:
 1. input_filepath (string): a path file to text file with just text to evaluate 
-2. args (WPEvalArgs): a dataclass with the fields shown in Table 4.1
+2. args (WPEvalArgs): a dataclass with the fields shown in Table 4.2
  
-#### Table 4.1
+#### Table 4.2
 
-| Parameter                     |Default|
-|-------------------------------|-------|
-| save_preprocessed_data        | False |
-| save_preprocessed_data_path   | ""    |
-| load_preprocessed_data        | False |
-| load_preprocessed_data_path   | ""    |
-| preprocessing_processes       | 1     |
-| line-by-line                  | False |
+| Parameter               | Default      |
+|-------------------------|--------------|
+| save_path               | ""           |
+| load_path               | ""           |
+| line-by-line            | False        |
+| max_length              | None         |
 
 See the explanations under Table 4.0 for more information 
 

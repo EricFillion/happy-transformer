@@ -1,18 +1,15 @@
-"""
-Contains a class called HappyTextClassification that performs text classification
-"""
+import csv
+from typing import Union
+
 from dataclasses import dataclass
+from datasets import Dataset
+from tqdm import tqdm
+from transformers import AutoConfig, AutoModelForSequenceClassification, AutoTokenizer, DataCollatorWithPadding, TextClassificationPipeline
 
-from transformers import TextClassificationPipeline, AutoConfig, AutoModelForSequenceClassification
-
-from happytransformer.tc.trainer import TCTrainer, TCTrainArgs, TCEvalArgs, TCTestArgs
-from happytransformer.cuda_detect import detect_cuda_device_number
-from happytransformer.happy_transformer import HappyTransformer
 from happytransformer.adaptors import get_adaptor
-from happytransformer.tc import ARGS_TC_TRAIN, ARGS_TC_EVAL, ARGS_TC_TEST
-from happytransformer.happy_trainer import EvalResult
-from happytransformer.fine_tuning_util import create_args_dataclass
-
+from happytransformer.args import TCEvalArgs, TCTestArgs, TCTrainArgs
+from happytransformer.fine_tuning_util import EvalResult
+from happytransformer.happy_transformer import HappyTransformer
 
 @dataclass
 class TextClassificationResult:
@@ -20,39 +17,27 @@ class TextClassificationResult:
     score: float
 
 class HappyTextClassification(HappyTransformer):
-    """
-    A user facing class for Text Classification
-    """
-
     def __init__(self, model_type="DISTILBERT",
-                 model_name="distilbert-base-uncased", num_labels: int = 2, load_path: str = "", use_auth_token: str = None, from_tf=False):
+                 model_name="distilbert-base-uncased", num_labels: int = 2, load_path: str = "", use_auth_token: Union[bool, str] = None,  trust_remote_code: bool=False):
+
+        self._num_labels = num_labels
         self.adaptor = get_adaptor(model_type)
+        model_class = AutoModelForSequenceClassification
 
-        config = AutoConfig.from_pretrained(model_name, num_labels=num_labels)
+        super().__init__(model_type, model_name, model_class, use_auth_token=use_auth_token, load_path=load_path, trust_remote_code=trust_remote_code)
 
-        if load_path != "":
-            model = AutoModelForSequenceClassification.from_pretrained(load_path, config=config, from_tf=from_tf)
-        else:
-            model = AutoModelForSequenceClassification.from_pretrained(model_name, config=config, use_auth_token=use_auth_token, from_tf=from_tf)
+        self._pipeline_class = TextClassificationPipeline
 
+        self._data_collator = DataCollatorWithPadding(self.tokenizer)
+        self._t_data_file_type = ["csv"]
+        self._type = "tc"
 
-        super().__init__(model_type, model_name, model, use_auth_token=use_auth_token, load_path=load_path)
-
-        device_number = detect_cuda_device_number()
-        self._pipeline = TextClassificationPipeline(
-            model=self.model, tokenizer=self.tokenizer,
-            device=device_number
-        )
-
-        self._trainer = TCTrainer(
-            self.model, self.model_type,
-            self.tokenizer, self._device, self.logger
-        )
 
     def classify_text(self, text: str) -> TextClassificationResult:
-        """
-        Classify text to a label based on model's training
-        """
+
+        # loads pipeline if it hasn't been loaded already.
+        self._load_pipeline()
+
         # Blocking allowing a for a list of strings
         if not isinstance(text, str):
             raise ValueError("the \"text\" argument must be a single string")
@@ -61,63 +46,62 @@ class HappyTextClassification(HappyTransformer):
         first_result = results[0]
 
         return TextClassificationResult(label=first_result["label"], score=first_result["score"])
-    
-    def train(self, input_filepath, args=TCTrainArgs()):
-        """
-        Trains the question answering model
-        input_filepath: a string that contains the location of a csv file
-        for training. Contains the following header values: text, label
-        args: Either a TCTrainArgs() object or a dictionary that contains all of the same keys as ARGS_TC_TRAIN
-        return: None
-        """
-        if type(args) == dict:
-            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_TC_TRAIN,
-                                                         input_dic_args=args,
-                                                         method_dataclass_args=TCTrainArgs)
-        elif type(args) == TCTrainArgs:
-            method_dataclass_args = args
-        else:
-            raise ValueError("Invalid args type. Use a TCTrainArgs object or a dictionary")
 
-        self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
+    def train(self, input_filepath: str, args: TCTrainArgs =TCTrainArgs(), eval_filepath: str = ""):
+        super(HappyTextClassification, self).train(input_filepath, args, eval_filepath)
 
-    def eval(self, input_filepath, args=TCEvalArgs()) -> EvalResult:
-        """
-        Evaluated the text classification answering model
-        input_filepath: a string that contains the location of a csv file
-        for training. Contains the following header values:
-        text, label
 
-        return: an EvalResult() object
-        """
-        if type(args) == dict:
-            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_TC_EVAL,
-                                                          input_dic_args=args,
-                                                          method_dataclass_args=TCEvalArgs)
-        elif type(args) == TCEvalArgs:
-            method_dataclass_args = args
-        else:
-            raise ValueError("Invalid args type. Use a TCEvalArgs object or a dictionary")
-
-        return self._trainer.eval(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
+    def eval(self, input_filepath, args: TCEvalArgs =TCEvalArgs()) -> EvalResult:
+        return super(HappyTextClassification, self).eval(input_filepath, args)
 
 
     def test(self, input_filepath, args=TCTestArgs()):
-        """
-        Tests the text classification  model. Used to obtain results
-        input_filepath: a string that contains the location of a csv file
-        for training. Contains the following header value:
-         text
-        return: A list of TextClassificationResult() objects
-        """
-
         if type(args) == dict:
-            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_TC_TEST,
-                                                          input_dic_args=args,
-                                                          method_dataclass_args=TCTestArgs)
-        elif type(args) == TCTestArgs:
-            method_dataclass_args = args
-        else:
-            raise ValueError("Invalid args type. Use a TCTestArgs() object or a dictionary")
+            raise ValueError("#todo")
 
-        return self._trainer.test(input_filepath=input_filepath, solve=self.classify_text, dataclass_args=method_dataclass_args)
+        contexts = self._get_data(input_filepath, test_data=True)
+
+        return [
+            self.classify_text(context)
+            for context in tqdm(contexts)
+        ]
+
+    def _tok_function(self, raw_dataset, args: TCTrainArgs, file_type: str) -> Dataset:
+
+        def __preprocess_function(case):
+            result = self.tokenizer(case["text"], truncation=True, padding=True)
+            result["labels"] = case["label"]
+            return result
+
+        tok_dataset = raw_dataset.map(
+            __preprocess_function,
+            batched=True,
+            remove_columns=["text", "label"],
+            desc="Tokenizing data"
+        )
+
+        return tok_dataset
+
+    def _get_data(self, filepath, test_data=False):
+        contexts = []
+        labels = []
+        with open(filepath, newline='', encoding="utf-8") as csv_file:
+            reader = csv.DictReader(csv_file)
+            for row in reader:
+                contexts.append(row['text'])
+                if not test_data:
+                    labels.append(int(row['label']))
+        csv_file.close()
+
+        if not test_data:
+            return contexts, labels
+        return contexts
+
+    def _get_model_components(self, model_name_path,  use_auth_token, trust_remote_code, model_class):
+        # HappyTextClassification is the only class that overwrites
+        # this as we need to specify number of labels.
+        config = AutoConfig.from_pretrained(model_name_path, use_auth_token=use_auth_token,  num_labels=self._num_labels)
+        model = model_class.from_pretrained(model_name_path, config=config, use_auth_token=use_auth_token)
+        tokenizer = AutoTokenizer.from_pretrained(model_name_path, use_auth_token=use_auth_token)
+
+        return config, tokenizer, model

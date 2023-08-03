@@ -1,31 +1,20 @@
-"""
-Contains a class called HappyTextToText which performs text to text generation
-"""
 from dataclasses import dataclass
+from typing import Union
 
-from transformers import Text2TextGenerationPipeline, AutoModelForSeq2SeqLM
+from datasets import Dataset
+from transformers import AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq, Text2TextGenerationPipeline
 
-from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.tt.trainer import TTTrainer
-from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.adaptors import get_adaptor
-from happytransformer.tt.trainer import TTTrainArgs, TTEvalArgs, TTTestArgs
-
+from happytransformer.args import TTEvalArgs, TTTestArgs, TTTrainArgs
+from happytransformer.fine_tuning_util import EvalResult
+from happytransformer.happy_transformer import HappyTransformer
 
 @dataclass
 class TextToTextResult:
-    """
-    Returned when HappyTextToText.generate() is called
-    """
     text: str
 
 @dataclass
 class TTSettings:
-    """
-    Used to adjust the text generation algorithm that's used when
-    HappyTextToText.generate() is called 
-
-    """
     min_length: int = 10
     max_length: int = 50
     do_sample: bool = False
@@ -41,33 +30,21 @@ class HappyTextToText(HappyTransformer):
     """
     A user facing class for text to text generation
     """
-    def __init__(self, model_type: str = "T5", model_name: str = "t5-small", load_path: str = "", use_auth_token: str = None, from_tf=False):
+    def __init__(self, model_type: str = "T5", model_name: str = "t5-small", load_path: str = "", use_auth_token: Union[bool, str] = None,  trust_remote_code: bool =False):
 
         self.adaptor = get_adaptor(model_type)
+        model_class = AutoModelForSeq2SeqLM
 
-        if load_path != "":
-            model = AutoModelForSeq2SeqLM.from_pretrained(load_path, from_tf=from_tf)
-        else:
-            model = AutoModelForSeq2SeqLM.from_pretrained(model_name, use_auth_token=use_auth_token, from_tf=from_tf)
+        super().__init__(model_type, model_name, model_class, use_auth_token=use_auth_token, load_path=load_path, trust_remote_code=trust_remote_code)
 
+        self._pipeline_class = Text2TextGenerationPipeline
 
-        super().__init__(model_type, model_name, model, use_auth_token=use_auth_token, load_path=load_path)
-
-        device_number = detect_cuda_device_number()
-
-        self._pipeline = Text2TextGenerationPipeline(model=self.model,
-                                                     tokenizer=self.tokenizer, device=device_number)
-
-        self._trainer = TTTrainer(self.model, model_type, self.tokenizer, self._device, self.logger)
+        self._data_collator = DataCollatorForSeq2Seq(self.tokenizer, model=self.model)
+        self._t_data_file_type = ["csv"]
+        self._type = "tt"
 
 
     def __assert_default_text_is_val(self, text):
-        """
-        Ensures the input's text input is valid.
-        Raises a Value Error if the text input is not valid.
-        :param text: The value the user inputs for the "text" parameter
-        """
-
         if not isinstance(text, str):
             raise ValueError("The text input must be a string")
         if not text:
@@ -76,11 +53,10 @@ class HappyTextToText(HappyTransformer):
 
     def generate_text(self, text: str,
                       args: TTSettings = TTSettings()) -> TextToTextResult:
-        """
-        :param text: starting text that the model uses as a prompt to continue it.
-        :param args: A TTSettings object
-        :return: A TextToTextResult() object
-        """
+
+        # loads pipeline if it hasn't been loaded already.
+        self._load_pipeline()
+
         self.__assert_default_text_is_val(text)
 
         output = self._pipeline(text, min_length=args.min_length,
@@ -95,30 +71,41 @@ class HappyTextToText(HappyTransformer):
                                 )
         return TextToTextResult(text=output[0]['generated_text'])
 
-    def train(self, input_filepath, args=TTTrainArgs()):
-        """
-        Trains the text-to-text model
-        input_filepath: a string that contains the location of a csv file
-        for training. Contains the following header values: text_1, text_2
-        args: A TTTrainArgs() object
-        return: None
-        """
-        self._trainer.train(input_filepath=input_filepath, dataclass_args=args)
+    def train(self, input_filepath, args: TTTrainArgs=TTTrainArgs(),  eval_filepath: str = ""):
+        super(HappyTextToText, self).train(input_filepath, args, eval_filepath)
 
-    def eval(self, input_filepath, args=TTEvalArgs()):
-        """
-        Evaluated the text-to-text model
-
-        input_filepath: a string that contains the location of a csv file
-        for training. Contains the following header values: text_1, text_2
-
-        args: A TTEvalArgs() object
-        return: an EvalResult() object
-        """
-
-        result = self._trainer.eval(input_filepath=input_filepath, dataclass_args=args)
-        return result
-
+    def eval(self, input_filepath, args=TTEvalArgs()) -> EvalResult:
+        return super(HappyTextToText, self).eval(input_filepath, args)
 
     def test(self, input_filepath, args=TTTestArgs):
         raise NotImplementedError("test() is currently not available")
+
+
+    def _tok_function(self, raw_dataset, args: Union[TTTrainArgs, TTEvalArgs], file_type: str) -> Dataset:
+
+        if not args.max_input_length:
+            max_input_length = self.tokenizer.model_max_length
+        else:
+            max_input_length = args.max_input_length
+
+        if not args.max_output_length:
+            max_output_length =  self.tokenizer.model_max_length
+        else:
+            max_output_length = args.max_output_length
+
+        def __preprocess_function(examples):
+            model_inputs = self.tokenizer(examples["input"], max_length=max_input_length, truncation=True)
+
+            # Setup the tokenizer for targets
+            labels = self.tokenizer(examples["target"], max_length=max_output_length, truncation=True)
+
+            model_inputs["labels"] = labels["input_ids"]
+            return model_inputs
+
+        tok_dataset = raw_dataset.map(
+            __preprocess_function,
+            batched=True,
+            remove_columns=["input", "target"],
+        )
+
+        return tok_dataset

@@ -1,7 +1,5 @@
 from .adaptor import Adaptor
 
-
-
 class RobertaAdaptor(Adaptor):
 
     @staticmethod

@@ -23,6 +23,7 @@ inputs:
 
 1. text (string): text to be classified 
 2. label (int): the corresponding label. Must be greater than or equal to 0
+3. eval_filepath (string): By default, an evaluating dataset will be generated from the supplied training data. But, you may provide a filepath to a CSV file as described for input_filepath to use standalone evaluating data. 
 
 | text                          | label |
 |-------------------------------|-------|
@@ -36,21 +37,20 @@ inputs:
 Information about the learning parameters can be found [here](/learning-parameters/)
 Information about saving/loading preprocessed data can be found [here](/save-load-data/)
 
-| Parameter                     |Default|
-|-------------------------------|-------|
-| learning_rate                 | 5e-5  |
-| num_train_epochs              | 3     |
-| batch_size                    | 1     |
-| weight_decay                  | 0     |
-| adam_beta1                    | 0.9   |
-| adam_beta2                    | 0.999 |
-| adam_epsilon                  | 1e-8  |
-| max_grad_norm                 | 1.0   |
-| save_preprocessed_data        | False |
-| save_preprocessed_data_path   | ""    |
-| load_preprocessed_data        | False |
-| load_preprocessed_data_path   | ""    |
-| fp16                          | False |
+| Parameter                   | Default             |
+|-----------------------------|---------------------|
+| learning_rate               | 5e-5                |
+| num_train_epochs            | 1                   |
+| batch_size                  | 1                   |
+| weight_decay                | 0                   |
+| save_path                   | ""                  |
+| load_path                   | ""                  |
+| fp16                        | False               |
+| eval_ratio                  | 0.1                 |
+| save_steps                  | 0.0                 |
+| eval_steps                  | 0.1                 |
+| logging_steps               | 0.1                 |
+| output_dir                  | "happy_transformer" |
 
 Output: None
 
@@ -81,8 +81,7 @@ from happytransformer import HappyTextClassification, TCEvalArgs
 happy_tc = HappyTextClassification(model_type="DISTILBERT",
                                    model_name="distilbert-base-uncased-finetuned-sst-2-english",
                                    num_labels=2)  # Don't forget to set num_labels!
-args = TCEvalArgs(save_preprocessed_data=False) # for demonstration -- not needed 
-result = happy_tc.eval("../../data/tc/train-eval.csv", args=args)
+result = happy_tc.eval("../../data/tc/train-eval.csv")
 print(type(result))  # <class 'happytransformer.happy_trainer.EvalResult'>
 print(result)  # EvalResult(eval_loss=0.007262040860950947)
 print(result.loss)  # 0.007262040860950947

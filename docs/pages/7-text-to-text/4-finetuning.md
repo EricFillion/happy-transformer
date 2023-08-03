@@ -17,6 +17,7 @@ HappyTextToText contains two methods for training
 inputs: 
 1. input_filepath (string): a path file to a csv file as shown in table 7.1
 2. args (TTTrainArgs): a dataclass with the same fields types as shown in Table 7.2. 
+3. eval_filepath (string): By default, an evaluating dataset will be generated from the supplied training data. But, you may provide a filepath to a CSV file as described for input_filepath to use standalone evaluating data. 
 
 
 #### Table 7.1
@@ -30,27 +31,29 @@ Contains two columns with the following header values: input and target
 
 #### Table 7.2
 
-| Parameter                     |Default|
-|-------------------------------|-------|
-| learning_rate                 | 5e-5  |
-| num_train_epochs              | 3     |
-| batch_size                    | 1     |
-| weight_decay                  | 0     |
-| adam_beta1                    | 0.9   |
-| adam_beta2                    | 0.999 |
-| adam_epsilon                  | 1e-8  |
-| max_grad_norm                 | 1.0   |
-| preprocessing_processes       | 1     |
-| max_input_length              | 1024  |
-| max_output_length             | 1024  |
-| fp16                          | False |
+| Parameter                | Default             |
+|--------------------------|---------------------|
+| learning_rate            | 5e-5                |
+| num_train_epochs         | 1                   |
+| batch_size               | 1                   |
+| preprocessing_processes  | 1                   |
+| save_path                | ""                  |
+| load_path                | ""                  |
+| max_input_length         | None                |
+| max_output_length        | None                |
+| fp16                     | False               |
+| eval_ratio               | 0.1                 |
+| save_steps               | 0.0                 |
+| eval_steps               | 0.1                 |
+| logging_steps            | 0.1                 |
+| output_dir               | "happy_transformer" |
 
 
 Information about the learning parameters can be found [here](/learning-parameters/)
 
 
 preprocessing_processes: Number of processes used for preprocessing. We recommend 1-4. 
-max_input_length: The maximum number of tokens for the input. The rest get truncated.
+max_input_length: The maximum number of tokens for the input. The rest get truncated. By default the maximum number of tokens the model can handle is used. 
 max_output_length: Ditto, except for the output. 
 
 

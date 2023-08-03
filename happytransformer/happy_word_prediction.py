@@ -1,15 +1,14 @@
-from typing import List, Optional
 from dataclasses import dataclass
+from datasets import Dataset
+from typing import List, Optional, Union
 
-from transformers import FillMaskPipeline, AutoModelForMaskedLM, PretrainedConfig
+from transformers import AutoModelForMaskedLM, DataCollatorForLanguageModeling, FillMaskPipeline
 
-from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.wp.trainer import WPTrainer, WPTrainArgs, WPEvalArgs
-from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.adaptors import get_adaptor
-from happytransformer.wp import ARGS_WP_TRAIN, ARGS_WP_EVAl, ARGS_WP_TEST
-from happytransformer.happy_trainer import EvalResult
-from happytransformer.fine_tuning_util import create_args_dataclass
+from happytransformer.args import WPEvalArgs, WPTrainArgs
+from happytransformer.fine_tuning_util import EvalResult, tok_text_gen_mlm, csv_tok_text_gen_mlm
+from happytransformer.happy_transformer import HappyTransformer
+
 
 @dataclass
 class WordPredictionResult:
@@ -22,23 +21,22 @@ class HappyWordPrediction(HappyTransformer):
     """
     def __init__(
             self, model_type: str = "DISTILBERT", model_name: str = "distilbert-base-uncased",
-            load_path: str ="", use_auth_token: str = None, from_tf=False):
-
+            load_path: str ="", use_auth_token: Union[bool, str] = None, trust_remote_code: bool =False):
 
         self.adaptor = get_adaptor(model_type)
+        model_class = AutoModelForMaskedLM
 
-        if load_path != "":
-            model = AutoModelForMaskedLM.from_pretrained(load_path, from_tf=from_tf)
-        else:
-            model = AutoModelForMaskedLM.from_pretrained(model_name, use_auth_token=use_auth_token, from_tf=from_tf)
 
-        super().__init__(model_type, model_name, model, load_path=load_path, use_auth_token=use_auth_token)
+        super().__init__(model_type, model_name, model_class, load_path=load_path, use_auth_token=use_auth_token, trust_remote_code=trust_remote_code)
 
-        device_number = detect_cuda_device_number()
 
-        self._pipeline = FillMaskPipeline(model=self.model, tokenizer=self.tokenizer, device=device_number)
+        self._pipeline_class = FillMaskPipeline
 
-        self._trainer = WPTrainer(self.model, model_type, self.tokenizer, self._device, self.logger)
+        # mlm_probability is modified to the train args value within HappyTransformer._run_eval() and HappyTransformer._run_eval()
+        self._data_collator = DataCollatorForLanguageModeling(tokenizer=self.tokenizer,
+                                                        mlm_probability=0.1)
+        self._t_data_file_type = ["text", "csv"]
+        self._type = "wp"
 
     def predict_mask(self, text: str, targets: Optional[List[str]] = None, top_k: int = 1) -> List[WordPredictionResult]:
         """
@@ -47,6 +45,11 @@ class HappyWordPrediction(HappyTransformer):
         top_k describes number of targets to return*
         *top_k does not apply if targets is supplied
         """
+
+        # loads pipeline if it hasn't been loaded already.
+        self._load_pipeline()
+
+
         if not isinstance(text, str):
             raise ValueError('the "text" argument must be a single string')
 
@@ -65,31 +68,33 @@ class HappyWordPrediction(HappyTransformer):
             for answer in answers
         ]
 
-    def train(self, input_filepath, args=ARGS_WP_TRAIN):
-        if type(args) == dict:
-            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_WP_TRAIN,
-                                                         input_dic_args=args,
-                                                         method_dataclass_args=WPTrainArgs)
-        elif type(args) == WPTrainArgs:
-            method_dataclass_args = args
-        else:
-            raise ValueError("Invalid args type. Use a WPTrainArgs object or a dictionary")
+    def train(self, input_filepath: str,  args: WPTrainArgs =WPTrainArgs(), eval_filepath: str = ""):
+        super(HappyWordPrediction, self).train(input_filepath, args, eval_filepath)
 
-        self._trainer.train(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
-
-    def eval(self, input_filepath, args=ARGS_WP_EVAl) -> EvalResult:
-        if type(args) == dict:
-
-            method_dataclass_args = create_args_dataclass(default_dic_args=ARGS_WP_EVAl,
-                                                         input_dic_args=args,
-                                                         method_dataclass_args=WPEvalArgs)
-        elif type(args) == WPEvalArgs:
-            method_dataclass_args = args
-        else:
-            raise ValueError("Invalid args type. Use a ARGS_WP_EVAl object or a dictionary")
-
-        return self._trainer.eval(input_filepath=input_filepath, dataclass_args=method_dataclass_args)
+    def eval(self, input_filepath, args: WPEvalArgs = WPEvalArgs()) -> EvalResult:
+        return super(HappyWordPrediction, self).eval(input_filepath, args)
 
 
-    def test(self, input_filepath, args=ARGS_WP_TEST):
+    def test(self, input_filepath, args=None):
         raise NotImplementedError("test() is currently not available")
+
+    def _tok_function(self, raw_dataset, args: Union[WPTrainArgs, WPEvalArgs], file_type: str) -> Dataset:
+
+        if file_type == "text":
+            if not args.line_by_line:
+                return tok_text_gen_mlm(tokenizer=self.tokenizer, dataset=raw_dataset, args=args,
+                                        mlm=True)
+            else:
+                def tokenize_function(example):
+                    return self.tokenizer(example["text"],
+                                     add_special_tokens=True, truncation=True)
+
+                tokenized_dataset = raw_dataset.map(tokenize_function, batched=True,
+                                                remove_columns=["text"])
+                return tokenized_dataset
+        else:
+            return csv_tok_text_gen_mlm(tokenizer=self.tokenizer,
+                                        dataset=raw_dataset,
+                                        args=args,
+                                        mlm=True
+                                        )
