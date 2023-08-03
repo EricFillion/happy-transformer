@@ -87,11 +87,11 @@ def test_tt_eval_loss_decreases():
     assert before_result.loss > after_result.loss
 
 def test_tt_train_custom_p():
-    args = TTTrainArgs(num_train_epochs=2, max_input_length=100, max_output_length=100, preprocessing_processes=1, batch_size=2)
+    args = TTTrainArgs(num_train_epochs=2, max_input_length=100, max_output_length=100, batch_size=2)
     happy_tt.train("../data/tt/train-eval-grammar.csv", args=args)
 
 def test_tt_eval_custom_p():
-    args = TTEvalArgs(max_input_length=100, max_output_length=100, preprocessing_processes=1, batch_size=2)
+    args = TTEvalArgs(max_input_length=100, max_output_length=100, batch_size=2)
     result = happy_tt.eval("../data/tt/train-eval-grammar.csv", args=args)
     assert type(result.loss) is float
 
