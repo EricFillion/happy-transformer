@@ -20,6 +20,7 @@ def main():
     train_args = QATrainArgs(
         num_train_epochs=1,
         learning_rate=1e-5,
+        # fp16=True,
         # report_to = ('wandb'),
         # project_name = "happy-transformer-examples",
         # run_name = "question-answering",

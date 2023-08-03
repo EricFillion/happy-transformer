@@ -18,6 +18,7 @@ def main():
     train_args = TCTrainArgs(
                        learning_rate=1e-5,
                        num_train_epochs=1,
+                       # fp16=True,
                        # report_to = ('wandb'),
                        # project_name = "happy-transformer-examples",
                        # run_name = "text-classification",

@@ -18,6 +18,7 @@ def main():
                 num_train_epochs=1,
                 max_input_length=1024,
                 max_output_length=1024,
+                # fp16=True,
                 # report_to = ('wandb'),
                 # project_name = "happy-transformer-examples",
                 # run_name = "translation",

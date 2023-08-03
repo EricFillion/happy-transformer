@@ -18,6 +18,7 @@ def main():
                        learning_rate=1e-5,
                        max_input_length=1024,
                        max_output_length=128,
+                       # fp16=True,
                        # report_to = ('wandb'),
                        # project_name = "happy-transformer-examples",
                        # run_name = "summarization",

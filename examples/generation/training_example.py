@@ -18,10 +18,12 @@ def main():
     train_args = GENTrainArgs(
         num_train_epochs=1,
         learning_rate=1e-5,
+        # fp16=True,
         # report_to = ('wandb'),
         # project_name = "happy-transformer-examples",
         # run_name = "text-generation",
-        # deepspeed="ZERO-2"
+        # deepspeed="ZERO-2",
+        # max_length = 128
     )
 
     happy_gen.train(train_csv_path, args=train_args, eval_filepath=eval_csv_path)
