@@ -15,7 +15,7 @@ Join our Discord server: [![Support Server](https://img.shields.io/discord/83926
 
 ![HappyTransformer](logo.png)
 
-Happy Transformer is built on top of [Hugging Face's transformer library](https://huggingface.co/transformers/) and makes it easy to fine-tune state-of-the-art NLP models. 
+Happy Transformer makes it easy to fine-tune NLP Transformer models and use them for inference. 
 
 ## 3.0.0 
 1. Deepspeed for training 

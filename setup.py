@@ -11,7 +11,7 @@ setup(
     packages = find_packages(exclude=("tests",)),
     version = '3.0.0',
     license='Apache 2.0',
-    description = "Happy Transformer makes it easy to fine-tune and perform inference with state-of-the-art NLP models.",
+    description = "Happy Transformer makes it easy to fine-tune NLP Transformer models and use them for inference.",
     long_description= readme,
     long_description_content_type='text/markdown',
     author = "The Happy Transformer Development Team",

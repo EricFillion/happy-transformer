@@ -25,7 +25,7 @@ Breaking changes:
 - Removed adam_beta1, adam_beta2, adam_epsilon and max_grad_norm learning parameters. 
 - Replaced save_preprocessed_data, save_preprocessed_data_path with a single parameter called save_path. Likewise for load_preprocessed_data and load_preprocessed_data_path being replaced by load_path. 
 - Removed support for dictionary settings for the args parameter for training and evaluating.
-- Removed the preprocessing_processes parameter for training and evaluation. 
+- Removed the preprocessing_processes parameter for training and evaluating. 
 
 
 ### November 19th, 2021
