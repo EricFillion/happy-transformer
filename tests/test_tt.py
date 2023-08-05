@@ -1,15 +1,13 @@
 import torch
 from happytransformer import HappyTextToText, TTSettings, TTTrainArgs, TTEvalArgs
-
-
+from tests import happy_tt
+from tests.run_save_load import run_save_load
 
 def test_default_simple():
-    happy_tt = HappyTextToText("T5", "t5-small")
     output = happy_tt.generate_text("translate English to French: Hello my name is Eric")
     assert type(output.text) == str
 
 def test_default_min_max_length():
-    happy_tt = HappyTextToText("T5", "t5-small")
     args = TTSettings(min_length=5, max_length=5)
     output = happy_tt.generate_text("translate English to French: Hello my name is Eric", args=args)
     tokens = happy_tt.tokenizer.encode(output.text, return_tensors="pt")
@@ -17,8 +15,6 @@ def test_default_min_max_length():
     assert length == 5
 
 def test_all_methods():
-    happy_tt = HappyTextToText("T5", "t5-small")
-
     greedy_settings = TTSettings(min_length=5, max_length=5, no_repeat_ngram_size=2)
     output_greedy = happy_tt.generate_text(
         "translate English to French: Hello my name is Eric",
@@ -62,47 +58,56 @@ def test_all_methods():
     print("top-p-sampling: ", output_top_p_sampling.text, end="\n\n")
 
 def test_tt_save():
-    happy_tt = HappyTextToText("T5", "t5-small")
     happy_tt.save("model/")
     result_before = happy_tt.generate_text("translate English to French: Hello my name is Eric")
 
-    happy = HappyTextToText(load_path="model/")
+    happy = HappyTextToText(model_name="model/")
     result_after = happy.generate_text("translate English to French: Hello my name is Eric")
 
     assert result_before.text == result_after.text
 
 
 def test_tt_train_simple():
-    happy_tt = HappyTextToText("T5", "t5-small")
     happy_tt.train("../data/tt/train-eval-grammar.csv")
 
 def test_tt_train_fp16():
     # Can only be used if fp16 if CUDA is available
     if torch.cuda.is_available():
-        happy_tt = HappyTextToText("T5", "t5-small")
         args = TTTrainArgs(fp16=True)
         happy_tt.train("../data/tt/train-eval-grammar.csv", args=args)
 
 def test_tt_eval_simple():
-    happy_tt = HappyTextToText("T5", "t5-small")
     happy_tt.eval("../data/tt/train-eval-grammar.csv")
 
 def test_tt_eval_loss_decreases():
-    happy_tt = HappyTextToText("T5", "t5-small")
-
-    before_result = happy_tt.eval("../data/tt/train-eval-grammar.csv")
-    happy_tt.train("../data/tt/train-eval-grammar.csv")
+    happy = HappyTextToText("T5", "t5-small")
+    args = TTTrainArgs(num_train_epochs=3)
+    before_result = happy.eval("../data/tt/train-eval-grammar.csv")
+    happy.train("../data/tt/train-eval-grammar.csv", args=args)
     after_result = happy_tt.eval("../data/tt/train-eval-grammar.csv")
 
     assert before_result.loss > after_result.loss
 
 def test_tt_train_custom_p():
-    happy_tt = HappyTextToText("T5", "t5-small")
-    args = TTTrainArgs(num_train_epochs=2, max_input_length=100, max_output_length=100, preprocessing_processes=1, batch_size=2)
+    args = TTTrainArgs(num_train_epochs=2, max_input_length=100, max_output_length=100, batch_size=2)
     happy_tt.train("../data/tt/train-eval-grammar.csv", args=args)
 
 def test_tt_eval_custom_p():
-    happy_tt = HappyTextToText("T5", "t5-small")
-    args = TTEvalArgs(max_input_length=100, max_output_length=100, preprocessing_processes=1, batch_size=2)
+    args = TTEvalArgs(max_input_length=100, max_output_length=100, batch_size=2)
     result = happy_tt.eval("../data/tt/train-eval-grammar.csv", args=args)
     assert type(result.loss) is float
+
+
+def test_tt_save_load_train():
+    output_path = "data/tt-train/"
+    data_path = "../data/tt/train-eval-grammar.csv"
+    args = TTTrainArgs(num_train_epochs=1)
+
+    run_save_load(happy_tt, output_path, args, data_path, "train")
+
+def test_tt_save_load_eval():
+    output_path = "data/tt-train/"
+    data_path = "../data/tt/train-eval-grammar.csv"
+
+    args = TTTrainArgs(num_train_epochs=1)
+    run_save_load(happy_tt, output_path, args, data_path, "eval")

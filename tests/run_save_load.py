@@ -1,8 +1,7 @@
 def run_save_load(happy, output_path, args, data_path, run_type):
-    args['save_preprocessed_data_path'] = output_path
-    args['load_preprocessed_data_path'] = output_path
+    args.save_path = output_path
+    args.load_path = False
 
-    args['save_preprocessed_data'] = True
     if run_type == "train":
         happy.train(data_path, args=args)
     elif run_type == "eval":
@@ -12,8 +11,9 @@ def run_save_load(happy, output_path, args, data_path, run_type):
     else:
         ValueError("invalid run_type for run_save_load")
 
-    args['save_preprocessed_data'] = False
-    args['load_preprocessed_data'] = True
+    args.save_path = False
+    args.load_path = output_path
+
     if run_type == "train":
         happy.train(data_path, args=args)
     elif run_type == "eval":

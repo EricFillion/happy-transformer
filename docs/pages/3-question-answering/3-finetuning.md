@@ -18,6 +18,7 @@ HappyQuestionAnswering contains three methods for training
 inputs: 
 1. input_filepath (string): a path file to a csv file as described in table 3.0
 2. args (QATrainArgs): a dataclass of type QATrainArgs which contains the fields shown in table 3.1
+3. eval_filepath (string): By default, an evaluating dataset will be generated from the supplied training data. But, you may provide a filepath to a CSV file as described for input_filepath to use standalone evaluating data. 
 
 
 #### Table 3.0
@@ -40,21 +41,20 @@ Information about saving/loading preprocessed data can be found [here](/save-loa
 
 #### Table 3.1
 
-| Parameter                     |Default|
-|-------------------------------|-------|
-| learning_rate                 | 5e-5  |
-| num_train_epochs              | 3     |
-| batch_size                    | 1     |
-| weight_decay                  | 0     |
-| adam_beta1                    | 0.9   |
-| adam_beta2                    | 0.999 |
-| adam_epsilon                  | 1e-8  |
-| max_grad_norm                 | 1.0   |
-| save_preprocessed_data        | False |
-| save_preprocessed_data_path   | ""    |
-| load_preprocessed_data        | False |
-| load_preprocessed_data_path   | ""    |
-| fp16                          | False |
+| Parameter                   | Default             |
+|-----------------------------|---------------------|
+| learning_rate               | 5e-5                |
+| num_train_epochs            | 1                   |
+| batch_size                  | 1                   |
+| weight_decay                | 0                   |
+| save_path                   | ""                  |
+| load_path                   | ""                  |
+| fp16                        | False               |
+| eval_ratio                  | 0.1                 |
+| save_steps                  | 0.0                 |
+| eval_steps                  | 0.1                 |
+| logging_steps               | 0.1                 |
+| output_dir                  | "happy_transformer" |
 
 Output: None
  
@@ -79,12 +79,10 @@ Information about saving/loading preprocessed data can be found [here](/save-loa
 
 #### Table 3.2
 
-| Parameter                     |Default|
-|-------------------------------|-------|
-| save_preprocessed_data        | False |
-| save_preprocessed_data_path   | ""    |
-| load_preprocessed_data        | False |
-| load_preprocessed_data_path   | ""    |
+| Parameter | Default |
+|-----------|---------|
+| save_path | ""      |
+| load_path | ""      |
 
 
 
@@ -127,8 +125,7 @@ Output: A list of named tuples with keys: "answer", "score", "start" and "end"
 from happytransformer import HappyQuestionAnswering, QATestArgs
 # --------------------------------------#
 happy_qa = HappyQuestionAnswering()
-args = QATestArgs() #  Using the default settings as an example
-result = happy_qa.test("../../data/qa/test.csv", args=args)
+result = happy_qa.test("../../data/qa/test.csv")
 print(type(result))
 print(result)  # [QuestionAnsweringResult(answer='October 31st', score=0.9939756989479065, start=0, end=12), QuestionAnsweringResult(answer='November 23rd', score=0.967872679233551, start=12, end=25)]
 print(result[0])  # QuestionAnsweringResult(answer='October 31st', score=0.9939756989479065, start=0, end=12)

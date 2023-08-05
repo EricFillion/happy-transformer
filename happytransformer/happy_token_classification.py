@@ -1,14 +1,10 @@
-from typing import List, Optional
 from dataclasses import dataclass
+from typing import List, Union
 
-from transformers import TokenClassificationPipeline, AutoModelForTokenClassification
+from transformers import AutoModelForTokenClassification, TokenClassificationPipeline
 
-from happytransformer.happy_transformer import HappyTransformer
-from happytransformer.toc.trainer import TOCTrainer
-from happytransformer.cuda_detect import detect_cuda_device_number
 from happytransformer.adaptors import get_adaptor
-from happytransformer.toc import  ARGS_TOC_TRAIN, ARGS_TOC_EVAl, ARGS_TOC_TEST
-
+from happytransformer.happy_transformer import HappyTransformer
 
 @dataclass
 class TokenClassificationResult:
@@ -21,33 +17,27 @@ class TokenClassificationResult:
 
 
 class HappyTokenClassification(HappyTransformer):
-    """
-    A user facing class for token classification
-    """
     def __init__(
-        self, model_type: str = "BERT", model_name: str = "dslim/bert-base-NER", load_path: str = "", use_auth_token: str = None, from_tf=False):
+        self, model_type: str = "BERT", model_name: str = "dslim/bert-base-NER", load_path: str = "", use_auth_token: Union[bool, str] = None, trust_remote_code: bool =False):
 
         self.adaptor = get_adaptor(model_type)
+        model_class = AutoModelForTokenClassification
 
-        if load_path != "":
-            model = AutoModelForTokenClassification.from_pretrained(load_path, from_tf=from_tf)
-        else:
-            model = AutoModelForTokenClassification.from_pretrained(model_name, use_auth_token=use_auth_token, from_tf=from_tf)
+        super().__init__(model_type, model_name, model_class, use_auth_token=use_auth_token, load_path=load_path, trust_remote_code=trust_remote_code)
 
+        self._type = "tok"
 
-        super().__init__(model_type, model_name, model, use_auth_token=use_auth_token, load_path=load_path)
-
-        device_number = detect_cuda_device_number()
-
-        self._pipeline = TokenClassificationPipeline(model=self.model, tokenizer=self.tokenizer, device=device_number)
-
-        self._trainer = TOCTrainer(self.model, model_type, self.tokenizer, self._device, self.logger)
+        self._pipeline_class = TokenClassificationPipeline
 
     def classify_token(self, text: str) -> List[TokenClassificationResult]:
         """
         :param text: Text that contains tokens to be classified
         :return:
         """
+
+        # loads pipeline if it hasn't been loaded already.
+        self._load_pipeline()
+
         if not isinstance(text, str):
             raise ValueError('the "text" argument must be a single string')
         results = self._pipeline(text)
@@ -65,11 +55,11 @@ class HappyTokenClassification(HappyTransformer):
         ]
 
 
-    def train(self, input_filepath, args=ARGS_TOC_TRAIN):
+    def train(self, input_filepath, args=None, eval_filepath: str = ""):
         raise NotImplementedError("train() is currently not available")
 
-    def eval(self, input_filepath, args=ARGS_TOC_EVAl):
+    def eval(self, input_filepath, args=None):
         raise NotImplementedError("eval() is currently not available")
 
-    def test(self, input_filepath, args=ARGS_TOC_TEST):
+    def test(self, input_filepath, args=None):
         raise NotImplementedError("test() is currently not available")

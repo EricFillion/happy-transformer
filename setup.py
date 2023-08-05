@@ -8,26 +8,28 @@ readme = (current_location / "README.md").read_text()
 
 setup(
     name = 'happytransformer',
-    packages = find_packages(),
-    version = '2.4.1',
+    packages = find_packages(exclude=("tests",)),
+    version = '3.0.0',
     license='Apache 2.0',
-    description = "Happy Transformer is an API built on top of Hugging Face's Transformer library that makes it easy to utilize state-of-the-art NLP models.",
+    description = "Happy Transformer makes it easy to fine-tune NLP Transformer models and use them for inference.",
     long_description= readme,
     long_description_content_type='text/markdown',
     author = "The Happy Transformer Development Team",
     author_email = 'happytransformer@gmail.com',
     url = 'https://github.com/EricFillion/happy-transformer',
-    keywords = ['bert', 'roberta', 'xlnet', "transformer", "happy", "HappyTransformer",  "classification",  "nlp", "nlu", "natural", "language", "processing", "understanding"],
+    keywords = ['bert', 'roberta', 'ai', "transformer", "happy", "HappyTransformer",  "classification",  "nlp", "nlu", "natural", "language", "processing", "understanding"],
 
     install_requires=[
             'torch>=1.0',
             'tqdm>=4.43',
-            'transformers>=4.4.0',
-            'datasets>=1.6.0',
+            'transformers>=4.30.1,<5.0.0',
+            'datasets>=2.13.1,<3.0.0',
             'dataclasses; python_version < "3.7"',
             'sentencepiece',
-            'protobuf'
-
+            'protobuf',
+            'accelerate>=0.20.1,<1.0.0',
+            'tokenizers>=0.13.3,<1.0.0',
+            'wandb'
     ],
     classifiers=[
         'Intended Audience :: Developers',

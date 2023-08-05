@@ -21,7 +21,7 @@ detect if an email is spam based on its text.
 3. num_labels(int): The number of text categories. The default is 2 
 4. use_auth_token (string): Specify the authentication token to 
    [load private](https://huggingface.co/transformers/model_sharing.html) models. 
-5. from_tf (bool): Set to True if you want to convert a TensorFlow model to PyTorch model.
+5. trust_remote_code (bool): Allow for custom Python files to be used from the model_name location.   
 
 
 WARNING: If you try to load a pretrained model that has a different number of categories 

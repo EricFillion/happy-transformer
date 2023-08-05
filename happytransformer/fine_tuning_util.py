@@ -1,25 +1,25 @@
 """
-Contains functions that are shared amongst the children of the HappyTrainer class.
-
 Based on
 https://github.com/huggingface/transformers/blob/master/examples/pytorch/language-modeling/run_mlm.py
 and
 https://github.com/huggingface/transformers/blob/master/examples/pytorch/language-modeling/run_clm.py
 """
 
+from dataclasses import dataclass
+from typing import Union
 
-def preprocess_concatenate(tokenizer, dataset, preprocessing_processes, mlm=True):
-    """
-    :param tokenizer: tokenizer for a transformer model
-    :param dataset: a datasets.Dataset object
-    :param preprocessing_processes:
-    :param mlm:
+from datasets import Dataset
+from transformers import PreTrainedTokenizer, TrainerCallback
 
-    :return:
-    """
+from happytransformer.args import GENTrainArgs, WPTrainArgs, GENEvalArgs, WPEvalArgs
 
-    max_input_length = tokenizer.model_max_length
-
+# Used for text gen and mlm fine-tuning.
+def tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, args: Union[GENTrainArgs, WPTrainArgs, GENEvalArgs, WPEvalArgs],  mlm: bool=True) -> Dataset:
+    #todo set to args.max_length
+    if args.max_length is None:
+        max_input_length = tokenizer.model_max_length
+    else:
+        max_input_length= args.max_length
 
     def tokenize_function(example):
         texts = example["text"]
@@ -28,7 +28,6 @@ def preprocess_concatenate(tokenizer, dataset, preprocessing_processes, mlm=True
         return tokenizer(texts)
 
     tokenized_dataset = dataset.map(tokenize_function, batched=True,
-                                      num_proc=preprocessing_processes,
                                       remove_columns=["text"])
 
     def group_texts(examples):
@@ -54,27 +53,124 @@ def preprocess_concatenate(tokenizer, dataset, preprocessing_processes, mlm=True
 
     tokenized_dataset = tokenized_dataset.map(
         group_texts,
-        batched=True,
-        num_proc=preprocessing_processes,
-    )
+        batched=True)
 
 
     return tokenized_dataset
 
 
+def csv_tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, args: Union[GENTrainArgs, WPTrainArgs, GENEvalArgs, WPEvalArgs],  mlm=True) -> Dataset:
+    if args.max_length is None:
+        max_input_length = tokenizer.model_max_length
+    else:
+        max_input_length = args.max_length
 
-def create_args_dataclass(default_dic_args, input_dic_args, method_dataclass_args):
-    """
-    Combines default_dic_args and input_dic_args and then outputs a dataclass.
+    def tokenize_function(example):
+        texts = example["text"]
+        toks = tokenizer(texts, padding="max_length", truncation=True, max_length=max_input_length)
+        if not mlm:
+            toks["labels"] = toks["input_ids"]
+        return toks
 
-    The values of input_dic_args overwrite the values of default_dic_args.
+    dataset= dataset.map(tokenize_function,
+                batched=True,
+                remove_columns=["text"])
 
-    default_dic_args and dataclass_args must have the same keys.
+    return dataset
 
-    :param default_dic_args: A dictionary that contains default settings. Example: ARGS_WP_EVAl
-    :param input_dic_args: A dictionary a user inputs for **kwargs when using .train(), .eval() or .test()
-    :param method_dataclass_args: A class for target functionality. Example: WPEvalArgs
-    :return: A dataclass object that will then be passed to HappyTrainer.train()/eval/test
-    """
-    settings_dic = {**default_dic_args, **input_dic_args}
-    return method_dataclass_args(**settings_dic)
+@dataclass
+class EvalResult:
+    loss: float
+
+
+ZERO_2_SETTINGS = {
+    "zero_optimization": {
+        "stage": 2,
+        "allgather_partitions": True,
+        "allgather_bucket_size": 2e8,
+        "overlap_comm": True,
+        "reduce_scatter": True,
+        "reduce_bucket_size": 5e8,
+        "contiguous_gradients": True,
+    },
+
+    "fp16": {
+        "enabled": "auto",
+        "loss_scale": 0,
+        "loss_scale_window": 1000,
+        "initial_scale_power": 16,
+        "hysteresis": 2,
+        "min_loss_scale": 1
+    },
+    "scheduler": {
+        "type": "WarmupDecayLR",
+        "params": {
+            "last_batch_iteration": -1,
+            "total_num_steps": "auto",
+            "warmup_min_lr": 0,
+            "warmup_max_lr": "auto",
+            "warmup_num_steps": "auto"
+        }
+    },
+    "gradient_accumulation_steps": "auto",
+    "gradient_clipping": "auto",
+    "steps_per_print": 32,
+    "train_batch_size": "auto",
+    "train_micro_batch_size_per_gpu": "auto",
+    "wall_clock_breakdown": False
+}
+
+ZERO_3_SETTINGS = {
+    "zero_optimization": {
+        "stage": 3,
+        "offload_optimizer": {
+            "device": "cpu",
+            "pin_memory": True
+        },
+        "offload_param": {
+            "device": "cpu",
+            "pin_memory": True
+        },
+        "overlap_comm": True,
+        "contiguous_gradients": True,
+        "sub_group_size": 1e9,
+        "reduce_bucket_size": "auto",
+        "stage3_prefetch_bucket_size": "auto",
+        "stage3_param_persistence_threshold": "auto",
+        "stage3_max_live_parameters": 1e9,
+        "stage3_max_reuse_distance": 1e9,
+        "stage3_gather_16bit_weights_on_model_save": True
+    },
+    "fp16": {
+        "enabled": "auto",
+        "loss_scale": 0,
+        "loss_scale_window": 1000,
+        "initial_scale_power": 16,
+        "hysteresis": 2,
+        "min_loss_scale": 1
+    },
+    "scheduler": {
+        "type": "WarmupDecayLR",
+        "params": {
+            "last_batch_iteration": -1,
+            "total_num_steps": "auto",
+            "warmup_min_lr": 0,
+            "warmup_max_lr": "auto",
+            "warmup_num_steps": "auto"
+        }
+    },
+    "gradient_accumulation_steps": "auto",
+    "gradient_clipping": "auto",
+    "steps_per_print": 8,
+    "train_batch_size": "auto",
+    "train_micro_batch_size_per_gpu": "auto",
+    "wall_clock_breakdown": False
+}
+
+
+class FistStep(TrainerCallback):
+    def on_step_begin(self, args, state, control, **kwargs):
+        if state.global_step == 0:
+            control.should_log = True
+            control.should_evaluate = True
+
