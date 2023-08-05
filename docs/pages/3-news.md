@@ -7,7 +7,7 @@ nav_order: 4
 ---
 ## News: 
 
-### August x, 2023 
+### August 5th, 2023 
 
 **Version 3.0.0!**
 - Deepspeed is now supported for fine-tuning. 
