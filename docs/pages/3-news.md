@@ -14,7 +14,6 @@ nav_order: 4
 - Apple's MPS backend is now automatically used for both training and fine-tuning if detected. 
 - Evaluating data is now used during fine-tuning to track the fine-tuning progress. 
 - WandB can now be used to log the results from fine-tuning. 
-- Apple's MPS chips can be used for inference and fine-tuning.
 - CSV files are supported for training/evaluating text generation and word prediction models. This makes it easy to isolate cases. 
 - Push models to Hugging Face's Hub with one command. 
 - Enable saving models periodically during training.
