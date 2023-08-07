@@ -6,7 +6,7 @@ nav_order: 1
 
 ---
 # About
-Happy Transformer makes it easy to fine-tune NLP Transformer models and use them for inference. 
+Happy Transformer makes it easy to fine-tune and perform inference with NLP Transformer models.
 
 ![Happy Transformer](assets/images/logo.jpg)
 
