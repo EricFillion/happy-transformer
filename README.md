@@ -15,7 +15,7 @@ Join our Discord server: [![Support Server](https://img.shields.io/discord/83926
 
 ![HappyTransformer](logo.png)
 
-Happy Transformer makes it easy to fine-tune NLP Transformer models and use them for inference. 
+Happy Transformer makes it easy to fine-tune and perform inference with NLP Transformer models.
 
 ## 3.0.0 
 1. Deepspeed for training 
