@@ -18,7 +18,7 @@ Join our Discord server: [![Support Server](https://img.shields.io/discord/83926
 Happy Transformer makes it easy to fine-tune and perform inference with NLP Transformer models.
 
 ## 3.0.0 
-1. Deepspeed for training 
+1. DeepSpeed for training 
 2. Apple's MPS for training and inference 
 3. WandB to track training runs 
 4. Data supplied for training is automatically split into portions for training and evaluating
