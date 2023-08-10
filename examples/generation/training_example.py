@@ -17,7 +17,7 @@ def main():
     train_args = GENTrainArgs(
         num_train_epochs=1,
         learning_rate=1e-5,
-        max_length=128,
+        max_length=256,
         fp16=True,
         # deepspeed="ZERO-2",
         # report_to = ('wandb'),
