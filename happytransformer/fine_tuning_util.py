@@ -81,6 +81,8 @@ def csv_tok_text_gen_mlm(tokenizer: PreTrainedTokenizer, dataset: Dataset, args:
 @dataclass
 class EvalResult:
     loss: float
+    metrics: dict = None
+
 
 
 ZERO_2_SETTINGS = {
