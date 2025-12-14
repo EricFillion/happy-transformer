@@ -1,21 +1,37 @@
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) 
-[![Downloads](https://pepy.tech/badge/happytransformer)](https://pepy.tech/project/happytransformer)
-[![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](http://happytransformer.com)
-![PyPI](https://img.shields.io/pypi/v/happytransformer)
-[![](https://github.com/EricFillion/happy-transformer/workflows/build/badge.svg)](https://github.com/EricFillion/happy-transformer/actions)
+<!-- HEADER -->
+<h1 align="center">
+  HAPPY TRANSFORMER
+</h1>
 
-# Happy Transformer 
-**Documentation and news: [happytransformer.com](http://happytransformer.com)**
+<p align="center">
+  <img src="https://raw.githubusercontent.com/EricFillion/happy-transformer/master/logo.png" alt="Happy Transformer logo" width="200">
+</p>
 
+<!-- BADGES -->
+<p align="center">
+  <a href="https://opensource.org/licenses/Apache-2.0">
+    <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License: Apache-2.0" height="20">
+  </a>
+  <a href="https://pepy.tech/project/happytransformer">
+    <img src="https://pepy.tech/badge/happytransformer" alt="Downloads" height="20">
+  </a>
+  <img src="https://img.shields.io/pypi/v/happytransformer" alt="PyPI" height="20">
+  <a href="https://discord.gg/psVwe3wfTb">
+    <img src="https://img.shields.io/discord/839263772312862740.svg?label=Discord&logo=Discord&colorB=7289da" alt="Discord" height="20">
+  </a>
+</p>
 
+<!-- SITE LINK -->
+<p align="center">
+  <strong><a href="https://happytransformer.com">happytransformer.com</a></strong>
+</p>
 
-Join our Discord server: [![Support Server](https://img.shields.io/discord/839263772312862740.svg?label=Discord&logo=Discord&colorB=7289da&style=?style=flat-square&logo=appveyor)](https://discord.gg/psVwe3wfTb)
+<!-- DIVIDER -->
+<hr>
 
-
-
-![HappyTransformer](logo.png)
 
 Happy Transformer makes it easy to fine-tune and perform inference with NLP Transformer models.
+
 
 ## 3.0.0 
 1. DeepSpeed for training 

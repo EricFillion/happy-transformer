@@ -1,0 +1,62 @@
+site_name: Happy Transformer
+site_description: Happy Transformer makes it easy to fine-tune LLMs.
+
+theme:
+  name: material
+  logo:  assets/favicon.ico
+  favicon: assets/favicon.ico
+
+  features:
+    - content.code.copy
+
+extra_css:
+  - style/custom.css
+
+markdown_extensions:
+  - pymdownx.highlight:
+      linenums: false
+      anchor_linenums: false
+      pygments_lang_class: true
+  - pymdownx.superfences
+
+nav:
+  - About: index.md
+  - Installation: installation.md
+  - Awards: awards.md
+  - News: news.md
+  - Maintainers: maintainers.md
+  - Text Generation:
+      - Overview: text-generation/index.md
+      - Usage: text-generation/usage.md
+      - Settings: text-generation/settings.md
+      - Finetuning: text-generation/finetuning.md
+  - Text Classification:
+      - Overview: text-classification/index.md
+      - Usage: text-classification/usage.md
+      - Finetuning: text-classification/finetuning.md
+  - Text-to-Text:
+      - Overview: text-to-text/index.md
+      - Usage:  text-to-text/usage.md
+      - Settings:  text-to-text/settings.md
+      - Finetuning:  text-to-text/finetuning.md
+  - Question Answering:
+      - Overview: question-answering/index.md
+      - Usage: question-answering/usage.md
+      - Finetuning: question-answering/finetuning.md
+  - Word Prediction:
+      - Overview: word-prediction/index.md
+      - Usage: word-prediction/usage.md
+      - Finetuning: word-prediction/finetuning.md
+  - Token Classification:
+      - Overview: token-classification/index.md
+      - Usage: token-classification/usage.md
+  - Next Sentence:
+      - Overview: next-sentence/index.md
+      - Usage: next-sentence/usage.md
+  - MISC:
+      - Training Parameters: learning-parameters.md
+      - Tokenize data: save-load-data.md
+      - Save model: save-load-model.md
+      - Push to Hub: push.md
+      - Deepspeed: deepspeed.md
+      - WandB: wandb.md
