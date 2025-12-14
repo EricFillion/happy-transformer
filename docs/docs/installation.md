@@ -1,0 +1,4 @@
+
+```sh
+pip install happytransformer
+```
