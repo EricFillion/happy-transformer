@@ -1,5 +1,6 @@
 import csv
 from typing import Union
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 from dataclasses import dataclass
 from datasets import Dataset
@@ -51,8 +52,49 @@ class HappyTextClassification(HappyTransformer):
         super(HappyTextClassification, self).train(input_filepath, args, eval_filepath)
 
 
-    def eval(self, input_filepath, args: TCEvalArgs =TCEvalArgs()) -> EvalResult:
-        return super(HappyTextClassification, self).eval(input_filepath, args)
+    # def eval(self, input_filepath, args: TCEvalArgs =TCEvalArgs()) -> EvalResult:
+    #     return super(HappyTextClassification, self).eval(input_filepath, args)
+    # def eval(self, input_filepath, args: TCEvalArgs = TCEvalArgs()) -> EvalResult:
+    #     contexts, labels = self._get_data(input_filepath)
+
+    #     predictions = []
+    #     for text in tqdm(contexts, desc="Evaluating"):
+    #         result = self.classify_text(text)
+    #         # result.label is like "LABEL_0", "LABEL_1", so extract the number
+    #         label_index = int(result.label.split("_")[-1])
+    #         predictions.append(label_index)
+
+    #     correct = sum([int(p == l) for p, l in zip(predictions, labels)])
+    #     accuracy = correct / len(labels)
+
+        
+    #     return EvalResult(loss=None, accuracy=accuracy)
+    def eval(self, input_filepath, args: TCEvalArgs = TCEvalArgs()) -> EvalResult:
+        contexts, labels = self._get_data(input_filepath)
+
+        predictions = []
+        for text in tqdm(contexts, desc="Evaluating"):
+            result = self.classify_text(text)
+            label_index = int(result.label.split("_")[-1])
+            predictions.append(label_index)
+
+        accuracy = accuracy_score(labels, predictions)
+        precision = precision_score(labels, predictions, average='weighted', zero_division=0)
+        recall = recall_score(labels, predictions, average='weighted', zero_division=0)
+        f1 = f1_score(labels, predictions, average='weighted', zero_division=0)
+
+        metrics = {
+            "accuracy": accuracy,
+            "precision": precision,
+            "recall": recall,
+            "f1": f1
+        }
+
+        return EvalResult(loss=None, metrics=metrics)
+
+
+
+
 
 
     def test(self, input_filepath, args=TCTestArgs()):
