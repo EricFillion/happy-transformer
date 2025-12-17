@@ -35,9 +35,9 @@ Happy Transformer makes it easy to fine-tune and perform inference with NLP Tran
 
 ## Upcoming Version 4.0.0 
 
-Version 4.0.0 is in the late stages of development!
-It's an entire rewrite the library with many new features.
-It includes breaking changes, and so we recommend you set the version to <4.0.0 within your requirements.   
+Version 4.0.0 is in the final stages of development. 
+It's a complete rewrite of the library with many new features.
+It includes breaking changes, and so we recommend you set the version to <4.0.0 in your requirements.   
 
 
 ## Tasks 
@@ -52,21 +52,13 @@ It includes breaking changes, and so we recommend you set the version to <4.0.0 
 | Next Sentence Prediction | ✔         |            | 
 | Token Classification     | ✔         |            | 
 
+Note: word prediction, question answering, next sentence prediction and token classification have been deprecated. 
 
 ## Quick Start
 ```sh
 pip install "happytransformer<4.0.0"
 ```
 
-```python
-
-from happytransformer import HappyWordPrediction
-#--------------------------------------#
-happy_wp = HappyWordPrediction()  # default uses distilbert-base-uncased
-result = happy_wp.predict_mask("I think therefore I [MASK]")
-print(result)  # [WordPredictionResult(token='am', score=0.10172799974679947)]
-print(result[0].token)  # am
-```
 
 ## Maintainers
 - [Eric Fillion](https://github.com/ericfillion)  Lead Maintainer
