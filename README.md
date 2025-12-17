@@ -54,7 +54,7 @@ It includes breaking changes, and so we recommend you set the version to <4.0.0 
 
 Note: word prediction, question answering, next sentence prediction and token classification have been deprecated. 
 
-## Quick Start
+## Install
 ```sh
 pip install "happytransformer<4.0.0"
 ```
