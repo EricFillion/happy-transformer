@@ -11,6 +11,7 @@ from happytransformer.args import QAEvalArgs, QATestArgs, QATrainArgs
 from happytransformer.fine_tuning_util import EvalResult
 from happytransformer.happy_transformer import HappyTransformer
 
+
 @dataclass
 class QuestionAnsweringResult:
     answer: str
@@ -21,16 +22,18 @@ class QuestionAnsweringResult:
 
 class HappyQuestionAnswering(HappyTransformer):
     def __init__(self, model_type="DISTILBERT",
-                 model_name="distilbert-base-cased-distilled-squad", 
+                 model_name="distilbert-base-cased-distilled-squad",
                  load_path: str = "",
                  use_auth_token: Union[bool, str] = None,
-                 trust_remote_code: bool=False
+                 trust_remote_code: bool = False
                  ):
-        
+
         self.adaptor = get_adaptor(model_type)
         model_class = AutoModelForQuestionAnswering
 
-        super().__init__(model_type, model_name, model_class,  use_auth_token=use_auth_token, load_path=load_path, trust_remote_code=trust_remote_code)
+        super().__init__(model_type, model_name, model_class, use_auth_token=use_auth_token, load_path=load_path,
+                         trust_remote_code=trust_remote_code)
+        self.logger.warning("HappyQuestionAnswering() is deprecated and will be removed in version 4.0.0.")
 
         self._pipeline_class = QuestionAnsweringPipeline
 
@@ -56,21 +59,20 @@ class HappyQuestionAnswering(HappyTransformer):
                 answer=answer["answer"],
                 score=answer["score"],
                 start=answer["start"],
-                end=answer["end"],)
+                end=answer["end"], )
             for answer in answers
         ]
 
-    def train(self, input_filepath, args: QATrainArgs =QATrainArgs(), eval_filepath: str = ""):
+    def train(self, input_filepath, args: QATrainArgs = QATrainArgs(), eval_filepath: str = ""):
         super(HappyQuestionAnswering, self).train(input_filepath, args, eval_filepath)
 
     def eval(self, input_filepath, args=QAEvalArgs()) -> EvalResult:
 
         return super(HappyQuestionAnswering, self).eval(input_filepath, args)
 
-
     def test(self, input_filepath, args=QATestArgs()):
         if type(args) == dict:
-            raise ValueError( "As of version 2.5.0 dictionary inputs are not acceptable. Please provide a QATestArgs. ")
+            raise ValueError("As of version 2.5.0 dictionary inputs are not acceptable. Please provide a QATestArgs. ")
 
         contexts, questions = self._get_data(input_filepath, test_data=True)
 
@@ -102,7 +104,7 @@ class HappyQuestionAnswering(HappyTransformer):
             encodings = self.tokenizer(case["context"], case["question"], truncation=True, padding=True)
 
             start_position = encodings.char_to_token(case['answer_start'])
-            end_position =  encodings.char_to_token(case['answer_end'] - 1)
+            end_position = encodings.char_to_token(case['answer_end'] - 1)
             if start_position is None:
                 start_position = self.tokenizer.model_max_length
             if end_position is None:
@@ -111,7 +113,6 @@ class HappyQuestionAnswering(HappyTransformer):
             encodings.update({'start_positions': start_position, 'end_positions': end_position})
 
             return encodings
-
 
         tok_dataset = raw_dataset.map(
             __preprocess_function,

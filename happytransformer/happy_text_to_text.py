@@ -54,6 +54,29 @@ class HappyTextToText(HappyTransformer):
     def generate_text(self, text: str,
                       args: TTSettings = TTSettings()) -> TextToTextResult:
 
+        deprecated_args = []
+        if args.early_stopping:
+            deprecated_args.append("early_stopping")
+        if args.no_repeat_ngram_size:
+            deprecated_args.append("no_repeat_ngram_size")
+        if args.num_beams >1:
+            deprecated_args.append("num_beams")
+
+        if deprecated_args:
+            if len(deprecated_args) == 1:
+                args_str = deprecated_args[0]
+                self.logger.warning(f"{args_str} is deprecated and will have no effect in version 4.0.0")
+
+            elif len(deprecated_args) == 2:
+                self.logger.warning(f"{deprecated_args[0]} and {deprecated_args[1]} is deprecated and will have no effect in version 4.0.0")
+
+            else:
+                output_string = ""
+                for i in range(len(deprecated_args) -1):
+                    output_string += f"{deprecated_args[i]}, "
+                output_string += f"and {deprecated_args[-1]}"
+                self.logger.warning(f"{output_string} are deprecated and will have no effect in version 4.0.0")
+
         # loads pipeline if it hasn't been loaded already.
         self._load_pipeline()
 

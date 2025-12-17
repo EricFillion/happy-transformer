@@ -76,7 +76,7 @@ def test_wp_eval_basic():
 
 def test_wp_train_effectiveness():
     happy = HappyWordPrediction('DISTILBERT', 'distilbert-base-uncased')
-    train_args = WPTrainArgs(max_length=512, num_train_epochs=3)
+    train_args = WPTrainArgs(max_length=512)
     eval_args = WPEvalArgs(max_length=512)
     before_result = happy.eval("../data/wp/train-eval.txt", args=eval_args)
 
@@ -150,7 +150,7 @@ def test_wp_csv():
 
     before_result = happy_wp.eval(data_path, args=WPEvalArgs(mlm_probability=mlm_probability))
     print("before_result", before_result)
-    happy_wp.train(data_path, args=WPTrainArgs(mlm_probability=mlm_probability))
+    happy_wp.train(data_path, args=WPTrainArgs(mlm_probability=mlm_probability, learning_rate=1e-4))
     after_result = happy_wp.eval(data_path, args=WPEvalArgs(mlm_probability=mlm_probability))
     print("after_result", after_result)
 

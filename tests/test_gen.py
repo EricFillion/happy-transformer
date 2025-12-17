@@ -34,7 +34,7 @@ def test_bad_words():
     for phrase in args_test_word_single.bad_words:
         for word in phrase.split():
             assert word not in output_words_single
-    # Test phrases 
+    # Test phrases
     args_test_word_phrase = GENSettings(bad_words=["new field"])
     output_phrase = happy_gen.generate_text("Artificial intelligence is ", args=args_test_word_phrase)
     for phrase in args_test_word_phrase.bad_words:
@@ -115,9 +115,9 @@ def test_gen_eval_basic():
     assert type(result.loss) == float
 
 def test_gen_train_effectiveness():
-    happy = HappyGeneration("GPT-2", "sshleifer/tiny-gpt2")
+    happy = HappyGeneration("GPT-2", "gpt2")
     before_result = happy.eval("../data/gen/train-eval.txt")
-    happy.train("../data/gen/train-eval.txt")
+    happy.train("../data/gen/train-eval.txt", args=GENTrainArgs(learning_rate=5e-4, num_train_epochs=3))
     after_result = happy.eval("../data/gen/train-eval.txt")
 
     assert after_result.loss < before_result.loss
@@ -176,7 +176,7 @@ def test_gen_csv():
     data_path = "../data/gen/train-eval.csv"
     before_result = happy_gen.eval(data_path)
     print("before_result", before_result)
-    happy_gen.train(data_path)
+    happy_gen.train(data_path, args=GENTrainArgs(num_train_epochs=3, learning_rate=1e-4))
     after_result = happy_gen.eval(data_path)
     print("after_result", after_result)
 

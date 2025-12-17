@@ -56,6 +56,8 @@ class HappyTextClassification(HappyTransformer):
 
 
     def test(self, input_filepath, args=TCTestArgs()):
+        self.logger.warning(f"HappyTextClassification.test() is deprecated and will be removed in version 4.0.0.")
+
         if type(args) == dict:
             raise ValueError("#todo")
 
@@ -100,8 +102,8 @@ class HappyTextClassification(HappyTransformer):
     def _get_model_components(self, model_name_path,  use_auth_token, trust_remote_code, model_class):
         # HappyTextClassification is the only class that overwrites
         # this as we need to specify number of labels.
-        config = AutoConfig.from_pretrained(model_name_path, use_auth_token=use_auth_token,  num_labels=self._num_labels)
-        model = model_class.from_pretrained(model_name_path, config=config, use_auth_token=use_auth_token)
-        tokenizer = AutoTokenizer.from_pretrained(model_name_path, use_auth_token=use_auth_token)
+        config = AutoConfig.from_pretrained(model_name_path, token=use_auth_token,  num_labels=self._num_labels)
+        model = model_class.from_pretrained(model_name_path, config=config, token=use_auth_token)
+        tokenizer = AutoTokenizer.from_pretrained(model_name_path, token=use_auth_token)
 
         return config, tokenizer, model

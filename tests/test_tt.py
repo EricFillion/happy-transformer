@@ -8,11 +8,13 @@ def test_default_simple():
     assert type(output.text) == str
 
 def test_default_min_max_length():
-    args = TTSettings(min_length=5, max_length=5)
+    target_tokens = 5
+    args = TTSettings(min_length=target_tokens, max_length=target_tokens)
     output = happy_tt.generate_text("translate English to French: Hello my name is Eric", args=args)
-    tokens = happy_tt.tokenizer.encode(output.text, return_tensors="pt")
+    tokens = happy_tt.tokenizer.encode(output.text, return_tensors="pt", add_special_tokens=True)
     length = len(tokens[0])
-    assert length == 5
+    # Depending on version a special token may or may not be added
+    assert length == target_tokens or length == target_tokens + 1
 
 def test_all_methods():
     greedy_settings = TTSettings(min_length=5, max_length=5, no_repeat_ngram_size=2)
