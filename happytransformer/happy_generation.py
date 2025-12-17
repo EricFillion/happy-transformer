@@ -28,7 +28,7 @@ class GenerationResult:
 
 
 class HappyGeneration(HappyTransformer):
-    def __init__(self, model_type: str = "GPT2", model_name: str = "gpt2", 
+    def __init__(self, model_type: str = "GPT2", model_name: str = "gpt2",
                  load_path: str = "", use_auth_token:  Union[bool, str]  = None, trust_remote_code: bool =False):
 
         self.adaptor = get_adaptor(model_type)
@@ -56,22 +56,46 @@ class HappyGeneration(HappyTransformer):
 
 
     def generate_text(self, text: str, args: GENSettings=GENSettings()) -> GenerationResult:
+        deprecated_args = []
+        if args.bad_words:
+            deprecated_args.append("bad_words")
+        if args.early_stopping:
+            deprecated_args.append("early_stopping")
+        if args.no_repeat_ngram_size:
+            deprecated_args.append("no_repeat_ngram_size")
+        if args.num_beams >1:
+            deprecated_args.append("num_beams")
+
+        if deprecated_args:
+            if len(deprecated_args) == 1:
+                args_str = deprecated_args[0]
+                self.logger.warning(f"{args_str} is deprecated and will have no effect in version 4.0.0")
+
+            elif len(deprecated_args) == 2:
+                self.logger.warning(f"{deprecated_args[0]} and {deprecated_args[1]} are deprecated and will have no effect in version 4.0.0")
+
+            else:
+                output_string = ""
+                for i in range(len(deprecated_args) -1):
+                    output_string += f"{deprecated_args[i]}, "
+                output_string += f"and {deprecated_args[-1]}"
+                self.logger.warning(f"{output_string} are deprecated and will have no effect in version 4.0.0")
+
+
 
         # loads pipeline if it hasn't been loaded already.
         self._load_pipeline()
 
         self.__assert_default_text_is_val(text)
-        input_ids = self.tokenizer.encode(text, return_tensors="pt")
-        adjusted_min_length = args.min_length + len(input_ids[0])
-        adjusted_max_length = args.max_length + len(input_ids[0])
+
         if args.bad_words:
             bad_words_ids = [self.tokenizer(" "+phrase.strip()).input_ids for phrase in args.bad_words]
         else:
             bad_words_ids = None
 
-        output = self._pipeline(text, min_length=adjusted_min_length,
+        output = self._pipeline(text, min_new_tokens=args.min_length,
                                 return_full_text=False,
-                                max_length=adjusted_max_length,
+                                max_new_tokens= args.max_length,
                                 do_sample=args.do_sample,
                                 early_stopping=args.early_stopping,
                                 num_beams=args.num_beams,

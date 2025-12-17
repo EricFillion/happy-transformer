@@ -33,18 +33,15 @@
 Happy Transformer makes it easy to fine-tune and perform inference with NLP Transformer models.
 
 
-## 3.0.0 
-1. DeepSpeed for training 
-2. Apple's MPS for training and inference 
-3. WandB to track training runs 
-4. Data supplied for training is automatically split into portions for training and evaluating
-5. Push models directly to Hugging Face's Model Hub
+## Upcoming Version 4.0.0 
 
-Read about the full 3.0.0 update including breaking changes [here](https://happytransformer.com/news/). 
+Version 4.0.0 is in the late stages of development!
+It's an entire rewrite the library with many new features.
+It includes breaking changes, and so we recommend you set the version to <4.0.0 within your requirements.   
 
 
 ## Tasks 
-  
+
 | Tasks                    | Inference | Training   |
 |--------------------------|-----------|------------|
 | Text Generation          | ✔         | ✔          |
@@ -55,9 +52,10 @@ Read about the full 3.0.0 update including breaking changes [here](https://happy
 | Next Sentence Prediction | ✔         |            | 
 | Token Classification     | ✔         |            | 
 
+
 ## Quick Start
 ```sh
-pip install happytransformer
+pip install "happytransformer<4.0.0"
 ```
 
 ```python
@@ -75,19 +73,22 @@ print(result[0].token)  # am
 - [Ted Brownlow](https://github.com/ted537) Maintainer
 
 
-## Tutorials 
-[Text generation with training (GPT-Neo)](https://youtu.be/GzHJ3NUVtV4)
+## Tutorial Articles
 
 [Text classification (training)](https://www.vennify.ai/train-text-classification-transformers/) 
-
-[Text classification (hate speech detection)](https://youtu.be/jti2sPQYzeQ) 
-
-[Text classification (sentiment analysis)](https://youtu.be/Ew72EAgM7FM)
-
-[Word prediction with training (DistilBERT, RoBERTa)](https://youtu.be/AWe0PHsPc_M)
 
 [Top T5 Models ](https://www.vennify.ai/top-t5-transformer-models/)
 
 [Grammar Correction](https://www.vennify.ai/grammar-correction-python/)
 
 [Fine-tune a Grammar Correction Model](https://www.vennify.ai/fine-tune-grammar-correction/)
+
+## Tutorial Videos
+
+[Text generation with training (GPT-Neo)](https://youtu.be/GzHJ3NUVtV4)
+
+[Text classification (hate speech detection)](https://youtu.be/jti2sPQYzeQ) 
+
+[Text classification (sentiment analysis)](https://youtu.be/Ew72EAgM7FM)
+
+[Word prediction with training (DistilBERT, RoBERTa)](https://youtu.be/AWe0PHsPc_M)

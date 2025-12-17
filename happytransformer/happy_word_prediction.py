@@ -26,9 +26,8 @@ class HappyWordPrediction(HappyTransformer):
         self.adaptor = get_adaptor(model_type)
         model_class = AutoModelForMaskedLM
 
-
         super().__init__(model_type, model_name, model_class, load_path=load_path, use_auth_token=use_auth_token, trust_remote_code=trust_remote_code)
-
+        self.logger.warning("HappyWordPrediction() is deprecated and will be removed in version 4.0.0.")
 
         self._pipeline_class = FillMaskPipeline
 
@@ -55,14 +54,14 @@ class HappyWordPrediction(HappyTransformer):
 
         text_for_pipeline = self.adaptor.preprocess_mask_text(text)
         answers = self._pipeline(
-            text_for_pipeline, 
+            text_for_pipeline,
             targets=targets, top_k=top_k
         )
 
         fix_token = self.adaptor.postprocess_mask_prediction_token
         return [
             WordPredictionResult(
-                token=fix_token(answer["token_str"]), 
+                token=fix_token(answer["token_str"]),
                 score=answer["score"]
             )
             for answer in answers

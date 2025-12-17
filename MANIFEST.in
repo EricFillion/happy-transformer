@@ -1,0 +1,23 @@
+# Strict. We must explicitly add files we want to include in the distribution.
+global-exclude *
+
+# Include all .py files in happytransformer
+recursive-include happytransformer *.py
+
+# Individual files to include
+include pyproject.toml
+include README.md
+include LICENSE*
+
+# Below is redundant given the use of "global-exclude *" but if we ever decide to remove it then it will be helpful to have.
+# directories to exclude
+prune data
+prune docs
+prune examples
+prune happy_transformer
+prune tests
+
+# files to exclude
+exclude logo.png
+exclude .gitignore
+exclude main.py

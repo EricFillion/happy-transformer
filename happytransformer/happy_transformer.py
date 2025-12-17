@@ -28,7 +28,7 @@ class HappyTransformer():
 
         # Sets self.model and self.tokenizer if load_model is True
         if load_path != "":
-            self.logger.warning(f"load_path has been deprecated. Provide the load_path to the  model_name parameter instead {self.model_name}. load_path will be removed in a later version. For now, we'll load the model form the load_path provided.  ")
+            self.logger.warning(f"load_path has been deprecated. Provide the load_path to the model_name parameter instead {self.model_name}. load_path will be removed in version 4.0.0. For now, we'll load the model form the load_path provided.")
             self.model_name = load_path
 
         self.config, self.tokenizer, self.model = self._get_model_components(self.model_name, use_auth_token, trust_remote_code, model_class)
@@ -63,9 +63,9 @@ class HappyTransformer():
         # HappyTextClassification is the only class that overwrites
         # this as we need to specify number of labels.
 
-        config = AutoConfig.from_pretrained(model_name_path, use_auth_token=use_auth_token, trust_remote_code=trust_remote_code)
-        model = model_class.from_pretrained(model_name_path, config=config, use_auth_token=use_auth_token, trust_remote_code=trust_remote_code)
-        tokenizer = AutoTokenizer.from_pretrained(model_name_path, use_auth_token=use_auth_token, trust_remote_code=trust_remote_code)
+        config = AutoConfig.from_pretrained(model_name_path, token=use_auth_token, trust_remote_code=trust_remote_code)
+        model = model_class.from_pretrained(model_name_path, config=config, token=use_auth_token, trust_remote_code=trust_remote_code)
+        tokenizer = AutoTokenizer.from_pretrained(model_name_path, token=use_auth_token, trust_remote_code=trust_remote_code)
 
         return config, tokenizer, model
 
@@ -96,12 +96,55 @@ class HappyTransformer():
 
         return device
 
-    def train(self, input_filepath: str ,  args: TrainArgs, eval_filepath: str = "", ):
+    def train(self, input_filepath: str ,  args: TrainArgs, eval_filepath: str = "",):
+
         if type(args) == dict:
-            raise ValueError("Dictionary training arguments are no longer supported as of Happy Transformer version 3.0.0.")
+            raise ValueError(
+                "Dictionary training arguments are no longer supported as of Happy Transformer version 3.0.0")
+
+        deprecated_args = []
+        if args.deepspeed:
+            deprecated_args.append("deepspeed")
+        if args.report_to:
+            deprecated_args.append("report_to")
+        if args.fp16:
+            deprecated_args.append("fp16")
+        if args.weight_decay:
+            deprecated_args.append("weight_decay")
+        if args.save_path:
+            deprecated_args.append("save_path")
+        if args.load_path:
+            deprecated_args.append("load_path")
+        if args.eval_ratio != 0.1:
+            deprecated_args.append("eval_ratio")
+        if args.save_steps:
+            deprecated_args.append("save_steps")
+        if args.project_name != "happy-transformer":
+            deprecated_args.append("project_name")
+        if args.eval_steps !=0.1:
+            self.logger.warning(f"Starting in version 4.0.0, eval_steps will take an int to specify how many steps until evaluating occurs.")
+        if args.logging_steps != 0.1:
+            self.logger.warning(
+                f"Starting in version 4.0.0, logging_steps will take an int to specify how many steps until logging occurs.")
+
+        if deprecated_args:
+            if len(deprecated_args) == 1:
+                args_str = deprecated_args[0]
+                self.logger.warning(f"{args_str} is deprecated and will have no effect in version 4.0.0")
+
+            elif len(deprecated_args) == 2:
+                self.logger.warning(f"{deprecated_args[0]} and {deprecated_args[1]} are deprecated and will have no effect in version 4.0.0")
+
+            else:
+                output_string = ""
+                for i in range(len(deprecated_args) -1):
+                    output_string += f"{deprecated_args[i]}, "
+                output_string += f"and {deprecated_args[-1]}"
+                self.logger.warning(f"{output_string} are deprecated and will have no effect in version 4.0.0")
+
 
         if args.eval_ratio <= 0 and eval_filepath == "":
-            raise ValueError("Please set TrainArgs.eval_ratio to greater than 0  or supply an eval_path")
+            raise ValueError("Please set TrainArgs.eval_ratio to greater than 0 or supply an eval_path")
 
         train_tok_data, eval_tok_data = self._preprocess_data_train(input_filepath=input_filepath,
                                                               eval_filepath=eval_filepath,
@@ -110,11 +153,33 @@ class HappyTransformer():
         self._run_train(train_tok_data, eval_tok_data, args,  self._data_collator)
 
 
-
     def eval(self, input_filepath, args):
         if type(args) == dict:
             raise ValueError(
                 "Dictionary evaluating arguments are no longer supported as of Happy Transformer version 3.0.0.")
+
+        deprecated_args = []
+        if args.deepspeed:
+            deprecated_args.append("deepspeed")
+        if args.save_path:
+            deprecated_args.append("save_path")
+        if args.load_path:
+            deprecated_args.append("load_path")
+
+        if deprecated_args:
+            if len(deprecated_args) == 1:
+                args_str = deprecated_args[0]
+                self.logger.warning(f"{args_str} is deprecated and will have no effect in version 4.0.0")
+
+            elif len(deprecated_args) == 2:
+                self.logger.warning(f"{deprecated_args[0]} and {deprecated_args[1]} are deprecated and will have no effect in version 4.0.0")
+
+            else:
+                output_string = ""
+                for i in range(len(deprecated_args) -1):
+                    output_string += f"{deprecated_args[i]}, "
+                output_string += f"and {deprecated_args[-1]}"
+                self.logger.warning(f"{output_string} are deprecated and will have no effect in version 4.0.0")
 
 
         tokenized_dataset = self._preprocess_data_eval(input_filepath, args)
@@ -223,14 +288,13 @@ class HappyTransformer():
             report_to=["none"] if len(args.report_to) == 0 else args.report_to,
             save_strategy="steps" if args.save_steps > 0 else "no",
             save_steps=args.save_steps,
-            evaluation_strategy="steps" if args.eval_steps > 0 else "no",
+            eval_strategy="steps" if args.eval_steps > 0 else "no",
             eval_steps=args.eval_steps,
             logging_strategy="steps" if args.logging_steps > 0 else "no",
             logging_steps = args.logging_steps,
             per_device_train_batch_size=args.batch_size,
             per_device_eval_batch_size=args.batch_size,
             fp16=args.fp16,
-            use_mps_device= True if self.device.type == "mps" else False,
             run_name=args.run_name,
         )
 
@@ -265,7 +329,7 @@ class HappyTransformer():
             args=training_args,
             train_dataset=train_dataset,
             eval_dataset=eval_dataset,
-            tokenizer=self.tokenizer,
+            processing_class=self.tokenizer,
             data_collator=data_collator,
         )
         trainer.add_callback(FistStep())
@@ -293,7 +357,6 @@ class HappyTransformer():
             seed=42,
             report_to=['none'],
             per_device_eval_batch_size=args.batch_size,
-            use_mps_device=True if self.device.type == "mps" else False,
             deepspeed=deepspeed
         )
 
